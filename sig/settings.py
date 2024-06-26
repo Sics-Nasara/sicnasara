@@ -215,5 +215,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VERSION = '0.0.5'
-VERSION_COMMENT = 'uwsgi, Pipfile'
+VERSION = '0.0.6'
+VERSION_COMMENT = 'settings, Pipfile'

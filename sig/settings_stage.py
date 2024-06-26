@@ -1,4 +1,4 @@
-from settings import *
+from .settings import *
 from .keep_safe import STAGE_SECRET_KEY, STAGE_DATABASE_PASSWORD
 
 
@@ -15,6 +15,7 @@ ALLOWED_HOSTS.append('sics_stage.nasaraperilburkina.org')
 SECRET_KEY = STAGE_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = STAGE_DATABASE_PASSWORD
+DATABASES['default']['name'] = 'sicsnasara_stage'
 
 CSRF_TRUSTED_ORIGINS = ['https://sics_stage.nasaraperilburkina.org']
 
