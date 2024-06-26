@@ -215,5 +215,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 VERSION_COMMENT = 'Pipfile'
