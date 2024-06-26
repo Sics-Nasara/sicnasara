@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from .keep_safe import PROD_SECRET_KEY, PROD_DATABASE_PASSWORD
 
 import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_^=mjdr+xr71y*0j$o!uaq79!+rz$5i2vvisl=3c($kb(lml5^'
+SECRET_KEY = PROD_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['113.30.150.236', '127.0.0.1', 'sig.c4k.it']
+ALLOWED_HOSTS = ['sics.nasaraperilburkina.org', '127.0.0.1', 'sig.c4k.it']
 
 
 # Application definition
@@ -84,8 +85,12 @@ WSGI_APPLICATION = 'sig.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'dbsig.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'sicsnasara_prod',
+        'HOST': 'localhost',
+        'USER': 'nasara',
+        'PASSWORD': PROD_DATABASE_PASSWORD,
+        'PORT': '5432',
     }
 }
 
@@ -122,6 +127,76 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOGGING_BASE_DIR = '/var/log/sicsnasara/prod/'
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '[%(asctime)s] %(levelname)s %(message)s'
+        },
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse"
+        }
+    },
+    "handlers": {
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler"
+        },
+        'file_django': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGGING_BASE_DIR + 'sicsnasara_django.log',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGGING_BASE_DIR + 'sicsnasara.log',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'errors': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGGING_BASE_DIR + 'sicsnasara_errors.log',
+            'maxBytes': 1024 * 1024 * 50,  # 50 MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["errors"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        'django': {
+            'handlers': ['file_django'],
+            'propagate': True,
+            'level': 'WARNING',
+        },
+        'scuelo': {
+            'handlers': ['file'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+    }
+}
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -140,3 +215,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+VERSION = '0.0.1'
+VERSION_COMMENT = 'Initial'
