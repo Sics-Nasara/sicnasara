@@ -84,16 +84,4 @@ class Migration(migrations.Migration):
                 'ordering': ['-date_paye'],
             },
         ),
-        migrations.CreateModel(
-            name='Attendance',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField()),
-                ('status', models.CharField(choices=[('present', 'Present'), ('absent', 'Absent'), ('late', 'Late')], max_length=10)),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='scuelo.eleve')),
-            ],
-            options={
-                'unique_together': {('date', 'student')},
-            },
-        ),
     ]
