@@ -1,0 +1,98 @@
+{% extends "../layout.html" %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for url, name in breadcrumbs %}
+            <li class="breadcrumb-item {% if forloop.last %}active{% endif %}">
+                {% if not forloop.last %}
+                    <a href="{{ url }}">{{ name }}</a>
+                {% else %}
+                    {{ name }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>
+
+<!-- Main content -->
+<div class="container mt-5">
+    <h1 class="page-title">Liste des Classes</h1>
+    <div class="card-container">
+        {% for classe in classes %}
+            <div class="card">
+                <div class="card-body">
+                    <i class="card-icon fas fa-users"></i> <!-- Example icon -->
+                    <a href="{% url 'student_per_classe' classe.id %}" class="card-link">
+                        {{ classe.nom }}
+                    </a>
+                </div>
+            </div>     
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Custom styles for the homepage cards */
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px; /* Space between cards */
+        margin-top: 50px;
+    }
+
+    .card {
+        border: none; /* Remove default card border */
+        border-radius: 20px; /* More rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        overflow: hidden; /* Clip rounded corners properly */
+        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transform and shadow transition */
+        width: 100%;
+        max-width: 300px; /* Ensure all cards have the same width */
+        background-color: #007bff; /* Primary button color */
+    }
+    
+    .card-body {
+        padding: 20px;
+        color: #ffffff; /* White text */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        transition: transform 0.2s; /* Smooth transform on hover */
+    }
+    
+    .card:hover {
+        transform: translateY(-10px); /* Slightly lift card on hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+    }
+    
+    .card-link {
+        color: #ffffff; /* White text */
+        text-decoration: none; /* Remove underline */
+        font-size: 1.25rem; /* Larger text */
+        font-weight: bold; /* Bold text */
+        margin-top: 10px; /* Space above the link */
+    }
+    
+    .card-link:hover {
+        text-decoration:; /* Underline on hover */
+    }
+
+    .card-icon {
+        font-size: 3rem; /* Large icon */
+        margin-bottom: 15px; /* Space below icon */
+    }
+
+    .page-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 40px;
+        color: #333; /* Dark text color */
+    }
+</style>
+{% endblock %}

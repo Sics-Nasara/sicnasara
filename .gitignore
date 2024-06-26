@@ -1,0 +1,6 @@
+*.py[cod]
+/Pipfile.lock
+.idea/
+.vscode/
+__pycache__/
+dbsig.sqlite3

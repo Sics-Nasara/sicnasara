@@ -1,0 +1,71 @@
+{% extends "../../layout.html" %}
+
+
+{% block content %}
+<ol class="breadcrumb">
+    {% for url, label in breadcrumbs %}
+    {% if url %}
+    <li class="breadcrumb-item"><a href="{{ url }}">{{ label }}</a></li>
+    {% else %}
+    <li class="breadcrumb-item active" aria-current="page">{{ label }}</li>
+    {% endif %}
+    {% endfor %}
+</ol>
+<div class="container vh-75 mt-3">
+    <div class="student-info bg-light p-3 mb-4">
+        <h4 class="mb-3">Informations de l'élève</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-2"><strong>Nom:</strong> {{ eleve.nom }}</p>
+                <p class="mb-2"><strong>Prénom:</strong> {{ eleve.prenom }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-2"><strong>Date de paiement:</strong> {{ paiement.date_paye }}</p>
+                <p class="mb-2"><strong>Classe:</strong> {{ classe.nom }} {{ classe.get_type_ecole_display }}</p>
+            </div>
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Mise à jour</button>
+            <a href="{% url 'manage_payments' %}" class="btn btn-danger ml-2">Retour</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .student-info {
+        border-radius: 10px;
+    }
+    
+    .student-info h4 {
+        color: #333;
+    }
+
+    .student-info p {
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+</style>
+{% endblock content %}

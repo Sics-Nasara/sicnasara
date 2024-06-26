@@ -1,0 +1,25 @@
+{% extends "../../layout.html" %}
+
+{%block content %}
+<ol class="breadcrumb">
+  {% for breadcrumb in breadcrumbs %}
+  {% if breadcrumb.url %}
+  <li class="breadcrumb-item"><a href="{% url breadcrumb.url %}">{{ breadcrumb.label }}</a></li>
+  {% else %}
+  <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.label }}</li>
+  {% endif %}
+  {% endfor %}
+</ol>
+<p>Nom: {{ annee_scolaire.nom }}</p>
+<p>Date Initiale: {{ annee_scolaire.date_initiale }}</p>
+<p>Date Finale: {{ annee_scolaire.date_finale }}</p>
+<p>Actuel: {{ annee_scolaire.actuel }}</p>
+<h2>mise a  jours  Annee Scolaire</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary"><i class="fa  fa-sync-alt"></i></button>
+  <a class="btn btn-danger" href="{% url 'manage_annee_scolaire' %}" ><i  class='fa fa-undo'></i></a>
+</form>
+{% endblock content %}

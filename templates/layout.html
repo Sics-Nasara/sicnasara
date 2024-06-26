@@ -1,0 +1,316 @@
+{%  load static  %}
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+ 
+    <title>
+        {% block title %}
+        
+        {% endblock title %}
+    </title>
+    
+</head>
+<body>
+    
+    <style>
+        .breadcrumbs > * {
+            font-size: 1.2em;
+        }
+        
+        .custom-navbar {
+            
+            border-radius: 10px; /* Rounded corners */
+            background-color: #A44400;
+            width: auto;
+        }
+        .custom-navbar .navbar-nav {
+            flex-direction: row;
+        }
+        
+        .custom-navbar .navbar-brand, 
+        .custom-navbar .navbar-text, 
+        .custom-navbar .nav-link {
+            color: white !important;
+        }
+        .custom-navbar .important-info {
+            text-align: center;
+            flex: 1;
+            font-size: 1.2em;
+        }
+        .custom-navbar .navbar-nav.ml-auto .nav-item {
+            display: flex;
+            align-items: center;
+            
+        }
+        .custom-navbar .username {
+            margin-right: 2px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .custom-navbar .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .custom-navbar .logout-btn:hover {
+            background-color: ;
+            color: white;
+        }
+        .custom-navbar .fas {
+            font-size: 1.5em;
+        }
+        
+        .form-control {
+            border-radius: 20px; /* Round the corners of the input */
+            padding-left: 20px; /* Add left padding */
+            padding-right: 40px; /* Add right padding for the button */
+        }
+        
+        
+        .search-button {
+            position: absolute;
+            right: 10px; /* Position the button to the right */
+            top: 50%; /* Align vertically in the middle */
+            transform: translateY(-50%);
+            border-radius: 20px; /* Round the corners of the button */
+        }
+        
+        
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.clicked {
+            background-color:  #A44400;
+        }
+        .sidebar a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .sidebar i {
+            margin-right: 10px;
+        }
+        .content {
+            margin-left: 250px; /* Adjust as needed */
+            padding: 20px;
+            transition:  0.3s ease; /* Add transition effect */
+        }
+        
+        .sidebar.collapsed + .content {
+            margin-left: 50px; /* Adjust to collapsed width */
+        }
+        
+        
+        
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color:  #A44400;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px; /* Collapsed width */
+        }
+        
+        .toggle-btn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-bottom: 20px; /* Add some spacing below the button */
+        }
+        
+        .toggle-btn:hover {
+            color: #007bff; /* Change color on hover */
+        }
+        /* Add this CSS to hide the text when the sidebar is collapsed */
+        /* Add this CSS to hide the text of sidebar links when collapsed */
+        .sidebar.collapsed a span {
+            display: none;
+        }
+        
+        /* Add this CSS to display only icons of sidebar links when collapsed */
+        .sidebar.collapsed a i {
+            margin-right: 2rem;
+            width: 100%;
+            
+        }
+        .custom-navbar {
+            width: calc(100% - 250px); /* Adjust based on the initial width of the sidebar */
+            transition: width 0.3s ease; /* Add transition effect */
+        }
+        
+        .sidebar.collapsed + .custom-navbar {
+            width: calc(100% - 60px); /* Adjust to collapsed width */
+            transition: width 0.3s ease; /* Add transition effect */
+            margin-left: 10px; /* Adjust to collapsed width */
+        }
+        .sidebar a.clicked {
+            background-color: white; /* Change to desired background color */
+            color:#A44400;/* Change to desired text color */
+        }
+        
+    </style>
+    {% block nav %}
+    <header class="costum-navbar  p-0  content">
+        <nav class="navbar navbar-expand-lg navbar-dark  h-100 w-100 pt-5 pb-2 custom-navbar  mt-xl-n1 ml-2 pl-5 overflow-auto">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="javascript:history.back()">
+                            <i class="fas fa-undo fa-2x"></i>
+                        </a>
+                    </li>
+               
+                </ul>
+                <span class="navbar-nav important-info">
+                    {% block important_info %}
+                    {% endblock %}
+                </span>
+                <ul class="navbar-nav d-flex justify-content-between">
+                    <li class="nav-item">
+                        <span class="navbar-text username text-black-50">
+                            {{ user.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item ml-4">
+                        <a class="nav-link logout-btn" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    {% endblock nav %}    
+    <div class="sidebar ml-5 rounded-lg">
+        <button class="toggle-btn  ml-5" onclick="toggleSidebar()">
+            <i class="fas fa-bars fa-2x"></i>   
+        </button>
+        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">
+            <i class="fas fa-home fa-2x mr-5"></i> <span>Home</span>
+   
+        </a>
+        <a href="{% url 'important_info' %}" class="{% if request.path == '/important_info/' %}active{% endif %}">
+            <i class="fas fa-chart-line fa-2x"></i> <span>Dashboard</span> 
+        </a>
+        <a href="{% url 'manage_payments' %}" class="{% if request.path == '/manage_payments/' %}active{% endif %}">
+            <i class="fas fa-money-check-alt fa-2x"></i><span>Paiements</span> 
+        </a>
+        <a href="{% url 'student_create' %}" class="{% if request.path == '/student_create/' %}active{% endif %}">
+            <i class="fas fa-user-plus fa-2x"></i> <span>ajouter eleve</span>
+            
+        </a>
+        <a href="{% url 'manage_inscriptions' %}" class="{% if request.path == '/manage_inscriptions/' %}active{% endif %}">
+            <i class="fas fa-users fa-2x"></i> <span>Inscriptions</span> 
+        </a>
+        
+        
+        
+        <a href="{% url 'student_list' %}" class="{% if request.path == '/students/' %}active{% endif %}">
+            <i class="fas fa-users fa-2x"></i> <span>Liste des Élèves</span>
+        </a>
+        
+        <a href="{% url 'manage_annee_scolaire' %}" class="{% if request.path == '/manage_annee_scolaire/' %}active{% endif %}">
+            <i class="fas fa-calendar-alt fa-2x"></i> <span>Annee scolaire</span> 
+        </a>
+    </div>
+    <!-- Main Content -->
+    <div class="content  bn">
+        <!-- Add your main content here -->
+        {% block content %}
+        {% endblock content %}
+    </div>
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container-fluid">
+        
+        
+        
+    </div>
+</footer>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+
+
+
+<script>
+    
+    function toggleSidebar() {
+        var sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('collapsed');
+        var toggleBtn = document.querySelector('.toggle-btn');
+        toggleBtn.classList.toggle('collapsed');
+    }
+    
+    // Add an event listener to all sidebar links
+    document.querySelectorAll('.sidebar a').forEach(link => {
+        link.addEventListener('click', function() {
+            // Remove 'clicked' class from all links
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.classList.remove('clicked');
+            });
+            // Add 'clicked' class to the clicked link
+            this.classList.add('clicked');
+        });
+    });
+    
+    
+       // Add an event listener to all sidebar links
+       document.querySelectorAll('.costum-navbar').forEach(link => {
+        link.addEventListener('click', function() {
+            // Remove 'clicked' class from all links
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.classList.remove('clicked');
+            });
+            // Add 'clicked' class to the clicked link
+            this.classList.add('clicked');
+        });
+    });
+    
+    
+</script>
+</body>
+</html>
