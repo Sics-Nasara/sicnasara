@@ -14,5 +14,6 @@ crispy-bootstrap5 = "*"
 psycopg2-binary = "*"
 uwsgi = "*"
 fontawesomefree = "*"
+openpyexcel = "*"
 [dev-packages]
 
