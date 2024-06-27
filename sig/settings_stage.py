@@ -10,14 +10,14 @@ DEBUG = True
 
 SITE_NAME = 'SICS NASARA STAGE'
 
-SITE_DOMAIN = 'sics_stage.nasaraperilburkina.org'
-ALLOWED_HOSTS.append('sics_stage.nasaraperilburkina.org')
+SITE_DOMAIN = 'sics-stage.nasaraperilburkina.org'
+ALLOWED_HOSTS.append('sics-stage.nasaraperilburkina.org')
 SECRET_KEY = STAGE_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = STAGE_DATABASE_PASSWORD
-DATABASES['default']['name'] = 'sicsnasara_stage'
+DATABASES['default']['NAME'] = 'sicsnasara_stage'
 
-CSRF_TRUSTED_ORIGINS = ['https://sics_stage.nasaraperilburkina.org']
+CSRF_TRUSTED_ORIGINS = ['http://sics-stage.nasaraperilburkina.org']
 
 LOGGING_BASE_DIR = '/var/log/sicsnasara/stage/'
 for h in LOGGING["handlers"]:

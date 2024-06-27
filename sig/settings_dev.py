@@ -15,7 +15,7 @@ ALLOWED_HOSTS.append('sics_dev.nasaraperilburkina.org')
 SECRET_KEY = DEV_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = DEV_DATABASE_PASSWORD
-DATABASES['default']['name'] = 'sicsnasara_dev'
+DATABASES['default']['NAME'] = 'sicsnasara_dev'
 
 CSRF_TRUSTED_ORIGINS = ['https://sics_dev.nasaraperilburkina.org']
 
