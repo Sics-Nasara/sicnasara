@@ -215,5 +215,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VERSION = '0.0.8'
-VERSION_COMMENT = 'fix settings'
+VERSION = '0.0.9'
+VERSION_COMMENT = 'prod pipenv path'
