@@ -16,6 +16,12 @@ SECRET_KEY = DEV_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = DEV_DATABASE_PASSWORD
 DATABASES['default']['NAME'] = 'sicsnasara_dev'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR + '/dbsig.sqlite3',
+    }
+}
 
 CSRF_TRUSTED_ORIGINS = ['https://sics_dev.nasaraperilburkina.org']
 

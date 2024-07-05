@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'bootstrap5',
     'crispy_bootstrap5',
+   
 ]
 
 
@@ -126,6 +127,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+CSRF_TRUSTED_ORIGINS = ['http://sics.nasaraperilburkina.org']
 
 LOGGING_BASE_DIR = '/var/log/sicsnasara/prod/'
 LOGGING = {
@@ -215,5 +218,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VERSION = '0.0.9'
-VERSION_COMMENT = 'prod pipenv path'
+VERSION = '0.0.10'
+VERSION_COMMENT = 'Models from functional_analysis, migrations, mngmnt cmds'
