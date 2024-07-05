@@ -218,5 +218,5 @@ STATIC_URL = 'staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VERSION = '0.0.9'
-VERSION_COMMENT = 'prod pipenv path'
+VERSION = '0.0.10'
+VERSION_COMMENT = 'Models from functional_analysis, migrations, mngmnt cmds'
