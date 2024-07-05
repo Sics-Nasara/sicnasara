@@ -9,7 +9,7 @@ from openpyexcel.styles.borders import Border, Side, BORDER_THIN, BORDER_THICK
 from openpyexcel.worksheet.datavalidation import DataValidation
 import openpyexcel.styles.colors
 
-from scuelo.models import AnneeScolaire, Eleve, Inscription, Classe, Paiement
+from scuelo.models import AnneeScolaire, Eleve, Inscription, Classe, Mouvement
 
 
 class Command(BaseCommand):
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         '''
             Classe   already loaded by fixtures
             Eleve    import first
-            Paiement import second
+            Mouvement import second
         '''
         annee_scolaire_actuel = AnneeScolaire.objects.get(actuel=True)
         derniere_annee_scolaire = AnneeScolaire.objects.get(actuel=False)
@@ -66,7 +66,7 @@ class Command(BaseCommand):
                     columns_paiement[row[column_index].value] = column_index
             else:
                 try:
-                    new_p = Paiement()
+                    new_p = Mouvement()
                     new_p.legacy_id = row[columns_paiement['_PK_Paiement_ID']].value
                     new_p.causal = row[columns_paiement['Causal_Paiement']].value
                     new_p.montant = row[columns_paiement['Montant']].value

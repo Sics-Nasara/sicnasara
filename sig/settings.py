@@ -128,6 +128,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+CSRF_TRUSTED_ORIGINS = ['http://sics.nasaraperilburkina.org']
+
 LOGGING_BASE_DIR = '/var/log/sicsnasara/prod/'
 LOGGING = {
     "version": 1,

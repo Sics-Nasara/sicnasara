@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Classe, Eleve, AnneeScolaire, Inscription, Paiement
+from .models import Classe, Eleve, AnneeScolaire, Inscription
 from django.contrib.auth.models import User, Group
 
 
@@ -12,10 +12,10 @@ class SicAdminArea(admin.AdminSite):
 sics_site = SicAdminArea(name='SICS NASSARA')
 
 
-class PaimentInline(admin.TabularInline):
-    model = Paiement
-    extra = 0
-    classes = ['collapse']
+# class PaimentInline(admin.TabularInline):
+#     model = Paiement
+#     extra = 0
+#     classes = ['collapse']
 
 
 class InscriptionInline(admin.TabularInline):
@@ -89,7 +89,7 @@ class PaiementAdmin(admin.ModelAdmin):
 class InscriptionAdmin(admin.ModelAdmin):
     autocomplete_fields = ['eleve']
 
-sics_site.register(Paiement, PaiementAdmin)
+# sics_site.register(Paiement, PaiementAdmin)
 sics_site.register(Eleve, EleveAdmin)
 sics_site.register(Classe)
 sics_site.register(AnneeScolaire)

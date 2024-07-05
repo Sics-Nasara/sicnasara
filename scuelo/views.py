@@ -1,6 +1,6 @@
 from django_filters.views import FilterView
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect , get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -8,21 +8,17 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.urls import   reverse , reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import UpdateView
-from django.db import  transaction 
+from django.db import transaction
 from django.views.generic import CreateView
-from django.views.generic import ( DetailView , ListView  ,
-                                  View, ListView, CreateView, UpdateView  
-)
-from django.db.models import Q  , Max ,  Sum , Count  , Case   , When, IntegerField
-from .forms import  ( InscriptionForm , EleveUpdateForm 
-                    , EleveCreateForm ,  EleveUpdateForm , 
-                    PaiementForm  ,AnneeScolaireForm ,
-                    PaiementPerStudentForm
-)
-from  .filters import EleveFilter
-from scuelo.models import Eleve, Classe, Inscription, Paiement , AnneeScolaire 
+from django.views.generic import (DetailView, ListView,
+                                  View, ListView, CreateView, UpdateView
+                                  )
+from django.db.models import Q, Max, Sum, Count, Case, When, IntegerField
+from .forms import InscriptionForm, EleveCreateForm, EleveUpdateForm, AnneeScolaireForm
+from .filters import EleveFilter
+from scuelo.models import Eleve, Classe, Inscription, AnneeScolaire
 
 
 @login_required
@@ -30,6 +26,7 @@ def home(request):
     breadcrumbs = [('/', 'Home')]
     classes = Classe.objects.all()
     return render(request, 'scuelo/home.html', {'breadcrumbs': breadcrumbs, 'classes': classes})
+
 
 class StudentCreateView(CreateView):
     model = Eleve
@@ -45,7 +42,8 @@ class StudentCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         return super().form_valid(form)
-        
+
+
 class StudentPerClasseView(ListView):
     model = Eleve
     template_name = 'scuelo/student/perclasse.html'
@@ -54,17 +52,18 @@ class StudentPerClasseView(ListView):
     def get_queryset(self):
         class_id = self.kwargs.get('class_id')
         # Get the latest inscription for each student in the specified class
-        latest_inscriptions = Inscription.objects.filter(classe_id=class_id).values('eleve_id').annotate(last_inscription=Max('date_inscription'))
+        latest_inscriptions = Inscription.objects.filter(classe_id=class_id).values('eleve_id').annotate(
+            last_inscription=Max('date_inscription'))
 
         # Get the IDs of the students with the latest inscription in the specified class
         student_ids = [inscription['eleve_id'] for inscription in latest_inscriptions]
 
         # Exclude students who have an earlier inscription for the same class
         queryset = Eleve.objects.filter(id__in=student_ids)
-         # Annotate queryset with total payment for each student
+        # Annotate queryset with total payment for each student
         queryset = queryset.annotate(total_payment=Sum('inscription__paiement__montant'))
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs.get('class_id')
@@ -81,14 +80,15 @@ class StudentPerClasseView(ListView):
         total_good_condition = students.filter(condition_eleve='CONF').count()
         total_abandon = students.filter(condition_eleve='ABAN').count()
         total_prop = students.filter(condition_eleve='PROP').count()
-        total_fees = Paiement.objects.filter(inscription__classe__id=class_id).aggregate(total_fees=Sum('montant'))['total_fees'] or 0
+#        total_fees = Paiement.objects.filter(inscription__classe__id=class_id).aggregate(total_fees=Sum('montant'))[
+#                         'total_fees'] or 0
         breadcrumbs = [
             (reverse('home'), 'Home'),
             (reverse('student_per_classe', kwargs={'class_id': class_id}), f'Class {clicked_class.nom}'),
         ]
         context.update({
-            'total_students': total_students,'total_girls': total_girls,'total_fees': total_fees,
-            'total_boys' : total_boys, 'total_cs': total_cs, 'total_extra': total_extra,
+#            'total_students': total_students, 'total_girls': total_girls, 'total_fees': total_fees,
+            'total_boys': total_boys, 'total_cs': total_cs, 'total_extra': total_extra,
             'total_py': total_py,
             'total_acc': total_acc,
             'total_bravo': total_bravo,
@@ -98,11 +98,12 @@ class StudentPerClasseView(ListView):
             'total_prop': total_prop,
             'students': students,  # Pass students queryset
             'breadcrumbs': breadcrumbs
-                
+
         })
 
         return context
-    
+
+
 class StudentDetailView(DetailView):
     model = Eleve
     template_name = 'scuelo/student/detail.html'
@@ -114,7 +115,7 @@ class StudentDetailView(DetailView):
         # Fetch inscriptions related to the student
         inscriptions = Inscription.objects.filter(eleve=student)
         # Fetch payments related to the student (via inscriptions)
-        payments = Paiement.objects.filter(inscription__in=inscriptions)
+        payments = None #Paiement.objects.filter(inscription__in=inscriptions)
         # Calculate the total payment for the student
         total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
         # Assuming the latest inscription holds the current class
@@ -124,7 +125,8 @@ class StudentDetailView(DetailView):
         breadcrumbs = [
             (reverse('home'), 'Home'),
             (reverse('student_list'), 'Liste Generale des eleves'),
-            (reverse('student_per_classe', kwargs={'class_id': classe.id}) if classe else '#', f'Classe {classe.nom}' if classe else 'No Class'),
+            (reverse('student_per_classe', kwargs={'class_id': classe.id}) if classe else '#',
+             f'Classe {classe.nom}' if classe else 'No Class'),
             (None, student.nom)  # Current page (no URL needed)
         ]
 
@@ -132,7 +134,7 @@ class StudentDetailView(DetailView):
         context['payments'] = payments
         context['total_payment'] = total_payment
         context['breadcrumbs'] = breadcrumbs
-        context['form'] = PaiementPerStudentForm()  # Add the payment form to the context
+#        context['form'] = PaiementPerStudentForm()  # Add the payment form to the context
         context['classe'] = classe
         return context
 
@@ -156,20 +158,20 @@ class StudentListView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         students = self.get_queryset()
         total_students = students.count()
         total_girls = students.filter(sex='F').count()
         total_boys = students.filter(sex='M').count()
         context['search_term'] = self.request.GET.get('q', '')
-        total_fees = Paiement.objects.aggregate(total_fees=Sum('montant'))['total_fees'] or 0
+        total_fees = None #Paiement.objects.aggregate(total_fees=Sum('montant'))['total_fees'] or 0
         cs_py_sum = students.aggregate(cs_py_sum=Sum('cs_py'))['cs_py_sum'] or 0
-        
+
         # Calculate total payment for each student
         for student in students:
             total_payment = student.total_payment
             setattr(student, 'total_payment', total_payment)
-        
+
         context.update({
             'total_students': total_students,
             'total_girls': total_girls,
@@ -178,11 +180,10 @@ class StudentListView(FilterView):
             'cs_py_sum': cs_py_sum,
             'students': students,
         })
-    
+
         return context
 
 
-       
 class StudentUpdateView(UpdateView):
     model = Eleve
     form_class = EleveUpdateForm
@@ -192,12 +193,13 @@ class StudentUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data['breadcrumbs'] = [('/', 'Home'), ('/students/', 'Eleves'), (f'/student/{self.object.pk}/update/', 'mise a jours eleve')]
+        data['breadcrumbs'] = [('/', 'Home'), ('/students/', 'Eleves'),
+                               (f'/student/{self.object.pk}/update/', 'mise a jours eleve')]
         return data
 
     def form_valid(self, form):
         self.object = form.save()
-        return super().form_valid(form) 
+        return super().form_valid(form)
 
 
 def login_view(request):
@@ -214,9 +216,10 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'scuelo/login.html', {'form': form})
 
+
 def logout_view(request):
     logout(request)
-    return redirect('login')   
+    return redirect('login')
 
 
 def calculate_tenue(classe, montant):
@@ -234,20 +237,21 @@ def calculate_tenue(classe, montant):
     # Return 0 if no matching rule is found
     return 0
 
+
 def manage_payments(request):
     breadcrumbs = [('/', 'Home'), ('/paiements/', 'Paiements')]
     causal_filter = request.GET.get('causal')
     search_query = request.GET.get('search')
 
     # Retrieve all payments
-    payments = Paiement.objects.all()
+    payments = None # Paiement.objects.all()
 
     # Filter payments with causal 'tenue'
-    tenue_payments = Paiement.objects.filter(causal='TEN')
+    tenue_payments = None # Paiement.objects.filter(causal='TEN')
 
     if search_query:
         # Filter payments based on the student's name (nom or prenom)
-        payments = payments.filter(Q(inscription__eleve__nom__icontains=search_query) | 
+        payments = payments.filter(Q(inscription__eleve__nom__icontains=search_query) |
                                    Q(inscription__eleve__prenom__icontains=search_query))
 
     if causal_filter:
@@ -265,13 +269,13 @@ def manage_payments(request):
 
     # Handle form submission
     if request.method == 'POST':
-        form = PaiementForm(request.POST)
+        form = None # PaiementForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Paiement ajouté avec succès.')
             return redirect('manage_payments')
     else:
-        form = PaiementForm()
+        form = None # PaiementForm()
 
     # Calculate total montant per causal category
     total_montant_per_causal = payments.object_list.values('causal').annotate(total_montant=Sum('montant'))
@@ -288,7 +292,8 @@ def manage_payments(request):
         payment_details.append({'payment': payment, 'nom_classe': nom_classe})
 
     total_payments_count = payments.paginator.count
-    total_montant_all_payments = payments.object_list.aggregate(total_montant_all_payments=Sum('montant'))['total_montant_all_payments']
+    total_montant_all_payments = payments.object_list.aggregate(total_montant_all_payments=Sum('montant'))[
+        'total_montant_all_payments']
 
     return render(request, 'scuelo/paiment/manage.html', {
         'breadcrumbs': breadcrumbs,
@@ -303,22 +308,23 @@ def manage_payments(request):
         'total_montant_all_payments': total_montant_all_payments,
     })
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class AddPaiementAjaxView(View):
     def post(self, request, *args, **kwargs):
         student_id = kwargs['pk']
         student = get_object_or_404(Eleve, pk=student_id)
-        form = PaiementPerStudentForm(request.POST)
+        form = None # PaiementPerStudentForm(request.POST)
         if form.is_valid():
             paiement = form.save(commit=False)
             paiement.inscription = Inscription.objects.filter(eleve=student).last()
             paiement.save()
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'errors': form.errors})
-    
-    
+
+
 def update_paiement(request, pk):
-    paiement = get_object_or_404(Paiement, pk=pk)
+    paiement = None # get_object_or_404(Paiement, pk=pk)
     eleve = paiement.inscription.eleve
     classe = paiement.inscription.classe
     breadcrumbs = [
@@ -328,13 +334,13 @@ def update_paiement(request, pk):
     ]
 
     if request.method == 'POST':
-        form = PaiementForm(request.POST, instance=paiement)
+        form = None # PaiementForm(request.POST, instance=paiement)
         if form.is_valid():
             form.save()
             messages.success(request, 'Paiement mis à jour avec succès.')
             return redirect('manage_payments')
     else:
-        form = PaiementForm(instance=paiement, initial={'creation_date': paiement.date_paye})  
+        form = None # PaiementForm(instance=paiement, initial={'creation_date': paiement.date_paye})
 
     return render(request, 'scuelo/paiment/update.html', {
         'form': form,
@@ -344,25 +350,27 @@ def update_paiement(request, pk):
         'breadcrumbs': breadcrumbs
     })
 
+
 def delete_payment(request, payment_id):
     if request.method == 'POST':
-        payment = get_object_or_404(Paiement, pk=payment_id)
+        payment = None # get_object_or_404(Paiement, pk=payment_id)
         payment.delete()
         messages.success(request, 'Payment deleted successfully.')
         return redirect('manage_payments')
     else:
-        return redirect('manage_payments') 
-    
+        return redirect('manage_payments')
+
+
 def manage_inscriptions(request):
     # Handle form submission
     if request.method == 'POST':
         form = InscriptionForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('manage_inscriptions') 
+            return redirect('manage_inscriptions')
     else:
         form = InscriptionForm()
-        
+
     # Fetch all classes
     classes = Classe.objects.all()
 
@@ -386,7 +394,8 @@ def manage_inscriptions(request):
 
     # Filter inscriptions by search query
     if search_query:
-        inscriptions = inscriptions.filter(Q(eleve__nom__icontains=search_query) | Q(eleve__prenom__icontains=search_query))
+        inscriptions = inscriptions.filter(
+            Q(eleve__nom__icontains=search_query) | Q(eleve__prenom__icontains=search_query))
 
     # Calculate total number of inscriptions
     total_inscriptions = inscriptions.count()
@@ -395,15 +404,15 @@ def manage_inscriptions(request):
     inscriptions_per_class = inscriptions.values('classe__nom').annotate(total=Count('id')).order_by('classe__nom')
 
     # Calculate inscriptions per school year
-    inscriptions_per_year = Inscription.objects.values('annee_scolaire__nom').annotate(total=Count('id')).order_by('annee_scolaire__nom')
+    inscriptions_per_year = Inscription.objects.values('annee_scolaire__nom').annotate(total=Count('id')).order_by(
+        'annee_scolaire__nom')
 
     # Paginate the inscriptions
     paginator = Paginator(inscriptions, 30)  # Show 10 inscriptions per page
     page = request.GET.get('page')
     inscriptions = paginator.get_page(page)
     breadcrumbs = [
-   
-       
+
     ]
     return render(request, 'scuelo/inscriptions/manage.html', {
         'form': form,
@@ -441,7 +450,7 @@ def update_inscription(request, pk):
         'inscription': inscription,
         'breadcrumbs': breadcrumbs,
     })
-    
+
 
 def manage_annee_scolaire(request):
     # Fetch all existing Annee Scolaire objects
@@ -465,8 +474,8 @@ def manage_annee_scolaire(request):
         'annee_scolaires': annee_scolaires,
         'form': form,
     })
-    
-    
+
+
 def update_annee_scolaire(request, pk):
     annee_scolaire = get_object_or_404(AnneeScolaire, pk=pk)
     if request.method == 'POST':
@@ -476,25 +485,23 @@ def update_annee_scolaire(request, pk):
             return redirect('manage_annee_scolaire')  # Redirect to the manage view after update
     else:
         form = AnneeScolaireForm(instance=annee_scolaire)
-    
+
     # Breadcrumbs
     breadcrumbs = [
         {'label': 'Home', 'url': 'home'},
         {'label': 'Manage Annee Scolaire', 'url': 'manage_annee_scolaire'},
         {'label': 'Mise a  jours  Annee Scolaire', 'url': None},  # Current page, no URL
     ]
-    return render(request, 'scuelo/anne_scolaire/update.html', 
-                  {'form': form , 'annee_scolaire': annee_scolaire ,
-                      'breadcrumbs': breadcrumbs
+    return render(request, 'scuelo/anne_scolaire/update.html',
+                  {'form': form, 'annee_scolaire': annee_scolaire,
+                   'breadcrumbs': breadcrumbs
                    }
-    )
+                  )
 
 
 def important_info(request):
-    
-    
     breadcrumbs = [('/', 'Home'), ('/important-info/', 'Dashboard')]
-    tenue_payments = Paiement.objects.filter(causal='TEN')
+    tenue_payments = None # Paiement.objects.filter(causal='TEN')
 
     # Calculate total fees for 'tenue'
     total_tenues = 0
@@ -504,13 +511,14 @@ def important_info(request):
         total_tenues += calculate_tenue(classe, montant)
 
     # Calculate total montant per causal category
-    total_montant_per_causal = Paiement.objects.values('causal').annotate(total_montant=Sum('montant'))
+    total_montant_per_causal = None # Paiement.objects.values('causal').annotate(total_montant=Sum('montant'))
 
     # Count total number of payments
-    total_payments_count = Paiement.objects.count()
+    total_payments_count = None # Paiement.objects.count()
 
     # Calculate total montant of all payments
-    total_montant_all_payments = Paiement.objects.aggregate(total_montant_all_payments=Sum('montant'))['total_montant_all_payments']
+    total_montant_all_payments = None # Paiement.objects.aggregate(total_montant_all_payments=Sum('montant'))[
+       # 'total_montant_all_payments']
 
     # Prepare data for Chart.js
     causal_labels = [entry['causal'] for entry in total_montant_per_causal]
