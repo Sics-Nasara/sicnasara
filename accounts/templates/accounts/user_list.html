@@ -1,0 +1,39 @@
+{% extends "../layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>User Management</h2>
+    <a href="{% url 'user_create' %}" class="btn btn-primary mb-3">Add User</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Groups</th>
+        
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% for group in user.groups.all %}
+                    <span class="badge badge-info">{{ group.name }}</span>
+                    {% endfor %}
+                </td>
+             
+                <td>{{ user.is_active }}</td>
+                <td>
+                    <a href="{% url 'user_update' user.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

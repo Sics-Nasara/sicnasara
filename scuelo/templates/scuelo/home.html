@@ -24,7 +24,7 @@
             <div class="card">
                 <div class="card-body">
                     <i class="card-icon fas fa-users"></i> <!-- Example icon -->
-                    <a href="{% url 'student_per_classe' classe.id %}" class="card-link">
+                    <a href="{% url 'class_detail' classe.id %}" class="card-link">
                         {{ classe.nom }}
                     </a>
                 </div>
@@ -79,7 +79,7 @@
     }
     
     .card-link:hover {
-        text-decoration:; /* Underline on hover */
+        text-decoration: underline; /* Underline on hover */
     }
 
     .card-icon {

@@ -1,0 +1,102 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<ol class="breadcrumb">
+    {% for url, label in breadcrumbs %}
+    {% if url %}
+    <li class="breadcrumb-item"><a href="{{ url }}">{{ label }}</a></li>
+    {% else %}
+    <li class="breadcrumb-item active" aria-current="page">{{ label }}</li>
+    {% endif %}
+    {% endfor %}
+</ol>
+<div class="container vh-75 mt-3">
+    <div class="student-info bg-light p-4 mb-4 rounded shadow-sm">
+        <h4 class="mb-3">Informations de l'élève</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-2"><strong>Nom:</strong> {{ paiement.inscription.eleve.nom }}</p>
+                <p class="mb-2"><strong>Prénom:</strong> {{ paiement.inscription.eleve.prenom }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-2"><strong>Date de paiement:</strong> {{ paiement.date_paye }}</p>
+                <p class="mb-2"><strong>Classe:</strong> {{ paiement.inscription.classe.nom }} {{ paiement.inscription.classe.type.get_type_ecole_display }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card p-4 shadow-sm">
+        <h4 class="card-title mb-4">Mise à Jour Paiement</h4>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.date_paye|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.montant|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.causal|as_crispy_field }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.note|as_crispy_field }}
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-lg mr-2">Mise à jour</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .student-info {
+        border-radius: 10px;
+        background-color: #f8f9fa; /* Light background color */
+    }
+    
+    .student-info h4 {
+        color: #333;
+    }
+
+    .student-info p {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #007bff; /* Primary color */
+    }
+
+    .card {
+        border: none; /* Remove default card border */
+        border-radius: 10px; /* Rounded corners */
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .form-control {
+        border-radius: 5px; /* Slightly rounded corners */
+    }
+</style>
+{% endblock content %}

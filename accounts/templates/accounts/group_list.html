@@ -1,0 +1,32 @@
+{% extends "../layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Group Management</h2>
+    <a href="{% url 'group_create' %}" class="btn btn-primary mb-3">Add Group</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Permissions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{ group.name }}</td>
+                <td>
+                    {% for perm in group.permissions.all %}
+                    <span class="badge badge-info">{{ perm.name }}</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{% url 'group_update' group.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'group_delete' group.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

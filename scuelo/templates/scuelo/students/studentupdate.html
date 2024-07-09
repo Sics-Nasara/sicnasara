@@ -1,0 +1,40 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'student_detail' student.pk %}">Student Detail</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Update</li>
+</ol>
+
+<div class="container mt-5">
+    <h2>Mise à Jour Étudiant</h2>
+    <form id="student-form" method="post">
+        {% csrf_token %}
+        <!-- Student Information -->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.nom|as_crispy_field }}
+                {{ form.prenom|as_crispy_field }}
+                {{ form.date_naissance|as_crispy_field }}
+                {{ form.sex|as_crispy_field }}
+                {{ form.cs_py|as_crispy_field }}
+                {{ form.date_enquete|as_crispy_field }}
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg">Confirmer</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                {{ form.hand|as_crispy_field }}
+                {{ form.condition_eleve|as_crispy_field }}
+                {{ form.parent|as_crispy_field }}
+                {{ form.tel_parent|as_crispy_field }}
+                {{ form.note_eleve|as_crispy_field }}
+            </div>
+        </div>        
+    </form>
+</div>
+
+{% endblock %}

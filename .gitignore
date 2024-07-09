@@ -5,3 +5,4 @@
 __pycache__/
 dbsig.sqlite3
 /sig/keep_safe.py
+/test_draft

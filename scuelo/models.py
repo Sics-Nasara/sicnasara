@@ -79,10 +79,12 @@ class Classe(TimeStampedModel):
     nom = models.CharField(max_length=10, null=False)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
 
+    '''def __str__(self):
+        return '%s %s' % (self.nom, self.get_type_ecole_display())'''
+
     def __str__(self):
-        return '%s %s' % (self.nom, self.get_type_ecole_display())
-
-
+        return '%s %s' % (self.nom, self.type.get_type_ecole_display()) 
+    
 class Eleve(TimeStampedModel):
     nom = models.CharField(max_length=34, null=False)
     prenom = models.CharField(max_length=34, null=False)
@@ -102,7 +104,6 @@ class Eleve(TimeStampedModel):
     note_eleve = models.TextField(blank=True, null=True, default='-')
     # tenues = models.CharField(choices=3   ,  max_length=2 blank=True , null = True)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
-
     # current_classe = models.ForeignKey(Classe, on_delete=models.SET_NULL, blank=True, null=True, related_name='current_students')
 
     def __str__(self):

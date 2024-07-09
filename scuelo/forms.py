@@ -1,43 +1,43 @@
 from django import forms
-from .models import Eleve, Inscription, AnneeScolaire
+from .models import Eleve, Inscription, AnneeScolaire  , Mouvement
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.forms import UserCreationForm
 
+class PaiementPerStudentForm(forms.ModelForm):
+    class Meta:
+        model = Mouvement
+        fields = ['date_paye', 'montant', 'causal', 'note']
 
+class EleveUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Eleve
+        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve']
+        
+        
 class InscriptionForm(forms.ModelForm):
     class Meta:
         model = Inscription
         fields = ['classe', 'annee_scolaire']
 
 
-# class PaiementForm(forms.ModelForm):
-#     creation_date = forms.DateField(widget=forms.HiddenInput())
-#
-#     class Meta:
-#         model = Paiement
-#         fields = ['causal', 'montant', 'date_paye', 'note', 'inscription']
-#         widgets = {
-#             'causal': forms.Select(attrs={'class': 'form-control'}),
-#             'montant': forms.NumberInput(attrs={'class': 'form-control'}),
-#             'creation_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-#             'note': forms.Textarea(attrs={'rows': 4, 'cols': 40, 'class': 'form-control'}),
-#             'inscription': forms.Select(attrs={'class': 'form-control'}),
-#         }
-#
-#
-# class PaiementUpdateForm(forms.ModelForm):
-#     class Meta:
-#         model = Paiement
-#         fields = ['causal', 'montant', 'date_paye', 'note', 'inscription']
-#         widgets = {
-#             'causal': forms.Select(attrs={'class': 'form-control'}),
-#             'montant': forms.NumberInput(attrs={'class': 'form-control'}),
-#             'date_paye': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-#             'note': forms.Textarea(attrs={'rows': 4, 'cols': 40, 'class': 'form-control'}),
-#             #'inscription': forms.Select(attrs={'class': 'form-control'}),
-#         }
+class UserForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'groups']
 
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'permissions']
+        widgets = {
+            'permissions': forms.CheckboxSelectMultiple,
+        }
+   
 class InscriptionPerStudentForm(forms.ModelForm):
     class Meta:
         model = Inscription
@@ -65,7 +65,7 @@ class EleveCreateForm(forms.ModelForm):
         }
 
 
-class EleveUpdateForm(forms.ModelForm):
+'''class EleveUpdateForm(forms.ModelForm):
     class Meta:
         model = Eleve
         fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'date_enquete', 'hand',
@@ -77,7 +77,7 @@ class EleveUpdateForm(forms.ModelForm):
             if self.instance and hasattr(self.instance, field_name):
                 field.initial = getattr(self.instance, field_name)
 
-
+'''
 class InscriptionForm(forms.ModelForm):
     class Meta:
         model = Inscription

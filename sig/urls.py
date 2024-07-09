@@ -24,6 +24,7 @@ urlpatterns = [
     path('', login_view, name='login'),
     path('admin/', admin.site.urls),
     path('sics/', sics_site.urls),
+    path('accounts/', include('accounts.urls')),
     path("homepage/", include('scuelo.urls')),
     
 ] + static(settings.STATIC_URL)
