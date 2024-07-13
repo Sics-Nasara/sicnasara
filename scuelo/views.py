@@ -13,13 +13,12 @@ from django.views.generic.edit import UpdateView
 from django.db import transaction
 from django.views.generic import CreateView
 from django.views.generic import (DetailView, ListView,
-                                  View, ListView, CreateView, UpdateView
+                                  View, ListView, CreateView, UpdateView ,TemplateView , DeleteView
                                   )
-from django.db.models import Q, Max, Sum, Count, Case, When, IntegerField
-from .forms import  PaiementPerStudentForm ,  EleveUpdateForm
-#InscriptionForm, EleveCreateForm, EleveUpdateForm, AnneeScolaireForm
+from django.db.models import Q, Max, Sum, Prefetch , Count, Case, When, IntegerField
+from .forms import  PaiementPerStudentForm ,  EleveUpdateForm ,  EleveCreateForm , EcoleCreateForm , ClasseCreateForm
 from .filters import EleveFilter
-from scuelo.models import Eleve, Classe, Inscription, AnneeScolaire ,  Mouvement
+from scuelo.models import Eleve, Classe, Inscription, AnneeScolaire ,  Mouvement , Ecole
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -172,6 +171,64 @@ def logout_view(request):
     return redirect('login')
 
 
+
+@method_decorator(login_required, name='dispatch')
+class StudentListView(ListView):
+    model = Eleve
+    template_name = 'scuelo/student_management.html'
+    context_object_name = 'students'
+
+    def get_queryset(self):
+        return Eleve.objects.all().order_by(
+            'inscription__classe__ecole__nom',
+            'inscription__classe__nom',
+            'nom',
+            'prenom'
+        ).select_related('inscription__classe__ecole')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        schools = Ecole.objects.prefetch_related(
+            Prefetch('classe_set', queryset=Classe.objects.prefetch_related(
+                Prefetch('inscription_set', queryset=Inscription.objects.select_related('eleve'))
+            ))
+        ).all()
+
+        for school in schools:
+            for classe in school.classe_set.all():
+                for inscription in classe.inscription_set.all():
+                    eleve = inscription.eleve
+                    eleve.total_paiements = Mouvement.objects.filter(inscription=inscription).aggregate(total=Sum('montant'))['total'] or 0
+
+        context['schools'] = schools
+        return context
+    
+    
+@login_required
+def offsite_students(request):
+    offsite_students = Eleve.objects.filter(
+        ~Q(inscription__classe__ecole__nom__iexact="SIG")
+    ).distinct().order_by('nom', 'prenom')
+
+    for student in offsite_students:
+        student.total_paiements = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
+
+    context = {
+        'offsite_students': offsite_students
+    }
+    return render(request, 'scuelo/offsite_students.html', context)
+
+class StudentCreateView(CreateView):
+    model = Eleve
+    form_class = EleveUpdateForm
+    template_name = 'scuelo/students/new_student.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
+        return data
+
 def recording_on_records(request):
     # Your logic for recording_on_records
     return render(request, 'scuelo/recording_on_records.html')
@@ -185,6 +242,102 @@ def types_of_fees(request):
     # Your logic for types_of_fees
     return render(request, 'scuelo/types_of_fees.html')
 
+@method_decorator(login_required, name='dispatch')
+class SchoolManagementView(TemplateView):
+    template_name = 'scuelo/school_management.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['schools'] = Ecole.objects.annotate(num_students=Count('classe__inscription__eleve', distinct=True))
+        context['form'] = EcoleCreateForm()
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class SchoolCreateView(CreateView):
+    model = Ecole
+    form_class = EcoleCreateForm
+    template_name = 'scuelo/school_create.html'
+    success_url = reverse_lazy('student_management')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"message": "Success"})
+        return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(form.errors, status=400)
+        return response
+    
+
+
+@method_decorator(login_required, name='dispatch')
+class SchoolUpdateView(UpdateView):
+    model = Ecole
+    form_class = EcoleCreateForm
+    template_name = 'scuelo/school_update.html'
+    success_url = reverse_lazy('student_management')
+
+@method_decorator(login_required, name='dispatch')
+class SchoolDeleteView(DeleteView):
+    model = Ecole
+    template_name = 'scuelo/school_confirm_delete.html'
+    success_url = reverse_lazy('student_management')
+
+@method_decorator(login_required, name='dispatch')
+class SchoolDetailView(DetailView):
+    model = Ecole
+    template_name = 'scuelo/school_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['students'] = Eleve.objects.filter(inscription__classe__ecole=self.object).distinct()
+        context['classe_form'] = ClasseCreateForm()
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class ClasseCreateView(CreateView):
+    model = Classe
+    form_class = ClasseCreateForm
+    template_name = 'scuelo/classe_create.html'
+
+    def form_valid(self, form):
+        form.instance.ecole_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('school_detail', kwargs={'pk': self.kwargs['pk']})
+
+class ClasseDetailView(DetailView):
+    model = Classe
+    template_name = 'scuelo/classe_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        classe = self.get_object()
+        context['students'] = Eleve.objects.filter(inscription__classe=classe)
+        context['breadcrumbs'] = [('/', 'Home'), 
+                                  (f'/homepage/schools/detail/{classe.ecole.pk}/', 'School Details'), 
+                                  ('', 'Class Details')]
+        return context
+
+class ClasseUpdateView(UpdateView):
+    model = Classe
+    form_class = ClasseCreateForm
+    template_name = 'scuelo/classe_update.html'
+
+    def get_success_url(self):
+        return reverse_lazy('classe_detail', kwargs={'pk': self.object.pk})
+
+class ClasseDeleteView(DeleteView):
+    model = Classe
+    template_name = 'scuelo/classe_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('school_detail', kwargs={'pk': self.object.ecole.pk})
+    
 def school_uniforms(request):
     # Your logic for school_uniforms
     return render(request, 'scuelo/school_uniforms.html')
@@ -214,9 +367,8 @@ def export_for_accounting(request):
     # Your logic for export_for_accounting
     return render(request, 'scuelo/export_for_accounting.html')
 
-def offsite_students(request):
-    # Your logic for offsite_students
-    return render(request, 'scuelo/offsite_students.html')
+
+
 
 def directly_managed_students(request):
     # Your logic for directly_managed_students

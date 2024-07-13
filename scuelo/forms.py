@@ -1,8 +1,8 @@
 from django import forms
-from .models import Eleve, Inscription, AnneeScolaire  , Mouvement
+from .models import Eleve, Inscription, AnneeScolaire  , Mouvement , Ecole , Classe
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group 
 from django.contrib.auth.forms import UserCreationForm
 
 class PaiementPerStudentForm(forms.ModelForm):
@@ -11,17 +11,46 @@ class PaiementPerStudentForm(forms.ModelForm):
         fields = ['date_paye', 'montant', 'causal', 'note']
 
 class EleveUpdateForm(forms.ModelForm):
+    ecole = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True)
+    classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
+
     class Meta:
         model = Eleve
-        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve']
+        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex',
+                  'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve', 'ecole', 'classe'
+        ]
         
-        
+class ClasseCreateForm(forms.ModelForm):
+    class Meta:
+        model = Classe
+        fields = ['nom', 'type', 'legacy_id']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'legacy_id': forms.TextInput(attrs={'class': 'form-control'}),
+        }    
+    
+    
 class InscriptionForm(forms.ModelForm):
     class Meta:
         model = Inscription
         fields = ['classe', 'annee_scolaire']
 
-
+class EcoleCreateForm(forms.ModelForm):
+    class Meta:
+        model = Ecole
+        fields = ['nom', 'ville', 'nom_du_referent', 'prenom_du_referent', 'email_du_referent', 'telephone_du_referent', 'note', 'externe']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'ville': forms.TextInput(attrs={'class': 'form-control'}),
+            'nom_du_referent': forms.TextInput(attrs={'class': 'form-control'}),
+            'prenom_du_referent': forms.TextInput(attrs={'class': 'form-control'}),
+            'email_du_referent': forms.EmailInput(attrs={'class': 'form-control'}),
+            'telephone_du_referent': forms.TextInput(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'externe': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        
 class UserForm(UserCreationForm):
     email = forms.EmailField(required=True)
     groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
@@ -102,23 +131,3 @@ class AnneeScolaireForm(forms.ModelForm):
             'actuel': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-#
-# class PaiementPerStudentForm(forms.ModelForm):
-#     class Meta:
-#         model = Paiement
-#         fields = ['causal', 'date_paye', 'montant', 'note']
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_method = 'post'
-#         self.helper.layout = Layout(
-#             Row(
-#                 Column('date_paye', css_class='form-group col-md-6 mb-0'),
-#                 Column('montant', css_class='form-group col-md-6 mb-0'),
-#                 css_class='form-row'
-#             ),
-#             'causal',  # Add 'causal' field here
-#             'note',
-#             Submit('submit', 'Save changes', css_class='btn btn-primary btn-lg btn-block mt-3')  # Custom button styling
-#         )

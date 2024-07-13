@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from .keep_safe import PROD_SECRET_KEY, PROD_DATABASE_PASSWORD
+from .keep_safe import PROD_SECRET_KEY, DEV_DATABASE_PASSWORD
 
 import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,10 +88,10 @@ WSGI_APPLICATION = 'sig.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sicsnasara_prod',
+        'NAME': 'sicsnasara_dev',
         'HOST': 'localhost',
         'USER': 'nasara',
-        'PASSWORD': PROD_DATABASE_PASSWORD,
+        'PASSWORD': DEV_DATABASE_PASSWORD,
         'PORT': '5432',
     }
 }

@@ -1,6 +1,41 @@
 {% extends "../layout.html" %}
 
 {% block content %}
-<h1>Off-site Students</h1>
-<p>This is the Off-site Students page.</p>
+<div class="container table-container">
+    <h1>Liste des élèves hors site</h1>
+    {% if offsite_students %}
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Sexe</th>
+                <th>Date Naissance</th>
+                <th>CS_PY</th>
+                <th>Paiements</th>
+                <th>Handicap</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for eleve in offsite_students %}
+            <tr>
+                <td>{{ eleve.id }}</td>
+                <td>{{ eleve.nom }}</td>
+                <td>{{ eleve.prenom }}</td>
+                <td>{{ eleve.get_sex_display }}</td>
+                <td>{{ eleve.date_naissance }}</td>
+                <td>{{ eleve.get_cs_py_display }}</td>
+                <td>{% if eleve.total_paiements == 0 %}-{% else %}{{ eleve.total_paiements }}{% endif %}</td>
+                <td>{% if eleve.hand %}{{ eleve.hand }}{% else %}{% endif %}</td>
+                <td>{{ eleve.note_eleve }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Il n'y a pas d'élèves hors site.</p>
+    {% endif %}
+</div>
 {% endblock %}

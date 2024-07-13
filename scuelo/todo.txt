@@ -1,0 +1,6 @@
+possible to do 
+
+page for creating the schools 
+have the student per this school  and per class will be good
+
+have a  btn change school and classe in  each student detail page 

@@ -55,6 +55,9 @@ class TypeClasse(TimeStampedModel):
     type_ecole = models.CharField(max_length=1, choices=TYPE_ECOLE, db_index=True)
 
 
+    def __str__(self):
+        return self.nom
+    
 class Ecole(TimeStampedModel):
     '''
     1) First, the Schools are ordered in the following order:
@@ -72,7 +75,8 @@ class Ecole(TimeStampedModel):
     note = models.TextField()
     externe = models.BooleanField(default=True)
 
-
+    def __str__(self):
+        return self.nom
 class Classe(TimeStampedModel):
     ecole = models.ForeignKey(Ecole, on_delete=models.CASCADE)
     type = models.ForeignKey(TypeClasse, on_delete=models.CASCADE)

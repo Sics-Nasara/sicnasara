@@ -1,8 +1,75 @@
 {% extends "../layout.html" %}
 
-{% block title %}Student Management{% endblock title %}
-
 {% block content %}
-<h1>Student Management</h1>
-<p>This is the student management page.</p>
-{% endblock content %}
+
+<style>
+    .table-container {
+        font-size: 0.8rem; /* Reduce overall font size */
+    }
+    .table-sm th, .table-sm td {
+        padding: 0.3rem; /* Reduce cell padding */
+    }
+    .bg-primary {
+        background-color: #007bff !important;
+    }
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+    .font-weight-bold {
+        font-weight: bold !important;
+    }
+    .p-2 {
+        padding: 0.5rem !important;
+    }
+    .text-white {
+        color: #fff !important;
+    }
+</style>
+
+
+<div class="table-container">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Sexe</th>
+                <th>Date Naissance</th>
+                <th>CS_PY</th>
+                <th>Paiements</th>
+                <th>Handicap</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for school in schools %}
+                <tr class="school-name">
+                    <td colspan="9" class="bg-primary text-white font-weight-bold p-2">{{ school.nom }}</td>
+                </tr>
+                {% for classe in school.classe_set.all %}
+                    <tr class="class-name">
+                        <td colspan="9" class="bg-secondary text-white font-weight-bold p-2">{{ classe.nom }}</td>
+                    </tr>
+                    {% for inscription in classe.inscription_set.all %}
+                        {% with eleve=inscription.eleve %}
+                        <tr>
+                            <td>{{ eleve.id }}</td>
+                            <td>{{ eleve.nom }}</td>
+                            <td>{{ eleve.prenom }}</td>
+                            <td>{{ eleve.get_sex_display }}</td>
+                            <td>{{ eleve.date_naissance }}</td>
+                            <td>{{ eleve.get_cs_py_display }}</td>
+                            <td>{% if eleve.total_paiements == 0 %}-{% else %}{{ eleve.total_paiements }}{% endif %}</td>
+                            <td>{% if eleve.hand %}{{ eleve.hand }}{% else %}{% endif %}</td>
+                            <td>{{ eleve.note_eleve }}</td>
+                        </tr>
+                        {% endwith %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+ 
+</div>
+{% endblock %}

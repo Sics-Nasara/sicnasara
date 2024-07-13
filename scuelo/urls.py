@@ -2,7 +2,8 @@
 
 from django.urls import path
 from . import views
-
+from .views  import ( StudentListView  , StudentCreateView ,   SchoolManagementView  , SchoolCreateView ,
+                     SchoolUpdateView , SchoolDeleteView  ,SchoolDetailView  , ClasseCreateView  , ClasseDetailView , ClasseUpdateView  , ClasseDeleteView )
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -31,8 +32,9 @@ urlpatterns = [
     path('cash_flow_report/', views.cash_flow_report, name='cash_flow_report'),
     path('export_for_accounting/', views.export_for_accounting, name='export_for_accounting'),
     path('offsite_students/', views.offsite_students, name='offsite_students'),
-    path('directly_managed_students/', views.directly_managed_students, name='directly_managed_students'),
-    path('new_student/', views.new_student, name='new_student'),
+    path('directly_managed_students/',  StudentListView.as_view(), name='directly_managed_students'),
+    # path('students/', StudentListView.as_view(), name='student_list'),
+    path('new_student/', StudentCreateView.as_view(), name='new_student'),
     path('change_school/', views.change_school, name='change_school'),
     path('class_upgrade/', views.class_upgrade, name='class_upgrade'),
     path('start_school_year/', views.start_school_year, name='start_school_year'),
@@ -41,5 +43,14 @@ urlpatterns = [
      path('student_documents/', views.student_documents, name='student_documents'),
     path('teacher_documents/', views.teacher_documents, name='teacher_documents'),
     path('accounting_documents/', views.accounting_documents, name='accounting_documents'),
+    path('school_management/', SchoolManagementView.as_view(), name='school_management'),
+    path('schools/create/', SchoolCreateView.as_view(), name='school_create'),
+    path('schools/update/<int:pk>/', SchoolUpdateView.as_view(), name='school_update'),
+    path('schools/delete/<int:pk>/', SchoolDeleteView.as_view(), name='school_delete'),
+    path('schools/detail/<int:pk>/', SchoolDetailView.as_view(), name='school_detail'),
+      path('classes/create/<int:pk>/', ClasseCreateView.as_view(), name='classe_create'),
+      path('classes/detail/<int:pk>/', ClasseDetailView.as_view(), name='classe_detail'),
+    path('classes/update/<int:pk>/', ClasseUpdateView.as_view(), name='classe_update'),
+    path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
+      
 ]
-
