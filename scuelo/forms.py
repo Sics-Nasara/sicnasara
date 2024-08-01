@@ -10,15 +10,12 @@ class PaiementPerStudentForm(forms.ModelForm):
         model = Mouvement
         fields = ['date_paye', 'montant', 'causal', 'note']
 
-class EleveUpdateForm(forms.ModelForm):
-    ecole = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True)
-    classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
 
+class EleveUpdateForm(forms.ModelForm):
     class Meta:
         model = Eleve
-        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex',
-                  'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve', 'ecole', 'classe'
-        ]
+        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve']
+
         
 class ClasseCreateForm(forms.ModelForm):
     class Meta:
@@ -94,19 +91,6 @@ class EleveCreateForm(forms.ModelForm):
         }
 
 
-'''class EleveUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Eleve
-        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'date_enquete', 'hand',
-                  'parent', 'tel_parent', 'note_eleve']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if self.instance and hasattr(self.instance, field_name):
-                field.initial = getattr(self.instance, field_name)
-
-'''
 class InscriptionForm(forms.ModelForm):
     class Meta:
         model = Inscription

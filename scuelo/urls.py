@@ -48,8 +48,8 @@ urlpatterns = [
     path('schools/update/<int:pk>/', SchoolUpdateView.as_view(), name='school_update'),
     path('schools/delete/<int:pk>/', SchoolDeleteView.as_view(), name='school_delete'),
     path('schools/detail/<int:pk>/', SchoolDetailView.as_view(), name='school_detail'),
-      path('classes/create/<int:pk>/', ClasseCreateView.as_view(), name='classe_create'),
-      path('classes/detail/<int:pk>/', ClasseDetailView.as_view(), name='classe_detail'),
+    path('classes/create/<int:pk>/', ClasseCreateView.as_view(), name='classe_create'),
+    path('classes/detail/<int:pk>/', ClasseDetailView.as_view(), name='classe_detail'),
     path('classes/update/<int:pk>/', ClasseUpdateView.as_view(), name='classe_update'),
     path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
       

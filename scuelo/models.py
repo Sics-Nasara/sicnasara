@@ -77,6 +77,7 @@ class Ecole(TimeStampedModel):
 
     def __str__(self):
         return self.nom
+    
 class Classe(TimeStampedModel):
     ecole = models.ForeignKey(Ecole, on_delete=models.CASCADE)
     type = models.ForeignKey(TypeClasse, on_delete=models.CASCADE)
@@ -98,7 +99,6 @@ class Eleve(TimeStampedModel):
         choices=CONDITION_ELEVE
     )
     sex = models.CharField(max_length=1, choices=SEX)
-
     date_naissance = models.DateField(blank=True, null=True)
     cs_py = models.CharField(max_length=7, choices=CS_PY, default="C")
     hand = models.CharField(max_length=2, choices=HAND, null=True, blank=True)
@@ -106,9 +106,8 @@ class Eleve(TimeStampedModel):
     parent = models.CharField(max_length=100, blank=True, null=True)
     tel_parent = models.CharField(max_length=100, blank=True, null=True)
     note_eleve = models.TextField(blank=True, null=True, default='-')
-    # tenues = models.CharField(choices=3   ,  max_length=2 blank=True , null = True)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
-    # current_classe = models.ForeignKey(Classe, on_delete=models.SET_NULL, blank=True, null=True, related_name='current_students')
+    
 
     def __str__(self):
         return f"{self.nom} {self.prenom} ({self.legacy_id})"

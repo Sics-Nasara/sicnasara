@@ -1,4 +1,3 @@
-from django_filters.views import FilterView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,47 +9,62 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import UpdateView
-from django.db import transaction
-from django.views.generic import CreateView
 from django.views.generic import (DetailView, ListView,
-                                  View, ListView, CreateView, UpdateView ,TemplateView , DeleteView
+                                  ListView, CreateView, UpdateView ,TemplateView , DeleteView
                                   )
 from django.db.models import Q, Max, Sum, Prefetch , Count, Case, When, IntegerField
-from .forms import  PaiementPerStudentForm ,  EleveUpdateForm ,  EleveCreateForm , EcoleCreateForm , ClasseCreateForm
+
+from .forms import  ( PaiementPerStudentForm ,  EleveUpdateForm , 
+                     EleveCreateForm , EcoleCreateForm , ClasseCreateForm 
+                      )
 from .filters import EleveFilter
 from scuelo.models import Eleve, Classe, Inscription, AnneeScolaire ,  Mouvement , Ecole
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 
-
-'''@login_required
-def home(request):
-    breadcrumbs = [('/', 'Home')]
-    classes = Classe.objects.all()
-    return render(request, 'scuelo/home.html', {'breadcrumbs': breadcrumbs, 'classes': classes})'''
-
-
+'''
+this is the home view ,it main functionality
+is to list the classes in a single page and enable each to get in a inspect
+'''
 @login_required
 def home(request):
     classes = Classe.objects.all()
     return render(request, 'scuelo/home.html', {'classes': classes})
 
+
+'''
+this one concern the detail of each classe it list the students of that 
+classe and some important stats about that particular classe
+'''
 @login_required
 def class_detail(request, pk):
     classe = get_object_or_404(Classe, pk=pk)
     students = Eleve.objects.filter(inscription__classe=classe)
-    breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
-    return render(request, 'scuelo/students/listperclasse.html', {'classe': classe, 'students': students, 'breadcrumbs': breadcrumbs})
-
-
-
+    breadcrumbs = [('/', 'Home'), 
+                   (reverse('home'), 'Classes'),
+                   ('#', classe.nom)
+    ]
+    return render(
+        request, 'scuelo/students/listperclasse.html',
+                  {
+                    'classe': classe,
+                    'students': students,
+                    'breadcrumbs': breadcrumbs
+    })
+'''
+once in the classe this one enable you to get more detailed informations
+about each students, this details are important because there are :
+  - the list of the paiment made for this student and update btn even
+  -the basic informations of that student (the name firstname and so)
+  -the list of inscriptions and even btn for updates
+  - in this view we are able to add some payments for that student
+  - we can be able to see also the total payments of that student
+  and also update the basic informations of that student
+'''
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     inscriptions = Inscription.objects.filter(eleve=student)
     payments = Mouvement.objects.filter(inscription__eleve=student)
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
-
     current_class = student.current_class
     if current_class:
         breadcrumbs = [
@@ -75,7 +89,11 @@ def student_detail(request, pk):
         'form': form
     })
 
-
+'''
+this view is for adding payments (it concerns the students)
+in the payment addition process we can add some paiment concerning some
+registered inscriptions
+'''
 @method_decorator(csrf_exempt, name='dispatch')
 def add_paiement(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -90,7 +108,9 @@ def add_paiement(request, pk):
             return JsonResponse({'success': False, 'errors': form.errors})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
+'''
+for updating payments
+'''
 @login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)
@@ -102,9 +122,12 @@ def update_paiement(request, pk):
     else:
         form = PaiementPerStudentForm(instance=paiement)
 
-    return render(request, 'scuelo/paiements/updatepaiment.html', {'form': form, 'paiement': paiement})
+    return render(
+        request, 'scuelo/paiements/updatepaiment.html', 
+        {'form': form, 'paiement': paiement}
+    )
 
-
+'''students update'''
 @login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -116,40 +139,9 @@ def student_update(request, pk):
     else:
         form = EleveUpdateForm(instance=student)
     
-    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student})
-
-
-
-#scuelo/templates/scuelo/students/listperclasse.html
-@login_required
-def important_info(request):
-    return render(request, 'scuelo/important_info.html')
-
-@login_required
-def user_management(request):
-    return render(request, 'scuelo/user_management.html')
-
-@login_required
-def student_management(request):
-    return render(request, 'scuelo/student_management.html')
-
-@login_required
-def teacher_management(request):
-    return render(request, 'scuelo/teacher_management.html')
-
-@login_required
-def financial_management(request):
-    return render(request, 'scuelo/financial_management.html')
-
-@login_required
-def reporting(request):
-    return render(request, 'scuelo/reporting.html')
-
-@login_required
-def document_management(request):
-    return render(request, 'scuelo/document_management.html')
-
-
+    return render(request, 'scuelo/students/studentupdate.html',
+                  {'form': form, 'student': student}
+    )
 
 def login_view(request):
     if request.method == 'POST':
@@ -165,12 +157,9 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'scuelo/login.html', {'form': form})
 
-
 def logout_view(request):
     logout(request)
     return redirect('login')
-
-
 
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
@@ -229,18 +218,9 @@ class StudentCreateView(CreateView):
         data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
         return data
 
-def recording_on_records(request):
-    # Your logic for recording_on_records
-    return render(request, 'scuelo/recording_on_records.html')
 
 
-def working_sessions(request):
-    # Your logic for working_sessions
-    return render(request, 'scuelo/working_sessions.html')
 
-def types_of_fees(request):
-    # Your logic for types_of_fees
-    return render(request, 'scuelo/types_of_fees.html')
 
 @method_decorator(login_required, name='dispatch')
 class SchoolManagementView(TemplateView):
@@ -301,7 +281,7 @@ class SchoolDetailView(DetailView):
 class ClasseCreateView(CreateView):
     model = Classe
     form_class = ClasseCreateForm
-    template_name = 'scuelo/classe_create.html'
+    template_name = 'scuelo/students/classe_create.html'
 
     def form_valid(self, form):
         form.instance.ecole_id = self.kwargs['pk']
@@ -312,7 +292,7 @@ class ClasseCreateView(CreateView):
 
 class ClasseDetailView(DetailView):
     model = Classe
-    template_name = 'scuelo/classe_detail.html'
+    template_name = 'scuelo/students/classe_detail.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -326,18 +306,63 @@ class ClasseDetailView(DetailView):
 class ClasseUpdateView(UpdateView):
     model = Classe
     form_class = ClasseCreateForm
-    template_name = 'scuelo/classe_update.html'
+    template_name = 'scuelo/students/classe_update.html'
 
     def get_success_url(self):
         return reverse_lazy('classe_detail', kwargs={'pk': self.object.pk})
 
 class ClasseDeleteView(DeleteView):
     model = Classe
-    template_name = 'scuelo/classe_confirm_delete.html'
+    template_name = 'scuelo/students/classe_confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.object.ecole.pk})
     
+#scuelo/templates/scuelo/students/listperclasse.html
+@login_required
+def important_info(request):
+    return render(request, 'scuelo/important_info.html')
+
+@login_required
+def user_management(request):
+    return render(request, 'scuelo/user_management.html')
+
+@login_required
+def student_management(request):
+    return render(request, 'scuelo/student_management.html')
+
+@login_required
+def teacher_management(request):
+    return render(request, 'scuelo/teacher_management.html')
+
+@login_required
+def financial_management(request):
+    return render(request, 'scuelo/financial_management.html')
+
+@login_required
+def reporting(request):
+    return render(request, 'scuelo/reporting.html')
+
+@login_required
+def document_management(request):
+    return render(request, 'scuelo/document_management.html')
+
+
+def recording_on_records(request):
+    # Your logic for recording_on_records
+    return render(request, 'scuelo/recording_on_records.html')
+
+
+def working_sessions(request):
+    # Your logic for working_sessions
+    return render(request, 'scuelo/working_sessions.html')
+
+def types_of_fees(request):
+    # Your logic for types_of_fees
+    return render(request, 'scuelo/types_of_fees.html')
+
+
+
 def school_uniforms(request):
     # Your logic for school_uniforms
     return render(request, 'scuelo/school_uniforms.html')
@@ -397,7 +422,7 @@ def teacher_registry(request):
 
 def class_teachers_association(request):
     # Your logic for class_teachers_association
-    return render(request, 'scuelo/class_teachers_association.html')
+    return render(request, 'scuelo/students/class_teachers_association.html')
 def student_documents(request):
     # Your logic for student_documents
     return render(request, 'scuelo/student_documents.html')
