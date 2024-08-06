@@ -54,10 +54,10 @@ class TypeClasse(TimeStampedModel):
     ordre = models.IntegerField(default=0)
     type_ecole = models.CharField(max_length=1, choices=TYPE_ECOLE, db_index=True)
 
-
     def __str__(self):
         return self.nom
-    
+
+
 class Ecole(TimeStampedModel):
     '''
     1) First, the Schools are ordered in the following order:
@@ -72,12 +72,15 @@ class Ecole(TimeStampedModel):
     prenom_du_referent = models.CharField(max_length=100, null=False)
     email_du_referent = models.CharField(max_length=100, null=False)
     telephone_du_referent = models.CharField(max_length=100, null=False)
+#    acronyme = models.CharField(max_length=20, blank=True, null=True)
     note = models.TextField()
+#    ordre = models.IntegerField(default=0)
     externe = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nom
-    
+
+
 class Classe(TimeStampedModel):
     ecole = models.ForeignKey(Ecole, on_delete=models.CASCADE)
     type = models.ForeignKey(TypeClasse, on_delete=models.CASCADE)
@@ -88,8 +91,9 @@ class Classe(TimeStampedModel):
         return '%s %s' % (self.nom, self.get_type_ecole_display())'''
 
     def __str__(self):
-        return '%s %s' % (self.nom, self.type.get_type_ecole_display()) 
-    
+        return '%s %s' % (self.nom, self.type.get_type_ecole_display())
+
+
 class Eleve(TimeStampedModel):
     nom = models.CharField(max_length=34, null=False)
     prenom = models.CharField(max_length=34, null=False)
@@ -107,7 +111,6 @@ class Eleve(TimeStampedModel):
     tel_parent = models.CharField(max_length=100, blank=True, null=True)
     note_eleve = models.TextField(blank=True, null=True, default='-')
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
-    
 
     def __str__(self):
         return f"{self.nom} {self.prenom} ({self.legacy_id})"
