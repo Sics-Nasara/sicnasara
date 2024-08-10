@@ -7,6 +7,7 @@ CONDITION_ELEVE = (
     ("CONF", "CONF"),
     ("ABAN", "ABAN"),
     ("PROP", "PROP"),
+   ("TBD", "TBD"),
 )
 
 HAND = (

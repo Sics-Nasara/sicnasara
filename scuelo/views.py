@@ -292,7 +292,7 @@ class ClasseCreateView(CreateView):
 
 class ClasseDetailView(DetailView):
     model = Classe
-    template_name = 'scuelo/students/classe_detail.html'
+    template_name = 'scuelo/classe/classe_detail.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
