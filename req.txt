@@ -9,10 +9,11 @@ django-filter==24.2
 django-jazzmin==3.0.0
 django-model-utils==4.5.1
 et-xmlfile==1.1.0
+fontawesomefree==6.6.0
 jdcal==1.4.1
 openpyexcel==2.5.14
 openpyxl==3.1.2
+psycopg2==2.9.9
 soupsieve==2.5
 sqlparse==0.5.0
 typing_extensions==4.11.0
-psycopg2==2.9.9

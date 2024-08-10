@@ -31,5 +31,7 @@ class Command(BaseCommand):
             except Exception as ex:
                 print(str(ex))
         ws_classe = wb.get_sheet_by_name('Classe')
+        
         ws_studente = wb.get_sheet_by_name('Studente')
+        
         print('Import external students END %s' % full_path)

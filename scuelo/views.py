@@ -422,7 +422,7 @@ def teacher_registry(request):
 
 def class_teachers_association(request):
     # Your logic for class_teachers_association
-    return render(request, 'scuelo/students/class_teachers_association.html')
+    return render(request, 'scuelo/class_teachers_association.html')
 def student_documents(request):
     # Your logic for student_documents
     return render(request, 'scuelo/student_documents.html')
