@@ -21,70 +21,12 @@
     </title>
     
 </head>
-<body>
+
     
     <style>
-        .breadcrumbs > * {
-            font-size: 1.2em;
+        body {
+            font-family: 'Nunito', sans-serif;
         }
-        
-        .custom-navbar {
-            border-radius: 10px;
-            background-color: #A44400;
-            width: auto;
-        }
-        .custom-navbar .navbar-nav {
-            flex-direction: row;
-        }
-        
-        .custom-navbar .navbar-brand, 
-        .custom-navbar .navbar-text, 
-        .custom-navbar .nav-link {
-            color: white !important;
-        }
-        .custom-navbar .important-info {
-            text-align: center;
-            flex: 1;
-            font-size: 1.2em;
-        }
-        .custom-navbar .navbar-nav.ml-auto .nav-item {
-            display: flex;
-            align-items: center;
-        }
-        .custom-navbar .username {
-            margin-right: 2px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        .custom-navbar .logout-btn {
-            background-color: #dc3545;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .custom-navbar .logout-btn:hover {
-            background-color: ;
-            color: white;
-        }
-        .custom-navbar .fas {
-            font-size: 1.5em;
-        }
-        
-        .form-control {
-            border-radius: 20px;
-            padding-left: 20px;
-            padding-right: 40px;
-        }
-        
-        .search-button {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-radius: 20px;
-        }
-        
         .sidebar {
             height: 100vh;
             width: 250px;
@@ -94,22 +36,20 @@
             background-color: #A44400;
             padding-top: 20px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
             transition: width 0.3s ease;
-            overflow-y: auto; /* Add this to make the sidebar scrollable */
         }
         .sidebar.collapsed {
             width: 60px;
         }
-        .toggle-btn {
+        .sidebar .toggle-btn {
             background-color: transparent;
             border: none;
             color: white;
             font-size: 1.5em;
             cursor: pointer;
             margin-bottom: 20px;
-        }
-        .toggle-btn:hover {
-            color: #007bff;
+            margin-left: 10px;
         }
         .sidebar a {
             display: block;
@@ -120,8 +60,7 @@
             transition: background-color 0.3s;
         }
         .sidebar a:hover, .sidebar a.active {
-            background-color: #A44400;
-            color: #fff;
+            background-color: #34495E;
         }
         .sidebar i {
             margin-right: 10px;
@@ -130,8 +69,7 @@
             display: none;
         }
         .sidebar.collapsed a i {
-            margin-right: 2rem;
-            width: 100%;
+            margin-right: 0;
         }
         .content {
             margin-left: 250px;
@@ -143,8 +81,15 @@
         }
         .sidebar.collapsed + .custom-navbar {
             width: calc(100% - 60px);
-            transition: width 0.3s ease;
-            margin-left: 10px;
+        }
+        .navbar {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+        .sidebar.collapsed + .navbar {
+            width: calc(100% - 60px);
+            margin-left: 60px;
         }
         .dropdown-container {
             display: none;
@@ -168,7 +113,7 @@
             transition: background-color 0.3s;
         }
         .dropdown-btn:hover {
-            background-color: #A44400;
+            background-color: #34495E;
         }
         .dropdown-btn .fa-chevron-down {
             margin-left: auto;
@@ -185,52 +130,44 @@
             transition: background-color 0.3s;
         }
         .dropdown-item:hover {
-            background-color: #A44400;
+            background-color: #34495E;
+        }
+        .logout-section {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        .username {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
         }
     </style>
-
+    <body>
     {% block nav %}
-    <header class="costum-navbar  p-0  content">
-        <nav class="navbar navbar-expand-lg navbar-dark  h-100 w-100 pt-5 pb-2 custom-navbar  mt-xl-n1 ml-2 pl-5 overflow-auto">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="javascript:history.back()">
-                            <i class="fas fa-undo fa-2x"></i>
-                        </a>
-                    </li>
-                </ul>
-                <span class="navbar-nav important-info">
-                    {% block important_info %}
-                    {% endblock %}
-                </span>
-                <ul class="navbar-nav d-flex justify-content-between">
-                    <li class="nav-item">
-                        <span class="navbar-text username text-black-50">
-                            {{ user.username }}
-                        </span>
-                    </li>
-                    <li class="nav-item ml-4">
-                        <a class="nav-link logout-btn" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    
     {% endblock nav %}
 
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">
-            <i class="fas fa-bars fa-2x"></i>
+            <i class="fas fa-angle-double-left fa-2x"></i>
         </button>
         <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">
-            <i class="fas fa-home fa-2x mr-5"></i> <span>Home</span>
+            <i class="fas fa-home fa-2x mr-5"></i><span>Home</span>
         </a>
         <button class="dropdown-btn">
-            <i class="fas fa-lock fa-2x"></i> <span>Security</span> <i class="fa fa-chevron-down"></i>
+            <i class="fas fa-lock fa-2x"></i><span>   Security</span> <i class="fa fa-chevron-down"></i>
         </button>
         <div class="dropdown-container">
             <a href="{% url 'user_list' %}" class="dropdown-item {% if request.path == '/accounts/users/' %}active{% endif %}">
@@ -257,16 +194,14 @@
             <a href="{% url 'school_management' %}" class="dropdown-item {% if request.path == '/scuelo/school_management/' %}active{% endif %}">
                 <i class="fas fa-school"></i> <span>Manage Schools</span>
             </a>
-            <a href="{% url 'types_of_fees' %}" class="dropdown-item {% if request.path == '/scuelo/types_of_fees/' %}active{% endif %}">
+            <a href="{% url 'tarif_list' %}" class="dropdown-item {% if request.path == '/scuelo/types_of_fees/' %}active{% endif %}">
                 <i class="fas fa-money-check-alt"></i> <span>Types of Fees</span>
             </a>
-            <a href="{% url 'types_of_fees' %}" class="dropdown-item {% if request.path == '/scuelo/types_of_fees/' %}active{% endif %}">
-                <i class="fas fa-money-check-alt"></i> <span>Types of Fees</span>
+          
+            <a href="{% url 'uniform_payments' %}" class="{% if request.path == '/scuelo/uniform_payments/' %}active{% endif %}">
+                <i class="fas fa-tshirt"></i> <span>Uniform Payments</span>
             </a>
-            <a href="{% url 'school_uniforms' %}" class="dropdown-item {% if request.path == '/scuelo/school_uniforms/' %}active{% endif %}">
-                <i class="fas fa-tshirt"></i> <span>Uniforms</span>
-            </a>
-            <a href="{% url 'late_payment' %}" class="dropdown-item {% if request.path == '/scuelo/late_payment/' %}active{% endif %}">
+            <a href="{% url 'delay_list' %}" class="dropdown-item {% if request.path == '/scuelo/delays/' %}active{% endif %}">
                 <i class="fas fa-exclamation-circle"></i> <span>Late Payment</span>
             </a>
             <a href="{% url 'print_receipts' %}" class="dropdown-item {% if request.path == '/scuelo/print_receipts/' %}active{% endif %}">
@@ -277,17 +212,17 @@
             </a>
         </div>
         <button class="dropdown-btn">
-            <i class="fas fa-cash-register fa-2x"></i> <span>Cash</span> <i class="fa fa-chevron-down"></i>
+            <i class="fas fa-cash-register"></i> <span>Cash Management</span> <i class="fa fa-chevron-down"></i>
         </button>
         <div class="dropdown-container">
-            <a href="{% url 'cash_inflows_outflows' %}" class="dropdown-item {% if request.path == '/scuelo/cash_inflows_outflows/' %}active{% endif %}">
-                <i class="fas fa-exchange-alt"></i> <span>Inflows/Outflows</span>
+            <a href="{% url 'cash_movements' %}" class="dropdown-item {% if request.path == '/scuelo/cash/movements/' %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i> <span>Movements</span>
             </a>
-            <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash_flow_report/' %}active{% endif %}">
-                <i class="fas fa-exchange-alt"></i> <span>Flows Report</span>
+            <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> <span>Flow Report</span>
             </a>
-            <a href="{% url 'export_for_accounting' %}" class="dropdown-item {% if request.path == '/scuelo/export_for_accounting/' %}active{% endif %}">
-                <i class="fas fa-file-export"></i> <span>Export Accounting</span>
+            <a href="{% url 'cash_accounting_export' %}" class="dropdown-item {% if request.path == '/scuelo/cash/accounting_export/' %}active{% endif %}">
+                <i class="fas fa-file-export"></i> <span>Accounting Export</span>
             </a>
         </div>
         <button class="dropdown-btn">
@@ -315,6 +250,12 @@
             <a class="dropdown-item" href="{% url 'student_documents' %}">Student Documents</a>
             <a class="dropdown-item" href="{% url 'teacher_documents' %}">Teacher Documents</a>
             <a class="dropdown-item" href="{% url 'accounting_documents' %}">Accounting Documents</a>
+        </div>
+        <div class="logout-section">
+            <div class="username">
+                {{ user.username }}
+            </div>
+            <a class="logout-btn" href="{% url 'logout' %}">Logout</a>
         </div>
     </div>
 

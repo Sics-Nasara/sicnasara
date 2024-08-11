@@ -1,0 +1,18 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+    Add Movement
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h1>Add Movement</h1>
+    <form method="post" action="{% url 'add_mouvement' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,45 @@
+{% extends "../../layout.html" %}
+
+{% block title %}Cash Movements{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="page-title">Cash Movements</h1>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'add_mouvement' %}" class="btn btn-success">Add Movement</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Entrée</th>
+                    <th>Sortie</th>
+                    <th>Progressif</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.inflow }}</td>
+                    <td>{{ item.outflow }}</td>
+                    <td>{{ item.progressive_total }}</td>
+                    <td>
+                        <a href="{% url 'update_mouvement' pk=item.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <a href="{% url 'delete_mouvement' pk=item.pk %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

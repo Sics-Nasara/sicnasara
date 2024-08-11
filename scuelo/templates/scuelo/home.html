@@ -19,43 +19,83 @@
 <!-- Main content -->
 <div class="container mt-5">
     <h1 class="page-title">Liste des Classes</h1>
-    <div class="card-container">
-        {% for classe in classes %}
-            <div class="card">
-                <div class="card-body">
-                    <i class="card-icon fas fa-users"></i> <!-- Example icon -->
-                    <a href="{% url 'class_detail' classe.id %}" class="card-link">
-                        {{ classe.nom }}
-                    </a>
+    <div class="school-container">
+        {% for school, classes in data.items %}
+            <div class="school-section">
+                <a href="{% url 'school_detail' school.id %}" class="school-title">{{ school.nom }}</a>
+                <div class="card-container">
+                    {% for classe in classes %}
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="card-icon fas fa-users"></i> <!-- Example icon -->
+                                <a href="{% url 'class_detail' classe.id %}" class="card-link">
+                                    {{ classe.nom }}
+                                </a>
+                            </div>
+                        </div>     
+                    {% endfor %}
                 </div>
-            </div>     
+            </div>
         {% endfor %}
     </div>
 </div>
 
 <style>
     /* Custom styles for the homepage cards */
+    .school-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between; /* Distribute space between items */
+    }
+
+    .school-section {
+        border: 2px solid #ccc; /* Border around each school section */
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #f9f9f9; /* Light background color */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        flex: 1 1 calc(33.333% - 20px); /* Responsive width */
+        min-width: 300px; /* Minimum width to prevent too small sections */
+        max-width: 100%; /* Maximum width */
+    }
+
+    .school-title {
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555; /* Slightly lighter text color */
+        display: block; /* Make it a block element to act like a button */
+        text-decoration: none; /* Remove underline */
+    }
+
+    .school-title:hover {
+        text-decoration: underline; /* Underline on hover */
+        color: #007bff; /* Change color on hover */
+    }
+
     .card-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 20px; /* Space between cards */
-        margin-top: 50px;
+        gap: 10px; /* Space between cards */
+        margin-top: 10px; /* Reduce space between sections and cards */
     }
 
     .card {
         border: none; /* Remove default card border */
-        border-radius: 20px; /* More rounded corners */
+        border-radius: 10px; /* More rounded corners */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         overflow: hidden; /* Clip rounded corners properly */
         transition: transform 0.3s, box-shadow 0.3s; /* Smooth transform and shadow transition */
         width: 100%;
-        max-width: 300px; /* Ensure all cards have the same width */
+        max-width: 100px; /* Reduce card size */
         background-color: #007bff; /* Primary button color */
     }
     
     .card-body {
-        padding: 20px;
+        padding: 10px;
         color: #ffffff; /* White text */
         display: flex;
         align-items: center;
@@ -66,16 +106,16 @@
     }
     
     .card:hover {
-        transform: translateY(-10px); /* Slightly lift card on hover */
+        transform: translateY(-5px); /* Slightly lift card on hover */
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
     }
     
     .card-link {
         color: #ffffff; /* White text */
         text-decoration: none; /* Remove underline */
-        font-size: 1.25rem; /* Larger text */
+        font-size: 0.75rem; /* Smaller text */
         font-weight: bold; /* Bold text */
-        margin-top: 10px; /* Space above the link */
+        margin-top: 5px; /* Space above the link */
     }
     
     .card-link:hover {
@@ -83,15 +123,15 @@
     }
 
     .card-icon {
-        font-size: 3rem; /* Large icon */
-        margin-bottom: 15px; /* Space below icon */
+        font-size: 1.5rem; /* Smaller icon */
+        margin-bottom: 5px; /* Space below icon */
     }
 
     .page-title {
         text-align: center;
         font-size: 2rem;
         font-weight: bold;
-        margin-bottom: 40px;
+        margin-bottom: 20px;
         color: #333; /* Dark text color */
     }
 </style>

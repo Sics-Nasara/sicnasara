@@ -14,11 +14,14 @@ from django.views.generic import (DetailView, ListView,
                                   )
 from django.db.models import Q, Max, Sum, Prefetch , Count, Case, When, IntegerField
 
-from .forms import  ( PaiementPerStudentForm ,  EleveUpdateForm , 
-                     EleveCreateForm , EcoleCreateForm , ClasseCreateForm 
-                      )
+
+from .forms import  ( PaiementPerStudentForm ,  EleveUpdateForm , MouvementForm ,
+                     EleveCreateForm , EcoleCreateForm , ClasseCreateForm ,
+                    TarifForm  )
 from .filters import EleveFilter
-from scuelo.models import Eleve, Classe, Inscription, AnneeScolaire ,  Mouvement , Ecole
+from scuelo.models import ( Eleve, Classe, Inscription,
+                           AnneeScolaire ,  Mouvement , Ecole , Tarif
+)
 
 '''
 this is the home view ,it main functionality
@@ -26,9 +29,18 @@ is to list the classes in a single page and enable each to get in a inspect
 '''
 @login_required
 def home(request):
-    classes = Classe.objects.all()
-    return render(request, 'scuelo/home.html', {'classes': classes})
-
+    schools = Ecole.objects.all()
+    data = {}
+    for school in schools:
+        classes = Classe.objects.filter(ecole=school)
+        class_data = []
+        for classe in classes:
+            if Inscription.objects.filter(classe=classe).exists():
+                class_data.append(classe)
+        if class_data:
+            data[school] = class_data
+    breadcrumbs = [('/', 'Home')]  # Update breadcrumbs as needed
+    return render(request, 'scuelo/home.html', {'data': data, 'breadcrumbs': breadcrumbs})
 
 '''
 this one concern the detail of each classe it list the students of that 
@@ -224,7 +236,7 @@ class StudentCreateView(CreateView):
 
 @method_decorator(login_required, name='dispatch')
 class SchoolManagementView(TemplateView):
-    template_name = 'scuelo/school_management.html'
+    template_name = 'scuelo/school/school_management.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -257,19 +269,19 @@ class SchoolCreateView(CreateView):
 class SchoolUpdateView(UpdateView):
     model = Ecole
     form_class = EcoleCreateForm
-    template_name = 'scuelo/school_update.html'
+    template_name = 'scuelo/school/school_update.html'
     success_url = reverse_lazy('student_management')
 
 @method_decorator(login_required, name='dispatch')
 class SchoolDeleteView(DeleteView):
     model = Ecole
-    template_name = 'scuelo/school_confirm_delete.html'
+    template_name = 'scuelo/school/school_confirm_delete.html'
     success_url = reverse_lazy('student_management')
 
 @method_decorator(login_required, name='dispatch')
 class SchoolDetailView(DetailView):
     model = Ecole
-    template_name = 'scuelo/school_detail.html'
+    template_name = 'scuelo/school/school_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -281,7 +293,7 @@ class SchoolDetailView(DetailView):
 class ClasseCreateView(CreateView):
     model = Classe
     form_class = ClasseCreateForm
-    template_name = 'scuelo/students/classe_create.html'
+    template_name = 'scuelo/classe/classe_create.html'
 
     def form_valid(self, form):
         form.instance.ecole_id = self.kwargs['pk']
@@ -306,19 +318,185 @@ class ClasseDetailView(DetailView):
 class ClasseUpdateView(UpdateView):
     model = Classe
     form_class = ClasseCreateForm
-    template_name = 'scuelo/students/classe_update.html'
+    template_name = 'scuelo/classe/classe_update.html'
 
     def get_success_url(self):
         return reverse_lazy('classe_detail', kwargs={'pk': self.object.pk})
 
 class ClasseDeleteView(DeleteView):
     model = Classe
-    template_name = 'scuelo/students/classe_confirm_delete.html'
+    template_name = 'scuelo/classe/classe_confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.object.ecole.pk})
     
-#scuelo/templates/scuelo/students/listperclasse.html
+class TarifListView(ListView):
+    model = Tarif
+    template_name = 'scuelo/tarif/tarif_list.html'
+    context_object_name = 'tarifs'
+
+class TarifCreateView(CreateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+class TarifUpdateView(UpdateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+
+@login_required
+def delay_list(request):
+    data = {}
+    schools = Ecole.objects.all()
+    for school in schools:
+        classes = Classe.objects.filter(ecole=school)
+        class_data = {}
+        for classe in classes:
+            students = Eleve.objects.filter(inscription__classe=classe)
+            student_data = []
+            for student in students:
+                sco_total = 0
+                sco_exigible_total = 0
+                can_total = 0
+                can_exigible_total = 0
+
+                inscriptions = Inscription.objects.filter(eleve=student, classe=classe)
+                for inscription in inscriptions:
+                    tariffs = Tarif.objects.filter(classe=classe, annee_scolaire=inscription.annee_scolaire)
+                    for tarif in tariffs:
+                        if tarif.causal == 'SCO1' or tarif.causal == 'SCO2' or tarif.causal == 'SCO3':
+                            sco_total += tarif.montant
+                            sco_exigible_total += tarif.montant  # This should be calculated based on due date and payments made
+                        elif tarif.causal == 'CAN':
+                            can_total += tarif.montant
+                            can_exigible_total += tarif.montant  # This should be calculated based on due date and payments made
+
+                diff_sco = sco_total - sco_exigible_total
+                diff_can = can_total - can_exigible_total
+                retards = diff_sco + diff_can
+
+                if retards > 0:  # Only include students with late payments
+                    student_data.append({
+                        'id': student.pk,
+                        'nom': student.nom,
+                        'prenom': student.prenom,
+                        'sex': student.sex,
+                        'cs_py': student.cs_py,
+                        'sco': sco_total,
+                        'sco_exigible': sco_exigible_total,
+                        'diff_sco': diff_sco,
+                        'can': can_total,
+                        'can_exigible': can_exigible_total,
+                        'diff_can': diff_can,
+                        'retards': retards,
+                        'note': student.note_eleve
+                    })
+            if student_data:  # Only add classes with students who have late payments
+                class_data[classe.nom] = student_data
+        if class_data:  # Only add schools with classes that have students with late payments
+            data[school.nom] = class_data
+    return render(request, 'scuelo/tarif/delay_list.html', {'data': data})
+
+@method_decorator(login_required, name='dispatch')
+class UniformPaymentListView(ListView):
+    model = Mouvement
+    template_name = 'scuelo/uniforms/uniform_payments.html'
+    context_object_name = 'payments'
+
+    def get_queryset(self):
+        return Mouvement.objects.filter(causal='TEN')
+
+@method_decorator(login_required, name='dispatch')
+class UniformPaymentCreateView(CreateView):
+    model = Mouvement
+    form_class = MouvementForm
+    template_name = 'payment_form.html'
+    success_url = reverse_lazy('uniform_payments')
+
+    def form_valid(self, form):
+        form.instance.causal = 'TEN'
+        return super().form_valid(form)
+    
+
+# List all inflows and outflows
+@method_decorator(login_required, name='dispatch')
+class InflowOutflowListView(ListView):
+    model = Mouvement
+    template_name = 'scuelo/inoutflows/inflow_outflow_list.html'
+    context_object_name = 'mouvements'
+
+    def get_queryset(self):
+        return Mouvement.objects.all()
+
+# Create a new inflow or outflow
+@method_decorator(login_required, name='dispatch')
+class InflowOutflowCreateView(CreateView):
+    model = Mouvement
+    form_class = MouvementForm
+    template_name = 'scuelo/inoutflows/inflow_outflow_form.html'
+    success_url = reverse_lazy('inflow_outflow_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"message": "Success"})
+        return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(form.errors, status=400)
+        return response
+
+# Update an existing inflow or outflow
+@method_decorator(login_required, name='dispatch')
+class InflowOutflowUpdateView(UpdateView):
+    model = Mouvement
+    form_class = MouvementForm
+    template_name = 'scuelo/inoutflows/inflow_outflow_form.html'
+    success_url = reverse_lazy('inflow_outflow_list')
+
+# Delete an existing inflow or outflow
+@method_decorator(login_required, name='dispatch')
+class InflowOutflowDeleteView(DeleteView):
+    model = Mouvement
+    template_name = 'scuelo/inoutflows/inflow_outflow_confirm_delete.html'
+    success_url = reverse_lazy('inflow_outflow_list')
+
+# Generate report for inflows and outflows
+@login_required
+def inflow_outflow_report(request):
+    inflows = Mouvement.objects.filter(type='inflow').aggregate(total=Sum('montant'))['total'] or 0
+    outflows = Mouvement.objects.filter(type='outflow').aggregate(total=Sum('montant'))['total'] or 0
+    context = {
+        'inflows': inflows,
+        'outflows': outflows,
+    }
+    return render(request, 'scuelo/inflow_outflow_report.html', context)
+
+@login_required
+def cash_flow_report(request):
+    mouvements = Mouvement.objects.all().order_by('date_paye')
+    
+    # Calculate the progressive balance
+    balance = 0
+    for mouvement in mouvements:
+        if mouvement.type == "R":
+            balance += mouvement.montant
+        else:
+            balance -= mouvement.montant
+        mouvement.progressif = balance
+    
+    return render(request, 'scuelo/cash/flow_report.html', {'mouvements': mouvements})
+
+@login_required
+def cash_accounting_export(request):
+    # Your logic for exporting cash accounting data
+    return render(request, 'scuelo/cash/accounting_export.html')
 @login_required
 def important_info(request):
     return render(request, 'scuelo/important_info.html')
@@ -357,19 +535,14 @@ def working_sessions(request):
     # Your logic for working_sessions
     return render(request, 'scuelo/working_sessions.html')
 
-def types_of_fees(request):
-    # Your logic for types_of_fees
-    return render(request, 'scuelo/types_of_fees.html')
 
 
 
 def school_uniforms(request):
     # Your logic for school_uniforms
-    return render(request, 'scuelo/school_uniforms.html')
+    return render(request, 'scuelo/school/school_uniforms.html')
 
-def late_payment(request):
-    # Your logic for late_payment
-    return render(request, 'scuelo/late_payment.html')
+
 
 def print_receipts(request):
     # Your logic for print_receipts
@@ -380,18 +553,68 @@ def generic_reports(request):
     return render(request, 'scuelo/generic_reports.html')
 
 
-def cash_inflows_outflows(request):
-    # Your logic for cash_inflows_outflows
-    return render(request, 'scuelo/cash_inflows_outflows.html')
-
-def cash_flow_report(request):
-    # Your logic for cash_flow_report
-    return render(request, 'scuelo/cash_flow_report.html')
 
 def export_for_accounting(request):
     # Your logic for export_for_accounting
     return render(request, 'scuelo/export_for_accounting.html')
 
+
+@login_required
+def cash_movements(request):
+    movements = Mouvement.objects.filter(destination='A').order_by('date_paye')
+    progressive_total = 0
+    data = []
+
+    for movement in movements:
+        if movement.type == 'R':
+            progressive_total += movement.montant
+            inflow = movement.montant
+            outflow = ''
+        else:
+            progressive_total -= movement.montant
+            inflow = ''
+            outflow = movement.montant
+
+        data.append({
+            'date': movement.date_paye,
+            'description': movement.causal,
+            'inflow': inflow,
+            'outflow': outflow,
+            'progressive_total': progressive_total,
+        })
+
+    return render(request, 'scuelo/cash/cash_movements.html', {'data': data})
+
+@login_required
+def add_mouvement(request):
+    if request.method == 'POST':
+        form = MouvementForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('cash_movements')
+    else:
+        form = MouvementForm()
+    return render(request, 'scuelo/cash/add_mouvement.html', {'form': form})
+
+@login_required
+def update_mouvement(request, pk):
+    mouvement = get_object_or_404(Mouvement, pk=pk)
+    if request.method == 'POST':
+        form = MouvementForm(request.POST, instance=mouvement)
+        if form.is_valid():
+            form.save()
+            return redirect('cash_movements')
+    else:
+        form = MouvementForm(instance=mouvement)
+    return render(request, 'scuelo/cash/update_mouvement.html', {'form': form, 'mouvement': mouvement})
+
+@login_required
+def delete_mouvement(request, pk):
+    mouvement = get_object_or_404(Mouvement, pk=pk)
+    if request.method == 'POST':
+        mouvement.delete()
+        return redirect('cash_movements')
+    return render(request, 'scuelo/cash/delete_mouvement.html', {'mouvement': mouvement})
 
 
 
@@ -399,9 +622,7 @@ def directly_managed_students(request):
     # Your logic for directly_managed_students
     return render(request, 'scuelo/directly_managed_students.html')
 
-def new_student(request):
-    # Your logic for new_student
-    return render(request, 'scuelo/new_student.html')
+
 
 def change_school(request):
     # Your logic for change_school

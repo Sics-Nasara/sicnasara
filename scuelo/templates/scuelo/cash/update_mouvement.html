@@ -1,0 +1,14 @@
+{% extends "../../layout.html" %}
+
+{% block title %}Update Movement{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="page-title">Update Movement</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Update Movement</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "../../layout.html" %}
+{% block content %}
+<h2>Uniform Payments</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Amount</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for payment in payments %}
+        <tr>
+            <td>{{ payment.inscription.eleve.nom }} {{ payment.inscription.eleve.prenom }}</td>
+            <td>{{ payment.montant }}</td>
+            <td>{{ payment.date_paye }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Eleve, Inscription, AnneeScolaire  , Mouvement , Ecole , Classe
+from .models import Eleve, Inscription, AnneeScolaire  , Mouvement , Ecole , Classe , Tarif
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 from django.contrib.auth.models import User, Group 
@@ -115,3 +115,16 @@ class AnneeScolaireForm(forms.ModelForm):
             'actuel': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+class TarifForm(forms.ModelForm):
+    class Meta:
+        model = Tarif
+        fields = ['causal', 'montant', 'classe', 'annee_scolaire', 'date_expiration']
+    
+
+class MouvementForm(forms.ModelForm):
+    class Meta:
+        model = Mouvement
+        fields = ['montant', 'date_paye', 'note', 'inscription']
+        widgets = {
+            'date_paye': forms.DateInput(attrs={'type': 'date'}),
+        }

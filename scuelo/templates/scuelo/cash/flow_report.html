@@ -1,0 +1,54 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+    Cash Flow Report
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mt-4">Mouvements caisse</h1>
+            <p>28/05/2024</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Entrée</th>
+                            <th>Sortie</th>
+                            <th>Progressif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mouvement in mouvements %}
+                        <tr>
+                            <td>{{ mouvement.date_paye|date:"d/m/Y" }}</td>
+                            <td>{{ mouvement.causal }}</td>
+                            <td>
+                                {% if mouvement.type == "R" %}
+                                    {{ mouvement.montant }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if mouvement.type == "D" %}
+                                    {{ mouvement.montant }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ mouvement.progressif }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
