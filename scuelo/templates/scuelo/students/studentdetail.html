@@ -2,41 +2,120 @@
 {% load crispy_forms_tags %}
 
 <style>
-    .modal-lg .modal-dialog {
-        max-width: 80%;
-    }
-    .page-title {
-        text-align: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 40px;
-        color: #333;
-    }
-    .card {
-        border: none;
+    .form-control {
         border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
-        background-color: #007bff;
+        padding-left: 20px;
+        padding-right: 40px;
     }
-    .card-body {
-        padding: 20px;
-        color: #ffffff;
-        transition: transform 0.2s;
+
+    .breadcrumb {
+        background-color: #f8f9fa;
+        border-radius: .25rem;
     }
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+
+    .breadcrumb-item a {
+        color: #007bff;
+        text-decoration: none;
     }
-    .card-title {
-        font-size: 1.5rem;
-        font-weight: bold;
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    .container h1 {
+        font-size: 2.5rem;
         margin-bottom: 20px;
+        text-align: center;
+        color: #343a40;
     }
-    .card-text {
+
+    .container h2 {
+        font-size: 1.75rem;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        color: #343a40;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        border-radius: 20px;
+        padding: 10px 20px;
         font-size: 1rem;
-        margin-bottom: 10px;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .table-responsive {
+        margin-top: 20px;
+    }
+
+    .table th {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .icon-btn {
+        border: none;
+        background: none;
+        color: #007bff;
+        cursor: pointer;
+    }
+
+    .icon-btn:hover {
+        color: #0056b3;
+    }
+
+    .icon-btn i {
+        font-size: 1.25rem;
+    }
+
+    .modal-lg {
+        max-width: 800px;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-header .btn-close {
+        background-color: #fff;
+        border-radius: 50%;
+        padding: 5px;
+    }
+
+    .modal-header .btn-close:hover {
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .btn-primary {
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
     }
 </style>
 
@@ -51,8 +130,10 @@
     {% endfor %}
 </ol>
 
+<!-- Container with Reduced Margins -->
 <div class="container mt-4" style="max-width: 95%; margin: 0 auto;">
     <div class="row">
+        <!-- Basic Information -->
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">
@@ -65,30 +146,15 @@
                     <p><strong>Sexe:</strong> {{ student.get_sex_display }}</p>
                     <p><strong>Date de Naissance:</strong> {{ student.date_naissance }}</p>
                     <p><strong>CS PY:</strong> {{ student.get_cs_py_display }}</p>
-                    {% if student.hand %}
-                    <p><strong>Hand:</strong> {{ student.get_hand_display }}</p>
-                    {% else %}
-                    <p style="color: black;"><strong>Hand:</strong></p>
-                    {% endif %}
-                    {% if student.date_enquete %}
-                    <p><strong>Date enquete:</strong> {{ student.date_enquete }}</p>
-                    {% else %}
-                    <p style="color: black;"><strong>Date enquete:</strong></p>
-                    {% endif %}
-                    {% if student.parent %}
-                    <p><strong>Parent:</strong> {{ student.parent }}</p>
-                    {% else %}
-                    <p style="color: black;"><strong>Parent:</strong></p>
-                    {% endif %}
-                    {% if student.note_eleve %}
-                    <p><strong>Notes:</strong> {{ student.note_eleve }}</p>
-                    {% else %}
-                    <p style="color: black;"><strong>Notes:</strong></p>
-                    {% endif %}
-                    <p><strong>École:</strong> {{ school_name }}</p>
+                    <p><strong>Hand:</strong> {{ student.get_hand_display|default:'-' }}</p>
+                    <p><strong>Date enquete:</strong> {{ student.date_enquete|default:'-' }}</p>
+                    <p><strong>Parent:</strong> {{ student.parent|default:'-' }}</p>
+                    <p><strong>Notes:</strong> {{ student.note_eleve|default:'-' }}</p>
+                    <p><strong>École:</strong> {{ student.current_class.ecole.nom }}</p>
                 </div>
             </div>  
         </div>
+        <!-- Inscriptions -->
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">
@@ -104,10 +170,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="d-flex justify-content-between">
-                <a href="{% url 'student_update' pk=student.pk %}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Modifier</a>
-                <a href="{% url 'class_upgrade' %}?student_id={{ student.pk }}" class="btn btn-warning"><i class="fas fa-arrow-up"></i> Classe Supérieure</a>
-                <a href="{% url 'change_school' %}?student_id={{ student.pk }}" class="btn btn-info"><i class="fas fa-exchange-alt"></i> Changer d'école</a>
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'student_update' pk=student.pk %}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Update</a>
+                <a href="{% url 'change_school' %}?student_id={{ student.id }}" class="btn btn-secondary ml-2"><i class="fas fa-exchange-alt"></i> Change School</a>
+                <a href="{% url 'class_upgrade' %}?student_id={{ student.id }}" class="btn btn-success ml-2"><i class="fas fa-arrow-up"></i> Class Upgrade</a>
             </div>
         </div>
     </div>
@@ -115,6 +181,7 @@
         <div class="col-md-12 mb-5">
             <div class="d-flex justify-content-between">
                 <h4>Paiements de {{ student.nom }}</h4> 
+                <!-- Button to trigger modal -->
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPaiementModal">
                     <i class="fa fa-plus"></i>
                     Ajouter paiement
@@ -136,7 +203,7 @@
                         <td>{{ payment.date_paye }}</td>
                         <td>{{ payment.causal }}</td>
                         <td>{{ payment.montant }}</td>
-                        <td>{% if payment.note %}{{ payment.note }}{% else %}<span style="color: black;"></span>{% endif %}</td>
+                        <td>{{ payment.note|default:'-' }}</td>
                         <td>
                             <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a>
                         </td>
@@ -154,6 +221,7 @@
     </div>
 </div> 
 
+<!-- Modal for Adding Payment -->
 <div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -164,22 +232,7 @@
                 </div>
                 <div class="modal-body">
                     {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form.date_paye|as_crispy_field }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.montant|as_crispy_field }}
-                            </div>
-                            <div class="col-md-12">
-                                {{ form.causal|as_crispy_field }}
-                            </div>
-                            <div class="col-md-12">
-                                {{ form.note|as_crispy_field }}
-                            </div>
-                        </div>
-                    </div>
+                    {{ form|crispy }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -189,27 +242,35 @@
         </div>
     </div>
 </div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('addPaiementForm');
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+   document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('addPaiementForm');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                // Handle errors and display them
+                let errorHtml = '<ul>';
+                for (let key in data.errors) {
+                    if (data.errors.hasOwnProperty(key)) {
+                        errorHtml += `<li>${data.errors[key]}</li>`;
+                    }
                 }
-            }).then(response => response.json()).then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    console.error(data.errors);
-                }
-            }).catch(error => console.error('Error:', error));
-        });
+                errorHtml += '</ul>';
+                document.getElementById('errorMessages').innerHTML = errorHtml;
+            }
+        }).catch(error => console.error('Error:', error));
     });
+});
+
 </script>
 {% endblock content %}
