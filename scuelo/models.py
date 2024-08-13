@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models import Q, Max, Sum, Count
 from model_utils.models import TimeStampedModel
+from django.contrib.auth.models import User
 
 CONDITION_ELEVE = (
     ("CONF", "CONF"),
@@ -238,3 +239,14 @@ class Mouvement(TimeStampedModel):
 
     def __str__(self):
         return f"{self.causal} {self.montant}"
+
+class StudentLog(models.Model):
+    student = models.ForeignKey(Eleve, on_delete=models.CASCADE, related_name='logs')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(default=timezone.now)
+    old_value = models.TextField(null=True, blank=True)
+    new_value = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Log for {self.student.nom} by {self.user.username if self.user else 'System'}"

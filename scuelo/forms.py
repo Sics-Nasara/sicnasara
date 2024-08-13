@@ -35,12 +35,24 @@ class ClasseCreateForm(forms.ModelForm):
         }    
     
 class ClassUpgradeForm(forms.Form):
-    new_class = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Nouvelle Classe")
+    new_school = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True, label="Nouvelle École")
+    new_class = forms.ModelChoiceField(queryset=Classe.objects.none(), required=True, label="Nouvelle Classe")
 
+    def __init__(self, *args, **kwargs):
+        super(ClassUpgradeForm, self).__init__(*args, **kwargs)
+        if 'new_school' in self.data:
+            try:
+                school_id = int(self.data.get('new_school'))
+                self.fields['new_class'].queryset = Classe.objects.filter(ecole_id=school_id).order_by('nom')
+            except (ValueError, TypeError):
+                self.fields['new_class'].queryset = Classe.objects.none()
+        else:
+            self.fields['new_class'].queryset = Classe.objects.none()
+
+            
 class SchoolChangeForm(forms.Form):
     new_school = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True, label="Nouvelle École")
-    new_class = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Nouvelle Classe")
-    
+
 class InscriptionForm(forms.ModelForm):
     class Meta:
         model = Inscription

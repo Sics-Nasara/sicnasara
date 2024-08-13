@@ -6,7 +6,7 @@ from .views import (
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView, TarifListView,
     TarifCreateView, TarifUpdateView, delay_list, UniformPaymentListView,
     InflowOutflowCreateView, InflowOutflowDeleteView, InflowOutflowUpdateView,
-    InflowOutflowListView, cash_movements, add_mouvement, update_mouvement, delete_mouvement
+    InflowOutflowListView, cash_movements, add_mouvement, update_mouvement, delete_mouvement 
 )
 
 urlpatterns = [
@@ -35,8 +35,10 @@ urlpatterns = [
     path('offsite_students/', views.offsite_students, name='offsite_students'),
     path('directly_managed_students/', StudentListView.as_view(), name='directly_managed_students'),
     path('new_student/', StudentCreateView.as_view(), name='new_student'),
-    path('change_school/', views.change_school, name='change_school'),
-    path('class_upgrade/', views.class_upgrade, name='class_upgrade'),
+    path('change_school/<int:pk>/', views.change_school, name='change_school'),
+
+    path('class_upgrade/<int:pk>/', views.class_upgrade, name='class_upgrade'),
+
     path('start_school_year/', views.start_school_year, name='start_school_year'),
     path('teacher_registry/', views.teacher_registry, name='teacher_registry'),
     path('class_teachers_association/', views.class_teachers_association, name='class_teachers_association'),
@@ -55,7 +57,8 @@ urlpatterns = [
     path('classes/detail/<int:pk>/', ClasseDetailView.as_view(), name='classe_detail'),
     path('classes/update/<int:pk>/', ClasseUpdateView.as_view(), name='classe_update'),
     path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
-
+    path('load_classes/', views.load_classes, name='load_classes'),
+    # Other URLs
     path('types_of_fees/', TarifListView.as_view(), name='tarif_list'),
     path('types_of_fees/add/', TarifCreateView.as_view(), name='tarif_create'),
     path('types_of_fees/<int:pk>/update/', TarifUpdateView.as_view(), name='tarif_update'),

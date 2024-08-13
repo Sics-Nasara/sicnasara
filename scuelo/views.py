@@ -5,8 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse , HttpResponseRedirect 
-
-from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
@@ -19,9 +17,9 @@ from django.db.models import Q, Max, Sum, Prefetch , Count, Case, When, IntegerF
 
 from .forms import  ( PaiementPerStudentForm ,  EleveUpdateForm , MouvementForm ,
                      EleveCreateForm , EcoleCreateForm , ClasseCreateForm ,
-                    TarifForm  )
+                    TarifForm  ,   ClassUpgradeForm, SchoolChangeForm )
 from .filters import EleveFilter
-from scuelo.models import ( Eleve, Classe, Inscription,
+from scuelo.models import ( Eleve, Classe, Inscription,StudentLog, 
                            AnneeScolaire ,  Mouvement , Ecole , Tarif
 )
 
@@ -76,11 +74,10 @@ about each students, this details are important because there are :
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
-    inscriptions = Inscription.objects.filter(eleve=student)
+    inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
     payments = Mouvement.objects.filter(inscription__eleve=student)
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
     current_class = student.current_class
-    school_name = current_class.ecole.nom if current_class else 'No School Assigned'
     if current_class:
         breadcrumbs = [
             ('/', 'Home'),
@@ -95,6 +92,7 @@ def student_detail(request, pk):
             ('#', f"{student.nom} {student.prenom}")
         ]
     form = PaiementPerStudentForm()
+    logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
     return render(request, 'scuelo/students/studentdetail.html', {
         'student': student,
         'inscriptions': inscriptions,
@@ -102,8 +100,10 @@ def student_detail(request, pk):
         'total_payment': total_payment,
         'breadcrumbs': breadcrumbs,
         'form': form,
-        'school_name':school_name
+        'logs': logs,
     })
+
+
 
 '''
 this view is for adding payments (it concerns the students)
@@ -118,7 +118,16 @@ def add_paiement(request, pk):
         if form.is_valid():
             paiement = form.save(commit=False)
             paiement.inscription = Inscription.objects.filter(eleve=student).last()
+            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
             paiement.save()
+            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Added Payment",
+                old_value=old_value,
+                new_value=new_value
+            )
             return JsonResponse({'success': True})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
@@ -147,16 +156,30 @@ def update_paiement(request, pk):
 @login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
+    old_values = student.__dict__.copy()
     if request.method == 'POST':
         form = EleveUpdateForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
+            # Log changes
+            new_values = student.__dict__.copy()
+            for field, old_value in old_values.items():
+                new_value = new_values.get(field)
+                if old_value != new_value:
+                    StudentLog.objects.create(
+                        student=student,
+                        user=request.user,
+                        action=f"Updated {field}",
+                        old_value=str(old_value),
+                        new_value=str(new_value)
+                    )
             return redirect('student_detail', pk=student.pk)
     else:
         form = EleveUpdateForm(instance=student)
     
-    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student})
-
+    return render(request, 'scuelo/students/studentupdate.html',
+                  {'form': form, 'student': student}
+    )
 
 def login_view(request):
     if request.method == 'POST':
@@ -216,13 +239,11 @@ def offsite_students(request):
 
     for student in offsite_students:
         student.total_paiements = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
-        student.school_name = student.current_class.ecole.nom if student.current_class else 'No School Assigned'
 
     context = {
         'offsite_students': offsite_students
     }
     return render(request, 'scuelo/offsite_students.html', context)
-
 
 class StudentCreateView(CreateView):
     model = Eleve
@@ -639,63 +660,68 @@ def change_school(request):
     # Your logic for change_school
     return render(request, 'scuelo/change_school.html')
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from .models import Eleve, Inscription, Classe, Ecole, AnneeScolaire
-from .forms import ClassUpgradeForm, SchoolChangeForm
+
+from django.http import JsonResponse
 
 @login_required
-def class_upgrade(request):
-    student_id = request.GET.get('student_id')
-    student = get_object_or_404(Eleve, pk=student_id)
-    current_inscription = Inscription.objects.filter(eleve=student).latest('date_inscription')
-    
+def class_upgrade(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
     if request.method == 'POST':
         form = ClassUpgradeForm(request.POST)
         if form.is_valid():
             new_class = form.cleaned_data['new_class']
-            new_inscription = Inscription(
-                eleve=student,
-                classe=new_class,
-                annee_scolaire=current_inscription.annee_scolaire
+            old_class = student.inscription_set.latest('date_inscription').classe.nom
+
+            # Update the latest inscription to the new class
+            latest_inscription = student.inscription_set.latest('date_inscription')
+            latest_inscription.classe = new_class
+            latest_inscription.save()
+
+            # Log the class upgrade
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Upgraded Class",
+                old_value=old_class,
+                new_value=new_class.nom
             )
-            new_inscription.save()
             return redirect('student_detail', pk=student.pk)
     else:
         form = ClassUpgradeForm()
 
-    return render(request, 'scuelo/classe/class_upgrade.html', {
-        'form': form,
-        'student': student,
-    })
+    return render(request, 'scuelo/classe/class_upgrade.html', {'form': form, 'student': student})
 
 @login_required
-def change_school(request):
-    student_id = request.GET.get('student_id')
-    student = get_object_or_404(Eleve, pk=student_id)
-    current_inscription = Inscription.objects.filter(eleve=student).latest('date_inscription')
+def load_classes(request):
+    school_id = request.GET.get('school_id')
+    classes = Classe.objects.filter(ecole_id=school_id).order_by('nom')
+    return JsonResponse(list(classes.values('id', 'nom')), safe=False)
 
+
+@login_required
+def change_school(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
     if request.method == 'POST':
         form = SchoolChangeForm(request.POST)
         if form.is_valid():
+            old_school = student.inscription_set.latest('date_inscription').classe.ecole.nom
             new_school = form.cleaned_data['new_school']
-            new_class = form.cleaned_data['new_class']
-            new_inscription = Inscription(
-                eleve=student,
-                classe=new_class,
-                annee_scolaire=current_inscription.annee_scolaire
+            # Assuming Inscription model has 'eleve', 'classe', and 'annee_scolaire' fields
+            latest_inscription = student.inscription_set.latest('date_inscription')
+            latest_inscription.classe.ecole = new_school
+            latest_inscription.save()
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Changed School",
+                old_value=old_school,
+                new_value=new_school.nom
             )
-            new_inscription.save()
             return redirect('student_detail', pk=student.pk)
     else:
         form = SchoolChangeForm()
 
-    return render(request, 'scuelo/school/change_school.html', {
-        'form': form,
-        'student': student,
-    })
-
+    return render(request, 'scuelo/school/change_school.html', {'form': form, 'student': student})
 
 def start_school_year(request):
     # Your logic for start_school_year
