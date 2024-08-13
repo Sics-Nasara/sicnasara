@@ -4,7 +4,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import JsonResponse
+from django.http import JsonResponse , HttpResponseRedirect 
+
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
@@ -78,6 +80,7 @@ def student_detail(request, pk):
     payments = Mouvement.objects.filter(inscription__eleve=student)
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
     current_class = student.current_class
+    school_name = current_class.ecole.nom if current_class else 'No School Assigned'
     if current_class:
         breadcrumbs = [
             ('/', 'Home'),
@@ -98,7 +101,8 @@ def student_detail(request, pk):
         'payments': payments,
         'total_payment': total_payment,
         'breadcrumbs': breadcrumbs,
-        'form': form
+        'form': form,
+        'school_name':school_name
     })
 
 '''
@@ -151,9 +155,8 @@ def student_update(request, pk):
     else:
         form = EleveUpdateForm(instance=student)
     
-    return render(request, 'scuelo/students/studentupdate.html',
-                  {'form': form, 'student': student}
-    )
+    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -213,15 +216,17 @@ def offsite_students(request):
 
     for student in offsite_students:
         student.total_paiements = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
+        student.school_name = student.current_class.ecole.nom if student.current_class else 'No School Assigned'
 
     context = {
         'offsite_students': offsite_students
     }
     return render(request, 'scuelo/offsite_students.html', context)
 
+
 class StudentCreateView(CreateView):
     model = Eleve
-    form_class = EleveUpdateForm
+    form_class = EleveCreateForm
     template_name = 'scuelo/students/new_student.html'
     success_url = reverse_lazy('home')
 
@@ -230,7 +235,13 @@ class StudentCreateView(CreateView):
         data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
         return data
 
-
+    def form_valid(self, form):
+        eleve = form.save(commit=False)
+        eleve.save()
+        classe = form.cleaned_data['classe']
+        annee_scolaire = form.cleaned_data['annee_scolaire']
+        Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
+        return super().form_valid(form)
 
 
 
@@ -628,9 +639,63 @@ def change_school(request):
     # Your logic for change_school
     return render(request, 'scuelo/change_school.html')
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from .models import Eleve, Inscription, Classe, Ecole, AnneeScolaire
+from .forms import ClassUpgradeForm, SchoolChangeForm
+
+@login_required
 def class_upgrade(request):
-    # Your logic for class_upgrade
-    return render(request, 'scuelo/class_upgrade.html')
+    student_id = request.GET.get('student_id')
+    student = get_object_or_404(Eleve, pk=student_id)
+    current_inscription = Inscription.objects.filter(eleve=student).latest('date_inscription')
+    
+    if request.method == 'POST':
+        form = ClassUpgradeForm(request.POST)
+        if form.is_valid():
+            new_class = form.cleaned_data['new_class']
+            new_inscription = Inscription(
+                eleve=student,
+                classe=new_class,
+                annee_scolaire=current_inscription.annee_scolaire
+            )
+            new_inscription.save()
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = ClassUpgradeForm()
+
+    return render(request, 'scuelo/classe/class_upgrade.html', {
+        'form': form,
+        'student': student,
+    })
+
+@login_required
+def change_school(request):
+    student_id = request.GET.get('student_id')
+    student = get_object_or_404(Eleve, pk=student_id)
+    current_inscription = Inscription.objects.filter(eleve=student).latest('date_inscription')
+
+    if request.method == 'POST':
+        form = SchoolChangeForm(request.POST)
+        if form.is_valid():
+            new_school = form.cleaned_data['new_school']
+            new_class = form.cleaned_data['new_class']
+            new_inscription = Inscription(
+                eleve=student,
+                classe=new_class,
+                annee_scolaire=current_inscription.annee_scolaire
+            )
+            new_inscription.save()
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = SchoolChangeForm()
+
+    return render(request, 'scuelo/school/change_school.html', {
+        'form': form,
+        'student': student,
+    })
+
 
 def start_school_year(request):
     # Your logic for start_school_year

@@ -11,11 +11,18 @@ class PaiementPerStudentForm(forms.ModelForm):
         fields = ['date_paye', 'montant', 'causal', 'note']
 
 
+
 class EleveUpdateForm(forms.ModelForm):
+    classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
+    annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True)
+
     class Meta:
         model = Eleve
-        fields = ['nom', 'prenom', 'date_naissance', 'condition_eleve', 'sex', 'cs_py', 'hand', 'date_enquete', 'parent', 'tel_parent', 'note_eleve']
-
+        fields = [
+            'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance', 
+            'cs_py', 'hand', 'annee_inscr', 'parent', 'tel_parent', 
+            'note_eleve', 'classe', 'annee_scolaire'
+        ]
         
 class ClasseCreateForm(forms.ModelForm):
     class Meta:
@@ -27,6 +34,12 @@ class ClasseCreateForm(forms.ModelForm):
             'legacy_id': forms.TextInput(attrs={'class': 'form-control'}),
         }    
     
+class ClassUpgradeForm(forms.Form):
+    new_class = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Nouvelle Classe")
+
+class SchoolChangeForm(forms.Form):
+    new_school = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True, label="Nouvelle École")
+    new_class = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Nouvelle Classe")
     
 class InscriptionForm(forms.ModelForm):
     class Meta:
@@ -69,27 +82,23 @@ class InscriptionPerStudentForm(forms.ModelForm):
         model = Inscription
         fields = ['classe', 'annee_scolaire']
 
-
 class EleveCreateForm(forms.ModelForm):
+    classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Classe")
+    annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True, label="Année Scolaire")
+
     class Meta:
         model = Eleve
-        fields = ['nom', 'prenom', 'date_enquete', 'condition_eleve', 'sex', 'date_naissance', 'cs_py', 'hand',
-                  'parent', 'tel_parent', 'note_eleve', 'legacy_id']
+        fields = [
+            'nom', 'prenom', 'date_enquete', 'condition_eleve', 'sex',
+            'date_naissance', 'cs_py', 'hand', 'annee_inscr', 'parent',
+            'tel_parent', 'note_eleve', 'classe', 'annee_scolaire'
+        ]
         widgets = {
-            'date_enquete': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'date_naissance': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'nom': forms.TextInput(attrs={'class': 'form-control'}),
-            'prenom': forms.TextInput(attrs={'class': 'form-control'}),
-            'condition_eleve': forms.Select(attrs={'class': 'form-control'}),
-            'sex': forms.Select(attrs={'class': 'form-control'}),
-            'cs_py': forms.Select(attrs={'class': 'form-control'}),
-            'hand': forms.Select(attrs={'class': 'form-control'}),
-            'parent': forms.TextInput(attrs={'class': 'form-control'}),
-            'tel_parent': forms.TextInput(attrs={'class': 'form-control'}),
-            'note_eleve': forms.Textarea(attrs={'class': 'form-control'}),
-            'legacy_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_enquete': forms.DateInput(attrs={'type': 'date'}),
+            'date_naissance': forms.DateInput(attrs={'type': 'date'}),
+            'annee_inscr': forms.NumberInput(attrs={'min': 1900, 'max': 2100}),
+            'note_eleve': forms.Textarea(attrs={'rows': 4}),
         }
-
 
 class InscriptionForm(forms.ModelForm):
     class Meta:

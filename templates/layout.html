@@ -212,7 +212,7 @@
             </a>
         </div>
         <button class="dropdown-btn">
-            <i class="fas fa-cash-register"></i> <span>Cash Management</span> <i class="fa fa-chevron-down"></i>
+            <i class="fas fa-cash-register fa-2x"></i> <span>Cash</span> <i class="fa fa-chevron-down"></i>
         </button>
         <div class="dropdown-container">
             <a href="{% url 'cash_movements' %}" class="dropdown-item {% if request.path == '/scuelo/cash/movements/' %}active{% endif %}">
@@ -232,9 +232,7 @@
             <a class="dropdown-item" href="{% url 'offsite_students' %}">Off-site Students</a>
             <a class="dropdown-item" href="{% url 'directly_managed_students' %}">Directly Mg Students</a>
             <a class="dropdown-item" href="{% url 'new_student' %}">New Student</a>
-            <a class="dropdown-item" href="{% url 'change_school' %}">Change School</a>
-            <a class="dropdown-item" href="{% url 'class_upgrade' %}">Class Upgrade</a>
-            <a class="dropdown-item" href="{% url 'start_school_year' %}">Start School Year</a>
+    
         </div>
         <button class="dropdown-btn">
             <i class="fas fa-chalkboard-teacher fa-2x"></i> <span>Teacher Mg </span> <i class="fa fa-chevron-down"></i>

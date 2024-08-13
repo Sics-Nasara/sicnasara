@@ -1,40 +1,149 @@
 {% extends "../../layout.html" %}
-{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap5 %}
 
-{% block content %}
-<ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'student_detail' student.pk %}">Student Detail</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Update</li>
-</ol>
-
-<div class="container mt-5">
-    <h2>Mise à Jour Étudiant</h2>
-    <form id="student-form" method="post">
-        {% csrf_token %}
-        <!-- Student Information -->
-        <div class="row">
-            <div class="col-md-6">
-                {{ form.nom|as_crispy_field }}
-                {{ form.prenom|as_crispy_field }}
-                {{ form.date_naissance|as_crispy_field }}
-                {{ form.sex|as_crispy_field }}
-                {{ form.cs_py|as_crispy_field }}
-                {{ form.date_enquete|as_crispy_field }}
-                <!-- Submit Button -->
-                <div class="d-flex justify-content-end mt-3">
-                    <button type="submit" class="btn btn-primary btn-lg">Confirmer</button>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Student</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <style>
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+        .container-fluid {
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #A44400;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-success {
+            background-color: #A44400;
+            border-color: #A44400;
+        }
+        .form-buttons {
+            text-align: right;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h1>Update Student</h1>
             </div>
-            <div class="col-md-6">
-                {{ form.hand|as_crispy_field }}
-                {{ form.condition_eleve|as_crispy_field }}
-                {{ form.parent|as_crispy_field }}
-                {{ form.tel_parent|as_crispy_field }}
-                {{ form.note_eleve|as_crispy_field }}
+            <div class="card-body">
+                <form method="post" action="{% url 'student_update' student.pk %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_nom">Nom</label>
+                                <input type="text" class="form-control" id="id_nom" name="nom" value="{{ form.instance.nom }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_prenom">Prénom</label>
+                                <input type="text" class="form-control" id="id_prenom" name="prenom" value="{{ form.instance.prenom }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_condition_eleve">État</label>
+                                <select class="form-control" id="id_condition_eleve" name="condition_eleve" required>
+                                    {% for key, value in form.condition_eleve.field.choices %}
+                                        <option value="{{ key }}" {% if form.instance.condition_eleve == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_sex">Sexe</label>
+                                <select class="form-control" id="id_sex" name="sex" required>
+                                    {% for key, value in form.sex.field.choices %}
+                                        <option value="{{ key }}" {% if form.instance.sex == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_date_naissance">Date de naissance</label>
+                                <input type="date" class="form-control" id="id_date_naissance" name="date_naissance" value="{{ form.instance.date_naissance }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_cs_py">CS/PY</label>
+                                <select class="form-control" id="id_cs_py" name="cs_py" required>
+                                    {% for key, value in form.cs_py.field.choices %}
+                                        <option value="{{ key }}" {% if form.instance.cs_py == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_hand">Hand</label>
+                                <select class="form-control" id="id_hand" name="hand">
+                                    {% for key, value in form.hand.field.choices %}
+                                        <option value="{{ key }}" {% if form.instance.hand == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_annee_inscr">Année d'inscription</label>
+                                <input type="number" class="form-control" id="id_annee_inscr" name="annee_inscr" value="{{ form.instance.annee_inscr }}" min="1900" max="2100">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_parent">Parent</label>
+                                <input type="text" class="form-control" id="id_parent" name="parent" value="{{ form.instance.parent }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_tel_parent">Tel Parent</label>
+                                <input type="text" class="form-control" id="id_tel_parent" name="tel_parent" value="{{ form.instance.tel_parent }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_note_eleve">Note élève</label>
+                                <textarea class="form-control" id="id_note_eleve" name="note_eleve" rows="4">{{ form.instance.note_eleve }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_classe">Classe</label>
+                                <select class="form-control" id="id_classe" name="classe" required>
+                                    {% for classe in form.fields.classe.queryset %}
+                                        <option value="{{ classe.pk }}" {% if form.instance.classe == classe %}selected{% endif %}>{{ classe.nom }} - {{ classe.type.nom }} - {{ classe.ecole.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_annee_scolaire">Année Scolaire</label>
+                                <select class="form-control" id="id_annee_scolaire" name="annee_scolaire" required>
+                                    {% for annee in form.fields.annee_scolaire.queryset %}
+                                        <option value="{{ annee.pk }}" {% if form.instance.annee_scolaire == annee %}selected{% endif %}>{{ annee.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-success">Update Student</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-        </div>        
-    </form>
-</div>
-
-{% endblock %}
+        </div>
+    </div>
+    {% endblock content %}
+</body>
+</html>

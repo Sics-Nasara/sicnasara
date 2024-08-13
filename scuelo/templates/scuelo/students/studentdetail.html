@@ -2,43 +2,38 @@
 {% load crispy_forms_tags %}
 
 <style>
-    /* Add custom CSS for wider modal and styling */
     .modal-lg .modal-dialog {
-        max-width: 80%; /* Adjust as needed */
+        max-width: 80%;
     }
     .page-title {
         text-align: center;
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 40px;
-        color: #333; /* Dark text color */
+        color: #333;
     }
     .card {
-        border: none; /* Remove default card border */
-        border-radius: 20px; /* More rounded corners */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        overflow: hidden; /* Clip rounded corners properly */
-        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transform and shadow transition */
-        background-color: #007bff; /* Primary button color */
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #007bff;
     }
-    
     .card-body {
         padding: 20px;
-        color: #ffffff; /* White text */
-        transition: transform 0.2s; /* Smooth transform on hover */
+        color: #ffffff;
+        transition: transform 0.2s;
     }
-    
     .card:hover {
-        transform: translateY(-10px); /* Slightly lift card on hover */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-    
     .card-title {
         font-size: 1.5rem;
         font-weight: bold;
         margin-bottom: 20px;
     }
-    
     .card-text {
         font-size: 1rem;
         margin-bottom: 10px;
@@ -56,10 +51,8 @@
     {% endfor %}
 </ol>
 
-<!-- Container with Reduced Margins -->
 <div class="container mt-4" style="max-width: 95%; margin: 0 auto;">
     <div class="row">
-        <!-- Basic Information -->
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">
@@ -92,10 +85,10 @@
                     {% else %}
                     <p style="color: black;"><strong>Notes:</strong></p>
                     {% endif %}
+                    <p><strong>École:</strong> {{ school_name }}</p>
                 </div>
             </div>  
         </div>
-        <!-- Inscriptions -->
         <div class="col-md-6">
             <div class="card mb-4">
                 <div class="card-header">
@@ -111,14 +104,17 @@
                     </ul>
                 </div>
             </div>
-            <a href="{% url 'student_update' pk=student.pk %}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'student_update' pk=student.pk %}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Modifier</a>
+                <a href="{% url 'class_upgrade' %}?student_id={{ student.pk }}" class="btn btn-warning"><i class="fas fa-arrow-up"></i> Classe Supérieure</a>
+                <a href="{% url 'change_school' %}?student_id={{ student.pk }}" class="btn btn-info"><i class="fas fa-exchange-alt"></i> Changer d'école</a>
+            </div>
         </div>
     </div>
     <div class="row mt-1">
         <div class="col-md-12 mb-5">
             <div class="d-flex justify-content-between">
                 <h4>Paiements de {{ student.nom }}</h4> 
-                <!-- Button to trigger modal -->
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPaiementModal">
                     <i class="fa fa-plus"></i>
                     Ajouter paiement
@@ -158,7 +154,6 @@
     </div>
 </div> 
 
-<!-- Modal for Adding Payment -->
 <div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -211,7 +206,6 @@
                 if (data.success) {
                     window.location.reload();
                 } else {
-                    // Handle errors and display them
                     console.error(data.errors);
                 }
             }).catch(error => console.error('Error:', error));
