@@ -1,54 +1,35 @@
 {% extends "../../layout.html" %}
-{% load crispy_forms_tags %}
-{% load static %}
-
-{% block title %}
-    Cash Flow Report
-{% endblock title %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mt-4">Mouvements caisse</h1>
-            <p>28/05/2024</p>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Entrée</th>
-                            <th>Sortie</th>
-                            <th>Progressif</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for mouvement in mouvements %}
-                        <tr>
-                            <td>{{ mouvement.date_paye|date:"d/m/Y" }}</td>
-                            <td>{{ mouvement.causal }}</td>
-                            <td>
-                                {% if mouvement.type == "R" %}
-                                    {{ mouvement.montant }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if mouvement.type == "D" %}
-                                    {{ mouvement.montant }}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>{{ mouvement.progressif }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<div class="container">
+    <h1>Cash Movements</h1>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Inflow</th>
+                <th>Outflow</th>
+                <th>Progressive Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.date }}</td>
+                <td>{{ row.description }}</td>
+                <td>{{ row.inflow }}</td>
+                <td>{{ row.outflow }}</td>
+                <td>{{ row.progressive_total }}</td>
+                <td>
+                    <a href="{% url 'update_mouvement' row.id %}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{% url 'delete_mouvement' row.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'add_mouvement' %}" class="btn btn-success">Add Movement</a>
 </div>
-{% endblock content %}
+{% endblock %}

@@ -1,18 +1,113 @@
 {% extends "../../layout.html" %}
-{% load crispy_forms_tags %}
 {% load static %}
+{% load bootstrap5 %}
 
-{% block title %}
-    Add Movement
-{% endblock title %}
-
-{% block content %}
-<div class="container">
-    <h1>Add Movement</h1>
-    <form method="post" action="{% url 'add_mouvement' %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
-{% endblock content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movement</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <style>
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+        .container-fluid {
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #A44400;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-success {
+            background-color: #A44400;
+            border-color: #A44400;
+        }
+        .form-buttons {
+            text-align: right;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h1>Add Movement</h1>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'add_mouvement' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_type">Type</label>
+                                <select class="form-control" id="id_type" name="type" required>
+                                    {% for key, value in form.type.field.choices %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_destination">Destination</label>
+                                <select class="form-control" id="id_destination" name="destination" required>
+                                    {% for key, value in form.destination.field.choices %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_causal">Causal</label>
+                                <select class="form-control" id="id_causal" name="causal" required>
+                                    {% for key, value in form.causal.field.choices %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_date_paye">Date Paye</label>
+                                <input type="date" class="form-control" id="id_date_paye" name="date_paye">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_note">Note</label>
+                                <textarea class="form-control" id="id_note" name="note" rows="4"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_inscription">Inscription</label>
+                                <select class="form-control" id="id_inscription" name="inscription" required>
+                                    {% for inscription in form.fields.inscription.queryset %}
+                                        <option value="{{ inscription.pk }}">{{ inscription.eleve.nom }} - {{ inscription.eleve.prenom }} - {{ inscription.classe.nom }} - {{ inscription.classe.ecole.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-success">Add Movement</button>
+                        <a href="{% url 'cash_movements' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock content %}
+</body>
+</html>

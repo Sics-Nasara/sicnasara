@@ -607,15 +607,31 @@ def cash_movements(request):
             inflow = ''
             outflow = movement.montant
 
+        inscription = movement.inscription
+        if inscription:
+            student = inscription.eleve
+            classe = inscription.classe
+            school = classe.ecole
+        else:
+            student = None
+            classe = None
+            school = None
+
         data.append({
+            'id': movement.id,
             'date': movement.date_paye,
             'description': movement.causal,
             'inflow': inflow,
             'outflow': outflow,
             'progressive_total': progressive_total,
+            'student': student,
+            'classe': classe,
+            'school': school,
         })
 
     return render(request, 'scuelo/cash/cash_movements.html', {'data': data})
+
+
 
 @login_required
 def add_mouvement(request):
@@ -650,15 +666,50 @@ def delete_mouvement(request, pk):
 
 
 
-def directly_managed_students(request):
-    # Your logic for directly_managed_students
-    return render(request, 'scuelo/directly_managed_students.html')
+@method_decorator(csrf_exempt, name='dispatch')
+def add_paiement(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    form = PaiementPerStudentForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            paiement = form.save(commit=False)
+            paiement.inscription = Inscription.objects.filter(eleve=student).last()
+            tarif = Tarif.objects.get(classe=paiement.inscription.classe, causal=paiement.causal)
+            paiement.montant = tarif.montant
+            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
+            paiement.save()
+            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Added Payment",
+                old_value=old_value,
+                new_value=new_value
+            )
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+@login_required
+def cash_flow_report(request):
+    mouvements = Mouvement.objects.all().order_by('date_paye')
 
+    # Calculate the progressive balance
+    balance = 0
+    for mouvement in mouvements:
+        if mouvement.type == "R":
+            balance += mouvement.montant
+        else:
+            balance -= mouvement.montant
+        mouvement.progressif = balance
 
-def change_school(request):
-    # Your logic for change_school
-    return render(request, 'scuelo/change_school.html')
+    return render(request, 'scuelo/cash/flow_report.html', {'mouvements': mouvements})
+
+@login_required
+def cash_accounting_export(request):
+    # Your logic for exporting cash accounting data
+    return render(request, 'scuelo/cash/accounting_export.html')
 
 
 from django.http import JsonResponse

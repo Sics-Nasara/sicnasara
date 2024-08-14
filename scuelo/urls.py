@@ -72,9 +72,8 @@ urlpatterns = [
 
     path('cash/movements/', cash_movements, name='cash_movements'),
     path('cash/movements/add/', add_mouvement, name='add_mouvement'),
-    path('cash/movements/update/<int:pk>/', update_mouvement, name='update_mouvement'),
-    path('cash/movements/delete/<int:pk>/', delete_mouvement, name='delete_mouvement'),
-
+    path('cash/movements/update/<int:pk>/', views.update_mouvement, name='update_mouvement'),
+    path('cash/movements/delete/<int:pk>/', views.delete_mouvement, name='delete_mouvement'),
     path('cash/flow_report/', views.cash_flow_report, name='cash_flow_report'),
     path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
 ]

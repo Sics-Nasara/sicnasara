@@ -145,7 +145,7 @@ class TarifForm(forms.ModelForm):
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement
-        fields = ['montant', 'date_paye', 'note', 'inscription']
+        fields = ['montant','type', 'destination' ,'causal', 'date_paye', 'note', 'inscription']
         widgets = {
             'date_paye': forms.DateInput(attrs={'type': 'date'}),
         }

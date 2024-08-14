@@ -221,9 +221,7 @@
             <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i> <span>Flow Report</span>
             </a>
-            <a href="{% url 'cash_accounting_export' %}" class="dropdown-item {% if request.path == '/scuelo/cash/accounting_export/' %}active{% endif %}">
-                <i class="fas fa-file-export"></i> <span>Accounting Export</span>
-            </a>
+          
         </div>
         <button class="dropdown-btn">
             <i class="fas fa-user-friends fa-2x"></i> <span>Students</span> <i class="fa fa-chevron-down"></i>
@@ -234,21 +232,7 @@
             <a class="dropdown-item" href="{% url 'new_student' %}">New Student</a>
     
         </div>
-        <button class="dropdown-btn">
-            <i class="fas fa-chalkboard-teacher fa-2x"></i> <span>Teacher Mg </span> <i class="fa fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a class="dropdown-item" href="{% url 'teacher_registry' %}">Teachers' Registry</a>
-            <a class="dropdown-item" href="{% url 'class_teachers_association' %}">Class Teachers' Association</a>
-        </div>
-        <button class="dropdown-btn">
-            <i class="fas fa-folder-open fa-2x"></i> <span>External Document</span> <i class="fa fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a class="dropdown-item" href="{% url 'student_documents' %}">Student Documents</a>
-            <a class="dropdown-item" href="{% url 'teacher_documents' %}">Teacher Documents</a>
-            <a class="dropdown-item" href="{% url 'accounting_documents' %}">Accounting Documents</a>
-        </div>
+        
         <div class="logout-section">
             <div class="username">
                 {{ user.username }}

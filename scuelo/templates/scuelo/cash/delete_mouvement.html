@@ -1,0 +1,12 @@
+{% extends "../../layout.html" %}
+{% block content %}
+<div class="container">
+    <h1>Delete Movement</h1>
+    <p>Are you sure you want to delete this movement?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'cash_movements' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
