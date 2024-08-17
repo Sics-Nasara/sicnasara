@@ -118,9 +118,11 @@ def add_paiement(request, pk):
         if form.is_valid():
             paiement = form.save(commit=False)
             paiement.inscription = Inscription.objects.filter(eleve=student).last()
-            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
             paiement.save()
-            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
+
+            # Log the payment
+            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
+            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
             StudentLog.objects.create(
                 student=student,
                 user=request.user,
@@ -128,10 +130,11 @@ def add_paiement(request, pk):
                 old_value=old_value,
                 new_value=new_value
             )
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+            return redirect('student_detail', pk=student.pk)
+    else:
+        # Handle the case where the form is not valid
+        return redirect('student_detail', pk=student.pk)
+
 
 '''
 for updating payments
@@ -666,30 +669,7 @@ def delete_mouvement(request, pk):
 
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-def add_paiement(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    form = PaiementPerStudentForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            paiement = form.save(commit=False)
-            paiement.inscription = Inscription.objects.filter(eleve=student).last()
-            tarif = Tarif.objects.get(classe=paiement.inscription.classe, causal=paiement.causal)
-            paiement.montant = tarif.montant
-            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
-            paiement.save()
-            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note}"
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Added Payment",
-                old_value=old_value,
-                new_value=new_value
-            )
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 
 @login_required
 def cash_flow_report(request):

@@ -190,11 +190,10 @@
 
    
 </div> 
-
 <div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="addPaiementForm" method="post" action="{% url 'add_paiement' student.id %}">
+            <form id="addPaiementForm" method="post" action="{% url 'add_paiement' student.pk %}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPaiementModalLabel">Ajouter un paiement pour {{ student.nom }} {{ student.prenom }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -204,16 +203,24 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6">
-                                {{ form.date_paye|as_crispy_field }}
+                                <label for="id_causal">Causal</label>
+                                <select name="causal" id="id_causal" class="form-control">
+                                    {% for key, value in form.causal.field.choices %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                {{ form.montant|as_crispy_field }}
+                                <label for="id_montant">Montant</label>
+                                <input type="number" name="montant" id="id_montant" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_date_paye">Date de paiement</label>
+                                <input type="date" name="date_paye" id="id_date_paye" class="form-control" required>
                             </div>
                             <div class="col-md-12">
-                                {{ form.causal|as_crispy_field }}
-                            </div>
-                            <div class="col-md-12">
-                                {{ form.note|as_crispy_field }}
+                                <label for="id_note">Note</label>
+                                <textarea name="note" id="id_note" class="form-control" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -227,13 +234,17 @@
     </div>
 </div>
 
+
+
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('addPaiementForm');
+        const form = document.getElementById('add-payment-form');
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(form);
-            fetch(form.action, {
+            fetch("{% url 'add_paiement' student.pk %}", {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -241,9 +252,12 @@
                 }
             }).then(response => response.json()).then(data => {
                 if (data.success) {
-                    window.location.reload();
+                    alert('Payment added successfully!');
+                    location.reload(); // Reload the page to update the payment list
                 } else {
+                    // Handle errors and display them
                     console.error(data.errors);
+                    alert('Failed to add payment. Please try again.');
                 }
             }).catch(error => console.error('Error:', error));
         });

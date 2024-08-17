@@ -8,7 +8,14 @@ from django.contrib.auth.forms import UserCreationForm
 class PaiementPerStudentForm(forms.ModelForm):
     class Meta:
         model = Mouvement
-        fields = ['date_paye', 'montant', 'causal', 'note']
+        fields = ['causal', 'montant', 'note', 'date_paye']
+        widgets = {
+            'causal': forms.Select(attrs={'class': 'form-control'}),
+            'montant': forms.NumberInput(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'date_paye': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
 
 
 
