@@ -95,7 +95,11 @@ class Classe(TimeStampedModel):
     def __str__(self):
         return '%s %s' % (self.nom, self.type.get_type_ecole_display())
 
-
+    @property
+    def sco_exigible(self):
+        total_tarifs = Tarif.objects.filter(classe=self).aggregate(total=Sum('montant'))['total'] or 0
+        return total_tarifs
+    
 class Eleve(TimeStampedModel):
     nom = models.CharField(max_length=34, null=False)
     prenom = models.CharField(max_length=34, null=False)
@@ -231,6 +235,7 @@ class Mouvement(TimeStampedModel):
     note = models.CharField(max_length=200, null=True, blank=True)
     inscription = models.ForeignKey(Inscription, on_delete=models.CASCADE, blank=True, null=True)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
+    tarif = models.ForeignKey(Tarif, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Mouvement'

@@ -1,5 +1,6 @@
 {% extends "../../layout.html" %}
 {% load crispy_forms_tags %}
+{% include 'scuelo/paiements/add_paiement_modal.html' %}
 
 <style>
     .modal-lg .modal-dialog {
@@ -118,10 +119,10 @@
         <div class="col-md-12 mb-5">
             <div class="d-flex justify-content-between">
                 <h4>Paiements de {{ student.nom }}</h4> 
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPaiementModal">
-                    <i class="fa fa-plus"></i>
-                    Ajouter paiement
-                </button>
+              <!-- Button to trigger modal -->
+              <a href="{% url 'add_paiement' student.pk %}">Add Payment</a>
+
+
             </div>
             <table class="table table-striped table-bordered payments-table mt-4">
                 <thead class="thead-light">
@@ -190,77 +191,28 @@
 
    
 </div> 
-<div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="addPaiementForm" method="post" action="{% url 'add_paiement' student.pk %}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPaiementModalLabel">Ajouter un paiement pour {{ student.nom }} {{ student.prenom }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="id_causal">Causal</label>
-                                <select name="causal" id="id_causal" class="form-control">
-                                    {% for key, value in form.causal.field.choices %}
-                                        <option value="{{ key }}">{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="id_montant">Montant</label>
-                                <input type="number" name="montant" id="id_montant" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="id_date_paye">Date de paiement</label>
-                                <input type="date" name="date_paye" id="id_date_paye" class="form-control" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="id_note">Note</label>
-                                <textarea name="note" id="id_note" class="form-control" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
 
 </div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('add-payment-form');
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(form);
-            fetch("{% url 'add_paiement' student.pk %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            }).then(response => response.json()).then(data => {
-                if (data.success) {
-                    alert('Payment added successfully!');
-                    location.reload(); // Reload the page to update the payment list
+    $('#payment-form').on('submit', function(event) {
+        event.preventDefault();
+    
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    alert('Payment added successfully');
+                    // You can also redirect or update the page here
                 } else {
-                    // Handle errors and display them
-                    console.error(data.errors);
-                    alert('Failed to add payment. Please try again.');
+                    alert('Failed to add payment: ' + response.errors);
                 }
-            }).catch(error => console.error('Error:', error));
+            }
         });
     });
+    
+    
 </script>
+
 {% endblock content %}

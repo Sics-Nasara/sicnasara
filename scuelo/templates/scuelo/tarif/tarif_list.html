@@ -1,37 +1,36 @@
 {% extends "../../layout.html" %}
+{% load static %}
 
-{% block title %}Types of Fees{% endblock %}
 {% block content %}
-  <h2>Types of Fees</h2>
-  <a href="{% url 'tarif_create' %}" class="btn btn-primary mb-3">Add New Fee</a>
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>ID</th>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Class</th>
-          <th>School Year</th>
-          <th>Expiration Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tarif in tarifs %}
-          <tr>
-            <td>{{ tarif.id }}</td>
-            <td>{{ tarif.get_causal_display }}</td>
-            <td>{{ tarif.montant }}</td>
-            <td>{{ tarif.classe }}</td>
-            <td>{{ tarif.annee_scolaire }}</td>
-            <td>{{ tarif.date_expiration }}</td>
-            <td>
-              <a href="{% url 'tarif_update' tarif.pk %}" class="btn btn-secondary btn-sm">Edit</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
+<div class="container">
+    <h2>Tarifs</h2>
+    <a href="{% url 'tarif_create' %}" class="btn btn-primary mb-3">Add New Tarif</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>School Year</th>
+                <th>Causal</th>
+                <th>Amount</th>
+                <th>Expiration Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tarif in tarifs %}
+                <tr>
+                    <td>{{ tarif.classe }}</td>
+                    <td>{{ tarif.annee_scolaire.nom }}</td>
+                    <td>{{ tarif.get_causal_display }}</td>
+                    <td>{{ tarif.montant }}</td>
+                    <td>{{ tarif.date_expiration }}</td>
+                    <td>
+                        <a href="{% url 'tarif_update' tarif.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'tarif_delete' tarif.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  </div>
+</div>
 {% endblock %}

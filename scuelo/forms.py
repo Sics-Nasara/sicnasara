@@ -5,19 +5,13 @@ from crispy_forms.layout import Layout, Submit, Row, Column
 from django.contrib.auth.models import User, Group 
 from django.contrib.auth.forms import UserCreationForm
 
+from django import forms
+from .models import Mouvement, Tarif, Inscription
+
 class PaiementPerStudentForm(forms.ModelForm):
     class Meta:
         model = Mouvement
-        fields = ['causal', 'montant', 'note', 'date_paye']
-        widgets = {
-            'causal': forms.Select(attrs={'class': 'form-control'}),
-            'montant': forms.NumberInput(attrs={'class': 'form-control'}),
-            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'date_paye': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-        }
-
-
-
+        fields = ['tarif', 'montant', 'date_paye', 'note']
 
 class EleveUpdateForm(forms.ModelForm):
     classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
@@ -147,7 +141,9 @@ class TarifForm(forms.ModelForm):
     class Meta:
         model = Tarif
         fields = ['causal', 'montant', 'classe', 'annee_scolaire', 'date_expiration']
-    
+        widgets = {
+            'date_expiration': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 class MouvementForm(forms.ModelForm):
     class Meta:

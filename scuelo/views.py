@@ -1,32 +1,52 @@
+# Authentication
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import JsonResponse , HttpResponseRedirect 
+from django.urls import reverse, reverse_lazy
+from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic import DetailView, ListView, CreateView, TemplateView
+from django.db.models import Q, Sum, Prefetch, Count
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.urls import reverse, reverse_lazy
-from django.views.generic.edit import UpdateView
-from django.views.generic import (DetailView, ListView,
-                                  ListView, CreateView, UpdateView ,TemplateView , DeleteView
-                                  )
-from django.db.models import Q, Max, Sum, Prefetch , Count, Case, When, IntegerField
-
-
-from .forms import  ( PaiementPerStudentForm ,  EleveUpdateForm , MouvementForm ,
-                     EleveCreateForm , EcoleCreateForm , ClasseCreateForm ,
-                    TarifForm  ,   ClassUpgradeForm, SchoolChangeForm )
-from .filters import EleveFilter
-from scuelo.models import ( Eleve, Classe, Inscription,StudentLog, 
-                           AnneeScolaire ,  Mouvement , Ecole , Tarif
+from django.http import JsonResponse, HttpResponseRedirect
+# Models and Forms
+from .forms import (
+    PaiementPerStudentForm, EleveUpdateForm, MouvementForm,
+    EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
+    TarifForm, ClassUpgradeForm, SchoolChangeForm
+)
+from scuelo.models import (
+    Eleve, Classe, Inscription, StudentLog,
+    AnneeScolaire, Mouvement, Ecole, Tarif
 )
 
-'''
-this is the home view ,it main functionality
-is to list the classes in a single page and enable each to get in a inspect
-'''
+# =======================
+# 1. Authentication
+# =======================
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'scuelo/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+# =======================
+# 2. Student Management
+# =======================
 @login_required
 def home(request):
     schools = Ecole.objects.all()
@@ -42,35 +62,17 @@ def home(request):
     breadcrumbs = [('/', 'Home')]  # Update breadcrumbs as needed
     return render(request, 'scuelo/home.html', {'data': data, 'breadcrumbs': breadcrumbs})
 
-'''
-this one concern the detail of each classe it list the students of that 
-classe and some important stats about that particular classe
-'''
 @login_required
 def class_detail(request, pk):
     classe = get_object_or_404(Classe, pk=pk)
     students = Eleve.objects.filter(inscription__classe=classe)
-    breadcrumbs = [('/', 'Home'), 
-                   (reverse('home'), 'Classes'),
-                   ('#', classe.nom)
-    ]
-    return render(
-        request, 'scuelo/students/listperclasse.html',
-                  {
-                    'classe': classe,
-                    'students': students,
-                    'breadcrumbs': breadcrumbs
+    breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
+    return render(request, 'scuelo/students/listperclasse.html', {
+        'classe': classe,
+        'students': students,
+        'breadcrumbs': breadcrumbs
     })
-'''
-once in the classe this one enable you to get more detailed informations
-about each students, this details are important because there are :
-  - the list of the paiment made for this student and update btn even
-  -the basic informations of that student (the name firstname and so)
-  -the list of inscriptions and even btn for updates
-  - in this view we are able to add some payments for that student
-  - we can be able to see also the total payments of that student
-  and also update the basic informations of that student
-'''
+
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -103,59 +105,6 @@ def student_detail(request, pk):
         'logs': logs,
     })
 
-
-
-'''
-this view is for adding payments (it concerns the students)
-in the payment addition process we can add some paiment concerning some
-registered inscriptions
-'''
-@method_decorator(csrf_exempt, name='dispatch')
-def add_paiement(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    form = PaiementPerStudentForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            paiement = form.save(commit=False)
-            paiement.inscription = Inscription.objects.filter(eleve=student).last()
-            paiement.save()
-
-            # Log the payment
-            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
-            new_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Added Payment",
-                old_value=old_value,
-                new_value=new_value
-            )
-            return redirect('student_detail', pk=student.pk)
-    else:
-        # Handle the case where the form is not valid
-        return redirect('student_detail', pk=student.pk)
-
-
-'''
-for updating payments
-'''
-@login_required
-def update_paiement(request, pk):
-    paiement = get_object_or_404(Mouvement, pk=pk)
-    if request.method == 'POST':
-        form = PaiementPerStudentForm(request.POST, instance=paiement)
-        if form.is_valid():
-            form.save()
-            return redirect('student_detail', pk=paiement.inscription.eleve.pk)
-    else:
-        form = PaiementPerStudentForm(instance=paiement)
-
-    return render(
-        request, 'scuelo/paiements/updatepaiment.html', 
-        {'form': form, 'paiement': paiement}
-    )
-
-'''students update'''
 @login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -180,27 +129,7 @@ def student_update(request, pk):
     else:
         form = EleveUpdateForm(instance=student)
     
-    return render(request, 'scuelo/students/studentupdate.html',
-                  {'form': form, 'student': student}
-    )
-
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'scuelo/login.html', {'form': form})
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')
+    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student})
 
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
@@ -232,8 +161,60 @@ class StudentListView(ListView):
 
         context['schools'] = schools
         return context
-    
-    
+
+@login_required
+def class_upgrade(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    if request.method == 'POST':
+        form = ClassUpgradeForm(request.POST)
+        if form.is_valid():
+            new_class = form.cleaned_data['new_class']
+            old_class = student.inscription_set.latest('date_inscription').classe.nom
+
+            # Update the latest inscription to the new class
+            latest_inscription = student.inscription_set.latest('date_inscription')
+            latest_inscription.classe = new_class
+            latest_inscription.save()
+
+            # Log the class upgrade
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Upgraded Class",
+                old_value=old_class,
+                new_value=new_class.nom
+            )
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = ClassUpgradeForm()
+
+    return render(request, 'scuelo/classe/class_upgrade.html', {'form': form, 'student': student})
+
+@login_required
+def change_school(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    if request.method == 'POST':
+        form = SchoolChangeForm(request.POST)
+        if form.is_valid():
+            old_school = student.inscription_set.latest('date_inscription').classe.ecole.nom
+            new_school = form.cleaned_data['new_school']
+            # Assuming Inscription model has 'eleve', 'classe', and 'annee_scolaire' fields
+            latest_inscription = student.inscription_set.latest('date_inscription')
+            latest_inscription.classe.ecole = new_school
+            latest_inscription.save()
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Changed School",
+                old_value=old_school,
+                new_value=new_school.nom
+            )
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = SchoolChangeForm()
+
+    return render(request, 'scuelo/school/change_school.html', {'form': form, 'student': student})
+
 @login_required
 def offsite_students(request):
     offsite_students = Eleve.objects.filter(
@@ -248,6 +229,7 @@ def offsite_students(request):
     }
     return render(request, 'scuelo/offsite_students.html', context)
 
+@method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
     model = Eleve
     form_class = EleveCreateForm
@@ -268,62 +250,9 @@ class StudentCreateView(CreateView):
         return super().form_valid(form)
 
 
-
-@method_decorator(login_required, name='dispatch')
-class SchoolManagementView(TemplateView):
-    template_name = 'scuelo/school/school_management.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['schools'] = Ecole.objects.annotate(num_students=Count('classe__inscription__eleve', distinct=True))
-        context['form'] = EcoleCreateForm()
-        return context
-
-@method_decorator(login_required, name='dispatch')
-class SchoolCreateView(CreateView):
-    model = Ecole
-    form_class = EcoleCreateForm
-    template_name = 'scuelo/school_create.html'
-    success_url = reverse_lazy('student_management')
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"message": "Success"})
-        return response
-
-    def form_invalid(self, form):
-        response = super().form_invalid(form)
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse(form.errors, status=400)
-        return response
-    
-
-
-@method_decorator(login_required, name='dispatch')
-class SchoolUpdateView(UpdateView):
-    model = Ecole
-    form_class = EcoleCreateForm
-    template_name = 'scuelo/school/school_update.html'
-    success_url = reverse_lazy('student_management')
-
-@method_decorator(login_required, name='dispatch')
-class SchoolDeleteView(DeleteView):
-    model = Ecole
-    template_name = 'scuelo/school/school_confirm_delete.html'
-    success_url = reverse_lazy('student_management')
-
-@method_decorator(login_required, name='dispatch')
-class SchoolDetailView(DetailView):
-    model = Ecole
-    template_name = 'scuelo/school/school_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['students'] = Eleve.objects.filter(inscription__classe__ecole=self.object).distinct()
-        context['classe_form'] = ClasseCreateForm()
-        return context
-
+# =======================
+# 3. Class Management
+# =======================
 @method_decorator(login_required, name='dispatch')
 class ClasseCreateView(CreateView):
     model = Classe
@@ -337,6 +266,7 @@ class ClasseCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.kwargs['pk']})
 
+@method_decorator(login_required, name='dispatch')
 class ClasseDetailView(DetailView):
     model = Classe
     template_name = 'scuelo/classe/classe_detail.html'
@@ -350,6 +280,7 @@ class ClasseDetailView(DetailView):
                                   ('', 'Class Details')]
         return context
 
+@method_decorator(login_required, name='dispatch')
 class ClasseUpdateView(UpdateView):
     model = Classe
     form_class = ClasseCreateForm
@@ -358,83 +289,67 @@ class ClasseUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('classe_detail', kwargs={'pk': self.object.pk})
 
+@method_decorator(login_required, name='dispatch')
 class ClasseDeleteView(DeleteView):
     model = Classe
     template_name = 'scuelo/classe/classe_confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.object.ecole.pk})
-    
-class TarifListView(ListView):
-    model = Tarif
-    template_name = 'scuelo/tarif/tarif_list.html'
-    context_object_name = 'tarifs'
 
-class TarifCreateView(CreateView):
-    model = Tarif
-    form_class = TarifForm
-    template_name = 'scuelo/tarif/tarif_form.html'
-    success_url = reverse_lazy('tarif_list')
 
-class TarifUpdateView(UpdateView):
-    model = Tarif
-    form_class = TarifForm
-    template_name = 'scuelo/tarif/tarif_form.html'
-    success_url = reverse_lazy('tarif_list')
+# =======================
+# 4. Payment Management
+# =======================
+@csrf_exempt
+@login_required
+def add_payment(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    if request.method == 'POST':
+        form = PaiementPerStudentForm(request.POST)
+        if form.is_valid():
+            paiement = form.save(commit=False)
+            paiement.inscription = Inscription.objects.filter(eleve=student).last()
+            paiement.save()
 
+            # Log the payment
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Added Payment",
+                old_value="",
+                new_value=f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
+            )
+            
+            # Redirect to the student's detail page after successful payment
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = PaiementPerStudentForm()
+
+    # Render the form again if it's a GET request or if the form is invalid
+    return render(request, 'scuelo/paiements/add_payment.html', {'form': form, 'student': student})
 
 @login_required
-def delay_list(request):
-    data = {}
-    schools = Ecole.objects.all()
-    for school in schools:
-        classes = Classe.objects.filter(ecole=school)
-        class_data = {}
-        for classe in classes:
-            students = Eleve.objects.filter(inscription__classe=classe)
-            student_data = []
-            for student in students:
-                sco_total = 0
-                sco_exigible_total = 0
-                can_total = 0
-                can_exigible_total = 0
+def update_paiement(request, pk):
+    paiement = get_object_or_404(Mouvement, pk=pk)
+    student = paiement.inscription.eleve
+    if request.method == 'POST':
+        form = PaiementPerStudentForm(request.POST, instance=paiement)
+        if form.is_valid():
+            form.save()
+            # Log the update
+            StudentLog.objects.create(
+                student=student,
+                user=request.user,
+                action="Updated Payment",
+                old_value=f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}",
+                new_value=f"{paiement.causal} - {form.cleaned_data['montant']} - {form.cleaned_data['note']} - {form.cleaned_data['date_paye']}"
+            )
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = PaiementPerStudentForm(instance=paiement)
 
-                inscriptions = Inscription.objects.filter(eleve=student, classe=classe)
-                for inscription in inscriptions:
-                    tariffs = Tarif.objects.filter(classe=classe, annee_scolaire=inscription.annee_scolaire)
-                    for tarif in tariffs:
-                        if tarif.causal == 'SCO1' or tarif.causal == 'SCO2' or tarif.causal == 'SCO3':
-                            sco_total += tarif.montant
-                            sco_exigible_total += tarif.montant  # This should be calculated based on due date and payments made
-                        elif tarif.causal == 'CAN':
-                            can_total += tarif.montant
-                            can_exigible_total += tarif.montant  # This should be calculated based on due date and payments made
-
-                diff_sco = sco_total - sco_exigible_total
-                diff_can = can_total - can_exigible_total
-                retards = diff_sco + diff_can
-
-                if retards > 0:  # Only include students with late payments
-                    student_data.append({
-                        'id': student.pk,
-                        'nom': student.nom,
-                        'prenom': student.prenom,
-                        'sex': student.sex,
-                        'cs_py': student.cs_py,
-                        'sco': sco_total,
-                        'sco_exigible': sco_exigible_total,
-                        'diff_sco': diff_sco,
-                        'can': can_total,
-                        'can_exigible': can_exigible_total,
-                        'diff_can': diff_can,
-                        'retards': retards,
-                        'note': student.note_eleve
-                    })
-            if student_data:  # Only add classes with students who have late payments
-                class_data[classe.nom] = student_data
-        if class_data:  # Only add schools with classes that have students with late payments
-            data[school.nom] = class_data
-    return render(request, 'scuelo/tarif/delay_list.html', {'data': data})
+    return render(request, 'scuelo/paiements/updatepaiment.html', {'form': form, 'student': student})
 
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
@@ -455,9 +370,7 @@ class UniformPaymentCreateView(CreateView):
     def form_valid(self, form):
         form.instance.causal = 'TEN'
         return super().form_valid(form)
-    
 
-# List all inflows and outflows
 @method_decorator(login_required, name='dispatch')
 class InflowOutflowListView(ListView):
     model = Mouvement
@@ -467,7 +380,6 @@ class InflowOutflowListView(ListView):
     def get_queryset(self):
         return Mouvement.objects.all()
 
-# Create a new inflow or outflow
 @method_decorator(login_required, name='dispatch')
 class InflowOutflowCreateView(CreateView):
     model = Mouvement
@@ -487,7 +399,6 @@ class InflowOutflowCreateView(CreateView):
             return JsonResponse(form.errors, status=400)
         return response
 
-# Update an existing inflow or outflow
 @method_decorator(login_required, name='dispatch')
 class InflowOutflowUpdateView(UpdateView):
     model = Mouvement
@@ -495,14 +406,12 @@ class InflowOutflowUpdateView(UpdateView):
     template_name = 'scuelo/inoutflows/inflow_outflow_form.html'
     success_url = reverse_lazy('inflow_outflow_list')
 
-# Delete an existing inflow or outflow
 @method_decorator(login_required, name='dispatch')
 class InflowOutflowDeleteView(DeleteView):
     model = Mouvement
     template_name = 'scuelo/inoutflows/inflow_outflow_confirm_delete.html'
     success_url = reverse_lazy('inflow_outflow_list')
 
-# Generate report for inflows and outflows
 @login_required
 def inflow_outflow_report(request):
     inflows = Mouvement.objects.filter(type='inflow').aggregate(total=Sum('montant'))['total'] or 0
@@ -527,72 +436,6 @@ def cash_flow_report(request):
         mouvement.progressif = balance
     
     return render(request, 'scuelo/cash/flow_report.html', {'mouvements': mouvements})
-
-@login_required
-def cash_accounting_export(request):
-    # Your logic for exporting cash accounting data
-    return render(request, 'scuelo/cash/accounting_export.html')
-@login_required
-def important_info(request):
-    return render(request, 'scuelo/important_info.html')
-
-@login_required
-def user_management(request):
-    return render(request, 'scuelo/user_management.html')
-
-@login_required
-def student_management(request):
-    return render(request, 'scuelo/student_management.html')
-
-@login_required
-def teacher_management(request):
-    return render(request, 'scuelo/teacher_management.html')
-
-@login_required
-def financial_management(request):
-    return render(request, 'scuelo/financial_management.html')
-
-@login_required
-def reporting(request):
-    return render(request, 'scuelo/reporting.html')
-
-@login_required
-def document_management(request):
-    return render(request, 'scuelo/document_management.html')
-
-
-def recording_on_records(request):
-    # Your logic for recording_on_records
-    return render(request, 'scuelo/recording_on_records.html')
-
-
-def working_sessions(request):
-    # Your logic for working_sessions
-    return render(request, 'scuelo/working_sessions.html')
-
-
-
-
-def school_uniforms(request):
-    # Your logic for school_uniforms
-    return render(request, 'scuelo/school/school_uniforms.html')
-
-
-
-def print_receipts(request):
-    # Your logic for print_receipts
-    return render(request, 'scuelo/print_receipts.html')
-
-def generic_reports(request):
-    # Your logic for generic_reports
-    return render(request, 'scuelo/generic_reports.html')
-
-
-
-def export_for_accounting(request):
-    # Your logic for export_for_accounting
-    return render(request, 'scuelo/export_for_accounting.html')
-
 
 @login_required
 def cash_movements(request):
@@ -634,8 +477,6 @@ def cash_movements(request):
 
     return render(request, 'scuelo/cash/cash_movements.html', {'data': data})
 
-
-
 @login_required
 def add_mouvement(request):
     if request.method == 'POST':
@@ -667,60 +508,107 @@ def delete_mouvement(request, pk):
         return redirect('cash_movements')
     return render(request, 'scuelo/cash/delete_mouvement.html', {'mouvement': mouvement})
 
-
-
-
-
 @login_required
-def cash_flow_report(request):
-    mouvements = Mouvement.objects.all().order_by('date_paye')
+def delay_list(request):
+    data = {}
+    schools = Ecole.objects.all()
+    for school in schools:
+        classes = Classe.objects.filter(ecole=school)
+        class_data = {}
+        for classe in classes:
+            students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
+            student_data = []
+            for student in students:
+                sco_paid = Mouvement.objects.filter(inscription__eleve=student, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                sco_exigible = Tarif.objects.filter(classe=classe, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                can_paid = Mouvement.objects.filter(inscription__eleve=student, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+                can_exigible = Tarif.objects.filter(classe=classe, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
 
-    # Calculate the progressive balance
-    balance = 0
-    for mouvement in mouvements:
-        if mouvement.type == "R":
-            balance += mouvement.montant
-        else:
-            balance -= mouvement.montant
-        mouvement.progressif = balance
+                diff_sco = sco_paid - sco_exigible
+                diff_can = can_paid - can_exigible
+                retards = diff_sco + diff_can
 
-    return render(request, 'scuelo/cash/flow_report.html', {'mouvements': mouvements})
+                if retards != 0:  # Only include students with a balance
+                    percentage_paid = int(100 * (sco_paid + can_paid) / (sco_exigible + can_exigible)) if (sco_exigible + can_exigible) > 0 else 0
 
-@login_required
-def cash_accounting_export(request):
-    # Your logic for exporting cash accounting data
-    return render(request, 'scuelo/cash/accounting_export.html')
+                    student_data.append({
+                        'id': student.id,
+                        'nom': student.nom,
+                        'prenom': student.prenom,
+                        'sex': student.sex,
+                        'cs_py': student.cs_py,
+                        'sco_paid': sco_paid,
+                        'sco_exigible': sco_exigible,
+                        'diff_sco': diff_sco,
+                        'can_paid': can_paid,
+                        'can_exigible': can_exigible,
+                        'diff_can': diff_can,
+                        'retards': retards,
+                        'percentage_paid': percentage_paid,
+                        'note': student.note_eleve,
+                    })
+            if student_data:  # Only add classes with students who have late payments
+                class_data[classe.nom] = student_data
+        if class_data:  # Only add schools with classes that have students with late payments
+            data[school.nom] = class_data
+    return render(request, 'scuelo/paiements/late_payments_report.html', {'data': data})
 
 
-from django.http import JsonResponse
+# =======================
+# 5. School Management
+# =======================
+@method_decorator(login_required, name='dispatch')
+class SchoolManagementView(TemplateView):
+    template_name = 'scuelo/school/school_management.html'
 
-@login_required
-def class_upgrade(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    if request.method == 'POST':
-        form = ClassUpgradeForm(request.POST)
-        if form.is_valid():
-            new_class = form.cleaned_data['new_class']
-            old_class = student.inscription_set.latest('date_inscription').classe.nom
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['schools'] = Ecole.objects.annotate(num_students=Count('classe__inscription__eleve', distinct=True))
+        context['form'] = EcoleCreateForm()
+        return context
 
-            # Update the latest inscription to the new class
-            latest_inscription = student.inscription_set.latest('date_inscription')
-            latest_inscription.classe = new_class
-            latest_inscription.save()
+@method_decorator(login_required, name='dispatch')
+class SchoolCreateView(CreateView):
+    model = Ecole
+    form_class = EcoleCreateForm
+    template_name = 'scuelo/school_create.html'
+    success_url = reverse_lazy('student_management')
 
-            # Log the class upgrade
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Upgraded Class",
-                old_value=old_class,
-                new_value=new_class.nom
-            )
-            return redirect('student_detail', pk=student.pk)
-    else:
-        form = ClassUpgradeForm()
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"message": "Success"})
+        return response
 
-    return render(request, 'scuelo/classe/class_upgrade.html', {'form': form, 'student': student})
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(form.errors, status=400)
+        return response
+
+@method_decorator(login_required, name='dispatch')
+class SchoolUpdateView(UpdateView):
+    model = Ecole
+    form_class = EcoleCreateForm
+    template_name = 'scuelo/school/school_update.html'
+    success_url = reverse_lazy('student_management')
+
+@method_decorator(login_required, name='dispatch')
+class SchoolDeleteView(DeleteView):
+    model = Ecole
+    template_name = 'scuelo/school/school_confirm_delete.html'
+    success_url = reverse_lazy('student_management')
+
+@method_decorator(login_required, name='dispatch')
+class SchoolDetailView(DetailView):
+    model = Ecole
+    template_name = 'scuelo/school/school_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['students'] = Eleve.objects.filter(inscription__classe__ecole=self.object).distinct()
+        context['classe_form'] = ClasseCreateForm()
+        return context
 
 @login_required
 def load_classes(request):
@@ -729,35 +617,97 @@ def load_classes(request):
     return JsonResponse(list(classes.values('id', 'nom')), safe=False)
 
 
-@login_required
-def change_school(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    if request.method == 'POST':
-        form = SchoolChangeForm(request.POST)
-        if form.is_valid():
-            old_school = student.inscription_set.latest('date_inscription').classe.ecole.nom
-            new_school = form.cleaned_data['new_school']
-            # Assuming Inscription model has 'eleve', 'classe', and 'annee_scolaire' fields
-            latest_inscription = student.inscription_set.latest('date_inscription')
-            latest_inscription.classe.ecole = new_school
-            latest_inscription.save()
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Changed School",
-                old_value=old_school,
-                new_value=new_school.nom
-            )
-            return redirect('student_detail', pk=student.pk)
-    else:
-        form = SchoolChangeForm()
+# =======================
+# 6. Financial Management
+# =======================
+@method_decorator(login_required, name='dispatch')
+class TarifListView(ListView):
+    model = Tarif
+    template_name = 'scuelo/tarif/tarif_list.html'
+    context_object_name = 'tarifs'
 
-    return render(request, 'scuelo/school/change_school.html', {'form': form, 'student': student})
+    def get_queryset(self):
+        return Tarif.objects.all().order_by('classe__ecole__nom', 'classe__nom', 'annee_scolaire__nom', 'causal')
+
+@method_decorator(login_required, name='dispatch')
+class TarifCreateView(CreateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+@method_decorator(login_required, name='dispatch')
+class TarifUpdateView(UpdateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+@method_decorator(login_required, name='dispatch')
+class TarifDeleteView(DeleteView):
+    model = Tarif
+    template_name = 'scuelo/tarif/tarif_confirm_delete.html'
+    success_url = reverse_lazy('tarif_list')
+
+
+# =======================
+# 7. Others (Not Completed)
+# =======================
+@login_required
+def important_info(request):
+    return render(request, 'scuelo/important_info.html')
+
+@login_required
+def user_management(request):
+    return render(request, 'scuelo/user_management.html')
+
+@login_required
+def student_management(request):
+    return render(request, 'scuelo/student_management.html')
+
+@login_required
+def teacher_management(request):
+    return render(request, 'scuelo/teacher_management.html')
+
+@login_required
+def financial_management(request):
+    return render(request, 'scuelo/financial_management.html')
+
+@login_required
+def reporting(request):
+    return render(request, 'scuelo/reporting.html')
+
+@login_required
+def document_management(request):
+    return render(request, 'scuelo/document_management.html')
+
+def recording_on_records(request):
+    # Your logic for recording_on_records
+    return render(request, 'scuelo/recording_on_records.html')
+
+def working_sessions(request):
+    # Your logic for working_sessions
+    return render(request, 'scuelo/working_sessions.html')
+
+def school_uniforms(request):
+    # Your logic for school_uniforms
+    return render(request, 'scuelo/school/school_uniforms.html')
+
+def print_receipts(request):
+    # Your logic for print_receipts
+    return render(request, 'scuelo/print_receipts.html')
+
+def generic_reports(request):
+    # Your logic for generic_reports
+    return render(request, 'scuelo/generic_reports.html')
+
+def export_for_accounting(request):
+    # Your logic for export_for_accounting
+    return render(request, 'scuelo/export_for_accounting.html')
 
 def start_school_year(request):
     # Your logic for start_school_year
     return render(request, 'scuelo/start_school_year.html')
-
 
 def teacher_registry(request):
     # Your logic for teacher_registry
@@ -766,6 +716,7 @@ def teacher_registry(request):
 def class_teachers_association(request):
     # Your logic for class_teachers_association
     return render(request, 'scuelo/class_teachers_association.html')
+
 def student_documents(request):
     # Your logic for student_documents
     return render(request, 'scuelo/student_documents.html')

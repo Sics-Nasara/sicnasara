@@ -1,0 +1,10 @@
+{% extends "../../layout.html" %}
+
+{% block content %}
+<h2>Add Payment for {{ student.nom }} {{ student.prenom }}</h2>
+<form method="POST" action="{% url 'add_paiement' student.pk %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Payment</button>
+</form>
+{% endblock %}

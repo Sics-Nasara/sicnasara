@@ -109,8 +109,9 @@
                         </thead>
                         <tbody>
                             {% for student in students %}
-                            <tr>
-                                <td data-column="id">{{ student.id }}</td>
+                            <tr> 
+
+                                <td data-column="id">{{ student.pk }}</td>
                                 <td data-column="nom">{{ student.nom }}</td>
                                 <td data-column="prenom">{{ student.prenom }}</td>
                                 <td data-column="condition">{{ student.get_condition_eleve_display }}</td>
@@ -132,7 +133,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{% url 'student_detail' pk=student.pk %}" class="btn btn-warning btn-sm">
+                                    <a href="{% url 'student_detail' student.pk %}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                 </td>
