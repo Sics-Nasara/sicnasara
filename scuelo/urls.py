@@ -5,8 +5,8 @@ from .views import (
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView, ClasseCreateView,
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView, TarifListView,
     TarifCreateView, TarifUpdateView, delay_list, UniformPaymentListView,
-    InflowOutflowCreateView, InflowOutflowDeleteView, InflowOutflowUpdateView, TarifDeleteView , 
-    InflowOutflowListView, cash_movements, add_mouvement,add_payment ,  update_mouvement, delete_mouvement 
+     TarifDeleteView 
+    
 )
 
 urlpatterns = [
@@ -67,17 +67,12 @@ urlpatterns = [
     path('tarifs/delete/<int:pk>/', TarifDeleteView.as_view(), name='tarif_delete'),
     path('delays/', delay_list, name='delay_list'),
 
-    path('inflow_outflow_list/', InflowOutflowListView.as_view(), name='inflow_outflow_list'),
-    path('inflow_outflow_create/', InflowOutflowCreateView.as_view(), name='inflow_outflow_create'),
-    path('inflow_outflow_update/<int:pk>/', InflowOutflowUpdateView.as_view(), name='inflow_outflow_update'),
-    path('inflow_outflow_delete/<int:pk>/', InflowOutflowDeleteView.as_view(), name='inflow_outflow_delete'),
-    path('inflow_outflow_report/', views.inflow_outflow_report, name='inflow_outflow_report'),
-
-    path('cash/movements/', cash_movements, name='cash_movements'),
-    path('cash/movements/add/', add_mouvement, name='add_mouvement'),
-    path('cash/movements/update/<int:pk>/', views.update_mouvement, name='update_mouvement'),
-    path('cash/movements/delete/<int:pk>/', views.delete_mouvement, name='delete_mouvement'),
-    path('cash/flow_report/', views.cash_flow_report, name='cash_flow_report'),
+ 
+     path('cash/flow_report/', views.cash_flow_report, name='cash_flow_report'),
+     path('mouvements/', views.mouvement_list, name='mouvement_list'),
+    path('mouvements/add/', views.add_mouvement, name='add_mouvement'),
+    path('mouvements/update/<int:pk>/', views.update_mouvement, name='update_mouvement'),
+    path('mouvements/delete/<int:pk>/', views.delete_mouvement, name='delete_mouvement'),
     #path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
 

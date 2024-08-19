@@ -1,0 +1,24 @@
+{% extends "../../layout.html" %}
+
+{% block content %}
+<h1>Accounting Report</h1>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Period</th>
+            <th>Total Income</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in grouped_income %}
+        <tr>
+            <td>{{ item.period }}</td>
+            <td>{{ item.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'export_accounting_report' %}" class="btn btn-primary">Export to CSV</a>
+{% endblock %}

@@ -22,6 +22,11 @@ from scuelo.models import (
     AnneeScolaire, Mouvement, Ecole, Tarif
 )
 
+from django.db.models import Sum, Q
+from datetime import timedelta, datetime
+import csv
+from django.http import HttpResponse
+
 # =======================
 # 1. Authentication
 # =======================
@@ -371,111 +376,99 @@ class UniformPaymentCreateView(CreateView):
         form.instance.causal = 'TEN'
         return super().form_valid(form)
 
-@method_decorator(login_required, name='dispatch')
-class InflowOutflowListView(ListView):
-    model = Mouvement
-    template_name = 'scuelo/inoutflows/inflow_outflow_list.html'
-    context_object_name = 'mouvements'
-
-    def get_queryset(self):
-        return Mouvement.objects.all()
-
-@method_decorator(login_required, name='dispatch')
-class InflowOutflowCreateView(CreateView):
-    model = Mouvement
-    form_class = MouvementForm
-    template_name = 'scuelo/inoutflows/inflow_outflow_form.html'
-    success_url = reverse_lazy('inflow_outflow_list')
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"message": "Success"})
-        return response
-
-    def form_invalid(self, form):
-        response = super().form_invalid(form)
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse(form.errors, status=400)
-        return response
-
-@method_decorator(login_required, name='dispatch')
-class InflowOutflowUpdateView(UpdateView):
-    model = Mouvement
-    form_class = MouvementForm
-    template_name = 'scuelo/inoutflows/inflow_outflow_form.html'
-    success_url = reverse_lazy('inflow_outflow_list')
-
-@method_decorator(login_required, name='dispatch')
-class InflowOutflowDeleteView(DeleteView):
-    model = Mouvement
-    template_name = 'scuelo/inoutflows/inflow_outflow_confirm_delete.html'
-    success_url = reverse_lazy('inflow_outflow_list')
-
-@login_required
-def inflow_outflow_report(request):
-    inflows = Mouvement.objects.filter(type='inflow').aggregate(total=Sum('montant'))['total'] or 0
-    outflows = Mouvement.objects.filter(type='outflow').aggregate(total=Sum('montant'))['total'] or 0
-    context = {
-        'inflows': inflows,
-        'outflows': outflows,
-    }
-    return render(request, 'scuelo/inflow_outflow_report.html', context)
+from django.shortcuts import render
+from django.db.models import Sum, Q
+from datetime import timedelta, datetime
+import csv
+from django.http import HttpResponse
 
 @login_required
 def cash_flow_report(request):
-    mouvements = Mouvement.objects.all().order_by('date_paye')
-    
-    # Calculate the progressive balance
-    balance = 0
-    for mouvement in mouvements:
-        if mouvement.type == "R":
-            balance += mouvement.montant
-        else:
-            balance -= mouvement.montant
-        mouvement.progressif = balance
-    
-    return render(request, 'scuelo/cash/flow_report.html', {'mouvements': mouvements})
-
-@login_required
-def cash_movements(request):
-    movements = Mouvement.objects.filter(destination='A').order_by('date_paye')
+    movements = Mouvement.objects.all().order_by('date_paye')
     progressive_total = 0
     data = []
 
     for movement in movements:
         if movement.type == 'R':
             progressive_total += movement.montant
-            inflow = movement.montant
-            outflow = ''
         else:
             progressive_total -= movement.montant
-            inflow = ''
-            outflow = movement.montant
-
-        inscription = movement.inscription
-        if inscription:
-            student = inscription.eleve
-            classe = inscription.classe
-            school = classe.ecole
-        else:
-            student = None
-            classe = None
-            school = None
 
         data.append({
-            'id': movement.id,
             'date': movement.date_paye,
-            'description': movement.causal,
-            'inflow': inflow,
-            'outflow': outflow,
-            'progressive_total': progressive_total,
-            'student': student,
-            'classe': classe,
-            'school': school,
+            'causal': movement.causal,
+            'inflow': movement.montant if movement.type == 'R' else '',
+            'outflow': movement.montant if movement.type == 'D' else '',
+            'progressive_total': progressive_total
         })
 
-    return render(request, 'scuelo/cash/cash_movements.html', {'data': data})
+    return render(request, 'scuelo/cash/cash_flow_report.html', {'data': data})
+
+@login_required
+def accounting_report(request):
+    # Grouping by period (e.g., 1st-15th and 16th-end)
+    start_of_period = datetime.now().replace(day=1)  # Start of the month
+    mid_of_period = datetime.now().replace(day=16)  # Mid of the month
+    
+    grouped_income = Mouvement.objects.filter(
+        Q(type='R'),
+        date_paye__gte=start_of_period
+    ).annotate(period=Case(
+        When(date_paye__lt=mid_of_period, then=Value('1st-15th')),
+        default=Value('16th-end')
+    )).values('period').annotate(total=Sum('montant')).order_by('period')
+
+    return render(request, 'scuelo/cash/accounting_report.html', {'grouped_income': grouped_income})
+
+@login_required
+def export_accounting_report(request):
+    # Exporting the accounting report to CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="accounting_report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Period', 'Total Income'])
+
+    grouped_income = Mouvement.objects.filter(
+        Q(type='R'),
+        date_paye__gte=start_of_period
+    ).annotate(period=Case(
+        When(date_paye__lt=mid_of_period, then=Value('1st-15th')),
+        default=Value('16th-end')
+    )).values('period').annotate(total=Sum('montant')).order_by('period')
+
+    for row in grouped_income:
+        writer.writerow([row['period'], row['total']])
+
+    return response
+
+
+@login_required
+def mouvement_list(request):
+    search_query = request.GET.get('search', '')
+    
+    # Fetch all movements
+    movements = Mouvement.objects.all().order_by('-date_paye')
+    
+    # Apply search filters if search_query is provided
+    if search_query:
+        movements = movements.filter(
+            Q(causal__icontains=search_query) | 
+            Q(note__icontains=search_query) |
+            Q(inscription__eleve__nom__icontains=search_query)
+        )
+    
+    # Update type to 'R' for specific causals
+    for mouvement in movements:
+        if mouvement.causal in ['INS', 'SCO', 'TEN', 'CAN']:
+            mouvement.type = 'R'
+        else:
+            mouvement.type = 'D'
+    
+    return render(request, 'scuelo/mouvement/mouvement_list.html', {
+        'movements': movements,
+        'search_query': search_query
+    })
 
 @login_required
 def add_mouvement(request):
@@ -483,11 +476,10 @@ def add_mouvement(request):
         form = MouvementForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('cash_movements')
+            return redirect('mouvement_list')
     else:
         form = MouvementForm()
-    return render(request, 'scuelo/cash/add_mouvement.html', {'form': form})
-
+    return render(request, 'scuelo/mouvement/add_mouvement.html', {'form': form})
 @login_required
 def update_mouvement(request, pk):
     mouvement = get_object_or_404(Mouvement, pk=pk)
@@ -495,18 +487,19 @@ def update_mouvement(request, pk):
         form = MouvementForm(request.POST, instance=mouvement)
         if form.is_valid():
             form.save()
-            return redirect('cash_movements')
+            return redirect('mouvement_list')
     else:
         form = MouvementForm(instance=mouvement)
-    return render(request, 'scuelo/cash/update_mouvement.html', {'form': form, 'mouvement': mouvement})
+    return render(request, 'scuelo/mouvement/update_mouvement.html', {'form': form, 'mouvement': mouvement})
 
 @login_required
 def delete_mouvement(request, pk):
     mouvement = get_object_or_404(Mouvement, pk=pk)
     if request.method == 'POST':
         mouvement.delete()
-        return redirect('cash_movements')
-    return render(request, 'scuelo/cash/delete_mouvement.html', {'mouvement': mouvement})
+        return redirect('mouvement_list')
+    return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement})
+
 
 @login_required
 def delay_list(request):
