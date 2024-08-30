@@ -13,6 +13,5 @@ urlpatterns = [
     path('sics/', sics_site.urls),
     path('accounts/', include('accounts.urls')),
     path("homepage/", include('scuelo.urls')),
-     path('reports/', include('report_builder.urls'))
-    
+
 ] + static(settings.STATIC_URL)
