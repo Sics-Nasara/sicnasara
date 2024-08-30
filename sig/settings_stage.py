@@ -10,8 +10,8 @@ DEBUG = True
 
 SITE_NAME = 'SICS NASARA STAGE'
 
-SITE_DOMAIN = 'sics-stage.nasaraperilburkina.org'
-ALLOWED_HOSTS.append('sics-stage.nasaraperilburkina.org')
+SITE_DOMAIN = 'sics-stage-cl.nasaraperilburkina.org'
+ALLOWED_HOSTS.append('sics-stage-cl.nasaraperilburkina.org')
 SECRET_KEY = STAGE_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = STAGE_DATABASE_PASSWORD

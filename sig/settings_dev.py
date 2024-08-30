@@ -10,8 +10,8 @@ DEBUG = True
 
 SITE_NAME = 'SICS NASARA DEV'
 
-SITE_DOMAIN = 'sics_dev.nasaraperilburkina.org'
-ALLOWED_HOSTS.append('sics_dev.nasaraperilburkina.org')
+SITE_DOMAIN = 'sics-dev-cl.nasaraperilburkina.org'
+ALLOWED_HOSTS.append('sics-dev-cl.nasaraperilburkina.org')
 SECRET_KEY = DEV_SECRET_KEY
 
 DATABASES['default']['PASSWORD'] = DEV_DATABASE_PASSWORD

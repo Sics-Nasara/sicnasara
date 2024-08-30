@@ -25,9 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = PROD_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['sics.nasaraperilburkina.org', '127.0.0.1', 'sig.c4k.it']
+SITE_DOMAIN = 'sicscl.nasaraperilburkina.org'
+ALLOWED_HOSTS = ['sicscl.nasaraperilburkina.org', '127.0.0.1']
 
 
 # Application definition
