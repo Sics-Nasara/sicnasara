@@ -18,6 +18,6 @@ psycopg2-binary = "*"
 uwsgi = "*"
 fontawesomefree = "*"
 openpyexcel = "*"
-report_builder = "*"
+django-report-builder = "*"
 [dev-packages]
 
