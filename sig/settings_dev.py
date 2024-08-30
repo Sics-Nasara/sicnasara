@@ -23,7 +23,7 @@ DATABASES = {
     }
 }
 
-CSRF_TRUSTED_ORIGINS = ['https://sics_dev.nasaraperilburkina.org']
+CSRF_TRUSTED_ORIGINS = ['https://sics-dev-cl.nasaraperilburkina.org']
 
 LOGGING_BASE_DIR = '/var/log/sicsnasara/dev/'
 for h in LOGGING["handlers"]:
