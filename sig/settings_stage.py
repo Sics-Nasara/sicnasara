@@ -17,7 +17,7 @@ SECRET_KEY = STAGE_SECRET_KEY
 DATABASES['default']['PASSWORD'] = STAGE_DATABASE_PASSWORD
 DATABASES['default']['NAME'] = 'sicsnasara_stage'
 
-CSRF_TRUSTED_ORIGINS = ['http://sics-stage-cl.nasaraperilburkina.org']
+CSRF_TRUSTED_ORIGINS = ['https://sics-stage-cl.nasaraperilburkina.org']
 
 LOGGING_BASE_DIR = '/var/log/sicsnasara/stage/'
 for h in LOGGING["handlers"]:
