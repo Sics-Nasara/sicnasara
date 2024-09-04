@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from .keep_safe import STAGE_SECRET_KEY, STAGE_DATABASE_PASSWORD
+
+from .keep_safe import PROD_SECRET_KEY, DEV_DATABASE_PASSWORD
+
 
 import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,13 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = STAGE_SECRET_KEY
+
+SECRET_KEY = PROD_SECRET_KEY
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-SITE_DOMAIN = 'https://sics-stage-cl.nasaraperilburkina.org/'
-ALLOWED_HOSTS = ['https://sics-stage-cl.nasaraperilburkina.org/', '127.0.0.1']
+
+SITE_DOMAIN = 'sicscl.nasaraperilburkina.org'
+ALLOWED_HOSTS = ['sicscl.nasaraperilburkina.org', '127.0.0.1']
 
 
 # Application definition
@@ -91,7 +96,9 @@ DATABASES = {
         'NAME': 'sicsnasara_dev',
         'HOST': 'localhost',
         'USER': 'nasara',
-        'PASSWORD': STAGE_DATABASE_PASSWORD,
+
+        'PASSWORD': DEV_DATABASE_PASSWORD,
+
         'PORT': '5432',
     }
 }
@@ -129,7 +136,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-CSRF_TRUSTED_ORIGINS = ['https://sics-stage-cl.nasaraperilburkina.org/']
+
+CSRF_TRUSTED_ORIGINS = ['https://sicscl.nasaraperilburkina.org']
+
 
 LOGGING_BASE_DIR = '/var/log/sicsnasara/prod/'
 LOGGING = {
