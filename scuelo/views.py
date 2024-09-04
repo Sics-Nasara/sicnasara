@@ -79,6 +79,15 @@ def class_detail(request, pk):
         'breadcrumbs': breadcrumbs
     })
 
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from .models import Eleve, Inscription, Mouvement, StudentLog
+from .forms import PaiementPerStudentForm
+from django.urls import reverse
+from django.db.models import Sum
+
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -86,6 +95,8 @@ def student_detail(request, pk):
     payments = Mouvement.objects.filter(inscription__eleve=student)
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
     current_class = student.current_class
+    
+    # Check if current_class is None
     if current_class:
         breadcrumbs = [
             ('/', 'Home'),
@@ -99,8 +110,28 @@ def student_detail(request, pk):
             (reverse('home'), 'Classes'),
             ('#', f"{student.nom} {student.prenom}")
         ]
+    
     form = PaiementPerStudentForm()
     logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
+    
+    # Handle receipt printing
+    if request.method == 'POST' and 'print_receipt' in request.POST:
+        payment_id = request.POST.get('payment_id')
+        payment = get_object_or_404(Mouvement, pk=payment_id)
+
+        # Render receipt template to HTML
+        html_string = render_to_string('scuelo/paiements/receipt.html', {'student': student, 'payment': payment})
+
+        # Generate PDF
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        # Create a HttpResponse object with the appropriate PDF headers.
+        response = HttpResponse(result, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename=receipt_{student.nom}_{student.prenom}_{payment.id}.pdf'
+        
+        return response
+
     return render(request, 'scuelo/students/studentdetail.html', {
         'student': student,
         'inscriptions': inscriptions,
@@ -362,7 +393,6 @@ def update_paiement(request, pk):
         form = PaiementPerStudentForm(instance=paiement)
 
     return render(request, 'scuelo/paiements/updatepaiment.html', {'form': form, 'student': student})
-
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
     model = Mouvement
@@ -378,53 +408,61 @@ class UniformPaymentListView(ListView):
 
         # Group payments by class
         classes = {}
-        total_uniforms = 0
+        total_uniforms_across_classes = 0
 
         for payment in payments:
             classe = payment.inscription.classe.nom
             student = payment.inscription.eleve
             school_type = payment.inscription.classe.type.type_ecole  # Assuming you have this attribute for school type
+            cs_py = student.cs_py  # Assuming 'cs_py' contains 'CS' for Caisse Scolaire
 
             if classe not in classes:
-                classes[classe] = {}
+                classes[classe] = {
+                    'students': {},
+                    'total_uniforms': 0,
+                    'total_amount': 0
+                }
 
-            if student not in classes[classe]:
-                classes[classe][student] = {
+            if student not in classes[classe]['students']:
+                classes[classe]['students'][student] = {
                     'nom': student.nom,
                     'prenom': student.prenom,
-                    'payments': [],
                     'uniform_count': 0,
                     'total_amount': 0,
                 }
 
-            # Determine uniform count based on payment amount and school type
-            if school_type in ['P', 'S', 'L']:  # Assuming 'P' for Primaire, 'S' for Secondaire, 'L' for Lycée
-                if payment.montant == 4500:
-                    uniform_count = 2
-                elif payment.montant == 2250:
+            # Determine uniform count based on payment amount, school type, and CS status
+            uniform_count = 0
+            if cs_py == 'CS':
+                # For students with 'CS' status
+                if school_type == 'P' and payment.montant == 2250:
                     uniform_count = 1
-                else:
-                    uniform_count = 0
-            elif school_type == 'M':  # Assuming 'M' for Maternelle
-                if payment.montant == 4000:
-                    uniform_count = 2
-                elif payment.montant == 2000:
+                elif school_type == 'M' and payment.montant == 2000:
                     uniform_count = 1
-                else:
-                    uniform_count = 0
             else:
-                uniform_count = 0
+                # For other students without 'CS' status
+                if school_type in ['P', 'S', 'L']:  # Primaire, Secondaire, Lycée
+                    if payment.montant == 4500:
+                        uniform_count = 2
+                    elif payment.montant == 2250:
+                        uniform_count = 1
+                elif school_type == 'M':  # Maternelle
+                    if payment.montant == 4000:
+                        uniform_count = 2
+                    elif payment.montant == 2000:
+                        uniform_count = 1
 
-            classes[classe][student]['payments'].append(payment)
-            classes[classe][student]['uniform_count'] += uniform_count
-            classes[classe][student]['total_amount'] += payment.montant
-            total_uniforms += uniform_count
+            # Update student and class data
+            classes[classe]['students'][student]['uniform_count'] += uniform_count
+            classes[classe]['students'][student]['total_amount'] += payment.montant
+            classes[classe]['total_uniforms'] += uniform_count
+            classes[classe]['total_amount'] += payment.montant
+            total_uniforms_across_classes += uniform_count
 
+        # Pass the context to the template
         context['classes'] = classes
-        context['total_uniforms'] = total_uniforms
+        context['total_uniforms'] = total_uniforms_across_classes
         return context
-
-
 
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentCreateView(CreateView):
