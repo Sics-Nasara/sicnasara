@@ -12,7 +12,17 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseRedirect
 from weasyprint import HTML
+import base64
+import matplotlib.pyplot as plt
+from io import BytesIO
+import seaborn as sns
+from django.db import models
+from django.utils import timezone
+from datetime import datetime
+from django.db.models import Sum, Case, When, Value
+from django.db.models.functions import TruncDay
 # Models and Forms
+from django.utils.timezone import now
 from .forms import (
     PaiementPerStudentForm, EleveUpdateForm, MouvementForm,
     EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
@@ -479,29 +489,70 @@ from django.shortcuts import render
 from django.db.models import Sum, Q
 from datetime import timedelta, datetime
 import csv
+import io
 from django.http import HttpResponse
+
+from django.utils import timezone
 
 @login_required
 def cash_flow_report(request):
-    movements = Mouvement.objects.all().order_by('date_paye')
-    progressive_total = 0
-    data = []
+    # Get all movements for the current year
+    current_date = now()
+    movements = Mouvement.objects.filter(date_paye__year=current_date.year)
+    
+    # Calculate key metrics
+    total_revenue = movements.filter(type='R').aggregate(total=Sum('montant'))['total'] or 0
+    total_expenses = movements.filter(type='D').aggregate(total=Sum('montant'))['total'] or 0
+    net_cash_flow = total_revenue - total_expenses
+    
+    # Group by months for trend analysis
+    monthly_data = movements.values('date_paye__month').annotate(
+        total_inflow=Sum('montant', filter=models.Q(type='R')),
+        total_outflow=Sum('montant', filter=models.Q(type='D'))
+    ).order_by('date_paye__month')
+    
+    # Create Monthly Cash Flow Chart
+    months = [month['date_paye__month'] for month in monthly_data]
+    inflow = [month['total_inflow'] or 0 for month in monthly_data]
+    outflow = [month['total_outflow'] or 0 for month in monthly_data]
 
-    for movement in movements:
-        if movement.type == 'R':
-            progressive_total += movement.montant
-        else:
-            progressive_total -= movement.montant
+    plt.figure(figsize=(10, 6))
+    plt.plot(months, inflow, marker='o', label='Inflow')
+    plt.plot(months, outflow, marker='o', label='Outflow')
+    plt.title('Monthly Cash Flow')
+    plt.xlabel('Month')
+    plt.ylabel('Amount')
+    plt.legend()
 
-        data.append({
-            'date': movement.date_paye,
-            'causal': movement.causal,
-            'inflow': movement.montant if movement.type == 'R' else '',
-            'outflow': movement.montant if movement.type == 'D' else '',
-            'progressive_total': progressive_total
-        })
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    monthly_cash_flow_chart = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
 
-    return render(request, 'scuelo/cash/cash_flow_report.html', {'data': data})
+    # Income vs Expenses Pie Chart
+    labels = ['Revenue', 'Expenses']
+    sizes = [total_revenue, total_expenses]
+    colors = ['#28a745', '#dc3545']
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title('Revenue vs Expenses')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    income_vs_expenses_chart = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
+
+    context = {
+        'total_revenue': total_revenue,
+        'total_expenses': total_expenses,
+        'net_cash_flow': net_cash_flow,
+        'monthly_cash_flow_chart': monthly_cash_flow_chart,
+        'income_vs_expenses_chart': income_vs_expenses_chart,
+    }
+    return render(request, 'scuelo/cash/cash_flow_report.html', context)
 
 @login_required
 def accounting_report(request):

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from .keep_safe import PROD_SECRET_KEY, DEV_DATABASE_PASSWORD
+from .keep_safe import PROD_SECRET_KEY, STAGE_DATABASE_PASSWORD
 
 import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = PROD_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 SITE_DOMAIN = 'sicscl.nasaraperilburkina.org'
 ALLOWED_HOSTS = ['sicscl.nasaraperilburkina.org', '127.0.0.1']
@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'sicsnasara_dev',
         'HOST': 'localhost',
         'USER': 'nasara',
-        'PASSWORD': DEV_DATABASE_PASSWORD,
+        'PASSWORD': STAGE_DATABASE_PASSWORD,
         'PORT': '5432',
     }
 }
