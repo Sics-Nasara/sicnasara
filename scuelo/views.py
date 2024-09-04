@@ -12,6 +12,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseRedirect
 from weasyprint import HTML
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+from .models import Eleve, Inscription, Mouvement, StudentLog
+from .forms import PaiementPerStudentForm
+
+from django.db.models import Sum
 import base64
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -89,14 +97,7 @@ def class_detail(request, pk):
         'breadcrumbs': breadcrumbs
     })
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from weasyprint import HTML
-from .models import Eleve, Inscription, Mouvement, StudentLog
-from .forms import PaiementPerStudentForm
-from django.urls import reverse
-from django.db.models import Sum
+
 
 @login_required
 def student_detail(request, pk):

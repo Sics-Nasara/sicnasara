@@ -5,7 +5,7 @@ from .views import (
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView, ClasseCreateView,
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView, TarifListView,
     TarifCreateView, TarifUpdateView, delay_list, UniformPaymentListView, print_receipt ,
-     TarifDeleteView 
+     TarifDeleteView , login_view
     
 )
 
@@ -18,7 +18,7 @@ urlpatterns = [
     path('financial-management/', views.financial_management, name='financial_management'),
     path('reporting/', views.reporting, name='reporting'),
     path('document-management/', views.document_management, name='document_management'),
-    path('login/', views.login_view, name='login'),
+    path('login/', login_view, name='login'),
 
     path('update_paiement/<int:pk>/', views.update_paiement, name='update_paiement'),
     path('add_paiement/<int:pk>/', views.add_payment, name='add_paiement'),
