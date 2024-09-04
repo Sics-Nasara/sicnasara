@@ -1,0 +1,83 @@
+{% extends "../layout.html" %}
+
+
+
+{% block content %}
+<style>
+    /* attendance.css */
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="date"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+</style>
+<form method="post">
+    {% csrf_token %}
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required><br>
+    
+    <label for="status">Status:</label>
+    <select id="status" name="status" required>
+        <option value="present">Present</option>
+        <option value="absent">Absent</option>
+        <option value="late">Late</option>
+    </select><br>
+    
+    <fieldset>
+        <legend>Students:</legend>
+        {% for student in students %}
+            <label>
+                <input type="checkbox" name="students" value="{{ student.id }}"> {{ student.nom }} {{ student.prenom }}
+            </label><br>
+        {% endfor %}
+    </fieldset>
+    
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock content %}

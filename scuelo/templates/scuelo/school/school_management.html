@@ -1,0 +1,219 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+<style>
+    .form-control {
+        border-radius: 20px;
+        padding-left: 20px;
+        padding-right: 40px;
+    }
+
+    .breadcrumb {
+        background-color: #f8f9fa;
+        border-radius: .25rem;
+    }
+
+    .breadcrumb-item a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    .container h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #343a40;
+    }
+
+    .container h2 {
+        font-size: 1.75rem;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        color: #343a40;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .table-responsive {
+        margin-top: 20px;
+    }
+
+    .table th {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .icon-btn {
+        border: none;
+        background: none;
+        color: #007bff;
+        cursor: pointer;
+    }
+
+    .icon-btn:hover {
+        color: #0056b3;
+    }
+
+    .icon-btn i {
+        font-size: 1.25rem;
+    }
+
+    .modal-lg {
+        max-width: 800px;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-header .btn-close {
+        background-color: #fff;
+        border-radius: 50%;
+        padding: 5px;
+    }
+
+    .modal-header .btn-close:hover {
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .btn-primary {
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+</style>
+
+{% block content %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Manage Students</li>
+</ol>
+<div class="">
+    <h1>Manage schools  </h1>
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSchoolModal">
+            Add School
+        </button>
+    </div>
+
+    <!-- List of Schools -->
+    <h2>List of Schools</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover table-sm">
+            <thead>
+                <tr>
+                    <th>School Name</th>
+                    <th>City</th>
+                    <th>Contact Name</th>
+                    <th>Contact Email</th>
+                    <th>Number of Students</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for school in schools %}
+                <tr>
+                    <td>{{ school.nom }}</td>
+                    <td>{{ school.ville }}</td>
+                    <td>{{ school.nom_du_referent }} {{ school.prenom_du_referent }}</td>
+                    <td>{{ school.email_du_referent }}</td>
+                    <td>{{ school.num_students }}</td>
+                    <td>
+                        <a href="{% url 'school_detail' school.pk %}" class="btn btn-info btn-sm">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'school_update' school.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-pencil-alt"></i>
+
+                        </a>
+                        <a href="{% url 'school_delete' school.pk %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add School Modal -->
+<div class="modal fade" id="addSchoolModal" tabindex="-1" aria-labelledby="addSchoolModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSchoolModalLabel">Add School</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-school-form" method="post" action="{% url 'school_create' %}">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary">Add School</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $('#add-school-form').on('submit', function(event){
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response){
+                    // Close modal and refresh the page or update the list
+                    $('#addSchoolModal').modal('hide');
+                    location.reload(); // This will refresh the page
+                },
+                error: function(response){
+                    // Handle error
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

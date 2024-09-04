@@ -1,0 +1,11 @@
+
+{% extends "../../layout.html" %}
+{% block content %}
+    <h1>Delete Mouvement</h1>
+    <p>Are you sure you want to delete this mouvement?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Yes, delete it</button>
+        <a href="{% url 'mouvement_list' %}">Cancel</a>
+    </form>
+{% endblock %}

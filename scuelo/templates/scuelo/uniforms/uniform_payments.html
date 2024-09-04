@@ -1,0 +1,109 @@
+{% extends "../../layout.html" %}
+
+<style>
+    /* General table styling */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 20px;
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
+    
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #34495e;
+        color: white;
+        font-weight: bold;
+    }
+    
+    td {
+        background-color: #f9f9f9;
+    }
+
+    /* Zebra striping for table rows */
+    tr:nth-child(even) td {
+        background-color: #f2f2f2;
+    }
+
+    /* Hover effect for rows */
+    tr:hover td {
+        background-color: #ecf0f1;
+    }
+
+    /* Page title styling */
+    h2 {
+        font-size: 28px;
+        color: #34495e;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        font-size: 24px;
+        color: #27ae60;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    /* Icon button styling */
+    .icon-btn {
+        background: none;
+        border: none;
+        color: #2980b9;
+        cursor: pointer;
+        font-size: 18px;
+        transition: color 0.3s ease;
+    }
+
+    .icon-btn:hover {
+        color: #1c598a;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        h2, h3 {
+            font-size: 22px;
+        }
+    }
+</style>
+
+{% block content %}
+<h2>Uniform Payments</h2>
+
+{% for class_name, students in classes.items %}
+    <h3>Class: {{ class_name }}</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Number of Uniforms</th>
+                <th>Total Amount</th>
+                <th>Actions</th> <!-- New Actions column -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for student, details in students.items %}
+            <tr>
+                <td>{{ details.nom }} {{ details.prenom }}</td>
+                <td>{{ details.uniform_count }}</td>
+                <td>{{ details.total_amount }}</td>
+                <td>
+                    <a href="{% url 'student_detail' student.id %}" class="icon-btn">
+                        <i class="fas fa-eye"></i> <!-- Font Awesome eye icon -->
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+<h4>Total Uniforms Paid: {{ total_uniforms }}</h4>
+
+{% endblock %}

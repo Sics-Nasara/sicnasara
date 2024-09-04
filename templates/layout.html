@@ -1,0 +1,294 @@
+{% load static %}
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<!-- Include Bootstrap CSS and JS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+
+
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    
+</head>
+
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #A44400;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transition: width 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 60px;
+        }
+        .sidebar .toggle-btn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495E;
+        }
+        .sidebar i {
+            margin-right: 10px;
+        }
+        .sidebar.collapsed a span {
+            display: none;
+        }
+        .sidebar.collapsed a i {
+            margin-right: 0;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .sidebar.collapsed + .content {
+            margin-left: 60px;
+        }
+        .sidebar.collapsed + .custom-navbar {
+            width: calc(100% - 60px);
+        }
+        .navbar {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+        .sidebar.collapsed + .navbar {
+            width: calc(100% - 60px);
+            margin-left: 60px;
+        }
+        .dropdown-container {
+            display: none;
+            background-color: #34495E;
+            padding-left: 8px;
+        }
+        .dropdown-btn.active + .dropdown-container {
+            display: block;
+        }
+        .dropdown-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            outline: none;
+            transition: background-color 0.3s;
+        }
+        .dropdown-btn:hover {
+            background-color: #34495E;
+        }
+        .dropdown-btn .fa-chevron-down {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+        .dropdown-btn.active .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+        .dropdown-item {
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        .dropdown-item:hover {
+            background-color: #34495E;
+        }
+        .logout-section {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        .username {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+    <body>
+    {% block nav %}
+    
+    {% endblock nav %}
+
+    <div class="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">
+            <i class="fas fa-angle-double-left fa-2x"></i>
+        </button>
+        <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">
+            <i class="fas fa-home fa-2x mr-5"></i><span>Home</span>
+        </a>
+        <button class="dropdown-btn">
+            <i class="fas fa-lock fa-2x"></i><span>   Security</span> <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="{% url 'user_list' %}" class="dropdown-item {% if request.path == '/accounts/users/' %}active{% endif %}">
+                <i class="fas fa-users"></i> <span>Users</span>
+            </a>
+            <a href="{% url 'group_list' %}" class="dropdown-item {% if request.path == '/accounts/groups/' %}active{% endif %}">
+                <i class="fas fa-users-cog"></i> <span>Groups</span>
+            </a>
+            <a href="{% url 'rights_management' %}" class="dropdown-item {% if request.path == '/accounts/rights/' %}active{% endif %}">
+                <i class="fas fa-key"></i> <span>Rights</span>
+            </a>
+            <a href="{% url 'recording_on_records' %}" class="dropdown-item {% if request.path == '/scuelo/recording_on_records/' %}active{% endif %}">
+                <i class="fas fa-record-vinyl"></i> <span>Records</span>
+            </a>
+            <a href="{% url 'working_sessions' %}" class="dropdown-item {% if request.path == '/scuelo/working_sessions/' %}active{% endif %}">
+                <i class="fas fa-clock"></i> <span>Sessions</span>
+            </a>
+        </div>
+        <button class="dropdown-btn">
+            <i class="fas fa-money-bill-wave fa-2x"></i> <span>School & Fees</span> <i class="fa fa-chevron-down"></i>
+        </button>
+
+        <div class="dropdown-container">
+            <a href="{% url 'school_management' %}" class="dropdown-item {% if request.path == '/scuelo/school_management/' %}active{% endif %}">
+                <i class="fas fa-school"></i> <span>Manage Schools</span>
+            </a>
+            <a href="{% url 'tarif_list' %}" class="dropdown-item {% if request.path == '/scuelo/types_of_fees/' %}active{% endif %}">
+                <i class="fas fa-money-check-alt"></i> <span>Types of Fees</span>
+            </a>
+          
+            <a href="{% url 'uniform_payments' %}" class="{% if request.path == '/scuelo/uniform_payments/' %}active{% endif %}">
+                <i class="fas fa-tshirt"></i> <span>Uniform Payments</span>
+            </a>
+            <a href="{% url 'delay_list' %}" class="dropdown-item {% if request.path == '/scuelo/delays/' %}active{% endif %}">
+                <i class="fas fa-exclamation-circle"></i> <span>Late Payment</span>
+            </a>
+            <a href="{% url 'print_receipts' %}" class="dropdown-item {% if request.path == '/scuelo/print_receipts/' %}active{% endif %}">
+                <i class="fas fa-receipt"></i> <span>Receipts</span>
+            </a>
+            <a href="{% url 'generic_reports' %}" class="dropdown-item {% if request.path == '/scuelo/generic_reports/' %}active{% endif %}">
+                <i class="fas fa-chart-bar"></i> <span>Generic Reports</span>
+            </a>
+        </div>
+        <button class="dropdown-btn">
+            <i class="fas fa-cash-register fa-2x"></i> <span>Cash</span> <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="{% url 'mouvement_list' %}" class="dropdown-item {% if request.path == '/scuelo/cash/movements/' %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i> <span>Movements</span>
+            </a>
+            <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> <span>Cash Flow Report</span>
+            </a>
+          
+        </div>
+        <button class="dropdown-btn">
+            <i class="fas fa-user-friends fa-2x"></i> <span>Students</span> <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a class="dropdown-item" href="{% url 'offsite_students' %}">Off-site Students</a>
+            <a class="dropdown-item" href="{% url 'directly_managed_students' %}">Directly Mg Students</a>
+            <a class="dropdown-item" href="{% url 'new_student' %}">New Student</a>
+    
+        </div>
+        
+        <div class="logout-section">
+            <div class="username">
+                {{ user.username }}
+            </div>
+            <a class="logout-btn" href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+
+    <div class="content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            var toggleBtn = document.querySelector('.toggle-btn');
+            toggleBtn.classList.toggle('collapsed');
+        }
+
+        // Add an event listener to all sidebar links
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function() {
+                // Remove 'clicked' class from all links
+                document.querySelectorAll('.sidebar a').forEach(link => {
+                    link.classList.remove('clicked');
+                });
+                // Add 'clicked' class to the clicked link
+                this.classList.add('clicked');
+            });
+        });
+
+        // Toggle dropdowns
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+
+        for (i = 0; i < dropdown.length; i++) {
+          dropdown[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+              dropdownContent.style.display = "none";
+            } else {
+              dropdownContent.style.display = "block";
+            }
+          });
+        }
+    </script>
+</body>
+</html>

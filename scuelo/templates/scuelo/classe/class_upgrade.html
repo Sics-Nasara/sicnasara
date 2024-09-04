@@ -1,0 +1,44 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'student_detail' pk=student.pk %}">{{ student.nom }} {{ student.prenom }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Upgrade Class</li>
+</ol>
+
+<div class="container mt-4">
+    <h1>Upgrade Class for {{ student.nom }} {{ student.prenom }}</h1>
+    <form method="post" action="{% url 'class_upgrade' pk=student.pk %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Upgrade Class</button>
+            <a href="{% url 'student_detail' pk=student.pk %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const schoolSelect = document.getElementById('id_new_school');
+        const classSelect = document.getElementById('id_new_class');
+
+        schoolSelect.addEventListener('change', function () {
+            const schoolId = this.value;
+            fetch(`/homepage/load_classes/?school_id=${schoolId}`)
+                .then(response => response.json())
+                .then(data => {
+                    classSelect.innerHTML = '<option value="">Select class</option>';
+                    data.forEach(function (classe) {
+                        const option = document.createElement('option');
+                        option.value = classe.id;
+                        option.textContent = classe.nom;
+                        classSelect.appendChild(option);
+                    });
+                });
+        });
+    });
+</script>
+{% endblock %}

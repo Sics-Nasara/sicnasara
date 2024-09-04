@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        
+        .login-container {
+            background-color: #A44400;
+            padding: 40px;  /* Increased padding */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;  /* Increased width */
+            text-align: center;
+            color: white;
+        }
+        
+        .login-container img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-container form input[type="text"],
+        .login-container form input[type="password"] {
+            padding: 15px;  /* Increased padding */
+            margin: 15px 0;  /* Increased margin */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;  /* Increased font size */
+        }
+        
+        .login-container form input[type="text"]:focus,
+        .login-container form input[type="password"]:focus {
+            border-color: #A44400;
+            outline: none;
+        }
+        
+        .login-container form button {
+            padding: 15px;  /* Increased padding */
+            border: none;
+            border-radius: 4px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 18px;  /* Increased font size */
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .login-container form button:hover {
+            background-color: #b32d37;
+        }
+        
+        .error-message {
+            color: yellow;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h3>Bienvenue à SICS Nasara</h3>
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+        {% if form.errors %}
+            <div class="error-message">
+                <p class='text-danger'>Veuillez vérifier vos informations ....</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

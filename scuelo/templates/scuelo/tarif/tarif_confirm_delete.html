@@ -1,0 +1,14 @@
+{% extends "../../layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Delete Tarif</h2>
+    <p>Are you sure you want to delete this tarif?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'tarif_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

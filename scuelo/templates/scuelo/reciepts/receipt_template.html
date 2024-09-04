@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 12pt;
+        }
+        .receipt-container {
+            width: 100%;
+            max-width: 720px; /* Approximate B5 width */
+            padding: 20px;
+            margin: 0 auto;
+            border: 1px solid #000;
+        }
+        .header, .footer {
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 18pt;
+        }
+        .header p {
+            margin: 2px 0;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .content .details {
+            margin-bottom: 20px;
+        }
+        .details h3 {
+            margin-bottom: 10px;
+        }
+        .details p {
+            margin: 4px 0;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+        .signature, .stamp {
+            margin-top: 50px;
+        }
+        .signature-space, .stamp-space {
+            border-top: 1px solid #000;
+            width: 40%;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 5px;
+        }
+        .signature-space {
+            float: left;
+        }
+        .stamp-space {
+            float: right;
+        }
+        .clear {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <h1>School Name</h1>
+            <p>Address Line 1</p>
+            <p>Address Line 2</p>
+            <p>Phone: (xxx) xxx-xxxx</p>
+        </div>
+
+        <div class="content">
+            <div class="details">
+                <h3>Receipt</h3>
+                <p><strong>Student Name:</strong> {{ mouvement.inscription.eleve.nom }} {{ mouvement.inscription.eleve.prenom }}</p>
+                <p><strong>Class:</strong> {{ mouvement.inscription.classe.nom }}</p>
+                <p><strong>School Year:</strong> {{ mouvement.inscription.annee_scolaire.nom }}</p>
+                <p><strong>Tariff Paid:</strong> {{ mouvement.tarif.causal }} - {{ mouvement.tarif.montant }} FCFA</p>
+                <p><strong>Payment Date:</strong> {{ mouvement.date_paye }}</p>
+            </div>
+
+            <div class="total">
+                <p>Total Paid: {{ mouvement.montant }} FCFA</p>
+            </div>
+
+            <div class="signature">
+                <div class="signature-space">
+                    Signature
+                </div>
+                <div class="stamp-space">
+                    Stamp
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for your payment.</p>
+        </div>
+    </div>
+</body>
+</html>

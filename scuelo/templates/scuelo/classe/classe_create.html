@@ -1,0 +1,44 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="addClasseModal" tabindex="-1" aria-labelledby="addClasseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClasseModalLabel">Add Class</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-classe-form" method="post" action="{% url 'classe_create' school_id %}">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Add Class</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#add-classe-form').on('submit', function(event){
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response){
+                    // Close modal and refresh the page or update the list
+                    $('#addClasseModal').modal('hide');
+                    location.reload(); // This will refresh the page
+                },
+                error: function(response){
+                    // Handle error
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>

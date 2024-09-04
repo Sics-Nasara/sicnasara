@@ -1,0 +1,9 @@
+{% extends "../../layout.html" %}
+
+{% block content %}
+  <h2>{{ object.nom }} Details</h2>
+  <!-- Add other school details here -->
+
+  <a href="{% url 'school_update' object.pk %}">Edit School</a>
+  <a href="{% url 'school_delete' object.pk %}" class="btn btn-danger">Delete School</a>
+{% endblock %}

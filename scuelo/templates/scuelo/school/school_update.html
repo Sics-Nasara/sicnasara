@@ -1,0 +1,17 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Update School</li>
+</ol>
+<div class="container">
+    <h1>Update School</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Update School</button>
+    </form>
+</div>
+{% endblock %}
