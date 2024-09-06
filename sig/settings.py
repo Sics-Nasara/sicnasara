@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 
 #from .keep_safe import PROD_SECRET_KEY, DEV_DATABASE_PASSWORD
-from .keep_safe import STAGE_SECRET_KEY, STAGE_DATABASE_PASSWORD
+from .keep_safe import DEV_DATABASE_PASSWORD, DEV_SECRET_KEY
 
 
 import os 
@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = STAGE_SECRET_KEY
+SECRET_KEY = DEV_SECRET_KEY
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -102,7 +102,7 @@ DATABASES = {
         'HOST': 'localhost',
         'USER': 'nasara',
 
-        'PASSWORD': STAGE_DATABASE_PASSWORD,
+        'PASSWORD': DEV_DATABASE_PASSWORD,
 
         'PORT': '5432',
     }
