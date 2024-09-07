@@ -75,7 +75,7 @@ urlpatterns = [
     path('mouvements/delete/<int:pk>/', views.delete_mouvement, name='delete_mouvement'),
     #path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
-
+  
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
 
 ]

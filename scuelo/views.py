@@ -15,7 +15,14 @@ from weasyprint import HTML
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.shortcuts import render
+from django.db.models import Sum, Q
+from datetime import timedelta, datetime
+import csv
+import io
+from django.http import HttpResponse
 
+from django.utils import timezone
 from .models import Eleve, Inscription, Mouvement, StudentLog
 from .forms import PaiementPerStudentForm
 
@@ -486,14 +493,7 @@ class UniformPaymentCreateView(CreateView):
         form.instance.causal = 'TEN'
         return super().form_valid(form)
 
-from django.shortcuts import render
-from django.db.models import Sum, Q
-from datetime import timedelta, datetime
-import csv
-import io
-from django.http import HttpResponse
 
-from django.utils import timezone
 
 @login_required
 def cash_flow_report(request):

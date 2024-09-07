@@ -209,6 +209,8 @@ class Tarif(TimeStampedModel):
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE)
     date_expiration = models.DateField("Date d'expiration")
 
+
+
     def __str__(self):
         return f"{self.causal} {self.montant} {self.classe}"
     
@@ -222,6 +224,7 @@ class Mouvement(TimeStampedModel):
         ("A", "A"),
         ("B", "B"),
     )
+    
     CAUSAL = (
         ("INS", "Inscription"),
         ("SCO", "Scolarite"),
