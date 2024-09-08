@@ -44,9 +44,9 @@ class Command(BaseCommand):
             me1, _ = TypeClasse.objects.get_or_create(nom='1me', ordre=15, type_ecole='L')
             term, _ = TypeClasse.objects.get_or_create(nom='Term', ordre=16, type_ecole='L')
 
-            ecole_interne, _ = Ecole.objects.get_or_create(nom= 'SIG', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='', externe=False)
-            ecole_externe_1, _ = Ecole.objects.get_or_create(nom= '', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='')
-            ecole_externe_2, _ = Ecole.objects.get_or_create(nom= '', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='')
+            ecole_interne, _ = Ecole.objects.get_or_create(nom= 'Bisongo du coeur', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='', externe=False)
+            #ecole_externe_1, _ = Ecole.objects.get_or_create(nom= '', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='')
+            #ecole_externe_2, _ = Ecole.objects.get_or_create(nom= '', ville='', nom_du_referent='', prenom_du_referent='', email_du_referent='', telephone_du_referent='', note='')
 
             Classe.objects.get_or_create(ecole=ecole_interne, type=ps, nom='PS',  legacy_id= '_PK-PS-Nas')
             Classe.objects.get_or_create(ecole=ecole_interne, type=ms, nom='MS',  legacy_id= '_PK-MS-Nas')

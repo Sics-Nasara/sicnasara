@@ -30,7 +30,7 @@ SECRET_KEY = DEV_SECRET_KEY
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 #SITE_DOMAIN = 'sicscl.nasaraperilburkina.org'

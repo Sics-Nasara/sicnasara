@@ -95,6 +95,10 @@ class Classe(TimeStampedModel):
     def __str__(self):
         return '%s %s' % (self.nom, self.type.get_type_ecole_display())
 
+
+    def get_latest_tariffs(self):
+        return self.tarifs.order_by('-version').distinct('causal')
+    
     @property
     def sco_exigible(self):
         total_tarifs = Tarif.objects.filter(classe=self).aggregate(total=Sum('montant'))['total'] or 0
@@ -209,6 +213,15 @@ class Tarif(TimeStampedModel):
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE)
     date_expiration = models.DateField("Date d'expiration")
 
+    
+    tranche_1_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
+    tranche_1_due_date = models.DateField(blank = True , null = True )
+
+    tranche_2_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
+    tranche_2_due_date = models.DateField(blank = True , null = True )
+
+    tranche_3_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
+    tranche_3_due_date = models.DateField(blank = True , null = True )
 
 
     def __str__(self):
