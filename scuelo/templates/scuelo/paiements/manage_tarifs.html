@@ -1,0 +1,41 @@
+{% extends "../../layout.html" %}
+{% load crispy_forms_tags %}
+
+<h2>Manage Tariffs for {{ classe.nom }}</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tarif in tarifs %}
+        <tr>
+            <td>{{ tarif.get_type_frais_display }}</td>
+            <td>{{ tarif.montant }}</td>
+            <td>{{ tarif.date_expiration }}</td>
+            <td>
+                <a href="{% url 'update_tarif' tarif.pk %}" class="btn btn-warning">Edit</a>
+                <form action="{% url 'delete_tarif' tarif.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No tariffs found for this class.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success">Add Tariff</button>
+</form>

@@ -3,9 +3,9 @@ from . import views
 from .views import (
     StudentListView, StudentCreateView, SchoolManagementView, SchoolCreateView,
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView, ClasseCreateView,
-    ClasseDetailView, ClasseUpdateView, ClasseDeleteView
-     , UniformPaymentListView, print_receipt  , TarifManagementView , TarifCreateView
-      , login_view , TarifUpdateView
+    ClasseDetailView, ClasseUpdateView, ClasseDeleteView, TarifListView,
+    TarifCreateView, TarifUpdateView , UniformPaymentListView, print_receipt ,
+     TarifDeleteView , login_view
     
 )
 
@@ -13,7 +13,11 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('class/<int:pk>/', views.class_detail, name='class_detail'),
 
-
+    path('student-management/', views.student_management, name='student_management'),
+    path('teacher-management/', views.teacher_management, name='teacher_management'),
+    path('financial-management/', views.financial_management, name='financial_management'),
+    path('reporting/', views.reporting, name='reporting'),
+    path('document-management/', views.document_management, name='document_management'),
     path('login/', login_view, name='login'),
 
     path('update_paiement/<int:pk>/', views.update_paiement, name='update_paiement'),
@@ -21,11 +25,13 @@ urlpatterns = [
 
     path('student_update/<int:pk>/', views.student_update, name='student_update'),  # Add this line
     path('logout/', views.logout_view, name='logout'),
-
-
+    path('recording_on_records/', views.recording_on_records, name='recording_on_records'),
+    path('working_sessions/', views.working_sessions, name='working_sessions'),
 
     path('uniform_payments/', UniformPaymentListView.as_view(), name='uniform_payments'),
-
+    path('print_receipts/', views.print_receipts, name='print_receipts'),
+    path('generic_reports/', views.generic_reports, name='generic_reports'),
+    path('export_for_accounting/', views.export_for_accounting, name='export_for_accounting'),
 
     path('offsite_students/', views.offsite_students, name='offsite_students'),
     path('directly_managed_students/', StudentListView.as_view(), name='directly_managed_students'),
@@ -34,8 +40,13 @@ urlpatterns = [
 
     path('class_upgrade/<int:pk>/', views.class_upgrade, name='class_upgrade'),
 
+    path('start_school_year/', views.start_school_year, name='start_school_year'),
+    path('teacher_registry/', views.teacher_registry, name='teacher_registry'),
+    path('class_teachers_association/', views.class_teachers_association, name='class_teachers_association'),
 
-  
+    path('student_documents/', views.student_documents, name='student_documents'),
+    path('teacher_documents/', views.teacher_documents, name='teacher_documents'),
+    path('accounting_documents/', views.accounting_documents, name='accounting_documents'),
 
     path('school_management/', SchoolManagementView.as_view(), name='school_management'),
     path('schools/create/', SchoolCreateView.as_view(), name='school_create'),
@@ -49,7 +60,11 @@ urlpatterns = [
     path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
     path('load_classes/', views.load_classes, name='load_classes'),
     # Other URLs
- 
+    path('types_of_fees/', TarifListView.as_view(), name='tarif_list'),
+    path('types_of_fees/add/', TarifCreateView.as_view(), name='tarif_create'),
+    path('types_of_fees/<int:pk>/update/', TarifUpdateView.as_view(), name='tarif_update'),
+    path('tarifs/update/<int:pk>/', TarifUpdateView.as_view(), name='tarif_update'),
+    path('tarifs/delete/<int:pk>/', TarifDeleteView.as_view(), name='tarif_delete'),
 
  
      path('cash/flow_report/', views.cash_flow_report, name='cash_flow_report'),
@@ -62,8 +77,4 @@ urlpatterns = [
   
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
 
-    path('class/<int:pk>/manage-tarifs/', TarifManagementView.as_view(), name='manage_tarifs'),
-    path('class/<int:pk>/add-tarif/', TarifCreateView.as_view(), name='tarif_create'),
-    path('tarif/<int:pk>/update/', TarifUpdateView.as_view(), name='tarif_update'),
-    #path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='tarif_delete'),
 ]

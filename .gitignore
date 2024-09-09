@@ -5,5 +5,10 @@
 __pycache__/
 dbsig.sqlite3
 /sig/keep_safe.py
+/sig/models_draft.py
+/sig/urls_draft.py
+/sig/forms_draft.py
+
+
 /test_draft
 logonassara-removebg-preview.png

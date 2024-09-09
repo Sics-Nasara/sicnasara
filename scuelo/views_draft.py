@@ -97,15 +97,12 @@ def home(request):
 def class_detail(request, pk):
     classe = get_object_or_404(Classe, pk=pk)
     students = Eleve.objects.filter(inscription__classe=classe)
-    tarifs = classe.tarifs.all()  # Access related tarifs through the related name
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
     return render(request, 'scuelo/students/listperclasse.html', {
         'classe': classe,
         'students': students,
-        'tarifs': tarifs,
         'breadcrumbs': breadcrumbs
     })
-
 
 
 
@@ -113,10 +110,7 @@ def class_detail(request, pk):
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
-    
-    # Filter payments using the correct field relationship
     payments = Mouvement.objects.filter(inscription__eleve=student)
-    
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
     current_class = student.current_class
     
@@ -165,7 +159,7 @@ def student_detail(request, pk):
         'form': form,
         'logs': logs,
     })
- 
+
 @login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -500,6 +494,7 @@ class UniformPaymentCreateView(CreateView):
         return super().form_valid(form)
 
 
+
 @login_required
 def cash_flow_report(request):
     # Get all movements for the current year
@@ -559,41 +554,6 @@ def cash_flow_report(request):
         'income_vs_expenses_chart': income_vs_expenses_chart,
     }
     return render(request, 'scuelo/cash/cash_flow_report.html', context)
-
-class TarifManagementView(ListView):
-    model = Tarif
-    template_name = 'scuelo/paiements/manage_tarifs.html'
-    context_object_name = 'tarifs'
-
-    def get_queryset(self):
-        classe = get_object_or_404(Classe, pk=self.kwargs['pk'])
-        return Tarif.objects.filter(classe=classe)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['classe'] = get_object_or_404(Classe, pk=self.kwargs['pk'])
-        return context
-
-class TarifCreateView(CreateView):
-    model = Tarif
-    form_class = TarifForm
-    template_name = 'scuelo/paiements/tarif_form.html'
-
-    def get_success_url(self):
-        return reverse_lazy('manage_tarifs', kwargs={'pk': self.kwargs['pk']})
-
-    def form_valid(self, form):
-        classe = get_object_or_404(Classe, pk=self.kwargs['pk'])
-        form.instance.classe = classe
-        return super().form_valid(form)
-
-class TarifUpdateView(UpdateView):
-    model = Tarif
-    form_class = TarifForm
-    template_name = 'scuelo/tarifs/tarif_form.html'
-
-    def get_success_url(self):
-        return reverse_lazy('manage_tarifs', kwargs={'pk': self.object.classe.pk})
 
 @login_required
 def accounting_report(request):
@@ -700,6 +660,51 @@ def delete_mouvement(request, pk):
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement})
 
 
+@login_required
+def delay_list(request):
+    data = {}
+    schools = Ecole.objects.all()
+    for school in schools:
+        classes = Classe.objects.filter(ecole=school)
+        class_data = {}
+        for classe in classes:
+            students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
+            student_data = []
+            for student in students:
+                sco_paid = Mouvement.objects.filter(inscription__eleve=student, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                sco_exigible = Tarif.objects.filter(classe=classe, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                can_paid = Mouvement.objects.filter(inscription__eleve=student, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+                can_exigible = Tarif.objects.filter(classe=classe, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+
+                diff_sco = sco_paid - sco_exigible
+                diff_can = can_paid - can_exigible
+                retards = diff_sco + diff_can
+
+                if retards != 0:  # Only include students with a balance
+                    percentage_paid = int(100 * (sco_paid + can_paid) / (sco_exigible + can_exigible)) if (sco_exigible + can_exigible) > 0 else 0
+
+                    student_data.append({
+                        'id': student.id,
+                        'nom': student.nom,
+                        'prenom': student.prenom,
+                        'sex': student.sex,
+                        'cs_py': student.cs_py,
+                        'sco_paid': sco_paid,
+                        'sco_exigible': sco_exigible,
+                        'diff_sco': diff_sco,
+                        'can_paid': can_paid,
+                        'can_exigible': can_exigible,
+                        'diff_can': diff_can,
+                        'retards': retards,
+                        'percentage_paid': percentage_paid,
+                        'note': student.note_eleve,
+                    })
+            if student_data:  # Only add classes with students who have late payments
+                class_data[classe.nom] = student_data
+        if class_data:  # Only add schools with classes that have students with late payments
+            data[school.nom] = class_data
+    return render(request, 'scuelo/paiements/late_payments_report.html', {'data': data})
+
 
 # =======================
 # 5. School Management
@@ -776,6 +781,34 @@ def load_classes(request):
 # =======================
 # 6. Financial Management
 # =======================
+@method_decorator(login_required, name='dispatch')
+class TarifListView(ListView):
+    model = Tarif
+    template_name = 'scuelo/tarif/tarif_list.html'
+    context_object_name = 'tarifs'
+
+    def get_queryset(self):
+        return Tarif.objects.all().order_by('classe__ecole__nom', 'classe__nom', 'annee_scolaire__nom', 'causal')
+
+@method_decorator(login_required, name='dispatch')
+class TarifCreateView(CreateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+@method_decorator(login_required, name='dispatch')
+class TarifUpdateView(UpdateView):
+    model = Tarif
+    form_class = TarifForm
+    template_name = 'scuelo/tarif/tarif_form.html'
+    success_url = reverse_lazy('tarif_list')
+
+@method_decorator(login_required, name='dispatch')
+class TarifDeleteView(DeleteView):
+    model = Tarif
+    template_name = 'scuelo/tarif/tarif_confirm_delete.html'
+    success_url = reverse_lazy('tarif_list')
 
 
 def print_receipt(request, mouvement_id):
@@ -791,3 +824,82 @@ def print_receipt(request, mouvement_id):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'filename="receipt_{mouvement.id}.pdf"'
     return response
+
+# =======================
+# 7. Others (Not Completed)
+# =======================
+@login_required
+def important_info(request):
+    return render(request, 'scuelo/important_info.html')
+
+@login_required
+def user_management(request):
+    return render(request, 'scuelo/user_management.html')
+
+@login_required
+def student_management(request):
+    return render(request, 'scuelo/student_management.html')
+
+@login_required
+def teacher_management(request):
+    return render(request, 'scuelo/teacher_management.html')
+
+@login_required
+def financial_management(request):
+    return render(request, 'scuelo/financial_management.html')
+
+@login_required
+def reporting(request):
+    return render(request, 'scuelo/reporting.html')
+
+@login_required
+def document_management(request):
+    return render(request, 'scuelo/document_management.html')
+
+def recording_on_records(request):
+    # Your logic for recording_on_records
+    return render(request, 'scuelo/recording_on_records.html')
+
+def working_sessions(request):
+    # Your logic for working_sessions
+    return render(request, 'scuelo/working_sessions.html')
+
+def school_uniforms(request):
+    # Your logic for school_uniforms
+    return render(request, 'scuelo/school/school_uniforms.html')
+
+def print_receipts(request):
+    # Your logic for print_receipts
+    return render(request, 'scuelo/print_receipts.html')
+
+def generic_reports(request):
+    # Your logic for generic_reports
+    return render(request, 'scuelo/generic_reports.html')
+
+def export_for_accounting(request):
+    # Your logic for export_for_accounting
+    return render(request, 'scuelo/export_for_accounting.html')
+
+def start_school_year(request):
+    # Your logic for start_school_year
+    return render(request, 'scuelo/start_school_year.html')
+
+def teacher_registry(request):
+    # Your logic for teacher_registry
+    return render(request, 'scuelo/teacher_registry.html')
+
+def class_teachers_association(request):
+    # Your logic for class_teachers_association
+    return render(request, 'scuelo/class_teachers_association.html')
+
+def student_documents(request):
+    # Your logic for student_documents
+    return render(request, 'scuelo/student_documents.html')
+
+def teacher_documents(request):
+    # Your logic for teacher_documents
+    return render(request, 'scuelo/teacher_documents.html')
+
+def accounting_documents(request):
+    # Your logic for accounting_documents
+    return render(request, 'scuelo/accounting_documents.html')

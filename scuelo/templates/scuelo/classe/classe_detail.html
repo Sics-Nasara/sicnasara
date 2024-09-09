@@ -44,6 +44,9 @@
     {% endfor %}
 </ol>
 
+<a href="{% url 'manage_tarifs' classe.pk %}" class="btn btn-primary">
+    <i class="fas fa-money-check-alt"></i> Gérer les Tarifs
+</a>
 <!-- Container with Reduced Margins -->
 <div class="container mt-4" style="max-width: 95%; margin: 0 auto;">
     <div class="row">
@@ -91,49 +94,32 @@
             </div>
         </div>
     </div>
-    <div class="row mt-1">
-        <div class="col-md-12 mb-5">
-            <div class="d-flex justify-content-between">
-                <h4>Paiements de {{ student.nom }}</h4> 
-                <!-- Button to trigger modal -->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPaiementModal">
-                    <i class="fa fa-plus"></i>
-                    Ajouter paiement
-                </button>
-            </div>
-            <table class="table table-striped table-bordered payments-table mt-4">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Date</th>
-                        <th>Causal</th>
-                        <th>Montant</th>
-                        <th>Note</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for payment in payments %}
-                    <tr>
-                        <td>{{ payment.date_paye }}</td>
-                        <td>{{ payment.causal }}</td>
-                        <td>{{ payment.montant }}</td>
-                        <td>{{ payment.note|default:'-' }}</td>
-                        <td>
-                            <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2"><strong>Total paiement:</strong></td>
-                        <td><strong>{{ total_payment }}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-</div> 
+    <h2>{{ classe.nom }}</h2>
+    <h2>{{ classe.nom }}</h2>
+    <h3>Tariffs</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Causal</th>
+                <th>Amount</th>
+                <th>1st Installment</th>
+                <th>1st Due Date</th>
+                <!-- Add other columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for tarif in latest_tariffs %}
+            <tr>
+                <td>{{ tarif.causal }}</td>
+                <td>{{ tarif.montant }}</td>
+                <td>{{ tarif.tranche_1_montant }}</td>
+                <td>{{ tarif.tranche_1_due_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
 
 <!-- Modal for Adding Payment -->
 <div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">

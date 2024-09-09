@@ -209,19 +209,10 @@ class Tarif(TimeStampedModel):
     )
     causal = models.CharField(max_length=5, choices=CAUSAL, db_index=True)
     montant = models.PositiveBigIntegerField()
-    classe = models.ForeignKey(Classe, on_delete=models.CASCADE, blank=True, null=True)
+    classe = models.ForeignKey(Classe, on_delete=models.CASCADE,   related_name='tarifs' , blank=True, null=True)
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE)
-    date_expiration = models.DateField("Date d'expiration")
+    date_expiration = models.DateField("Date d'expiration or tranche dates")
 
-    
-    tranche_1_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
-    tranche_1_due_date = models.DateField(blank = True , null = True )
-
-    tranche_2_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
-    tranche_2_due_date = models.DateField(blank = True , null = True )
-
-    tranche_3_montant = models.PositiveBigIntegerField( blank = True ,  null = True)
-    tranche_3_due_date = models.DateField(blank = True , null = True )
 
 
     def __str__(self):

@@ -187,12 +187,8 @@
             <a href="{% url 'rights_management' %}" class="dropdown-item {% if request.path == '/accounts/rights/' %}active{% endif %}">
                 <i class="fas fa-key"></i> <span>Rights</span>
             </a>
-            <a href="{% url 'recording_on_records' %}" class="dropdown-item {% if request.path == '/scuelo/recording_on_records/' %}active{% endif %}">
-                <i class="fas fa-record-vinyl"></i> <span>Records</span>
-            </a>
-            <a href="{% url 'working_sessions' %}" class="dropdown-item {% if request.path == '/scuelo/working_sessions/' %}active{% endif %}">
-                <i class="fas fa-clock"></i> <span>Sessions</span>
-            </a>
+           
+           
         </div>
         <button class="dropdown-btn">
             <i class="fas fa-money-bill-wave fa-2x"></i> <span>School & Fees</span> <i class="fa fa-chevron-down"></i>
@@ -202,16 +198,12 @@
             <a href="{% url 'school_management' %}" class="dropdown-item {% if request.path == '/scuelo/school_management/' %}active{% endif %}">
                 <i class="fas fa-school"></i> <span>Manage Schools</span>
             </a>
-            <a href="{% url 'tarif_list' %}" class="dropdown-item {% if request.path == '/scuelo/types_of_fees/' %}active{% endif %}">
-                <i class="fas fa-money-check-alt"></i> <span>Types of Fees</span>
-            </a>
+          
           
             <a href="{% url 'uniform_payments' %}" class="{% if request.path == '/scuelo/uniform_payments/' %}active{% endif %}">
                 <i class="fas fa-tshirt"></i> <span>Uniform Payments</span>
             </a>
-            <a href="{% url 'delay_list' %}" class="dropdown-item {% if request.path == '/scuelo/delays/' %}active{% endif %}">
-                <i class="fas fa-exclamation-circle"></i> <span>Late Payment</span>
-            </a>
+          
     
         
         </div>
