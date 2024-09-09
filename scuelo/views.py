@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseRedirect
 from weasyprint import HTML
+from django.forms import modelformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -47,7 +48,6 @@ from scuelo.models import (
     Eleve, Classe, Inscription, StudentLog,
     AnneeScolaire, Mouvement, Ecole, Tarif
 )
-
 from django.db.models import Sum, Q
 from datetime import timedelta, datetime
 import csv
@@ -560,19 +560,40 @@ def cash_flow_report(request):
     }
     return render(request, 'scuelo/cash/cash_flow_report.html', context)
 
-class TarifManagementView(ListView):
-    model = Tarif
-    template_name = 'scuelo/paiements/manage_tarifs.html'
-    context_object_name = 'tarifs'
+@login_required
+def manage_tarifs(request, pk):
+    classe = get_object_or_404(Classe, pk=pk)
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)  # Make sure to replace this with how you get the current year
 
-    def get_queryset(self):
-        classe = get_object_or_404(Classe, pk=self.kwargs['pk'])
-        return Tarif.objects.filter(classe=classe)
+    # Modelformset for Tarif model
+    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=1, can_delete=True)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['classe'] = get_object_or_404(Classe, pk=self.kwargs['pk'])
-        return context
+    if request.method == 'POST':
+        formset = TarifFormset(request.POST, queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
+
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.classe = classe
+                instance.annee_scolaire = current_annee_scolaire
+                instance.save()
+
+            # Delete instances marked for deletion
+            for obj in formset.deleted_objects:
+                obj.delete()
+
+            return redirect('class_detail', pk=classe.pk)
+        else:
+            print("Formset errors: ", formset.errors)
+    else:
+        formset = TarifFormset(queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
+
+    return render(request, 'scuelo/tarif/tarif_list.html', {
+        'classe': classe,
+        'formset': formset,
+    })
+    #return render(request, 'scuelo/tarif/tarif_list.html', context)
+
 
 class TarifCreateView(CreateView):
     model = Tarif
@@ -587,14 +608,25 @@ class TarifCreateView(CreateView):
         form.instance.classe = classe
         return super().form_valid(form)
 
+# Update an existing tariff
+@method_decorator(login_required, name='dispatch')
 class TarifUpdateView(UpdateView):
     model = Tarif
     form_class = TarifForm
-    template_name = 'scuelo/tarifs/tarif_form.html'
+    template_name = 'tarifs/tarif_form.html'
 
     def get_success_url(self):
         return reverse_lazy('manage_tarifs', kwargs={'pk': self.object.classe.pk})
+    
+# Delete a tariff
+@method_decorator(login_required, name='dispatch')
+class TarifDeleteView(DeleteView):
+    model = Tarif
+    template_name = 'tarifs/tarif_confirm_delete.html'
 
+    def get_success_url(self):
+        return reverse_lazy('manage_tarifs', kwargs={'pk': self.object.classe.pk})
+    
 @login_required
 def accounting_report(request):
     # Grouping by period (e.g., 1st-15th and 16th-end)

@@ -215,6 +215,8 @@ class Tarif(TimeStampedModel):
 
 
 
+    
+
     def __str__(self):
         return f"{self.causal} {self.montant} {self.classe}"
     

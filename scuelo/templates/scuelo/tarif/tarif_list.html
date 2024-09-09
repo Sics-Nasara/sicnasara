@@ -1,36 +1,57 @@
 {% extends "../../layout.html" %}
-{% load static %}
+{% load crispy_forms_tags %}
+
+<style>
+    .card {
+        padding: 20px;
+        background-color: #007bff;
+        color: #ffffff;
+    }
+    .tarif-form input {
+        margin-bottom: 10px;
+    }
+    .tarif-form .date-field {
+        width: 150px;
+    }
+    .section-title {
+        font-weight: bold;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+</style>
 
 {% block content %}
-<div class="container">
-    <h2>Tarifs</h2>
-    <a href="{% url 'tarif_create' %}" class="btn btn-primary mb-3">Add New Tarif</a>
+<h2>Manage Tarifs for {{ classe.nom }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
     <table class="table table-bordered">
+        {{ formset.management_form }} <!-- This is very important! -->
         <thead>
             <tr>
-                <th>Class</th>
-                <th>School Year</th>
                 <th>Causal</th>
-                <th>Amount</th>
-                <th>Expiration Date</th>
-                <th>Actions</th>
+                <th>Montant</th>
+                <th>Date Expiration</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
-            {% for tarif in tarifs %}
+            {% for form in formset %}
                 <tr>
-                    <td>{{ tarif.classe }}</td>
-                    <td>{{ tarif.annee_scolaire.nom }}</td>
-                    <td>{{ tarif.get_causal_display }}</td>
-                    <td>{{ tarif.montant }}</td>
-                    <td>{{ tarif.date_expiration }}</td>
-                    <td>
-                        <a href="{% url 'tarif_update' tarif.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="{% url 'tarif_delete' tarif.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
+                    <td>{{ form.causal }}</td>
+                    <td>{{ form.montant }}</td>
+                    <td>{{ form.date_expiration }}</td>
+                    <td>{{ form.DELETE }}</td>
+                    
+                    <!-- Make sure the ID field is included but hidden -->
+                    {{ form.id }}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-</div>
+    
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
 {% endblock %}

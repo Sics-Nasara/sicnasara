@@ -1,10 +1,41 @@
 {% extends "../../layout.html" %}
+
 {% load crispy_forms_tags %}
+
 {% block content %}
-  <h2>{% if form.instance.pk %}Update{% else %}Add{% endif %} Fee</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Save</button>
-  </form>
+<div class="container">
+    <h2>{{ form.instance.pk|default:"Add" }} Tarif</h2>
+    <h2>Manage Tarifs for {{ classe.nom }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <table class="table table-bordered">
+            {{ formset.management_form }}
+            <thead>
+                <tr>
+                    <th>Causal</th>
+                    <th>Montant</th>
+                    <th>Date Expiration</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                    <tr>
+                        <td>{{ form.causal }}</td>
+                        <td>{{ form.montant }}</td>
+                        <td>{{ form.date_expiration }}</td>
+                        <td>{{ form.DELETE }}</td>
+                        
+                        <!-- Make sure the ID field is included but hidden -->
+                        {{ form.id }}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
 {% endblock %}

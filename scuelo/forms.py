@@ -150,13 +150,12 @@ class AnneeScolaireForm(forms.ModelForm):
             'date_finale': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'actuel': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-
 class TarifForm(forms.ModelForm):
     class Meta:
         model = Tarif
-        fields = ['causal', 'montant', 'classe', 'annee_scolaire', 'date_expiration']
+        fields = ['causal', 'montant', 'date_expiration']
         widgets = {
-            'date_expiration': forms.DateInput(attrs={'type': 'date'}),
+            'date_expiration': forms.TextInput(attrs={'type': 'date'}),
         }
 
 class MouvementForm(forms.ModelForm):
