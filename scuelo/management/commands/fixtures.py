@@ -61,6 +61,12 @@ class Command(BaseCommand):
                                                 date_finale='2024-06-01', actuel=False)
             AnneeScolaire.objects.get_or_create(nom='Année scolaire 2024-25', date_initiale='2024-09-01',
                                                 date_finale='2025-06-01', actuel=True)
+            AnneeScolaire.objects.get_or_create(nom='Année scolaire 2019-20', date_initiale='2019-09-01', date_finale='2020-06-01', actuel=False)
+            AnneeScolaire.objects.get_or_create(nom='Année scolaire 2020-21', date_initiale='2020-09-01', date_finale='2021-06-01', actuel=False)
+            AnneeScolaire.objects.get_or_create(nom='Année scolaire 2021-22', date_initiale='2021-09-01', date_finale='2022-06-01', actuel=False)
+            AnneeScolaire.objects.get_or_create(nom='Année scolaire 2022-23', date_initiale='2022-09-01', date_finale='2023-06-01', actuel=False)
+            AnneeScolaire.objects.get_or_create(nom='NULL', date_initiale=None, date_finale=None, actuel=False)
+            
             gr_operateur, _ = Group.objects.get_or_create(name='Opérateur')
             superuser, _ = User.objects.get_or_create(username='superuser',
                                                    first_name='Super',

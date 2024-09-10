@@ -174,22 +174,28 @@
         <a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">
             <i class="fas fa-home fa-2x mr-5"></i><span>Home</span>
         </a>
-        <button class="dropdown-btn">
-            <i class="fas fa-lock fa-2x"></i><span>   Security</span> <i class="fa fa-chevron-down"></i>
+         <button class="dropdown-btn">
+            <i class="fas fa-user-friends fa-2x"></i> <span>Students</span> <i class="fa fa-chevron-down"></i>
         </button>
         <div class="dropdown-container">
-            <a href="{% url 'user_list' %}" class="dropdown-item {% if request.path == '/accounts/users/' %}active{% endif %}">
-                <i class="fas fa-users"></i> <span>Users</span>
-            </a>
-            <a href="{% url 'group_list' %}" class="dropdown-item {% if request.path == '/accounts/groups/' %}active{% endif %}">
-                <i class="fas fa-users-cog"></i> <span>Groups</span>
-            </a>
-            <a href="{% url 'rights_management' %}" class="dropdown-item {% if request.path == '/accounts/rights/' %}active{% endif %}">
-                <i class="fas fa-key"></i> <span>Rights</span>
-            </a>
-           
-           
+            <a class="dropdown-item" href="{% url 'offsite_students' %}">Off-site Students</a>
+            <a class="dropdown-item" href="{% url 'directly_managed_students' %}">Directly Mg Students</a>
+            <a class="dropdown-item" href="{% url 'new_student' %}">New Student</a>
+    
         </div>
+        <button class="dropdown-btn">
+            <i class="fas fa-cash-register fa-2x"></i> <span>Cash</span> <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="{% url 'mouvement_list' %}" class="dropdown-item {% if request.path == '/scuelo/cash/movements/' %}active{% endif %}">
+                <i class="fas fa-exchange-alt"></i> <span>Movements</span>
+            </a>
+            <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
+                <i class="fas fa-chart-line"></i> <span>Cash Flow Report</span>
+            </a>
+          
+        </div>
+
         <button class="dropdown-btn">
             <i class="fas fa-money-bill-wave fa-2x"></i> <span>School & Fees</span> <i class="fa fa-chevron-down"></i>
         </button>
@@ -207,27 +213,25 @@
     
         
         </div>
+       
         <button class="dropdown-btn">
-            <i class="fas fa-cash-register fa-2x"></i> <span>Cash</span> <i class="fa fa-chevron-down"></i>
+            <i class="fas fa-lock fa-2x"></i><span>   Security</span> <i class="fa fa-chevron-down"></i>
         </button>
         <div class="dropdown-container">
-            <a href="{% url 'mouvement_list' %}" class="dropdown-item {% if request.path == '/scuelo/cash/movements/' %}active{% endif %}">
-                <i class="fas fa-exchange-alt"></i> <span>Movements</span>
+            <a href="{% url 'user_list' %}" class="dropdown-item {% if request.path == '/accounts/users/' %}active{% endif %}">
+                <i class="fas fa-users"></i> <span>Users</span>
             </a>
-            <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
-                <i class="fas fa-chart-line"></i> <span>Cash Flow Report</span>
+            <a href="{% url 'group_list' %}" class="dropdown-item {% if request.path == '/accounts/groups/' %}active{% endif %}">
+                <i class="fas fa-users-cog"></i> <span>Groups</span>
             </a>
-          
+            <a href="{% url 'rights_management' %}" class="dropdown-item {% if request.path == '/accounts/rights/' %}active{% endif %}">
+                <i class="fas fa-key"></i> <span>Rights</span>
+            </a>
+           
+           
         </div>
-        <button class="dropdown-btn">
-            <i class="fas fa-user-friends fa-2x"></i> <span>Students</span> <i class="fa fa-chevron-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a class="dropdown-item" href="{% url 'offsite_students' %}">Off-site Students</a>
-            <a class="dropdown-item" href="{% url 'directly_managed_students' %}">Directly Mg Students</a>
-            <a class="dropdown-item" href="{% url 'new_student' %}">New Student</a>
-    
-        </div>
+     
+       
         
         <div class="logout-section">
             <div class="username">

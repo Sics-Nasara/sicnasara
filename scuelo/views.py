@@ -96,17 +96,29 @@ def home(request):
 
 @login_required
 def class_detail(request, pk):
+    # Get the class based on the provided primary key (pk)
     classe = get_object_or_404(Classe, pk=pk)
-    students = Eleve.objects.filter(inscription__classe=classe)
-    tarifs = classe.tarifs.all()  # Access related tarifs through the related name
+
+    # Get the current academic year (AnneeScolaire)
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+    # Get students registered in this class during the current academic year
+    # This is done via the Inscription model (which links Eleve to Classe and AnneeScolaire)
+    inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+    students = [inscription.eleve for inscription in inscriptions]
+
+    # Get tarifs related to this class for the current academic year
+    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+
+    # Breadcrumb navigation (for template rendering)
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
+
     return render(request, 'scuelo/students/listperclasse.html', {
         'classe': classe,
-        'students': students,
-        'tarifs': tarifs,
+        'students': students,  # List of students registered this year
+        'tarifs': tarifs,  # Tarifs related to this class for this year
         'breadcrumbs': breadcrumbs
     })
-
 
 
 
@@ -279,17 +291,26 @@ def change_school(request, pk):
 
 @login_required
 def offsite_students(request):
+    # Get the current school year
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+    # Filter offsite students by school year and exclude those in the specified school
     offsite_students = Eleve.objects.filter(
-        ~Q(inscription__classe__ecole__nom__iexact="SIG")
+        ~Q(inscription__classe__ecole__nom__iexact="Bisongo du coeur"),
+        inscription__annee_scolaire=current_annee_scolaire
     ).distinct().order_by('nom', 'prenom')
 
+    # Calculate total payments for each student
     for student in offsite_students:
         student.total_paiements = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
 
     context = {
-        'offsite_students': offsite_students
+        'offsite_students': offsite_students,
+        'current_annee_scolaire': current_annee_scolaire
     }
     return render(request, 'scuelo/offsite_students.html', context)
+
+
 
 @method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
