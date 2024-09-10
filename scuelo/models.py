@@ -99,6 +99,37 @@ class Classe(TimeStampedModel):
     def get_latest_tariffs(self):
         return self.tarifs.order_by('-version').distinct('causal')
     
+    def get_progressive_by_student(self):
+        # Sum tariffs (SCO1, SCO2, SCO3) for each student in the class
+        return self.tarifs.filter(causal__in=["SCO1", "SCO2", "SCO3"]).aggregate(total=Sum('montant'))['total'] or 0
+
+    def get_progressive_by_class(self):
+        # Get the progressive payment based on confirmed PY students
+        confirmed_students = Eleve.objects.filter(
+            inscription__classe=self,
+            condition_eleve="CONF",
+            cs_py="P"
+        )
+        return confirmed_students.count()
+
+    def get_expected_payment(self):
+        # Calculate the total amount expected for the class based on confirmed students
+        confirmed_students = Eleve.objects.filter(
+            inscription__classe=self,
+            condition_eleve="CONF",
+            cs_py="P"
+        )
+        total_tarif = self.tarifs.filter(causal__in=["SCO1", "SCO2", "SCO3"]).aggregate(total=Sum('montant'))['total'] or 0
+        return confirmed_students.count() * total_tarif
+    
+    def confirmed_py_count(self):
+        # Count the number of PY students who have confirmed their enrollment
+        return Eleve.objects.filter(
+            inscription__classe=self,
+            condition_eleve="CONF",
+            cs_py="P"
+        ).count()
+    
     @property
     def sco_exigible(self):
         total_tarifs = Tarif.objects.filter(classe=self).aggregate(total=Sum('montant'))['total'] or 0

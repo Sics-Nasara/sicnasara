@@ -17,10 +17,11 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q , F
 from datetime import timedelta, datetime
 import csv
 import io
+
 from django.http import HttpResponse
 
 from django.utils import timezone
@@ -563,10 +564,21 @@ def cash_flow_report(request):
 @login_required
 def manage_tarifs(request, pk):
     classe = get_object_or_404(Classe, pk=pk)
-    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)  # Make sure to replace this with how you get the current year
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+    # Get the number of students in the class
+    student_count = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).count()
+
+    # Get the number of students that are both CONF and PY
+    confirmed_py_count = Inscription.objects.filter(
+        classe=classe,
+        annee_scolaire=current_annee_scolaire,
+        eleve__condition_eleve="CONF",  # Filtering students that are CONF
+        eleve__cs_py="P"  # Filtering students that are PY
+    ).count()
 
     # Modelformset for Tarif model
-    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=1, can_delete=True)
+    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=3, can_delete=True)
 
     if request.method == 'POST':
         formset = TarifFormset(request.POST, queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
@@ -588,11 +600,48 @@ def manage_tarifs(request, pk):
     else:
         formset = TarifFormset(queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
 
+    # Calculate cumulative amounts for each type
+    cumulative_data = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).aggregate(
+        total_inscription=Sum('montant', filter=Q(causal='INS')),
+        total_sco1=Sum('montant', filter=Q(causal='SCO1')),
+        total_sco2=Sum('montant', filter=Q(causal='SCO2')),
+        total_sco3=Sum('montant', filter=Q(causal='SCO3')),
+    )
+
+    # Calculate cumulative progress per eleve and tranche
+    progress_per_eleve = sum([
+        cumulative_data.get('total_inscription') or 0,
+        cumulative_data.get('total_sco1') or 0,
+        cumulative_data.get('total_sco2') or 0,
+        cumulative_data.get('total_sco3') or 0
+    ])
+
+    tranche_data = {
+        'first_tranche': cumulative_data.get('total_sco1') or 0,
+        'second_tranche': (cumulative_data.get('total_sco1') or 0) + (cumulative_data.get('total_sco2') or 0),
+        'third_tranche': (cumulative_data.get('total_sco1') or 0) + (cumulative_data.get('total_sco2') or 0) + (cumulative_data.get('total_sco3') or 0)
+    }
+
+    # Calculate the expected payment for the class at each tranche (confirmed PY students)
+    expected_payment = {
+        'first_tranche': tranche_data['first_tranche'] * confirmed_py_count,
+        'second_tranche': tranche_data['second_tranche'] * confirmed_py_count,
+        'third_tranche': tranche_data['third_tranche'] * confirmed_py_count
+    }
+
+    # Calculate total actual payments (optional if you want to display actual payments)
+    total_actual_payments = Mouvement.objects.filter(inscription__classe=classe, inscription__annee_scolaire=current_annee_scolaire).aggregate(total=Sum('montant'))['total'] or 0
+
     return render(request, 'scuelo/tarif/tarif_list.html', {
         'classe': classe,
         'formset': formset,
+        'progress_per_eleve': progress_per_eleve,
+        'tranche_data': tranche_data,
+        'student_count': student_count,  # Pass student count to template
+        'confirmed_py_count': confirmed_py_count,  # Pass CONF PY count to template
+        'expected_payment': expected_payment,
+        'total_actual_payments': total_actual_payments  # Pass total actual payments to template
     })
-    #return render(request, 'scuelo/tarif/tarif_list.html', context)
 
 
 class TarifCreateView(CreateView):

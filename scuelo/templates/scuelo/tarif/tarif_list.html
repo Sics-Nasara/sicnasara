@@ -2,56 +2,164 @@
 {% load crispy_forms_tags %}
 
 <style>
-    .card {
-        padding: 20px;
-        background-color: #007bff;
-        color: #ffffff;
+    .form-container {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
     }
-    .tarif-form input {
+
+    h3 {
+        text-align: center;
+        color: #343a40;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .table th, .table td {
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-submit {
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 20px;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: #0056b3;
+        color: #fff;
+    }
+
+    .progressive-data {
+        background-color: #e9ecef;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .progressive-data p {
+        font-size: 18px;
+        font-weight: bold;
+        color: #007bff;
+        margin: 10px 0;
+    }
+
+    .progressive-data h4 {
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    ul li {
+        font-size: 18px;
+        font-weight: bold;
+        color: #495057;
         margin-bottom: 10px;
     }
-    .tarif-form .date-field {
-        width: 150px;
+
+    .alert {
+        margin-top: 20px;
     }
-    .section-title {
-        font-weight: bold;
-        font-size: 1.5rem;
+
+    .student-info {
         margin-bottom: 20px;
-        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .table input[type="text"], .table input[type="number"], .table input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 16px;
     }
 </style>
 
 {% block content %}
-<h2>Manage Tarifs for {{ classe.nom }}</h2>
-
-<form method="POST">
-    {% csrf_token %}
-    
-    <table class="table table-bordered">
-        {{ formset.management_form }} <!-- This is very important! -->
-        <thead>
-            <tr>
-                <th>Causal</th>
-                <th>Montant</th>
-                <th>Date Expiration</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for form in formset %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ form.causal }}</td>
+                    <th>Causal</th>
+                    <th>Montant (FCFA)</th>
+                    <th>Date d'expiration</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.id }} <!-- Ensure the id field is included for each form -->
+                        {{ form.causal }}
+                    </td>
                     <td>{{ form.montant }}</td>
                     <td>{{ form.date_expiration }}</td>
                     <td>{{ form.DELETE }}</td>
-                    
-                    <!-- Make sure the ID field is included but hidden -->
-                    {{ form.id }}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary btn-submit">Enregistrer les modifications</button>
+    </form>
     
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
-{% endblock %}
+
+    <div class="progressive-data">
+        <h4>Progressive Payments</h4>
+        <p><strong>Total per Student:</strong> {{ progress_per_eleve }} FCFA</p>
+        <p><strong>Confirmed PY Students:</strong> {{ confirmed_py_count }}</p>
+        <p><strong>Expected Payment:</strong> {{ expected_payment }} FCFA</p>
+        <h4>Tranche-wise Payment</h4>
+<ul>
+    <li>1st Tranche: {{ tranche_data.first_tranche }} FCFA</li>
+    <li>2nd Tranche: {{ tranche_data.second_tranche }} FCFA</li>
+    <li>3rd Tranche: {{ tranche_data.third_tranche }} FCFA</li>
+</ul>
+
+        
+    
+        <h4>Uniform Orders</h4>
+        <p><strong>PY Uniforms Ordered:</strong> {{ py_uniforms }}</p>
+        <p><strong>CS Uniforms Ordered:</strong> {{ cs_uniforms }}</p>
+        <p><strong>Expected Payment for PY Tenues:</strong> {{ expected_tenues_py }} FCFA</p>
+        <p><strong>Actual Payment for PY Tenues:</strong> {{ actual_tenues_py }} FCFA</p>
+    
+        <h4>Total Payments</h4>
+        <p><strong>Total Expected for Class:</strong> {{ total_expected_class }} FCFA</p>
+        <p><strong>Total Actual Received:</strong> {{ total_actual_payments }} FCFA</p>
+    </div>
+    
+</div>
+{% endblock content %}
