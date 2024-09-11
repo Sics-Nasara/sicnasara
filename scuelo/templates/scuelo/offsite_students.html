@@ -1,103 +1,5 @@
 {% extends "../layout.html" %}
 
-<style>
-    .table-container {
-        margin: 20px auto;
-        max-width: 100%;
-        overflow-x: auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #343a40;
-        font-weight: bold;
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .table th,
-    .table td {
-        padding: 12px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-        vertical-align: middle;
-    }
-
-    .table th {
-        background-color: #007bff;
-        color: white;
-        text-transform: uppercase;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f1f3f5;
-    }
-
-    .table tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    .btn-info,
-    .btn-warning {
-        padding: 8px 12px;
-        font-size: 14px;
-        border-radius: 20px;
-        transition: all 0.3s;
-    }
-
-    .btn-info:hover {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
-    }
-
-    .btn-warning:hover {
-        background-color: #ffc107;
-        border-color: #ffc107;
-    }
-
-    @media (max-width: 768px) {
-        .table th,
-        .table td {
-            font-size: 12px;
-        }
-
-        .btn {
-            font-size: 12px;
-        }
-    }
-
-    /* Breadcrumb styling */
-    .breadcrumb {
-        background-color: transparent;
-        padding: 10px 0;
-        margin-bottom: 20px;
-    }
-
-    .breadcrumb-item a {
-        color: #007bff;
-    }
-
-    .breadcrumb-item a:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* Center align for no data message */
-    .no-data-message {
-        text-align: center;
-        font-size: 18px;
-        color: #6c757d;
-    }
-</style>
-
 {% block content %}
 <div class="table-container">
     <h1>Liste des élèves hors site</h1>
@@ -112,7 +14,7 @@
                 <th>Date Naissance</th>
                 <th>CS_PY</th>
                 <th>École</th>
-                <th>Paiements</th>
+           
                 <th>Handicap</th>
                 <th>Note</th>
                 <th>Actions</th>
@@ -128,23 +30,19 @@
                 <td>{{ eleve.date_naissance }}</td>
                 <td>{{ eleve.get_cs_py_display }}</td>
                 <td>{{ eleve.school_name }}</td>
-                <td>{% if eleve.total_paiements == 0 %}-{% else %}{{ eleve.total_paiements }}{% endif %}</td>
+             
                 <td>{% if eleve.hand %}{{ eleve.get_hand_display }}{% else %}{% endif %}</td>
                 <td>{{ eleve.note_eleve }}</td>
                 <td>
-                    <a href="{% url 'student_detail' eleve.id %}" class="btn btn-info btn-sm">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="{% url 'student_update' eleve.id %}" class="btn btn-warning btn-sm">
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
+                    <a href="{% url 'student_detail' eleve.id %}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                    <a href="{% url 'student_update' eleve.id %}" class="btn btn-warning btn-sm"><i class="fas fa-pencil-alt"></i></a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p class="no-data-message">Il n'y a pas d'élèves hors site.</p>
+    <p>Il n'y a pas d'élèves hors site.</p>
     {% endif %}
 </div>
 {% endblock %}

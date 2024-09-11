@@ -103,9 +103,13 @@ def class_detail(request, pk):
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
     # Get students registered in this class during the current academic year
-    # This is done via the Inscription model (which links Eleve to Classe and AnneeScolaire)
     inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
     students = [inscription.eleve for inscription in inscriptions]
+
+    # Calculate total payments for each student
+    for student in students:
+        total_payment = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
+        student.total_payment = total_payment
 
     # Get tarifs related to this class for the current academic year
     tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
@@ -119,6 +123,7 @@ def class_detail(request, pk):
         'tarifs': tarifs,  # Tarifs related to this class for this year
         'breadcrumbs': breadcrumbs
     })
+
 
 
 
@@ -294,15 +299,19 @@ def offsite_students(request):
     # Get the current school year
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
-    # Filter offsite students by school year and exclude those in the specified school
-    offsite_students = Eleve.objects.filter(
-        ~Q(inscription__classe__ecole__nom__iexact="Bisongo du coeur"),
-        inscription__annee_scolaire=current_annee_scolaire
-    ).distinct().order_by('nom', 'prenom')
+    # Fetch offsite students by filtering on Inscription and related models
+    inscriptions = Inscription.objects.filter(
+        ~Q(classe__ecole__nom__iexact="Bisongo du coeur"),
+        annee_scolaire=current_annee_scolaire
+    ).select_related('eleve', 'classe__ecole')
 
-    # Calculate total payments for each student
-    for student in offsite_students:
-        student.total_paiements = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
+    # Get the list of offsite students from the inscriptions
+    offsite_students = []
+    for inscription in inscriptions:
+        student = inscription.eleve
+        student.total_paiements = Mouvement.objects.filter(inscription=inscription).aggregate(total=Sum('montant'))['total'] or 0
+        student.school_name = inscription.classe.ecole.nom
+        offsite_students.append(student)
 
     context = {
         'offsite_students': offsite_students,
@@ -751,7 +760,8 @@ def mouvement_list(request):
             Q(inscription__eleve__nom__icontains=search_query)
         )
     
-    # Ensure the causal and type are correctly set
+    # Calculate progressive total (cash register total)
+    progressive_total = 0
     for mouvement in movements:
         if mouvement.tarif and not mouvement.causal:
             mouvement.causal = mouvement.tarif.causal
@@ -763,12 +773,19 @@ def mouvement_list(request):
         else:
             mouvement.type = 'D'
 
-        # Save any changes made during the loop
+        # Calculate the progressive total
+        if mouvement.type == 'R':
+            progressive_total += mouvement.montant
+        elif mouvement.type == 'D':
+            progressive_total -= mouvement.montant
+
+        # Save the progressive total to be displayed in the template
+        mouvement.progressive_total = progressive_total
         mouvement.save()
     
     return render(request, 'scuelo/mouvement/mouvement_list.html', {
         'movements': movements,
-        'search_query': search_query
+        'search_query': search_query,
     })
 
 @login_required

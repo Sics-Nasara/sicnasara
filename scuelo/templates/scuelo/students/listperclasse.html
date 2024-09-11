@@ -200,6 +200,7 @@
                         <th class="sortable" data-sort="sex">Sexe</th>
                         <th class="sortable" data-sort="date_naissance">Date naissance</th>
                         <th class="sortable" data-sort="total_payment">Total payé</th>
+                        <th class="sortable" data-sort="note_eleve">Note</th>
                         <th class="sortable" data-sort="cs_py">CS_PY</th>
                         <th class="sortable" data-sort="hand">Hand</th>
                         <th>Actions</th>
@@ -214,7 +215,14 @@
                         <td data-column="condition">{{ student.get_condition_eleve_display }}</td>
                         <td data-column="sex">{{ student.get_sex_display }}</td>
                         <td data-column="date_naissance">{{ student.date_naissance }}</td>
-                        <td data-column="total_payment">{{ student.total_payment }}</td>
+                        <td data-column="total_payment">
+                            {% if student.total_payment == 0 %}
+                            -
+                            {% else %}
+                            {{ student.total_payment }}
+                            {% endif %}
+                        </td>
+                        <td data-column="note_eleve">{{ student.note_eleve }}</td>
                         <td data-column="cs_py">{{ student.get_cs_py_display }}</td>
                         <td data-column="hand">
                             {% if student.hand %}

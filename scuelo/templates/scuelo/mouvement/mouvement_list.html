@@ -1,6 +1,5 @@
 {% extends "../../layout.html" %}
 
-
 {% block content %}
     <style>
         .table-container {
@@ -60,13 +59,13 @@
         }
     </style>
 
-    <h1>Mouvements List</h1>
+    <h1>Liste des Mouvements</h1>
 
-    <a href="{% url 'add_mouvement' %}" class="add-button">Add Movement</a>
+    <a href="{% url 'add_mouvement' %}" class="add-button">Ajouter Mouvement</a>
 
     <form method="GET">
-        <input type="text" name="search" placeholder="Search" value="{{ search_query }}">
-        <button type="submit">Search</button>
+        <input type="text" name="search" placeholder="Rechercher" value="{{ search_query }}">
+        <button type="submit">Rechercher</button>
     </form>
 
     <div class="table-responsive table-container w-100">
@@ -76,9 +75,10 @@
                     <th>ID</th>
                     <th>Date</th>
                     <th>Causal</th>
-                    <th>Inflow</th>
-                    <th>Outflow</th>
-                    <th>Progressive Total</th>
+                    <th>Entrée (Recette)</th>
+                    <th>Sortie (Dépense)</th>
+                    <th>Total Progressif</th>
+                    <th>Description</th> <!-- Added Description -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -90,7 +90,8 @@
                         <td>{{ mouvement.causal }}</td>
                         <td class="inflow">{% if mouvement.type == 'R' %}{{ mouvement.montant }}{% endif %}</td>
                         <td class="outflow">{% if mouvement.type == 'D' %}{{ mouvement.montant }}{% endif %}</td>
-                        <td>{{ mouvement.progressive_total }}</td>
+                        <td>{{ mouvement.progressive_total }}</td> <!-- Added Progressive Total -->
+                        <td>{{ mouvement.note }}</td> <!-- Added Description (note) -->
                         <td class="action-links">
                             <a href="{% url 'update_mouvement' mouvement.pk %}" class="edit-icon">
                                 <i class="fas fa-edit"></i>
