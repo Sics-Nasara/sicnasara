@@ -8,7 +8,9 @@ dbsig.sqlite3
 /sig/models_draft.py
 /sig/urls_draft.py
 /sig/forms_draft.py
-
-
+scuelo/management/commands/register_deadlines.py
+scuelo/forms_draft.py
 /test_draft
 logonassara-removebg-preview.png
+scuelo/urls_draft.py
+scuelo/views_draft.py

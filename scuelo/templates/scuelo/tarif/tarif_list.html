@@ -1,6 +1,7 @@
 {% extends "../../layout.html" %}
 {% load crispy_forms_tags %}
 
+{% block content %}
 <style>
     .form-container {
         background-color: #f8f9fa;
@@ -53,11 +54,19 @@
     }
 
     .progressive-data {
-        background-color: #e9ecef;
+        background-color: #f0f4f8;
         padding: 25px;
         border-radius: 10px;
         margin-top: 30px;
-        text-align: center;
+        text-align: left;
+    }
+
+    .progressive-data h4 {
+        font-weight: bold;
+        color: #343a40;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
     }
 
     .progressive-data p {
@@ -67,46 +76,62 @@
         margin: 10px 0;
     }
 
-    .progressive-data h4 {
-        font-weight: bold;
-        color: #343a40;
-        margin-bottom: 20px;
-    }
-
-    ul {
+    .progressive-data ul {
         list-style: none;
         padding-left: 0;
     }
 
-    ul li {
+    .progressive-data ul li {
         font-size: 18px;
         font-weight: bold;
         color: #495057;
         margin-bottom: 10px;
     }
 
-    .alert {
-        margin-top: 20px;
+    .section-heading {
+        font-size: 20px;
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
     }
 
-    .student-info {
-        margin-bottom: 20px;
-        font-size: 18px;
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .data-label {
         font-weight: bold;
         color: #495057;
     }
 
-    .table input[type="text"], .table input[type="number"], .table input[type="date"] {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ced4da;
-        border-radius: 5px;
-        font-size: 16px;
+    .data-value {
+        color: #007bff;
+    }
+
+    /* Small screen responsiveness */
+    @media (max-width: 768px) {
+        .table th, .table td {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .btn-submit {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+
+        .progressive-data p {
+            font-size: 16px;
+        }
     }
 </style>
 
-{% block content %}
-<div class="container">
+
+<div class=" form-container">
     <form method="post">
         {% csrf_token %}
         {{ formset.management_form }}
@@ -134,32 +159,81 @@
         </table>
         <button type="submit" class="btn btn-primary btn-submit">Enregistrer les modifications</button>
     </form>
-    
 
     <div class="progressive-data">
-        <h4>Progressive Payments</h4>
-        <p><strong>Total per Student:</strong> {{ progress_per_eleve }} FCFA</p>
-        <p><strong>Confirmed PY Students:</strong> {{ confirmed_py_count }}</p>
-        <p><strong>Expected Payment:</strong> {{ expected_payment }} FCFA</p>
-        <h4>Tranche-wise Payment</h4>
-<ul>
-    <li>1st Tranche: {{ tranche_data.first_tranche }} FCFA</li>
-    <li>2nd Tranche: {{ tranche_data.second_tranche }} FCFA</li>
-    <li>3rd Tranche: {{ tranche_data.third_tranche }} FCFA</li>
-</ul>
+        <h4 class="section-heading">Progressive Payments</h4>
+        <div class="data-row">
+            <span class="data-label">Total per Student:</span>
+            <span class="data-value">{{ progress_per_eleve }} FCFA</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Confirmed PY Students:</span>
+            <span class="data-value">{{ confirmed_py_count }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Expected Payment:</span>
+            <span class="data-value">{{ expected_payment }}</span>
+        </div>
 
+        <h4 class="section-heading">Tranche-wise Payment</h4>
+        <ul>
+            <li>1st Tranche: {{ tranche_data.first_tranche }} FCFA</li>
+            <li>2nd Tranche: {{ tranche_data.second_tranche }} FCFA</li>
+            <li>3rd Tranche: {{ tranche_data.third_tranche }} FCFA</li>
+        </ul>
+
+        <h4 class="section-heading">Uniform Orders</h4>
+        <div class="data-row">
+            <span class="data-label">PY Uniforms Ordered:</span>
+            <span class="data-value">{{ py_uniforms }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">CS Uniforms Ordered:</span>
+            <span class="data-value">{{ cs_uniforms }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Expected Payment for PY Tenues:</span>
+            <span class="data-value">{{ expected_tenues_py }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Actual Payment for PY Tenues:</span>
+            <span class="data-value">{{ actual_tenues_py }}</span>
+        </div>
+
+        <h4 class="section-heading">Total Payments</h4>
+        <div class="data-row">
+            <span class="data-label">Expected Payment (First Tranche):</span>
+            <span class="data-value">{{ expected_payment.first_tranche }} FCFA</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Expected Payment (Second Tranche):</span>
+            <span class="data-value">{{ expected_payment.second_tranche }} FCFA</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Expected Payment (Third Tranche):</span>
+            <span class="data-value">{{ expected_payment.third_tranche }} FCFA</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Total Students:</span>
+            <span class="data-value">{{ student_count }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">CS Students:</span>
+            <span class="data-value">{{ cs_students_count }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">PY Students:</span>
+            <span class="data-value">{{ py_students_count }}</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">Other Students:</span>
+            <span class="data-value">{{ other_students_count }}</span>
+        </div>
         
-    
-        <h4>Uniform Orders</h4>
-        <p><strong>PY Uniforms Ordered:</strong> {{ py_uniforms }}</p>
-        <p><strong>CS Uniforms Ordered:</strong> {{ cs_uniforms }}</p>
-        <p><strong>Expected Payment for PY Tenues:</strong> {{ expected_tenues_py }} FCFA</p>
-        <p><strong>Actual Payment for PY Tenues:</strong> {{ actual_tenues_py }} FCFA</p>
-    
-        <h4>Total Payments</h4>
-        <p><strong>Total Expected for Class:</strong> {{ total_expected_class }} FCFA</p>
-        <p><strong>Total Actual Received:</strong> {{ total_actual_payments }} FCFA</p>
+        <div class="data-row">
+            <span class="data-label">Total Actual Received:</span>
+            <span class="data-value">{{ total_actual_payments }} FCFA</span>
+        </div>
     </div>
-    
 </div>
 {% endblock content %}
