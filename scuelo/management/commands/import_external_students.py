@@ -5,21 +5,28 @@ from openpyxl import load_workbook
 from pathlib import Path
 from django.utils.dateparse import parse_date
 from django.utils import timezone
-from scuelo.models import AnneeScolaire, Eleve, Inscription, Classe, Mouvement, Ecole, TypeClasse
+from scuelo.models import AnneeScolaire,  Eleve, Inscription, Classe, Ecole, TypeClasse
 import datetime
+
 class Command(BaseCommand):
     help = '''Imports data from "External students.xlsx" file.'''
 
     def handle(self, *args, **options):
         BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
         full_path = f'{BASE_DIR}/export_sics/External students.xlsx'
-        print('Import SICS START %s' % full_path)
+        print(f'Import SICS START {full_path}')
         wb = load_workbook(full_path)
         
-        # Load the current and previous school years
+        # Load the current school year
         annee_scolaire_actuel = AnneeScolaire.objects.get(actuel=True)
-        derniere_annee_scolaire = AnneeScolaire.objects.get(actuel=False)
         
+        # Load the most recent past school year (not actuel)
+        derniere_annee_scolaire = AnneeScolaire.objects.filter(actuel=False).order_by('-date_finale').first()
+
+        if not derniere_annee_scolaire:
+            print("Error: Could not find the last school year.")
+            return
+
         # Import data from Scuole sheet
         ws_scuole = wb['Scuole']
         for row in ws_scuole.iter_rows(min_row=2, values_only=True):
@@ -27,45 +34,45 @@ class Command(BaseCommand):
                 new_ecole, created = Ecole.objects.get_or_create(
                     nom=row[1].strip(),  # Strip leading/trailing whitespace
                     defaults={
-                        'ville': 'Unknown',  # Update with actual data if available
-                        'nom_du_referent': 'Unknown',  # Update with actual data if available
-                        'prenom_du_referent': 'Unknown',  # Update with actual data if available
-                        'email_du_referent': 'unknown@example.com',  # Update with actual data if available
-                        'telephone_du_referent': '0000000000',  # Update with actual data if available
+                        'ville': 'Unknown',
+                        'nom_du_referent': 'Unknown',
+                        'prenom_du_referent': 'Unknown',
+                        'email_du_referent': 'unknown@example.com',
+                        'telephone_du_referent': '0000000000',
                         'note': row[3] if row[3] else '',
                         'externe': True
                     }
                 )
-                print(f'Ecole: {new_ecole.nom} created' if created else f'Ecole: {new_ecole.nom} already exists')
+                print(f'Ecole: {new_ecole.nom} {"created" if created else "already exists"}')
             except Exception as ex:
                 print(f'Error creating Ecole: {str(ex)}')
         
         # Manually register classes
         classe_data = [
-            {"legacy_id": "_PK-6me-WP", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "6me"},
-            {"legacy_id": "_PK-6me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "6me"},
-            {"legacy_id": "_PK-6me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "6me"},
-            {"legacy_id": "_PK-5me-WP", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "5me"},
-            {"legacy_id": "_PK-5me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "5me"},
-            {"legacy_id": "_PK-5me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "5me"},
-            {"legacy_id": "_PK-4me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "4me"},
-            {"legacy_id": "_PK-4me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "4me"},
-            {"legacy_id": "_PK-3me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "3me"},
-            {"legacy_id": "_PK-Term-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "Term"},
-            {"legacy_id": "_PK-4me-LPMSBD", "ecole_nom": "Lycee Provincial Molla Sanou de Bobo Dioulasso", "type_classe_nom": "4me"},
-            {"legacy_id": "_PK-CE2-EPCELP", "ecole_nom": "Ecole Primaire Catholique Effata Ludovic Pavoni", "type_classe_nom": "CE2"},
-            {"legacy_id": "_PK-CE2-EPPLE", "ecole_nom": "Ecole Primaire Les Emerites", "type_classe_nom": "CE2"},
-            {"legacy_id": "_PK-CM1-LSB", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "CM1"},
-            {"legacy_id": "_PK-CM1-YAMT", "ecole_nom": "Ecole Yamtenga", "type_classe_nom": "CM1"},
-            # Add any other missing legacy_ids here
-        ]
+        {"legacy_id": "_PK-6me-WP", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "6me"},
+        {"legacy_id": "_PK-6me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "6me"},
+        {"legacy_id": "_PK-6me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "6me"},
+        {"legacy_id": "_PK-5me-WP", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "5me"},
+        {"legacy_id": "_PK-5me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "5me"},
+        {"legacy_id": "_PK-5me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "5me"},
+        {"legacy_id": "_PK-4me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "4me"},
+        {"legacy_id": "_PK-4me-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "4me"},
+        {"legacy_id": "_PK-4me-LPMSBD", "ecole_nom": "Lycee Provincial Molla Sanou de Bobo Dioulasso", "type_classe_nom": "4me"},
+        {"legacy_id": "_PK-CE2-EPCELP", "ecole_nom": "Ecole Primaire Catholique Effata Ludovic Pavoni", "type_classe_nom": "CE2"},
+        {"legacy_id": "_PK-CE2-EPPLE", "ecole_nom": "Ecole Primaire Les Emerites", "type_classe_nom": "CE2"},
+        {"legacy_id": "_PK-CM1-LSB", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "CM1"},
+        {"legacy_id": "_PK-CM1-YAMT", "ecole_nom": "Ecole Yamtenga", "type_classe_nom": "CM1"},
+        {"legacy_id": "_PK-3me-WLM", "ecole_nom": "Ecole WEND LA MANEGDA", "type_classe_nom": "3me"},
+        {"legacy_id": "_PK-Term-LMS", "ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "Term"},
+    ]
+
         
         for data in classe_data:
             try:
                 ecole = Ecole.objects.get(nom=data['ecole_nom'].strip())
                 type_classe, created = TypeClasse.objects.get_or_create(
                     nom=data['type_classe_nom'],
-                    defaults={'ordre': 0, 'type_ecole': 'L'}  # Update with actual data if available
+                    defaults={'ordre': 0, 'type_ecole': 'L'}
                 )
                 new_classe, created = Classe.objects.get_or_create(
                     legacy_id=data['legacy_id'],
@@ -75,7 +82,7 @@ class Command(BaseCommand):
                         'nom': data['type_classe_nom']
                     }
                 )
-                print(f'Classe: {new_classe.nom} created' if created else f'Classe: {new_classe.nom} already exists')
+                print(f'Classe: {new_classe.nom} {"created" if created else "already exists"}')
             except Ecole.DoesNotExist:
                 print(f'Error creating Classe: Ecole named {data["ecole_nom"]} does not exist.')
             except Exception as ex:
@@ -85,10 +92,10 @@ class Command(BaseCommand):
         def parse_date_safe(date_str):
             if date_str is None:
                 return None
-            if isinstance(date_str, str):
-                return parse_date(date_str)
             if isinstance(date_str, (datetime.date, datetime.datetime)):
                 return date_str.date() if isinstance(date_str, datetime.datetime) else date_str
+            if isinstance(date_str, str):
+                return parse_date(date_str)
             return None
         
         # Import data from Studente sheet
@@ -102,7 +109,7 @@ class Command(BaseCommand):
                         'nom': row[5],
                         'prenom': row[4],
                         'date_enquete': parse_date_safe(row[3]),
-                        'condition_eleve': row[6][:4],  # Ensure length is not exceeding the limit
+                        'condition_eleve': row[6][:4],  # Ensure it is max length of 4
                         'sex': row[7],
                         'date_naissance': parse_date_safe(row[8]),
                         'cs_py': row[9],
@@ -113,7 +120,7 @@ class Command(BaseCommand):
                         'note_eleve': row[18] if row[18] else '',
                     }
                 )
-                print(f'Eleve: {new_eleve.nom} {new_eleve.prenom} created' if created else f'Eleve: {new_eleve.nom} {new_eleve.prenom} already exists')
+                print(f"Eleve: {new_eleve.nom} {new_eleve.prenom} {'created' if created else 'updated'}")
                 
                 # Create Inscription
                 Inscription.objects.get_or_create(
@@ -128,4 +135,4 @@ class Command(BaseCommand):
             except Exception as ex:
                 print(f'Error creating Eleve: {str(ex)}')
 
-        print('Import external students END %s' % full_path)
+        print(f'Import external students END {full_path}')

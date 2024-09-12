@@ -199,8 +199,8 @@ class Eleve(TimeStampedModel):
 class AnneeScolaire(TimeStampedModel):
     nom = models.CharField(max_length=100)
     nom_bref = models.CharField(max_length=10, default='')
-    date_initiale = models.DateField(blank=True)
-    date_finale = models.DateField(blank=True)
+    date_initiale = models.DateField(blank=True, null=True)  # Allow null here
+    date_finale = models.DateField(blank=True, null=True)    # Allow null here
     actuel = models.BooleanField(default=False)
 
     def __str__(self):
@@ -243,9 +243,6 @@ class Tarif(TimeStampedModel):
     classe = models.ForeignKey(Classe, on_delete=models.CASCADE,   related_name='tarifs' , blank=True, null=True)
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE)
     date_expiration = models.DateField("Date d'expiration or tranche dates")
-
-
-
     
 
     def __str__(self):
