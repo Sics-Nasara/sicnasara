@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import logging
-
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, User, Permission
 from scuelo.models import Ecole, Classe, AnneeScolaire, TypeClasse
 
-logger = logging.getLogger(__name__)
+# Set up logging configuration
+logging.basicConfig(
+    level=logging.INFO,  # Log INFO and above
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("class_setup.log"),  # Save logs to file
+        logging.StreamHandler()  # Also log to console
+    ]
+)
 
+logger = logging.getLogger(__name__)
 
 def attribuer_tous_autorisations(groups, modelli):
     """Assign all permissions for models to specific groups."""
@@ -19,7 +27,6 @@ def attribuer_tous_autorisations(groups, modelli):
                                                content_type__model=permesso['model']):
                 if p not in group.permissions.all():
                     group.permissions.add(p)
-
 
 class Command(BaseCommand):
     help = '''Inserts class data'''
@@ -44,7 +51,7 @@ class Command(BaseCommand):
             me1, _ = TypeClasse.objects.get_or_create(nom='1me', ordre=15, type_ecole='L')
             term, _ = TypeClasse.objects.get_or_create(nom='Term', ordre=16, type_ecole='L')
 
-            logger.info("Classes created")
+            logger.info("Classes created successfully.")
 
             # Insert internal school
             ecole_interne, _ = Ecole.objects.get_or_create(
@@ -57,8 +64,7 @@ class Command(BaseCommand):
                 note='',
                 externe=False
             )
-
-            logger.info("Internal school created")
+            logger.info("Internal school created successfully.")
 
             # Insert classes for internal school
             Classe.objects.get_or_create(ecole=ecole_interne, type=ps, nom='PS', legacy_id='_PK-PS-Nas')
@@ -71,7 +77,7 @@ class Command(BaseCommand):
             Classe.objects.get_or_create(ecole=ecole_interne, type=cm1, nom='CM1', legacy_id='_PK-CM1-Nas')
             Classe.objects.get_or_create(ecole=ecole_interne, type=cm2, nom='CM2', legacy_id='_PK-CM2-Nas')
 
-            logger.info("Classes for internal school created")
+            logger.info("Classes for internal school created successfully.")
 
             # Insert school years
             AnneeScolaire.objects.get_or_create(nom='Année scolaire 2023-24', date_initiale='2023-09-01', date_finale='2024-06-01', actuel=False)
@@ -88,7 +94,7 @@ class Command(BaseCommand):
                 actuel=False
             )
 
-            logger.info("School years created")
+            logger.info("School years created successfully.")
 
             # Create groups and users
             gr_operateur, _ = Group.objects.get_or_create(name='Opérateur')
@@ -104,7 +110,7 @@ class Command(BaseCommand):
             superuser.set_password('3g3rKD8naG')
             superuser.save()
 
-            logger.info("Superuser created")
+            logger.info("Superuser created successfully.")
 
             # Create operator
             operateur, _ = User.objects.get_or_create(username='operateur', defaults={
@@ -117,7 +123,7 @@ class Command(BaseCommand):
             operateur.groups.add(gr_operateur)
             operateur.save()
 
-            logger.info("Operator created")
+            logger.info("Operator created successfully.")
 
             # Set permissions
             modelli_autorisations_complet = [
@@ -130,7 +136,7 @@ class Command(BaseCommand):
             groupes_autorisations_complet = [gr_operateur]
             attribuer_tous_autorisations(groupes_autorisations_complet, modelli_autorisations_complet)
 
-            logger.info("Permissions assigned")
+            logger.info("Permissions assigned successfully.")
 
         except Exception as ex:
             logger.error(f'Error during fixture setup: {str(ex)}')
