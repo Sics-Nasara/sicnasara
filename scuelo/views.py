@@ -94,16 +94,30 @@ def home(request):
     breadcrumbs = [('/', 'Home')]  # Update breadcrumbs as needed
     return render(request, 'scuelo/home.html', {'data': data, 'breadcrumbs': breadcrumbs})
 
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from scuelo.models import Classe, AnneeScolaire, Inscription, Mouvement, Tarif
+
 @login_required
 def class_detail(request, pk):
     # Get the class based on the provided primary key (pk)
     classe = get_object_or_404(Classe, pk=pk)
 
-    # Get the current academic year (AnneeScolaire)
-    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+    # Get all academic years to display in the selection dropdown
+    all_annee_scolaires = AnneeScolaire.objects.all()
 
-    # Get students registered in this class during the current academic year
-    inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+    # Get the selected academic year, default to the current year if none is selected
+    selected_annee_scolaire_id = request.GET.get('annee_scolaire', None)
+    if selected_annee_scolaire_id:
+        selected_annee_scolaire = AnneeScolaire.objects.get(pk=selected_annee_scolaire_id)
+    else:
+        # Default to the current academic year if none is selected
+        selected_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+    # Get students registered in this class during the selected academic year
+    inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
     students = [inscription.eleve for inscription in inscriptions]
 
     # Calculate total payments for each student
@@ -111,8 +125,8 @@ def class_detail(request, pk):
         total_payment = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
         student.total_payment = total_payment
 
-    # Get tarifs related to this class for the current academic year
-    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+    # Get tarifs related to this class for the selected academic year
+    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
 
     # Breadcrumb navigation (for template rendering)
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
@@ -121,7 +135,9 @@ def class_detail(request, pk):
         'classe': classe,
         'students': students,  # List of students registered this year
         'tarifs': tarifs,  # Tarifs related to this class for this year
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
+        'selected_annee_scolaire': selected_annee_scolaire  # Pass the selected academic year
     })
 
 
