@@ -315,13 +315,13 @@ def offsite_students(request):
     # Get the current school year
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
-    # Fetch offsite students by filtering on Inscription and related models
+    # Fetch offsite students by filtering on Inscription and related models, including students with null `annee_inscr`
     inscriptions = Inscription.objects.filter(
         ~Q(classe__ecole__nom__iexact="Bisongo du coeur"),
         annee_scolaire=current_annee_scolaire
     ).select_related('eleve', 'classe__ecole')
 
-    # Get the list of offsite students from the inscriptions
+    # Get the list of offsite students from the inscriptions, including those with null `annee_inscr`
     offsite_students = []
     for inscription in inscriptions:
         student = inscription.eleve
@@ -329,12 +329,15 @@ def offsite_students(request):
         student.school_name = inscription.classe.ecole.nom
         offsite_students.append(student)
 
+    # Add a filter to include students even if `annee_inscr` is null
+    null_annee_inscr_students = [student for student in offsite_students if student.annee_inscr is None]
+
     context = {
         'offsite_students': offsite_students,
+        'null_annee_inscr_students': null_annee_inscr_students,
         'current_annee_scolaire': current_annee_scolaire
     }
     return render(request, 'scuelo/offsite_students.html', context)
-
 
 
 @method_decorator(login_required, name='dispatch')
