@@ -100,6 +100,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from scuelo.models import Classe, AnneeScolaire, Inscription, Mouvement, Tarif
 
+from django.db.models import Q
+
+from django.db.models import Q, Sum
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from scuelo.models import Classe, AnneeScolaire, Inscription, Eleve, Mouvement, Tarif
+from django.urls import reverse
+
+
 @login_required
 def class_detail(request, pk):
     # Get the class based on the provided primary key (pk)
@@ -113,31 +122,45 @@ def class_detail(request, pk):
     if selected_annee_scolaire_id:
         selected_annee_scolaire = AnneeScolaire.objects.get(pk=selected_annee_scolaire_id)
     else:
-        # Default to the current academic year if none is selected
         selected_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
     # Get students registered in this class during the selected academic year
     inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
     students = [inscription.eleve for inscription in inscriptions]
 
+    # Filter students whose annee_inscr matches the selected academic year's date_initiale year if date_initiale is not None
+    if selected_annee_scolaire.date_initiale:
+        students_with_matching_annee = Eleve.objects.filter(
+            Q(inscription__classe=classe, inscription__annee_scolaire=selected_annee_scolaire) |
+            Q(annee_inscr=selected_annee_scolaire.date_initiale.year, inscription__classe=classe)
+        ).distinct()
+    else:
+        # If date_initiale is None, do not attempt to match students by annee_inscr
+        students_with_matching_annee = students
+
     # Calculate total payments for each student
-    for student in students:
+    for student in students_with_matching_annee:
         total_payment = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
         student.total_payment = total_payment
 
     # Get tarifs related to this class for the selected academic year
     tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
+    total_class_payment = Mouvement.objects.filter(
+        inscription__classe=classe,
+        inscription__annee_scolaire=selected_annee_scolaire
+    ).aggregate(total=Sum('montant'))['total'] or 0
 
     # Breadcrumb navigation (for template rendering)
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
 
     return render(request, 'scuelo/students/listperclasse.html', {
         'classe': classe,
-        'students': students,  # List of students registered this year
+        'students': students_with_matching_annee,  # List of students registered this year
         'tarifs': tarifs,  # Tarifs related to this class for this year
         'breadcrumbs': breadcrumbs,
         'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
-        'selected_annee_scolaire': selected_annee_scolaire  # Pass the selected academic year
+        'selected_annee_scolaire': selected_annee_scolaire  ,# Pass the selected academic year
+          'total_class_payment': total_class_payment  # Total amount of payments for the class in the selected year
     })
 
 
@@ -312,34 +335,33 @@ def change_school(request, pk):
 
 @login_required
 def offsite_students(request):
-    # Get the current school year
-    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
-
-    # Fetch offsite students by filtering on Inscription and related models, including students with null `annee_inscr`
+    # Fetch inscriptions where the school is not "Bisongo du coeur"
     inscriptions = Inscription.objects.filter(
-        ~Q(classe__ecole__nom__iexact="Bisongo du coeur"),
-        annee_scolaire=current_annee_scolaire
+        ~Q(classe__ecole__nom__iexact="Bisongo du coeur")
     ).select_related('eleve', 'classe__ecole')
 
-    # Get the list of offsite students from the inscriptions, including those with null `annee_inscr`
+    # Compile all students identified as offsite
     offsite_students = []
     for inscription in inscriptions:
         student = inscription.eleve
         student.total_paiements = Mouvement.objects.filter(inscription=inscription).aggregate(total=Sum('montant'))['total'] or 0
         student.school_name = inscription.classe.ecole.nom
+        student.condition_eleve = student.get_condition_eleve_display()  # Get condition display name
         offsite_students.append(student)
 
-    # Add a filter to include students even if `annee_inscr` is null
-    null_annee_inscr_students = [student for student in offsite_students if student.annee_inscr is None]
+    # Include students with null `annee_inscr` if their school is offsite
+    students_with_null_annee_inscr = Eleve.objects.filter(
+        ~Q(inscription__classe__ecole__nom__iexact="Bisongo du coeur"),
+        annee_inscr__isnull=True
+    )
+
+    # Combine both sets of students into one list
+    all_offsite_students = offsite_students 
 
     context = {
-        'offsite_students': offsite_students,
-        'null_annee_inscr_students': null_annee_inscr_students,
-        'current_annee_scolaire': current_annee_scolaire
+        'all_offsite_students': all_offsite_students,  # Combined list of offsite students
     }
     return render(request, 'scuelo/offsite_students.html', context)
-
-
 @method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
     model = Eleve
