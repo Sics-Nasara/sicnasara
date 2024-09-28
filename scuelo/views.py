@@ -79,35 +79,53 @@ def logout_view(request):
 # =======================
 # 2. Student Management
 # =======================
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from scuelo.models import Ecole, Classe
+
 @login_required
 def home(request):
     schools = Ecole.objects.all()
     data = {}
+
     for school in schools:
+        # Group classes by type (Maternelle, Primaire, Secondaire, Lycée)
+        categories = {
+            "Maternelle": [],
+            "Primaire": [],
+            "Secondaire": [],
+            "Lycée": []
+        }
+
         classes = Classe.objects.filter(ecole=school)
-        class_data = []
         for classe in classes:
-            if Inscription.objects.filter(classe=classe).exists():
-                class_data.append(classe)
-        if class_data:
-            data[school] = class_data
+            # Classify classes based on their type (type_ecole in TypeClasse)
+            if classe.type.type_ecole == 'M':
+                categories["Maternelle"].append(classe)
+            elif classe.type.type_ecole == 'P':
+                categories["Primaire"].append(classe)
+            elif classe.type.type_ecole == 'S':
+                categories["Secondaire"].append(classe)
+            elif classe.type.type_ecole == 'L':
+                categories["Lycée"].append(classe)
+
+        # Only add the school to data if it has classes in at least one category
+        if any(categories.values()):
+            data[school] = categories
+
     breadcrumbs = [('/', 'Home')]  # Update breadcrumbs as needed
-    return render(request, 'scuelo/home.html', {'data': data, 'breadcrumbs': breadcrumbs})
 
+    return render(request, 'scuelo/home.html', {
+        'data': data,
+        'breadcrumbs': breadcrumbs
+    })
+
+
+from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from scuelo.models import Classe, AnneeScolaire, Inscription, Mouvement, Tarif
-
-from django.db.models import Q
-
-from django.db.models import Q, Sum
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.decorators import login_required
 from scuelo.models import Classe, AnneeScolaire, Inscription, Eleve, Mouvement, Tarif
-from django.urls import reverse
-
 
 @login_required
 def class_detail(request, pk):
@@ -135,20 +153,24 @@ def class_detail(request, pk):
             Q(annee_inscr=selected_annee_scolaire.date_initiale.year, inscription__classe=classe)
         ).distinct()
     else:
-        # If date_initiale is None, do not attempt to match students by annee_inscr
         students_with_matching_annee = students
 
-    # Calculate total payments for each student
+    # Calculate total payments for each student and get details of each payment
     for student in students_with_matching_annee:
-        total_payment = Mouvement.objects.filter(inscription__eleve=student).aggregate(total=Sum('montant'))['total'] or 0
-        student.total_payment = total_payment
+        payments = Mouvement.objects.filter(inscription__eleve=student)
+        student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
+        student.payment_details = payments.values('causal', 'montant', 'date_paye')  # Detailed payment info
+        student.tenues = payments.filter(causal='TEN').values('montant')  # Only "tenues" payments
+        student.notes = student.note_eleve  # Fetch student's notes if available
 
-    # Get tarifs related to this class for the selected academic year
-    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
+    # Calculate the total payment amount for the class in the selected academic year
     total_class_payment = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=selected_annee_scolaire
     ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Get tarifs related to this class for the selected academic year
+    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
 
     # Breadcrumb navigation (for template rendering)
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
@@ -159,10 +181,9 @@ def class_detail(request, pk):
         'tarifs': tarifs,  # Tarifs related to this class for this year
         'breadcrumbs': breadcrumbs,
         'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
-        'selected_annee_scolaire': selected_annee_scolaire  ,# Pass the selected academic year
-          'total_class_payment': total_class_payment  # Total amount of payments for the class in the selected year
+        'selected_annee_scolaire': selected_annee_scolaire,  # Pass the selected academic year
+        'total_class_payment': total_class_payment  # Total amount of payments for the class in the selected year
     })
-
 
 
 

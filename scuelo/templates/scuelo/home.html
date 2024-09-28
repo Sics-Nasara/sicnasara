@@ -17,122 +17,191 @@
 </nav>
 
 <!-- Main content -->
-<div class="container mt-5">
+<div class=" mt-5">
     <h1 class="page-title">Liste des Classes</h1>
     <div class="school-container">
-        {% for school, classes in data.items %}
+        {% for school, categories in data.items %}
             <div class="school-section">
-                <a href="{% url 'school_detail' school.id %}" class="school-title">{{ school.nom }}</a>
-                <div class="card-container">
-                    {% for classe in classes %}
-                        <div class="card">
-                            <div class="card-body">
-                                <i class="card-icon fas fa-users"></i> <!-- Example icon -->
-                                <a href="{% url 'class_detail' classe.id %}" class="card-link">
-                                    {{ classe.nom }}
-                                </a>
-                            </div>
-                        </div>     
-                    {% endfor %}
-                </div>
+                <h2 class="school-title">{{ school.nom }}</h2>
+
+                <!-- Maternelle Section -->
+                {% if categories.Maternelle %}
+                    <div class="category-section">
+                        <h3 class="category-title">Maternelle</h3>
+                        <div class="card-container">
+                            {% for classe in categories.Maternelle %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <i class="card-icon fas fa-child"></i>
+                                        <a href="{% url 'class_detail' classe.id %}" class="card-link">
+                                            {{ classe.nom }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Primaire Section -->
+                {% if categories.Primaire %}
+                    <div class="category-section">
+                        <h3 class="category-title">Primaire</h3>
+                        <div class="card-container">
+                            {% for classe in categories.Primaire %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <i class="card-icon fas fa-school"></i>
+                                        <a href="{% url 'class_detail' classe.id %}" class="card-link">
+                                            {{ classe.nom }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Secondaire Section -->
+                {% if categories.Secondaire %}
+                    <div class="category-section">
+                        <h3 class="category-title">Secondaire</h3>
+                        <div class="card-container">
+                            {% for classe in categories.Secondaire %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <i class="card-icon fas fa-user-graduate"></i>
+                                        <a href="{% url 'class_detail' classe.id %}" class="card-link">
+                                            {{ classe.nom }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Lycée Section -->
+                {% if categories.Lycée %}
+                    <div class="category-section">
+                        <h3 class="category-title">Lycée</h3>
+                        <div class="card-container">
+                            {% for classe in categories.Lycée %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <i class="card-icon fas fa-chalkboard-teacher"></i>
+                                        <a href="{% url 'class_detail' classe.id %}" class="card-link">
+                                            {{ classe.nom }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
 </div>
 
 <style>
-    /* Custom styles for the homepage cards */
-    .school-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: space-between; /* Distribute space between items */
+    /* Main container and title styles */
+    .container {
+        max-width: 1200px;
     }
-
-    .school-section {
-        border: 2px solid #ccc; /* Border around each school section */
-        border-radius: 10px;
-        padding: 10px;
-        background-color: #f9f9f9; /* Light background color */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        flex: 1 1 calc(33.333% - 20px); /* Responsive width */
-        min-width: 300px; /* Minimum width to prevent too small sections */
-        max-width: 100%; /* Maximum width */
-    }
-
-    .school-title {
-        text-align: center;
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #555; /* Slightly lighter text color */
-        display: block; /* Make it a block element to act like a button */
-        text-decoration: none; /* Remove underline */
-    }
-
-    .school-title:hover {
-        text-decoration: underline; /* Underline on hover */
-        color: #007bff; /* Change color on hover */
-    }
-
-    .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px; /* Space between cards */
-        margin-top: 10px; /* Reduce space between sections and cards */
-    }
-
-    .card {
-        border: none; /* Remove default card border */
-        border-radius: 10px; /* More rounded corners */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        overflow: hidden; /* Clip rounded corners properly */
-        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transform and shadow transition */
-        width: 100%;
-        max-width: 100px; /* Reduce card size */
-        background-color: #007bff; /* Primary button color */
-    }
-    
-    .card-body {
-        padding: 10px;
-        color: #ffffff; /* White text */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        transition: transform 0.2s; /* Smooth transform on hover */
-    }
-    
-    .card:hover {
-        transform: translateY(-5px); /* Slightly lift card on hover */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
-    }
-    
-    .card-link {
-        color: #ffffff; /* White text */
-        text-decoration: none; /* Remove underline */
-        font-size: 0.75rem; /* Smaller text */
-        font-weight: bold; /* Bold text */
-        margin-top: 5px; /* Space above the link */
-    }
-    
-    .card-link:hover {
-        text-decoration: underline; /* Underline on hover */
-    }
-
-    .card-icon {
-        font-size: 1.5rem; /* Smaller icon */
-        margin-bottom: 5px; /* Space below icon */
-    }
-
     .page-title {
         text-align: center;
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 20px;
-        color: #333; /* Dark text color */
+        color: #333;
+    }
+
+    /* Breadcrumb styles */
+    .breadcrumb-item a {
+        color: #007bff;
+    }
+
+    /* School section styles */
+    .school-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+    .school-section {
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 300px;
+    }
+    .school-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+    }
+
+    /* Category title styles */
+    .category-section {
+        margin-top: 20px;
+    }
+    .category-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    /* Card styles */
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        width: 80px;
+        background-color: #007bff;
+    }
+    .card-body {
+        padding: 10px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card-link {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+    .card-link:hover {
+        text-decoration: underline;
+    }
+    .card-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
     }
 </style>
 {% endblock %}
