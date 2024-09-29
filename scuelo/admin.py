@@ -56,8 +56,9 @@ class EleveAdmin(admin.ModelAdmin):
         }
          )
     )
-    list_display = ['id', 'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance', 'tot_pag' , 'tenues' , 'cs_py' , 'hand'] #
-    search_fields = ['nom', 'prenom' , 'cs_py']
+    list_display = ['id', 'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance', 'tot_pag' , 'tenues' , 'cs_py' , 'hand' , 'annee_inscr' ] #
+    search_fields = ['nom', 'prenom' , 'cs_py' ]
+    list_filter = ['annee_inscr']
     inlines = [InscriptionInline]
 
     def tot_pag(self, instance):
