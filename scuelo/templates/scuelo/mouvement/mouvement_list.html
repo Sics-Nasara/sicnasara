@@ -118,7 +118,8 @@
                     <th>Entrée (Recette)</th>
                     <th>Sortie (Dépense)</th>
                     <th>Total Progressif</th>
-                    <th>Description</th> <!-- Added Description -->
+                    <th>Destination</th> <!-- Add destination column -->
+                    <th>Description</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -126,11 +127,12 @@
                 {% for mouvement in movements %}
                     <tr>
                         <td>{{ mouvement.id }}</td>
-                        <td>{{ mouvement.date_paye }}</td>
+                        <td>{{ mouvement.date_paye }}</td> <!-- Payment date is shown here -->
                         <td>{{ mouvement.causal }}</td>
                         <td class="inflow">{% if mouvement.type == 'R' %}{{ mouvement.montant }}{% endif %}</td>
                         <td class="outflow">{% if mouvement.type == 'D' %}{{ mouvement.montant }}{% endif %}</td>
                         <td>{{ mouvement.progressive_total }}</td> <!-- Progressive Total -->
+                        <td>{{ mouvement.get_destination_display }}</td> <!-- Destination displayed here -->
                         <td>{{ mouvement.description }}</td> <!-- Description with student name, school, and class -->
                         <td class="action-links">
                             <a href="{% url 'update_mouvement' mouvement.pk %}" class="edit-icon">
@@ -143,8 +145,6 @@
                     </tr>
                 {% endfor %}
             </tbody>
-            
-            
         </table>
     </div>
 {% endblock %}

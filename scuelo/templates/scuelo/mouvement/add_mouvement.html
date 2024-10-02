@@ -1,11 +1,138 @@
-
 {% extends "../../layout.html" %}
 
 {% block content %}
-    <h1>Add Mouvement</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Mouvement</button>
-    </form>
+    <style>
+        /* Form container for centering and spacing */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #343a40;
+        }
+
+        /* Form grid layout */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Form group styling for each input */
+        .form-group {
+            flex: 1 1 calc(50% - 20px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%;
+        }
+
+        /* Input, select, and textarea styles */
+        input, select, textarea {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        input[type="date"] {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            width: 100%;
+        }
+
+        /* Button styling */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-submit, .btn-cancel {
+            padding: 10px 20px;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+        /* Full viewport form responsiveness */
+        @media (max-width: 768px) {
+            .form-group {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+
+    <div class="form-container">
+        <h1>Ajouter un mouvement</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_montant">Montant</label>
+                    {{ form.montant }}
+                </div>
+                <div class="form-group">
+                    <label for="id_type">Type</label>
+                    {{ form.type }}
+                </div>
+                <div class="form-group">
+                    <label for="id_destination">Destination</label>
+                    {{ form.destination }}
+                </div>
+                <div class="form-group">
+                    <label for="id_causal">Causal</label>
+                    {{ form.causal }}
+                </div>
+                <div class="form-group">
+                    <label for="id_date_paye">Date de paiement</label>
+                    {{ form.date_paye }}
+                </div>
+                <div class="form-group">
+                    <label for="id_note">Note</label>
+                    {{ form.note }}
+                </div>
+                <div class="form-group full-width">
+                    <label for="id_inscription">Inscription</label>
+                    {{ form.inscription }}
+                </div>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn-submit">Ajouter Mouvement</button>
+                <a href="{% url 'mouvement_list' %}" class="btn-cancel">Annuler</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}

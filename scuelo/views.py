@@ -53,6 +53,11 @@ from django.db.models import Sum, Q
 from datetime import timedelta, datetime
 import csv
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
+
+
 
 # =======================
 # 1. Authentication
@@ -79,9 +84,6 @@ def logout_view(request):
 # =======================
 # 2. Student Management
 # =======================
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from scuelo.models import Ecole, Classe
 
 @login_required
 def home(request):
@@ -121,11 +123,6 @@ def home(request):
     })
 
 
-from django.db.models import Sum, Q
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from scuelo.models import Classe, AnneeScolaire, Inscription, Eleve, Mouvement, Tarif
 
 @login_required
 def class_detail(request, pk):
@@ -892,6 +889,7 @@ def mouvement_list(request):
         'movements': movements,
         'search_query': search_query,
     })
+    
 @login_required
 def add_mouvement(request):
     if request.method == 'POST':
