@@ -667,7 +667,7 @@ def manage_tarifs(request, pk):
     ).count()
 
     # Modelformset for Tarif model
-    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=3, can_delete=True)
+    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
         formset = TarifFormset(request.POST, queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))

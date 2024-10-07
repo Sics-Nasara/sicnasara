@@ -104,7 +104,7 @@ class Command(BaseCommand):
                 'first_name': 'Super',
                 'last_name': 'User',
                 'is_superuser': True,
-                'is_staff': True,
+                'is_staff': True, 
                 'email': 'davide@c4k.it'
             })
             superuser.set_password('3g3rKD8naG')
