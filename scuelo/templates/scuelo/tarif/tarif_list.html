@@ -4,18 +4,21 @@
 {% block content %}
 <style>
     .form-container {
-        background-color: #f8f9fa;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        max-width: 800px;
+        margin: 0 auto;
     }
 
     h3 {
         text-align: center;
-        color: #343a40;
+        color: #000;
         font-weight: bold;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
     }
 
     .table {
@@ -23,115 +26,82 @@
         margin-bottom: 20px;
         border-collapse: collapse;
         text-align: center;
+        font-size: 0.9rem;
     }
 
     .table th, .table td {
-        padding: 15px;
-        border: 1px solid #dee2e6;
-        vertical-align: middle;
+        padding: 10px;
+        border: 1px solid #000;
     }
 
     .table th {
-        background-color: #007bff;
-        color: white;
-        font-weight: bold;
+        background-color: #000;
+        color: #fff;
+        text-transform: uppercase;
     }
 
     .btn-submit {
-        background-color: #007bff;
+        background-color: #000;
         color: white;
+        padding: 10px;
+        font-size: 14px;
+        width: 100%;
+        text-align: center;
         border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        margin-top: 20px;
         border: none;
-        transition: background-color 0.3s ease;
     }
 
     .btn-submit:hover {
-        background-color: #0056b3;
-        color: #fff;
+        background-color: #333;
     }
 
     .progressive-data {
-        background-color: #f0f4f8;
-        padding: 25px;
-        border-radius: 10px;
-        margin-top: 30px;
-        text-align: left;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .progressive-column {
+        flex: 1 1 45%; /* Make two equal columns, each taking up 45% width */
     }
 
     .progressive-data h4 {
         font-weight: bold;
-        color: #343a40;
-        border-bottom: 2px solid #007bff;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-
-    .progressive-data p {
-        font-size: 18px;
-        font-weight: bold;
-        color: #007bff;
-        margin: 10px 0;
-    }
-
-    .progressive-data ul {
-        list-style: none;
-        padding-left: 0;
-    }
-
-    .progressive-data ul li {
-        font-size: 18px;
-        font-weight: bold;
-        color: #495057;
-        margin-bottom: 10px;
-    }
-
-    .section-heading {
-        font-size: 20px;
-        font-weight: bold;
-        color: #343a40;
+        color: #000;
+        border-bottom: 1px solid #000;
+        padding-bottom: 5px;
         margin-bottom: 15px;
-        border-bottom: 1px solid #dee2e6;
-        padding-bottom: 10px;
     }
 
     .data-row {
+        margin-bottom: 10px;
         display: flex;
         justify-content: space-between;
-        margin-bottom: 10px;
     }
 
     .data-label {
         font-weight: bold;
-        color: #495057;
     }
 
     .data-value {
         color: #007bff;
     }
 
-    /* Small screen responsiveness */
+    /* Smaller screen adjustments */
     @media (max-width: 768px) {
-        .table th, .table td {
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .btn-submit {
-            font-size: 14px;
-            padding: 8px 16px;
-        }
-
-        .progressive-data p {
-            font-size: 16px;
+        .progressive-column {
+            flex: 1 1 100%; /* On small screens, the columns stack */
         }
     }
 </style>
 
-
-<div class=" form-container">
+<div class="forrm-containe">
+    <h3>Modifier les Mouvements</h3>
     <form method="post">
         {% csrf_token %}
         {{ formset.management_form }}
@@ -147,9 +117,7 @@
             <tbody>
                 {% for form in formset %}
                 <tr>
-                    <td>{{ form.id }} <!-- Ensure the id field is included for each form -->
-                        {{ form.causal }}
-                    </td>
+                    <td>{{ form.causal }}</td>
                     <td>{{ form.montant }}</td>
                     <td>{{ form.date_expiration }}</td>
                     <td>{{ form.DELETE }}</td>
@@ -157,82 +125,78 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" class="btn btn-primary btn-submit">Enregistrer les modifications</button>
+        <button type="submit" class="btn-submit">Enregistrer les modifications</button>
     </form>
 
     <div class="progressive-data">
-        <h4 class="section-heading">Progressive Payments</h4>
-        <div class="data-row">
-            <span class="data-label">Total per Student:</span>
-            <span class="data-value">{{ progress_per_eleve }} FCFA</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Confirmed PY Students:</span>
-            <span class="data-value">{{ confirmed_py_count }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Expected Payment:</span>
-            <span class="data-value">{{ expected_payment }}</span>
-        </div>
-
-        <h4 class="section-heading">Tranche-wise Payment</h4>
-        <ul>
-            <li>1st Tranche: {{ tranche_data.first_tranche }} FCFA</li>
-            <li>2nd Tranche: {{ tranche_data.second_tranche }} FCFA</li>
-            <li>3rd Tranche: {{ tranche_data.third_tranche }} FCFA</li>
-        </ul>
-
-        <h4 class="section-heading">Uniform Orders</h4>
-        <div class="data-row">
-            <span class="data-label">PY Uniforms Ordered:</span>
-            <span class="data-value">{{ py_uniforms }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">CS Uniforms Ordered:</span>
-            <span class="data-value">{{ cs_uniforms }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Expected Payment for PY Tenues:</span>
-            <span class="data-value">{{ expected_tenues_py }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Actual Payment for PY Tenues:</span>
-            <span class="data-value">{{ actual_tenues_py }}</span>
+        <div class="progressive-column">
+            <h4>Progressive Payments</h4>
+            <div class="data-row">
+                <span class="data-label">Total par élève:</span>
+                <span>{{ progress_per_eleve }} FCFA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Étudiants PY Confirmés:</span>
+                <span>{{ confirmed_py_count }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Paiement Attendu:</span>
+                <span>{{ expected_payment }}</span>
+            </div>
+            
+            <h4>Commandes Uniformes</h4>
+            <div class="data-row">
+                <span class="data-label">Uniformes PY:</span>
+                <span>{{ py_uniforms }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Uniformes CS:</span>
+                <span>{{ cs_uniforms }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Paiement attendu pour tenues PY:</span>
+                <span>{{ expected_tenues_py }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Paiement actuel pour tenues PY:</span>
+                <span>{{ actual_tenues_py }}</span>
+            </div>
         </div>
 
-        <h4 class="section-heading">Total Payments</h4>
-        <div class="data-row">
-            <span class="data-label">Expected Payment (First Tranche):</span>
-            <span class="data-value">{{ expected_payment.first_tranche }} FCFA</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Expected Payment (Second Tranche):</span>
-            <span class="data-value">{{ expected_payment.second_tranche }} FCFA</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Expected Payment (Third Tranche):</span>
-            <span class="data-value">{{ expected_payment.third_tranche }} FCFA</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Total Students:</span>
-            <span class="data-value">{{ student_count }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">CS Students:</span>
-            <span class="data-value">{{ cs_students_count }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">PY Students:</span>
-            <span class="data-value">{{ py_students_count }}</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">Other Students:</span>
-            <span class="data-value">{{ other_students_count }}</span>
-        </div>
-        
-        <div class="data-row">
-            <span class="data-label">Total Actual Received:</span>
-            <span class="data-value">{{ total_actual_payments }} FCFA</span>
+        <div class="progressive-column">
+            <h4>Paiement Total</h4>
+            <div class="data-row">
+                <span class="data-label">Paiement attendu (1ère tranche):</span>
+                <span>{{ expected_payment.first_tranche }} FCFA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Paiement attendu (2ème tranche):</span>
+                <span>{{ expected_payment.second_tranche }} FCFA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Paiement attendu (3ème tranche):</span>
+                <span>{{ expected_payment.third_tranche }} FCFA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Total des étudiants:</span>
+                <span>{{ student_count }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Étudiants CS:</span>
+                <span>{{ cs_students_count }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Étudiants PY:</span>
+                <span>{{ py_students_count }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Autres Étudiants:</span>
+                <span>{{ other_students_count }}</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Total reçu:</span>
+                <span>{{ total_actual_payments }} FCFA</span>
+            </div>
         </div>
     </div>
 </div>
