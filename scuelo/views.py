@@ -710,6 +710,26 @@ def manage_tarifs(request, pk):
     classe = get_object_or_404(Classe, pk=pk)
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
+        # Fetch the students in this class for the current academic year
+    inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+        # Count total students
+    student_count = inscriptions.count()
+        # Count students who are both PY and CONF
+    confirmed_py_count = inscriptions.filter(
+        eleve__cs_py="P",  # PY students
+        eleve__condition_eleve="CONF"  # CONF students
+    ).count()
+
+    # Count CS students
+    cs_students_count = inscriptions.filter(eleve__cs_py="C").count()
+
+    # Count PY students
+    py_students_count = inscriptions.filter(eleve__cs_py="P").count()
+
+    # Count other students (students who are neither CS nor PY)
+    other_students_count = student_count - (cs_students_count + py_students_count)
+
+
     # Fetch confirmed PY students for the class
     confirmed_py_count = Inscription.objects.filter(
         classe=classe,
@@ -751,7 +771,7 @@ def manage_tarifs(request, pk):
         inscription__annee_scolaire=current_annee_scolaire
     ).aggregate(total=Sum('montant'))['total'] or 0
 
-    # Fetch count of students (PY, CS, and others)
+    '''    # Fetch count of students (PY, CS, and others)
     student_count = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).count()
     py_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="P"
@@ -767,14 +787,14 @@ def manage_tarifs(request, pk):
     cs_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="C"
     ).count()
-    other_students_count = student_count - py_students_count - cs_students_count
+    other_students_count = student_count - py_students_count - cs_students_count'''
 
     return render(request, 'scuelo/tarif/tarif_list.html', {
         'classe': classe,
         'tarifs': tarifs,
         'progress_per_eleve': progress_per_eleve,
         'tranche_data': tranche_data,
-        'py_conf_students_count':  py_conf_students_count ,
+        #'py_conf_students_count':  py_conf_students_count ,
         'student_count': student_count,
         'confirmed_py_count': confirmed_py_count,
         'expected_payment': expected_payment,
