@@ -756,6 +756,14 @@ def manage_tarifs(request, pk):
     py_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="P"
     ).count()
+      # Filter and count students who are PY and CONF
+    py_conf_students_count = Inscription.objects.filter(
+        classe=classe,
+        annee_scolaire=current_annee_scolaire,
+        eleve__cs_py="P",  # Filtering PY students
+        eleve__condition_eleve="CONF"  # Filtering CONF students
+    ).count()
+
     cs_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="C"
     ).count()
@@ -766,6 +774,7 @@ def manage_tarifs(request, pk):
         'tarifs': tarifs,
         'progress_per_eleve': progress_per_eleve,
         'tranche_data': tranche_data,
+        'py_conf_students_count':  py_conf_students_count ,
         'student_count': student_count,
         'confirmed_py_count': confirmed_py_count,
         'expected_payment': expected_payment,

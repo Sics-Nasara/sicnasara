@@ -84,6 +84,7 @@
     <h4>Progressive Payments</h4>
     <ul>
         <li>Total par élève: {{ progress_per_eleve }} FCFA</li>
+        <li>Étudiants PY Confirmés: {{ py_conf_students_count }}</li> <!-- Display PY CONF count -->
         <li>Étudiants PY Confirmés: {{ confirmed_py_count }}</li>
         <li>Étudiants CS: {{ cs_students_count }}</li>
         <li>Étudiants PY: {{ py_students_count }}</li>
@@ -92,9 +93,9 @@
     
     <h4>Tranche Details</h4>
     <ul>
-        <li>Paiement attendu (1ère tranche): {{ expected_payment.first_tranche }} FCFA</li>
-        <li>Paiement attendu (2ème tranche): {{ expected_payment.second_tranche }} FCFA</li>
-        <li>Paiement attendu (3ème tranche): {{ expected_payment.third_tranche }} FCFA</li>
+        <li>Paiement attendu (1ère tranche): {{ tranche_data.first_tranche }} FCFA</li>
+    <li>Paiement attendu (2ème tranche): {{ tranche_data.second_tranche }} FCFA</li>
+    <li>Paiement attendu (3ème tranche): {{ tranche_data.third_tranche }} FCFA</li>
         <li>Total reçu: {{ total_actual_payments }} FCFA</li>
     </ul>
     
