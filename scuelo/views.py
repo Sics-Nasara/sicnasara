@@ -459,14 +459,19 @@ class ClasseDetailView(DetailView):
 
         # Tariffs for the class and current academic year
         latest_tariffs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).order_by('date_expiration')
-        context['latest_tariffs'] = latest_tariffs
+        
+        # Calculate expected total for each tariff based on PY and CONF students
+        py_conf_students_count = Inscription.objects.filter(
+            classe=classe,
+            annee_scolaire=current_annee_scolaire,
+            eleve__cs_py="P",  # Only PY students
+            eleve__condition_eleve="CONF"  # Only CONF students
+        ).count()
 
-        # Calculate progressive payments and expected totals
-        tranche_data = {
-            'first_tranche': latest_tariffs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0,
-            'second_tranche': latest_tariffs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0,
-            'third_tranche': latest_tariffs.filter(causal='SCO3').aggregate(total=Sum('montant'))['total'] or 0,
-        }
+        for tarif in latest_tariffs:
+            tarif.expected_total = (tarif.montant * py_conf_students_count) if py_conf_students_count else 0
+
+        context['latest_tariffs'] = latest_tariffs
 
         # Uniforms (Tenues)
         tenues = Mouvement.objects.filter(inscription__classe=classe, causal='TEN', inscription__annee_scolaire=current_annee_scolaire).aggregate(total=Sum('montant'))['total'] or 0

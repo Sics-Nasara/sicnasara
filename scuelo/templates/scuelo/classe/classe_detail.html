@@ -114,7 +114,10 @@
         <p><strong>Notes:</strong> {{ notes|default:"Pas de notes disponibles." }}</p>
     </div>
 </div>
-
+<!-- Buttons for Managing Tariffs -->
+<a href="{% url 'manage_tarifs' classe.pk %}" class="btn btn-primary mb-3">
+    <i class="fas fa-money-check-alt"></i> Gérer les Tarifs
+</a>
 <!-- Tarifs Table -->
 <div class="card">
     <div class="card-header">
@@ -170,8 +173,5 @@
     </div>
 </div>
 
-<!-- Buttons for Managing Tariffs -->
-<a href="{% url 'manage_tarifs' classe.pk %}" class="btn btn-primary mb-3">
-    <i class="fas fa-money-check-alt"></i> Gérer les Tarifs
-</a>
+
 {% endblock content %}
