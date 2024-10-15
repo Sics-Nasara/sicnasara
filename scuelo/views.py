@@ -1119,7 +1119,7 @@ class SchoolUpdateView(UpdateView):
     model = Ecole
     form_class = EcoleCreateForm
     template_name = 'scuelo/school/school_update.html'
-    success_url = reverse_lazy('student_management')
+    success_url = reverse_lazy('school_management')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
