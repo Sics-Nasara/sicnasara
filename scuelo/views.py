@@ -754,8 +754,7 @@ def manage_tarifs(request, pk):
 
 
     # Calculate progressive payments per student
-    progress_per_eleve = (tranche_data['first_tranche'] +
-                          tranche_data['second_tranche'] +
+    progress_per_eleve = (
                           tranche_data['third_tranche'])
 
     # Calculate the expected total payment for the class at each tranche
@@ -788,7 +787,7 @@ def manage_tarifs(request, pk):
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="C"
     ).count()
     other_students_count = student_count - py_students_count - cs_students_count'''
-
+    cs_students_count = inscriptions.filter(eleve__cs_py="C").count()
     return render(request, 'scuelo/tarif/tarif_list.html', {
         'classe': classe,
         'tarifs': tarifs,
