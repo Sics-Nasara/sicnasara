@@ -1,203 +1,101 @@
 {% extends "../../layout.html" %}
-{% load crispy_forms_tags %}
 
-{% block content %}
 <style>
-    .form-container {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    h3 {
-        text-align: center;
-        color: #000;
-        font-weight: bold;
-        margin-bottom: 20px;
-        font-size: 1.5rem;
-    }
-
-    .table {
-        width: 100%;
-        margin-bottom: 20px;
-        border-collapse: collapse;
-        text-align: center;
-        font-size: 0.9rem;
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .table th, .table td {
-        padding: 10px;
-        border: 1px solid #000;
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
     }
 
     .table th {
-        background-color: #000;
+        background-color: #007bff;
         color: #fff;
         text-transform: uppercase;
+        font-weight: bold;
     }
 
-    .btn-submit {
-        background-color: #000;
-        color: white;
-        padding: 10px;
-        font-size: 14px;
-        width: 100%;
-        text-align: center;
-        border-radius: 5px;
+    .btn-primary {
+        background-color: #007bff;
         border: none;
+        border-radius: 20px;
+        padding: 10px 20px;
+        transition: background-color 0.3s;
     }
 
-    .btn-submit:hover {
-        background-color: #333;
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .progressive-data {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-top: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .progressive-column {
-        flex: 1 1 45%; /* Make two equal columns, each taking up 45% width */
-    }
-
-    .progressive-data h4 {
-        font-weight: bold;
-        color: #000;
-        border-bottom: 1px solid #000;
-        padding-bottom: 5px;
-        margin-bottom: 15px;
-    }
-
-    .data-row {
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .data-label {
-        font-weight: bold;
-    }
-
-    .data-value {
-        color: #007bff;
-    }
-
-    /* Smaller screen adjustments */
-    @media (max-width: 768px) {
-        .progressive-column {
-            flex: 1 1 100%; /* On small screens, the columns stack */
-        }
+    .table tbody tr:hover {
+        background-color: #e9ecef;
     }
 </style>
 
-<div class="forrm-containe">
-    <h3>Modifier les Mouvements</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        <table class="table">
+{% block content %}
+    <a href="{% url 'add_tarif' classe.pk %}" class="btn btn-primary mb-3">
+        <i class="fas fa-money-check-alt"></i> Ajouter un Tarif
+    </a>
+
+    <div class="table-responsive table-container">
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Causal</th>
                     <th>Montant (FCFA)</th>
                     <th>Date d'expiration</th>
-                    <th>Supprimer</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {% for form in formset %}
+                {% for tarif in tarifs %}
                 <tr>
-                    <td>{{ form.causal }}</td>
-                    <td>{{ form.montant }}</td>
-                    <td>{{ form.date_expiration }}</td>
-                    <td>{{ form.DELETE }}</td>
+                    <td>{{ tarif.get_causal_display }}</td>
+                    <td>{{ tarif.montant }}</td>
+                    <td>{{ tarif.date_expiration }}</td>
+                    <td>
+                        <a href="{% url 'update_tarif' tarif.pk %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-pencil-alt"></i> Modifier
+                        </a>
+                        <a href="{% url 'delete_tarif' tarif.pk %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Aucun tarif disponible pour cette classe.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" class="btn-submit">Enregistrer les modifications</button>
-    </form>
-
-    <div class="progressive-data">
-        <div class="progressive-column">
-            <h4>Progressive Payments</h4>
-            <div class="data-row">
-                <span class="data-label">Total par élève:</span>
-                <span>{{ progress_per_eleve }} FCFA</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Étudiants PY Confirmés:</span>
-                <span>{{ confirmed_py_count }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Paiement Attendu:</span>
-                <span>{{ expected_payment }}</span>
-            </div>
-            
-            <h4>Commandes Uniformes</h4>
-            <div class="data-row">
-                <span class="data-label">Uniformes PY:</span>
-                <span>{{ py_uniforms }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Uniformes CS:</span>
-                <span>{{ cs_uniforms }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Paiement attendu pour tenues PY:</span>
-                <span>{{ expected_tenues_py }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Paiement actuel pour tenues PY:</span>
-                <span>{{ actual_tenues_py }}</span>
-            </div>
-        </div>
-
-        <div class="progressive-column">
-            <h4>Paiement Total</h4>
-            <div class="data-row">
-                <span class="data-label">Paiement attendu (1ère tranche):</span>
-                <span>{{ expected_payment.first_tranche }} FCFA</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Paiement attendu (2ème tranche):</span>
-                <span>{{ expected_payment.second_tranche }} FCFA</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Paiement attendu (3ème tranche):</span>
-                <span>{{ expected_payment.third_tranche }} FCFA</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Total des étudiants:</span>
-                <span>{{ student_count }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Étudiants CS:</span>
-                <span>{{ cs_students_count }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Étudiants PY:</span>
-                <span>{{ py_students_count }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Autres Étudiants:</span>
-                <span>{{ other_students_count }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Total reçu:</span>
-                <span>{{ total_actual_payments }} FCFA</span>
-            </div>
-        </div>
     </div>
-</div>
-{% endblock content %}
+
+    <h4>Progressive Payments</h4>
+    <ul>
+        <li>Total par élève: {{ progress_per_eleve }} FCFA</li>
+        <li>Étudiants PY Confirmés: {{ confirmed_py_count }}</li>
+        <li>Étudiants CS: {{ cs_students_count }}</li>
+        <li>Étudiants PY: {{ py_students_count }}</li>
+        <li>Autres Étudiants: {{ other_students_count }}</li>
+    </ul>
+    
+    <h4>Tranche Details</h4>
+    <ul>
+        <li>Paiement attendu (1ère tranche): {{ expected_payment.first_tranche }} FCFA</li>
+        <li>Paiement attendu (2ème tranche): {{ expected_payment.second_tranche }} FCFA</li>
+        <li>Paiement attendu (3ème tranche): {{ expected_payment.third_tranche }} FCFA</li>
+        <li>Total reçu: {{ total_actual_payments }} FCFA</li>
+    </ul>
+    
+{% endblock %}

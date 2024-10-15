@@ -697,115 +697,130 @@ def cash_flow_report(request):
     }
     return render(request, 'scuelo/cash/cash_flow_report.html', context)
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum, Q
+from django.contrib.auth.decorators import login_required
+from .models import Classe, Tarif, AnneeScolaire, Inscription, Mouvement
+from .forms import TarifForm
+
+
 @login_required
 def manage_tarifs(request, pk):
+    # Fetch the class and current school year
     classe = get_object_or_404(Classe, pk=pk)
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
-    # Get the number of students in the class
-    student_count = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).count()
-
-    # Get the number of students that are both CONF and PY
+    # Fetch confirmed PY students for the class
     confirmed_py_count = Inscription.objects.filter(
         classe=classe,
         annee_scolaire=current_annee_scolaire,
-        eleve__condition_eleve="CONF",  # Filtering students that are CONF
-        eleve__cs_py="P"  # Filtering students that are PY
+        eleve__condition_eleve="CONF",
+        eleve__cs_py="P"
     ).count()
 
-    # Modelformset for Tarif model
-    TarifFormset = modelformset_factory(Tarif, form=TarifForm, extra=1, can_delete=True)
+    # Fetch all tariffs for the class in the current school year
+    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
 
-    if request.method == 'POST':
-        formset = TarifFormset(request.POST, queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
-
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-            for instance in instances:
-                instance.classe = classe
-                instance.annee_scolaire = current_annee_scolaire
-                instance.save()
-
-            # Delete instances marked for deletion
-            for obj in formset.deleted_objects:
-                obj.delete()
-
-            return redirect('class_detail', pk=classe.pk)
-        else:
-            print("Formset errors: ", formset.errors)
-    else:
-        formset = TarifFormset(queryset=Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire))
-
-    # Calculate cumulative amounts for each type
-    cumulative_data = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).aggregate(
-        total_inscription=Sum('montant', filter=Q(causal='INS')),
-        total_sco1=Sum('montant', filter=Q(causal='SCO1')),
-        total_sco2=Sum('montant', filter=Q(causal='SCO2')),
-        total_sco3=Sum('montant', filter=Q(causal='SCO3')),
-    )
-
-    # Calculate cumulative progress per eleve and tranche
-    progress_per_eleve = sum([
-        cumulative_data.get('total_inscription') or 0,
-        cumulative_data.get('total_sco1') or 0,
-        cumulative_data.get('total_sco2') or 0,
-        cumulative_data.get('total_sco3') or 0
-    ])
-
+    # Calculate cumulative amounts for each tranche (using 'causal' instead of 'type_frais')
     tranche_data = {
-        'first_tranche': cumulative_data.get('total_sco1') or 0,
-        'second_tranche': (cumulative_data.get('total_sco1') or 0) + (cumulative_data.get('total_sco2') or 0),
-        'third_tranche': (cumulative_data.get('total_sco1') or 0) + (cumulative_data.get('total_sco2') or 0) + (cumulative_data.get('total_sco3') or 0)
+        'first_tranche': tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0,
+        'second_tranche': tarifs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0,
+        'third_tranche': tarifs.filter(causal='SCO3').aggregate(total=Sum('montant'))['total'] or 0,
     }
 
-    # Calculate the expected payment for the class at each tranche (confirmed PY students)
+    # Calculate progressive payments per student
+    progress_per_eleve = (tranche_data['first_tranche'] +
+                          tranche_data['second_tranche'] +
+                          tranche_data['third_tranche'])
+
+    # Calculate the expected total payment for the class at each tranche
     expected_payment = {
         'first_tranche': tranche_data['first_tranche'] * confirmed_py_count,
         'second_tranche': tranche_data['second_tranche'] * confirmed_py_count,
         'third_tranche': tranche_data['third_tranche'] * confirmed_py_count
     }
 
-    # Calculate total actual payments (optional if you want to display actual payments)
-    total_actual_payments = Mouvement.objects.filter(inscription__classe=classe, inscription__annee_scolaire=current_annee_scolaire).aggregate(total=Sum('montant'))['total'] or 0
+    # Calculate total actual payments
+    total_actual_payments = Mouvement.objects.filter(
+        inscription__classe=classe,
+        inscription__annee_scolaire=current_annee_scolaire
+    ).aggregate(total=Sum('montant'))['total'] or 0
 
-    # Get the expected payments by the date of the late SCO1
-    latest_sco1_date = Tarif.objects.filter(causal='SCO1').order_by('-date_expiration').first()
-    if latest_sco1_date:
-        expected_payment['first_tranche'] = tranche_data['first_tranche'] * confirmed_py_count
-
-     # Count CS students
-    cs_students_count = Inscription.objects.filter(
-        classe=classe,
-        annee_scolaire=current_annee_scolaire,
-        eleve__cs_py="C"  # Filtering CS students
-    ).count()
-
-    # Count PY students
+    # Fetch count of students (PY, CS, and others)
+    student_count = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).count()
     py_students_count = Inscription.objects.filter(
-        classe=classe,
-        annee_scolaire=current_annee_scolaire,
-        eleve__cs_py="P"  # Filtering PY students
+        classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="P"
     ).count()
+    cs_students_count = Inscription.objects.filter(
+        classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="C"
+    ).count()
+    other_students_count = student_count - py_students_count - cs_students_count
 
-    # Count other students (students who are neither CS nor PY)
-    other_students_count = student_count - (cs_students_count - py_students_count)
-    
     return render(request, 'scuelo/tarif/tarif_list.html', {
         'classe': classe,
-        'formset': formset,
+        'tarifs': tarifs,
         'progress_per_eleve': progress_per_eleve,
         'tranche_data': tranche_data,
-        'student_count': student_count,  # Pass student count to template
-        'confirmed_py_count': confirmed_py_count,  # Pass CONF PY count to template
+        'student_count': student_count,
+        'confirmed_py_count': confirmed_py_count,
         'expected_payment': expected_payment,
-        'py_students_count':py_students_count ,
-        'cs_students_count':cs_students_count,
-        'other_students_count':other_students_count,
-        'total_actual_payments': total_actual_payments , # Pass total actual payments to template
+        'py_students_count': py_students_count,
+        'cs_students_count': cs_students_count,
+        'other_students_count': other_students_count,
+        'total_actual_payments': total_actual_payments,  
         'page_identifier': 'S09'
+        
     })
 
 
+@login_required
+def add_tarif(request, pk):
+    classe = get_object_or_404(Classe, pk=pk)
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+    if request.method == 'POST':
+        form = TarifForm(request.POST)
+        if form.is_valid():
+            tarif = form.save(commit=False)
+            tarif.classe = classe
+            tarif.annee_scolaire = current_annee_scolaire
+            tarif.save()
+            return redirect('manage_tarifs', pk=classe.pk)
+    else:
+        form = TarifForm()
+
+    return render(request, 'scuelo/tarif/tarif_form.html', {'form': form, 'classe': classe})
+
+@login_required
+def update_tarif(request, pk):
+    tarif = get_object_or_404(Tarif, pk=pk)
+    classe = tarif.classe
+
+    if request.method == 'POST':
+        form = TarifForm(request.POST, instance=tarif)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_tarifs', pk=classe.pk)
+    else:
+        form = TarifForm(instance=tarif)
+
+    return render(request, 'scuelo/tarif/tarif_form.html', {'form': form, 'classe': classe})
+
+@login_required
+def delete_tarif(request, pk):
+    tarif = get_object_or_404(Tarif, pk=pk)
+    classe = tarif.classe
+
+    if request.method == 'POST':  # If the user confirms deletion
+        if 'confirm' in request.POST:
+            tarif.delete()
+            return redirect('manage_tarifs', pk=classe.pk)  # Redirect after deletion
+        else:
+            return redirect('manage_tarifs', pk=classe.pk)  # Redirect if the user cancels
+
+    return render(request, 'scuelo/tarif/tarif_confirm_delete.html', {'tarif': tarif})
+
+'''
 @method_decorator(login_required, name='dispatch')
 class TarifCreateView(CreateView):
     model = Tarif
@@ -854,7 +869,7 @@ class TarifDeleteView(DeleteView):
         context = super().get_context_data(**kwargs)
         # Add the page identifier
         context['page_identifier'] = 'S24'  # Example page identifier for tarif deletion
-        return context
+        return context'''
     
 @login_required
 def accounting_report(request):

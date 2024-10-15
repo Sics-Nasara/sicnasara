@@ -4,8 +4,8 @@ from .views import (
     StudentListView, StudentCreateView, SchoolManagementView, SchoolCreateView,
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView, ClasseCreateView,
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView
-     , UniformPaymentListView, print_receipt   , TarifCreateView
-      , login_view , TarifUpdateView , TarifDeleteView
+     , UniformPaymentListView, print_receipt  
+      , login_view 
     
 )
 
@@ -50,7 +50,11 @@ urlpatterns = [
     path('load_classes/', views.load_classes, name='load_classes'),
     # Other URLs
  
-
+ path('class/<int:pk>/manage-tarifs/', views.manage_tarifs, name='manage_tarifs'),
+    path('class/<int:pk>/add-tarif/', views.add_tarif, name='add_tarif'),
+    path('tarif/<int:pk>/edit/', views.update_tarif, name='update_tarif'),
+    path('tarif/<int:pk>/delete/', views.delete_tarif, name='delete_tarif'),
+    
  
      path('cash/flow_report/', views.cash_flow_report, name='cash_flow_report'),
      path('mouvements/', views.mouvement_list, name='mouvement_list'),
@@ -63,8 +67,8 @@ urlpatterns = [
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
 
     path('class/<int:pk>/manage-tarifs/', views.manage_tarifs, name='manage_tarifs'),
-    path('class/<int:pk>/add-tarif/', TarifCreateView.as_view(), name='add_tarif'),
-    path('tarif/<int:pk>/edit/', TarifUpdateView.as_view(), name='edit_tarif'),
-    path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='delete_tarif'),
+   # path('class/<int:pk>/add-tarif/', TarifCreateView.as_view(), name='add_tarif'),
+   # path('tarif/<int:pk>/edit/', TarifUpdateView.as_view(), name='edit_tarif'),
+   # path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='delete_tarif'),
     #path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='tarif_delete'),
 ]

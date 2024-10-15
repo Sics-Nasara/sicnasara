@@ -1,41 +1,84 @@
 {% extends "../../layout.html" %}
-
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
-    <h2>{{ form.instance.pk|default:"Add" }} Tarif</h2>
-    <h2>Manage Tarifs for {{ classe.nom }}</h2>
+<style>
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
-    <form method="POST">
+    h3 {
+        text-align: center;
+        color: #000;
+        font-weight: bold;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-submit {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        font-size: 14px;
+        width: 100%;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="form-container">
+    <h3>{% if form.instance.pk %}Modifier Tarif{% else %}Ajouter Tarif{% endif %}</h3>
+    
+    <form method="post">
         {% csrf_token %}
-        
-        <table class="table table-bordered">
-            {{ formset.management_form }}
-            <thead>
-                <tr>
-                    <th>Causal</th>
-                    <th>Montant</th>
-                    <th>Date Expiration</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for form in formset %}
-                    <tr>
-                        <td>{{ form.causal }}</td>
-                        <td>{{ form.montant }}</td>
-                        <td>{{ form.date_expiration }}</td>
-                        <td>{{ form.DELETE }}</td>
-                        
-                        <!-- Make sure the ID field is included but hidden -->
-                        {{ form.id }}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <button type="submit" class="btn btn-primary">Save</button>
+        {{ form|crispy }}
+
+        <div class="form-footer">
+            <button type="submit" class="btn-submit">
+                {% if form.instance.pk %}Enregistrer les modifications{% else %}Ajouter Tarif{% endif %}
+            </button>
+
+            <a href="{% url 'manage_tarifs' classe.pk %}" class="btn-back">Annuler</a>
+        </div>
     </form>
 </div>
-{% endblock %}
+{% endblock content %}
