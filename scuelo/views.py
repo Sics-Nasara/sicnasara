@@ -722,11 +722,16 @@ def manage_tarifs(request, pk):
     tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
 
     # Calculate cumulative amounts for each tranche (using 'causal' instead of 'type_frais')
+    # Calculate cumulative sums for each tranche
     tranche_data = {
         'first_tranche': tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0,
-        'second_tranche': tarifs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0,
-        'third_tranche': tarifs.filter(causal='SCO3').aggregate(total=Sum('montant'))['total'] or 0,
+        'second_tranche': (tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0) +
+                        (tarifs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0),
+        'third_tranche': (tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0) +
+                        (tarifs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0) +
+                        (tarifs.filter(causal='SCO3').aggregate(total=Sum('montant'))['total'] or 0),
     }
+
 
     # Calculate progressive payments per student
     progress_per_eleve = (tranche_data['first_tranche'] +
