@@ -1,215 +1,177 @@
 {% extends "../../layout.html" %}
-{% load crispy_forms_tags %}
 
 <style>
-    .form-group {
-        margin-bottom: 1rem;
+    /* Custom styles */
+    .breadcrumb {
+        background: none;
+        padding: 0;
+        margin-bottom: 20px;
+        font-size: 14px;
     }
-    .container-fluid {
-        padding: 20px;
+
+    .breadcrumb-item a {
+        color: #007bff;
+        text-decoration: none;
     }
-    .card {
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
         border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+    }
+
+    .table th {
+        background-color: #007bff;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+    }
+
     .card-header {
-        background-color: #A44400;
-        color: white;
+        background-color: #007bff;
+        color: #fff;
         padding: 10px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        font-weight: bold;
     }
-    .card-body {
-        padding: 20px;
+
+    .card-body p {
+        margin: 10px 0;
     }
-    .btn-success {
-        background-color: #A44400;
-        border-color: #A44400;
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
     }
-    .form-buttons {
-        text-align: right;
-        margin-top: 1rem;
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 </style>
 
 {% block content %}
+<!-- Breadcrumb Navigation -->
 <ol class="breadcrumb">
     {% for url, label in breadcrumbs %}
-    {% if url %}
-    <li class="breadcrumb-item"><a href="{{ url }}">{{ label }}</a></li>
-    {% else %}
+    {% if forloop.last %}
     <li class="breadcrumb-item active" aria-current="page">{{ label }}</li>
+    {% else %}
+    <li class="breadcrumb-item"><a href="{{ url }}">{{ label }}</a></li>
     {% endif %}
     {% endfor %}
 </ol>
 
-<a href="{% url 'manage_tarifs' classe.pk %}" class="btn btn-primary">
-    <i class="fas fa-money-check-alt"></i> Gérer les Tarifs
-</a>
-<!-- Container with Reduced Margins -->
-<div class="container mt-4" style="max-width: 95%; margin: 0 auto;">
-    <div class="row">
-        <!-- Basic Information -->
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    Information de base
-                </div>
-                <div class="card-body">
-                    <p><strong>Nom:</strong> {{ student.nom }}</p>
-                    <p><strong>Prénom:</strong> {{ student.prenom }}</p>
-                    <p><strong>Condition:</strong> {{ student.get_condition_eleve_display }}</p>
-                    <p><strong>Sexe:</strong> {{ student.get_sex_display }}</p>
-                    <p><strong>Date de Naissance:</strong> {{ student.date_naissance }}</p>
-                    <p><strong>CS PY:</strong> {{ student.get_cs_py_display }}</p>
-                    <p><strong>Hand:</strong> {{ student.get_hand_display|default:'-' }}</p>
-                    <p><strong>Date enquete:</strong> {{ student.date_enquete|default:'-' }}</p>
-                    <p><strong>Parent:</strong> {{ student.parent|default:'-' }}</p>
-                    <p><strong>Notes:</strong> {{ student.note_eleve|default:'-' }}</p>
-                    <p><strong>École:</strong> {{ student.current_class.ecole.nom }}</p>
-                </div>
-            </div>  
-        </div>
-        <!-- Inscriptions -->
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    Inscriptions
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        {% for inscription in inscriptions %}
-                        <li class="list-group-item">{{ inscription.classe }} - {{ inscription.annee_scolaire.nom }}</li>
-                        {% empty %}
-                        <li class="list-group-item">Aucune inscription trouvée</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <a href="{% url 'student_update' pk=student.id %}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Update</a>
-                <a href="{% url 'change_school' %}?student_id={{ student.id }}" class="btn btn-secondary ml-2"><i class="fas fa-exchange-alt"></i> Change School</a>
-                <a href="{% url 'class_upgrade' %}?student_id={{ student.id }}" class="btn btn-success ml-2"><i class="fas fa-arrow-up"></i> Class Upgrade</a>
-            </div>
-        </div>
+<!-- Class Info -->
+<div class="card">
+    <div class="card-header">
+        Détails de la Classe
     </div>
-    <h2>{{ classe.nom }}</h2>
-    <h2>{{ classe.nom }}</h2>
-    <h3>Tariffs</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Causal</th>
-                <th>Amount</th>
-                <th>1st Installment</th>
-                <th>1st Due Date</th>
-                <!-- Add other columns as needed -->
-            </tr>
-        </thead>
-        <tbody>
-            {% for tarif in latest_tariffs %}
-            <tr>
-                <td>{{ tarif.causal }}</td>
-                <td>{{ tarif.montant }}</td>
-                <td>{{ tarif.tranche_1_montant }}</td>
-                <td>{{ tarif.tranche_1_due_date }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
+    <div class="card-body">
+        <p><strong>Nom de la Classe:</strong> {{ classe.nom }}</p>
+        <p><strong>École:</strong> {{ classe.ecole.nom }}</p>
+        <p><strong>Enseignant:</strong> {% if teacher %} {{ teacher }} {% else %} Non assigné {% endif %}</p>
+        <p><strong>Notes:</strong> {{ notes|default:"Pas de notes disponibles." }}</p>
+    </div>
+</div>
 
-
-<!-- Modal for Adding Payment -->
-<div class="modal fade" id="addPaiementModal" tabindex="-1" aria-labelledby="addPaiementModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="addPaiementForm" method="post" action="{% url 'add_paiement' student.id %}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPaiementModalLabel">Ajouter un paiement pour {{ student.nom }} {{ student.prenom }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                {{ form.causal|as_crispy_field }}
-                            </div>
-                            <div class="col-md-12">
-                                {{ form.note|as_crispy_field }}
-                            </div>
-                            <div class="col-md-12">
-                                {{ form.date_paye|as_crispy_field }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
-                </div>
-            </form>
+<!-- Tarifs Table -->
+<div class="card">
+    <div class="card-header">
+        Tarifs et Paiements
+    </div>
+    <div class="card-body">
+        <div class="table-responsive table-container">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Causal</th>
+                        <th>Montant</th>
+                        <th>Date d'Échéance</th>
+                        <th>Paiement attendu (Total)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tarif in latest_tariffs %}
+                    <tr>
+                        <td>{{ tarif.get_causal_display }}</td>
+                        <td>{{ tarif.montant }} FCFA</td>
+                        <td>{{ tarif.date_expiration }}</td>
+                        <td>{{ tarif.expected_total }} FCFA</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Aucun tarif disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const table = document.getElementById('studentTable');
-        const headers = table.querySelectorAll('.sortable');
-        let sortDirection = {};
-        
-        headers.forEach(header => {
-            header.addEventListener('click', () => {
-                const column = header.getAttribute('data-sort');
-                const direction = sortDirection[column] === 'asc' ? 'desc' : 'asc';
-                sortTable(column, direction);
-                sortDirection[column] = direction;
-                
-                headers.forEach(h => {
-                    if (h !== header) {
-                        h.classList.remove('asc', 'desc');
-                        h.querySelector('.sort-icon')?.remove();
-                    }
-                });
-                
-                header.classList.toggle('asc', direction === 'asc');
-                header.classList.toggle('desc', direction === 'desc');
-                
-                if (direction === 'asc') {
-                    header.innerHTML += '<span class="sort-icon asc">&#9650;</span>';
-                } else {
-                    header.innerHTML += '<span class="sort-icon desc">&#9660;</span>';
-                }
-            });
-        });
-        
-        function sortTable(column, direction) {
-            const rows = Array.from(table.querySelector('tbody').rows);
-            const compare = (a, b) => {
-                let cellA = a.querySelector(`td[data-column="${column}"]`)?.innerText.trim();
-                let cellB = b.querySelector(`td[data-column="${column}"]`)?.innerText.trim();
-                
-                if (column === 'sex') {
-                    cellA = cellA === 'F' ? 0 : 1;
-                    cellB = cellB === 'F' ? 0 : 1;
-                } else if (!isNaN(cellA) && !isNaN(cellB)) {
-                    cellA = parseFloat(cellA);
-                    cellB = parseFloat(cellB);
-                }
-                
-                if (direction === 'asc') {
-                    return cellA > cellB ? 1 : -1;
-                } else {
-                    return cellA < cellB ? 1 : -1;
-                }
-            };
-            rows.sort(compare);
-            rows.forEach(row => table.querySelector('tbody').appendChild(row));
-        }
-        
-        sortTable('nom', 'asc');
-    });
-</script>
-{% endblock %}
+
+<!-- Uniforms (Tenues) -->
+<div class="card">
+    <div class="card-header">
+        Uniformes (Tenues)
+    </div>
+    <div class="card-body">
+        <p>Total des coûts pour les uniformes (tenues): {{ tenues }} FCFA</p>
+    </div>
+</div>
+
+<!-- Total Payments and Summary -->
+<div class="card">
+    <div class="card-header">
+        Résumé des Paiements
+    </div>
+    <div class="card-body">
+        <p><strong>Total des paiements pour {{ classe.nom }} cette année:</strong> {{ total_class_payment }} FCFA</p>
+    </div>
+</div>
+
+<!-- Buttons for Managing Tariffs -->
+<a href="{% url 'manage_tarifs' classe.pk %}" class="btn btn-primary mb-3">
+    <i class="fas fa-money-check-alt"></i> Gérer les Tarifs
+</a>
+{% endblock content %}

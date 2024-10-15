@@ -10,3 +10,8 @@ have #RtItBfF2013 a  btn change school and classe in  each student detail page
 what should  be fixed next  
 
 deal the student through the annee scolaire 
+
+
+     <a href="{% url 'classe_del' classe.pk %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>

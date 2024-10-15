@@ -437,6 +437,8 @@ class ClasseCreateView(CreateView):
         context['page_identifier'] = 'S16'  # Example page identifier
         return context
     
+from django.db.models import Sum
+
 @method_decorator(login_required, name='dispatch')
 class ClasseDetailView(DetailView):
     model = Classe
@@ -445,15 +447,44 @@ class ClasseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         classe = self.get_object()
-        # Add the students related to the class
-        context['students'] = Eleve.objects.filter(inscription__classe=classe)
-        # Breadcrumbs for navigation
-        context['breadcrumbs'] = [('/', 'Home'), 
-                                  (f'/homepage/schools/detail/{classe.ecole.pk}/', 'School Details'), 
-                                  ('', 'Class Details')]
-        # Add the page identifier
-        context['page_identifier'] = 'S17'  # Example identifier for the page
+
+        # Get the current academic year
+        current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+
+        # Class Information
+        context['classe'] = classe
+        context['school_name'] = classe.ecole.nom
+        context['teacher'] = None  # Placeholder for when teachers are assigned
+        context['notes'] = "Add any specific notes about the class here."  # Placeholder for notes
+
+        # Tariffs for the class and current academic year
+        latest_tariffs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).order_by('date_expiration')
+        context['latest_tariffs'] = latest_tariffs
+
+        # Calculate progressive payments and expected totals
+        tranche_data = {
+            'first_tranche': latest_tariffs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0,
+            'second_tranche': latest_tariffs.filter(causal='SCO2').aggregate(total=Sum('montant'))['total'] or 0,
+            'third_tranche': latest_tariffs.filter(causal='SCO3').aggregate(total=Sum('montant'))['total'] or 0,
+        }
+
+        # Uniforms (Tenues)
+        tenues = Mouvement.objects.filter(inscription__classe=classe, causal='TEN', inscription__annee_scolaire=current_annee_scolaire).aggregate(total=Sum('montant'))['total'] or 0
+        context['tenues'] = tenues
+
+        # Total payments for the class
+        total_class_payment = Mouvement.objects.filter(inscription__classe=classe, inscription__annee_scolaire=current_annee_scolaire).aggregate(total=Sum('montant'))['total'] or 0
+        context['total_class_payment'] = total_class_payment
+
+        # Add Breadcrumbs
+        context['breadcrumbs'] = [
+            ('/', 'Home'),
+            (f'/homepage/schools/detail/{classe.ecole.pk}/', 'School Details'),
+            ('', 'Class Details')
+        ]
+
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ClasseUpdateView(UpdateView):
@@ -770,7 +801,7 @@ def manage_tarifs(request, pk):
         inscription__annee_scolaire=current_annee_scolaire
     ).aggregate(total=Sum('montant'))['total'] or 0
 
-    '''    # Fetch count of students (PY, CS, and others)
+       # Fetch count of students (PY, CS, and others)
     student_count = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).count()
     py_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="P"
@@ -786,7 +817,7 @@ def manage_tarifs(request, pk):
     cs_students_count = Inscription.objects.filter(
         classe=classe, annee_scolaire=current_annee_scolaire, eleve__cs_py="C"
     ).count()
-    other_students_count = student_count - py_students_count - cs_students_count'''
+    other_students_count = student_count - py_students_count - cs_students_count
     cs_students_count = inscriptions.filter(eleve__cs_py="C").count()
     return render(request, 'scuelo/tarif/tarif_list.html', {
         'classe': classe,
