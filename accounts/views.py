@@ -8,7 +8,12 @@ from .forms import UserForm, GroupForm
 @permission_required('auth.view_user', raise_exception=True)
 def user_list(request):
     users = User.objects.all()
-    return render(request, 'accounts/user_list.html', {'users': users})
+    context = {
+        'users': users,
+        'page_identifier': 'U01'  # Unique page identifier for the user list page
+    }
+    return render(request, 'accounts/user_list.html', context)
+
 
 @login_required
 @permission_required('auth.add_user', raise_exception=True)
@@ -22,7 +27,7 @@ def user_create(request):
             return redirect('user_list')
     else:
         form = UserForm()
-    return render(request, 'accounts/user_form.html', {'form': form})
+    return render(request, 'accounts/user_form.html', {'form': form ,   'page_identifier': 'U02' })
 
 @login_required
 @permission_required('auth.change_user', raise_exception=True)
@@ -38,7 +43,7 @@ def user_update(request, pk):
             return redirect('user_list')
     else:
         form = UserForm(instance=user)
-    return render(request, 'accounts/user_form.html', {'form': form})
+    return render(request, 'accounts/user_form.html', {'form': form ,  'page_identifier': 'U03' })
 
 @login_required
 @permission_required('auth.delete_user', raise_exception=True)
@@ -47,14 +52,14 @@ def user_delete(request, pk):
     if request.method == 'POST':
         user.delete()
         return redirect('user_list')
-    return render(request, 'accounts/user_confirm_delete.html', {'user': user})
+    return render(request, 'accounts/user_confirm_delete.html', {'user': user ,   'page_identifier': 'U04' })
 
 # Group Management Views
 @login_required
 @permission_required('auth.view_group', raise_exception=True)
 def group_list(request):
     groups = Group.objects.all()
-    return render(request, 'accounts/group_list.html', {'groups': groups})
+    return render(request, 'accounts/group_list.html', {'groups': groups ,    'page_identifier': 'U05'} )
 
 @login_required
 @permission_required('auth.add_group', raise_exception=True)
@@ -66,7 +71,7 @@ def group_create(request):
             return redirect('group_list')
     else:
         form = GroupForm()
-    return render(request, 'accounts/group_form.html', {'form': form})
+    return render(request, 'accounts/group_form.html', {'form': form ,  'page_identifier': 'U05' })
 
 @login_required
 @permission_required('auth.change_group', raise_exception=True)
@@ -79,7 +84,7 @@ def group_update(request, pk):
             return redirect('group_list')
     else:
         form = GroupForm(instance=group)
-    return render(request, 'accounts/group_form.html', {'form': form})
+    return render(request, 'accounts/group_form.html', {'form': form ,   'page_identifier': 'U06' })
 
 @login_required
 @permission_required('auth.delete_group', raise_exception=True)
@@ -88,11 +93,11 @@ def group_delete(request, pk):
     if request.method == 'POST':
         group.delete()
         return redirect('group_list')
-    return render(request, 'accounts/group_confirm_delete.html', {'group': group})
+    return render(request, 'accounts/group_confirm_delete.html', {'group': group ,   'page_identifier': 'U07' })
 
 
 @login_required
 @permission_required('auth.view_permission', raise_exception=True)
 def rights_management(request):
     permissions = Permission.objects.all()
-    return render(request, 'accounts/rights_management.html', {'permissions': permissions})
+    return render(request, 'accounts/rights_management.html', {'permissions': permissions ,   'page_identifier': 'U08' })

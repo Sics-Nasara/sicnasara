@@ -161,6 +161,14 @@
         .logout-btn:hover {
             background-color: #c82333;
         }
+        .page-identifier {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 22px;
+            color: black;
+            font-weight: bold;
+        }
     </style>
     <body>
     {% block nav %}
@@ -243,10 +251,15 @@
     </div>
 
     <div class="content">
+        <div class="page-identifier ">
+            <p> <strong>{{ page_identifier }}</strong></p>
+        </div>
         {% block content %}
+     
         {% endblock content %}
     </div>
 
+  
     <script>
         function toggleSidebar() {
             var sidebar = document.querySelector('.sidebar');

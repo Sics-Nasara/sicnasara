@@ -119,7 +119,8 @@ def home(request):
 
     return render(request, 'scuelo/home.html', {
         'data': data,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'page_identifier': 'S01'  # Unique page identifier
     })
 
 
@@ -179,7 +180,8 @@ def class_detail(request, pk):
         'breadcrumbs': breadcrumbs,
         'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
         'selected_annee_scolaire': selected_annee_scolaire,  # Pass the selected academic year
-        'total_class_payment': total_class_payment  # Total amount of payments for the class in the selected year
+        'total_class_payment': total_class_payment ,
+         'page_identifier': 'S02'  # Unique page identifier# Total amount of payments for the class in the selected year
     })
 
 
@@ -239,6 +241,7 @@ def student_detail(request, pk):
         'breadcrumbs': breadcrumbs,
         'form': form,
         'logs': logs,
+         'page_identifier': 'S03'  # Unique page identifier
     })
  
 @login_required
@@ -265,7 +268,8 @@ def student_update(request, pk):
     else:
         form = EleveUpdateForm(instance=student)
     
-    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student})
+    return render(request, 'scuelo/students/studentupdate.html', {'form': form, 'student': student,
+                                                                  'page_identifier': 'S13'  })
 
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
@@ -296,6 +300,8 @@ class StudentListView(ListView):
                     eleve.total_paiements = Mouvement.objects.filter(inscription=inscription).aggregate(total=Sum('montant'))['total'] or 0
 
         context['schools'] = schools
+         # Add your page identifier here
+        context['page_identifier'] = 'S14' 
         return context
 
 @login_required
@@ -324,7 +330,9 @@ def class_upgrade(request, pk):
     else:
         form = ClassUpgradeForm()
 
-    return render(request, 'scuelo/classe/class_upgrade.html', {'form': form, 'student': student})
+    return render(request, 'scuelo/classe/class_upgrade.html',
+                  {'form': form, 'student': student ,  
+                    'page_identifier': 'S04' })
 
 @login_required
 def change_school(request, pk):
@@ -349,7 +357,9 @@ def change_school(request, pk):
     else:
         form = SchoolChangeForm()
 
-    return render(request, 'scuelo/school/change_school.html', {'form': form, 'student': student})
+    return render(request, 'scuelo/school/change_school.html',
+                  {'form': form, 'student': student ,
+                    'page_identifier': 'S05' })
 
 @login_required
 def offsite_students(request):
@@ -377,7 +387,8 @@ def offsite_students(request):
     all_offsite_students = offsite_students 
 
     context = {
-        'all_offsite_students': all_offsite_students,  # Combined list of offsite students
+        'all_offsite_students': all_offsite_students,  
+        'page_identifier': 'S06' # Combined list of offsite students
     }
     return render(request, 'scuelo/offsite_students.html', context)
 @method_decorator(login_required, name='dispatch')
@@ -390,6 +401,9 @@ class StudentCreateView(CreateView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
+          # Add page identifier
+        data['page_identifier'] = 'S15'  # Unique identifier for this page
+        
         return data
 
     def form_valid(self, form):
@@ -417,6 +431,12 @@ class ClasseCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.kwargs['pk']})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add page identifier for this page
+        context['page_identifier'] = 'S16'  # Example page identifier
+        return context
+    
 @method_decorator(login_required, name='dispatch')
 class ClasseDetailView(DetailView):
     model = Classe
@@ -425,10 +445,14 @@ class ClasseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         classe = self.get_object()
+        # Add the students related to the class
         context['students'] = Eleve.objects.filter(inscription__classe=classe)
+        # Breadcrumbs for navigation
         context['breadcrumbs'] = [('/', 'Home'), 
                                   (f'/homepage/schools/detail/{classe.ecole.pk}/', 'School Details'), 
                                   ('', 'Class Details')]
+        # Add the page identifier
+        context['page_identifier'] = 'S17'  # Example identifier for the page
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -437,6 +461,12 @@ class ClasseUpdateView(UpdateView):
     form_class = ClasseCreateForm
     template_name = 'scuelo/classe/classe_update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier for this view
+        context['page_identifier'] = 'S18'  # Example page identifier
+        return context
+
     def get_success_url(self):
         return reverse_lazy('classe_detail', kwargs={'pk': self.object.pk})
 
@@ -444,6 +474,12 @@ class ClasseUpdateView(UpdateView):
 class ClasseDeleteView(DeleteView):
     model = Classe
     template_name = 'scuelo/classe/classe_confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier for this view
+        context['page_identifier'] = 'S19'  # Example page identifier
+        return context
 
     def get_success_url(self):
         return reverse_lazy('school_detail', kwargs={'pk': self.object.ecole.pk})
@@ -485,7 +521,8 @@ def add_payment(request, pk):
     else:
         form = PaiementPerStudentForm()
 
-    return render(request, 'scuelo/paiements/add_payment.html', {'form': form, 'student': student})
+    return render(request, 'scuelo/paiements/add_payment.html', {'form': form, 'student': student ,
+                                                                 'page_identifier': 'S07'})
 @login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)
@@ -506,7 +543,9 @@ def update_paiement(request, pk):
     else:
         form = PaiementPerStudentForm(instance=paiement)
 
-    return render(request, 'scuelo/paiements/updatepaiment.html', {'form': form, 'student': student})
+    return render(request, 'scuelo/paiements/updatepaiment.html',
+                  {'form': form, 'student': student ,
+                                                                   'page_identifier': 'S07'})
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
     model = Mouvement
@@ -574,7 +613,8 @@ class UniformPaymentListView(ListView):
             total_uniforms_across_classes += uniform_count
 
         # Pass the context to the template
-        context['classes'] = classes
+        context['classes'] = classes  
+        context['page_identifier'] = 'S20'  # Example page identifier
         context['total_uniforms'] = total_uniforms_across_classes
         return context
 
@@ -586,8 +626,14 @@ class UniformPaymentCreateView(CreateView):
     success_url = reverse_lazy('uniform_payments')
 
     def form_valid(self, form):
-        form.instance.causal = 'TEN'
+        form.instance.causal = 'TEN'  # Set the causal for uniforms
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier for this view
+        context['page_identifier'] = 'S21'  # Example page identifier
+        return context
 
 
 @login_required
@@ -647,6 +693,7 @@ def cash_flow_report(request):
         'net_cash_flow': net_cash_flow,
         'monthly_cash_flow_chart': monthly_cash_flow_chart,
         'income_vs_expenses_chart': income_vs_expenses_chart,
+        'page_identifier': 'S08'
     }
     return render(request, 'scuelo/cash/cash_flow_report.html', context)
 
@@ -754,10 +801,12 @@ def manage_tarifs(request, pk):
         'py_students_count':py_students_count ,
         'cs_students_count':cs_students_count,
         'other_students_count':other_students_count,
-        'total_actual_payments': total_actual_payments  # Pass total actual payments to template
+        'total_actual_payments': total_actual_payments , # Pass total actual payments to template
+        'page_identifier': 'S09'
     })
 
 
+@method_decorator(login_required, name='dispatch')
 class TarifCreateView(CreateView):
     model = Tarif
     form_class = TarifForm
@@ -771,6 +820,12 @@ class TarifCreateView(CreateView):
         form.instance.classe = classe
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier
+        context['page_identifier'] = 'S22'  # Example page identifier for tarif creation
+        return context
+
 # Update an existing tariff
 @method_decorator(login_required, name='dispatch')
 class TarifUpdateView(UpdateView):
@@ -780,15 +835,26 @@ class TarifUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('manage_tarifs', kwargs={'pk': self.object.classe.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier
+        context['page_identifier'] = 'S23'  # Example page identifier for tarif update
+        return context
     
-# Delete a tariff
-@method_decorator(login_required, name='dispatch')
+# Delete a tariff@method_decorator(login_required, name='dispatch')
 class TarifDeleteView(DeleteView):
     model = Tarif
     template_name = 'tarifs/tarif_confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('manage_tarifs', kwargs={'pk': self.object.classe.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the page identifier
+        context['page_identifier'] = 'S24'  # Example page identifier for tarif deletion
+        return context
     
 @login_required
 def accounting_report(request):
@@ -804,7 +870,8 @@ def accounting_report(request):
         default=Value('16th-end')
     )).values('period').annotate(total=Sum('montant')).order_by('period')
 
-    return render(request, 'scuelo/cash/accounting_report.html', {'grouped_income': grouped_income})
+    return render(request, 'scuelo/cash/accounting_report.html', {'grouped_income': grouped_income ,
+                                                                  'page_identifier': 'S10'})
 
 @login_required
 def export_accounting_report(request):
@@ -888,6 +955,7 @@ def mouvement_list(request):
     return render(request, 'scuelo/mouvement/mouvement_list.html', {
         'movements': movements,
         'search_query': search_query,
+        'page_identifier': 'S11'
     })
     
 @login_required
@@ -899,7 +967,7 @@ def add_mouvement(request):
             return redirect('mouvement_list')
     else:
         form = MouvementForm()
-    return render(request, 'scuelo/mouvement/add_mouvement.html', {'form': form})
+    return render(request, 'scuelo/mouvement/add_mouvement.html', {'form': form , 'page_identifier': 'S12'})
 @login_required
 def update_mouvement(request, pk):
     mouvement = get_object_or_404(Mouvement, pk=pk)
@@ -910,7 +978,8 @@ def update_mouvement(request, pk):
             return redirect('mouvement_list')
     else:
         form = MouvementForm(instance=mouvement)
-    return render(request, 'scuelo/mouvement/update_mouvement.html', {'form': form, 'mouvement': mouvement})
+    return render(request, 'scuelo/mouvement/update_mouvement.html', {'form': form,
+                                                                      'mouvement': mouvement , 'page_identifier': 'S13'})
 
 @login_required
 def delete_mouvement(request, pk):
@@ -918,7 +987,8 @@ def delete_mouvement(request, pk):
     if request.method == 'POST':
         mouvement.delete()
         return redirect('mouvement_list')
-    return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement})
+    return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
+                                                                      'page_identifier': 'S14' })
 
 
 
@@ -933,6 +1003,7 @@ class SchoolManagementView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['schools'] = Ecole.objects.annotate(num_students=Count('classe__inscription__eleve', distinct=True))
         context['form'] = EcoleCreateForm()
+        context['page_identifier'] = 'S25'  # Add page identifier
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -941,6 +1012,11 @@ class SchoolCreateView(CreateView):
     form_class = EcoleCreateForm
     template_name = 'scuelo/school_create.html'
     success_url = reverse_lazy('student_management')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_identifier'] = 'S26'  # Add page identifier
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -961,20 +1037,27 @@ class SchoolUpdateView(UpdateView):
     template_name = 'scuelo/school/school_update.html'
     success_url = reverse_lazy('student_management')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_identifier'] = 'S27'  # Add page identifier
+        return context
+
+
 @method_decorator(login_required, name='dispatch')
 class SchoolDeleteView(DeleteView):
     model = Ecole
     template_name = 'scuelo/school/school_confirm_delete.html'
     success_url = reverse_lazy('school_management')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_identifier'] = 'S28'  # Add page identifier
+        return context
+
     def delete(self, request, *args, **kwargs):
-        """
-        Override the delete method to add any additional logic if needed,
-        like checking if the school has any related objects that should
-        also be deleted or should prevent deletion.
-        """
         # Optional: Add any pre-deletion logic here
         return super().delete(request, *args, **kwargs)
+
     
 @method_decorator(login_required, name='dispatch')
 class SchoolDetailView(DetailView):
@@ -985,6 +1068,7 @@ class SchoolDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['students'] = Eleve.objects.filter(inscription__classe__ecole=self.object).distinct()
         context['classe_form'] = ClasseCreateForm()
+        context['page_identifier'] = 'S29'  # Add unique page identifier
         return context
 
 @login_required

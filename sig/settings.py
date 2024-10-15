@@ -101,9 +101,7 @@ DATABASES = {
         'NAME': 'sicsnasara_dev',
         'HOST': 'localhost',
         'USER': 'nasara',
-
         'PASSWORD': DEV_DATABASE_PASSWORD,
-
         'PORT': '5432',
     }
 }
