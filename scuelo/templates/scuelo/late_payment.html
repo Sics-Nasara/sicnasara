@@ -1,6 +1,5 @@
 {% extends "../layout.html" %}
 
-
 {% block content %}
 <style>
     .table-container {
@@ -40,14 +39,6 @@
         background-color: #f8f9fa;
     }
 
-    .progressive-data {
-        padding: 20px;
-        margin-bottom: 20px;
-        background-color: #f9f9f9;
-        border: 1px solid #dee2e6;
-        border-radius: 10px;
-    }
-
     h2, h3 {
         text-align: left;
         margin-top: 30px;
@@ -73,32 +64,29 @@
             </thead>
             <tbody>
                 {% for data in class_data.students %}
-                    {% if data.total.ratio != 100 %}
+                    <tr>
+                        <td rowspan="{{ data.details|length }}">
+                            {{ data.student.nom }} {{ data.student.prenom }}
+                        </td>
+                        {% for detail in data.details %}
                         <tr>
-                            <td rowspan="{{ data.details|length }}">
-                                {{ data.student.nom }} {{ data.student.prenom }}
-                            </td>
-                            {% for detail in data.details %}
                             <td>{{ detail.causal }}</td>
                             <td>{{ detail.expected }} FCFA</td>
                             <td>{{ detail.paid }} FCFA</td>
                             <td>{{ detail.difference }} FCFA</td>
                             <td>{{ detail.ratio }}%</td>
                         </tr>
+                        {% endfor %}
                         <tr>
-                            {% endfor %}
                             <td colspan="2"><strong>Total</strong></td>
                             <td><strong>{{ data.total.expected }} FCFA</strong></td>
                             <td><strong>{{ data.total.paid }} FCFA</strong></td>
                             <td><strong>{{ data.total.difference }} FCFA</strong></td>
                             <td><strong>{{ data.total.ratio }}%</strong></td>
                         </tr>
-                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
-    {% empty %}
-        <p>No students with outstanding payments in this class.</p>
     {% endfor %}
 </div>
 {% endblock %}

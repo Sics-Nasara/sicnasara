@@ -1073,7 +1073,6 @@ def delete_mouvement(request, pk):
         return redirect('mouvement_list')
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
                                                                       'page_identifier': 'S14' })
-
 @login_required
 def late_payment_report(request):
     # Get the current school year
@@ -1088,6 +1087,11 @@ def late_payment_report(request):
     for classe in classes:
         # Get students registered in the class for the current school year
         inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+
+        class_data = {
+            'classe': classe,
+            'students': []
+        }
 
         for inscription in inscriptions:
             student = inscription.eleve
@@ -1135,19 +1139,21 @@ def late_payment_report(request):
             total_difference = total_payable - total_paid_sum
             total_ratio = (total_difference / total_payable) * 100 if total_payable else 0
 
-            # Add the overall total to the student's report
-            student_report['total'] = {
-                'expected': total_payable,
-                'paid': total_paid_sum,
-                'difference': total_difference,
-                'ratio': round(total_ratio, 2)
-            }
+            # Only include students who have not paid everything (ratio not equal to 100%)
+            if total_ratio != 0 or student.cs_py == "C":  # Include CS students even if fully paid
+                # Add the overall total to the student's report
+                student_report['total'] = {
+                    'expected': total_payable,
+                    'paid': total_paid_sum,
+                    'difference': total_difference,
+                    'ratio': round(total_ratio, 2)
+                }
+                # Append student's data to the class report
+                class_data['students'].append(student_report)
 
-            # Append student's data to the class report
-            report_data.append(student_report)
-
-    # Sort the report data by total ratio in descending order
-    report_data = sorted(report_data, key=lambda x: x['total']['ratio'], reverse=True)
+        # Only add class data if there are students with late payments
+        if class_data['students']:
+            report_data.append(class_data)
 
     return render(request, 'scuelo/late_payment.html', {
         'report_data': report_data,
