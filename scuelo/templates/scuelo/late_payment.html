@@ -37,7 +37,7 @@
         background-color: #f2f2f2;
     }
 
-    .class-header {
+    .class-header, .school-header {
         background-color: #333;
         color: #fff;
         font-weight: bold;
@@ -50,52 +50,62 @@
         background-color: #e74c3c;
         color: white;
     }
+
+    h2 {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 30px;
+    }
 </style>
 
-<h2>Liste Générale Retards Paiements - {{ current_annee_scolaire.nom }}</h2>
+<h2>Liste Générale Retards Paiements - Année scolaire {{ current_annee_scolaire.nom }}</h2>
 
 <div class="table-container">
-    {% for class_data in report_data %}
-        <div class="class-header">{{ class_data.classe.nom }} - {{ class_data.classe.ecole.nom }}</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Sex</th>
-                    <th>CS_PY</th>
-                    <th>SCO Exigible</th>
-                    <th>Paid Amount</th>
-                    <th>Difference</th>
-                    <th>Ratio (%)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in class_data.students %}
-                    {% if student.ratio < 100 %}
+    {% for school_name, school_data in data.items %}
+        <div class="school-header">{{ school_name }}</div>
+        {% for class_name, students in school_data.items %}
+            <div class="class-header">{{ class_name }}</div>
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ student.id }}</td>
-                        <td>{{ student.nom }}</td>
-                        <td>{{ student.prenom }}</td>
-                        <td>{{ student.sex }}</td>
-                        <td>{{ student.cs_py }}</td>
-                        <td>{{ student.total_exigible }} FCFA</td>
-                        <td>{{ student.total_paid }} FCFA</td>
-                        <td>{{ student.difference }} FCFA</td>
-                        <td>{{ student.ratio }}%</td>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Sex</th>
+                        <th>CS_PY</th>
+                        <th>SCO Paid</th>
+                        <th>SCO Exigible</th>
+                        <th>Difference SCO</th>
+                        <th>CAN Paid</th>
+                        <th>CAN Exigible</th>
+                        <th>Difference CAN</th>
+                        <th>Retards</th>
+                        <th>% Paid</th>
+                        <th>Note</th>
                     </tr>
-                    {% endif %}
-                {% endfor %}
-                <tr class="totals-row">
-                    <td colspan="5">Class Total</td>
-                    <td>{{ class_data.class_total_exigible }} FCFA</td>
-                    <td></td>
-                    <td>{{ class_data.class_total_difference }} FCFA</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.nom }}</td>
+                            <td>{{ student.prenom }}</td>
+                            <td>{{ student.sex }}</td>
+                            <td>{{ student.cs_py }}</td>
+                            <td>{{ student.sco_paid }} FCFA</td>
+                            <td>{{ student.sco_exigible }} FCFA</td>
+                            <td>{{ student.diff_sco }} FCFA</td>
+                            <td>{{ student.can_paid }} FCFA</td>
+                            <td>{{ student.can_exigible }} FCFA</td>
+                            <td>{{ student.diff_can }} FCFA</td>
+                            <td>{{ student.retards }} FCFA</td>
+                            <td>{{ student.percentage_paid }}%</td>
+                            <td>{{ student.note|default:"-" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
     {% endfor %}
 </div>
 {% endblock %}
