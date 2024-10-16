@@ -1080,64 +1080,88 @@ def late_payment_report(request):
     # Get the current school year
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
     
-    # Fetch all classes and prepare the report data structure
+    # Fetch all classes, irrespective of their school
     classes = Classe.objects.all()
+
+    # Prepare data structure for report
     report_data = []
 
     for classe in classes:
-        # Get students registered in the class for the current school year
-        inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
+        # Get students registered in the class for the current school year, excluding those with CS_PY = 'CS'
+        inscriptions = Inscription.objects.filter(
+            classe=classe, 
+            annee_scolaire=current_annee_scolaire
+        ).exclude(eleve__cs_py='CS')  # Exclude CS students
 
-        # Class data structure
-        class_data = {
+        class_report = {
             'classe': classe,
-            'students': [],
-            'class_total_difference': 0,
-            'class_total_exigible': 0
+            'ecole': classe.ecole,  # Add school information for grouping
+            'students': []
         }
 
         for inscription in inscriptions:
             student = inscription.eleve
 
-            # Calculate total paid and expected amounts for the student
+            # Calculate total paid by the student by type (e.g., SCO1, SCO2, INS, TEN, etc.)
             total_paid = Mouvement.objects.filter(inscription=inscription).values('causal').annotate(
                 paid_amount=Sum('montant')
             )
 
-            expected_amounts = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).values('causal').annotate(
+            # Get the expected amount the student needs to pay by type (based on tarifs)
+            expected_amounts = Tarif.objects.filter(
+                classe=classe, 
+                annee_scolaire=current_annee_scolaire
+            ).values('causal').annotate(
                 expected_amount=Sum('montant')
             )
 
-            expected_dict = {item['causal']: item['expected_amount'] for item in expected_amounts}
-            paid_dict = {item['causal']: item['paid_amount'] for item in total_paid}
+            # Convert expected_amounts to a dictionary for easier comparison
+            expected_amount_dict = {item['causal']: item['expected_amount'] for item in expected_amounts}
+            total_paid_dict = {item['causal']: item['paid_amount'] for item in total_paid}
 
-            total_exigible = sum(expected_dict.values())
-            total_paid_sum = sum(paid_dict.values())
-            total_difference = total_exigible - total_paid_sum
-            ratio = (total_difference / total_exigible) * 100 if total_exigible else 0
+            # Calculate differences and ratio
+            student_report = {
+                'student': student,
+                'details': []
+            }
+            
+            total_payable = 0
+            total_paid_sum = 0
 
-            # Only include students with a late payment or CS students
-            if total_difference != 0 or student.cs_py == "C":
-                student_data = {
-                    'id': student.id,
-                    'nom': student.nom,
-                    'prenom': student.prenom,
-                    'sex': student.get_sex_display(),
-                    'cs_py': student.get_cs_py_display(),
-                    'condition_eleve': student.get_condition_eleve_display(),
-                    'total_exigible': total_exigible,
-                    'total_paid': total_paid_sum,
-                    'difference': total_difference,
+            for causal, expected in expected_amount_dict.items():
+                paid = total_paid_dict.get(causal, 0)
+                difference = expected - paid
+                ratio = (difference / expected) * 100 if expected else 0
+                
+                student_report['details'].append({
+                    'causal': causal,
+                    'expected': expected,
+                    'paid': paid,
+                    'difference': difference,
                     'ratio': round(ratio, 2)
-                }
+                })
 
-                # Add to class totals and student list
-                class_data['students'].append(student_data)
-                class_data['class_total_difference'] += total_difference
-                class_data['class_total_exigible'] += total_exigible
+                total_payable += expected
+                total_paid_sum += paid
 
-        if class_data['students']:
-            report_data.append(class_data)
+            # Calculate total difference and ratio for the student
+            total_difference = total_payable - total_paid_sum
+            total_ratio = (total_difference / total_payable) * 100 if total_payable else 0
+
+            # Add the overall total to the student's report
+            student_report['total'] = {
+                'expected': total_payable,
+                'paid': total_paid_sum,
+                'difference': total_difference,
+                'ratio': round(total_ratio, 2)
+            }
+
+            # Only add students who have a ratio less than 100%
+            if student_report['total']['ratio'] < 100:
+                class_report['students'].append(student_report)
+
+        if class_report['students']:
+            report_data.append(class_report)
 
     return render(request, 'scuelo/late_payment.html', {
         'report_data': report_data,
