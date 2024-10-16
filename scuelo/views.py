@@ -1073,29 +1073,59 @@ def delete_mouvement(request, pk):
         return redirect('mouvement_list')
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
                                                                       'page_identifier': 'S14' })
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Sum
+from .models import Ecole, Classe, Eleve, Mouvement, Tarif
 
 @login_required
 def late_payment_report(request):
     data = {}
     schools = Ecole.objects.all()
+
     for school in schools:
         classes = Classe.objects.filter(ecole=school)
         class_data = {}
+
         for classe in classes:
+            # Get all students who are 'PY' in the current class
             students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
             student_data = []
-            for student in students:
-                sco_paid = Mouvement.objects.filter(inscription__eleve=student, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
-                sco_exigible = Tarif.objects.filter(classe=classe, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
-                can_paid = Mouvement.objects.filter(inscription__eleve=student, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
-                can_exigible = Tarif.objects.filter(classe=classe, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
 
-                diff_sco = sco_paid - sco_exigible
-                diff_can = can_paid - can_exigible
+            for student in students:
+                # Calculate the total amount paid for SCO and CAN
+                sco_paid = Mouvement.objects.filter(
+                    inscription__eleve=student, 
+                    causal__in=['SCO1', 'SCO2', 'SCO3']
+                ).aggregate(total=Sum('montant'))['total'] or 0
+                
+                can_paid = Mouvement.objects.filter(
+                    inscription__eleve=student, 
+                    causal='CAN'
+                ).aggregate(total=Sum('montant'))['total'] or 0
+
+                # Calculate the SCO exigible as the sum of SCO1, SCO2, and SCO3
+                sco_exigible = Tarif.objects.filter(
+                    classe=classe, 
+                    causal__in=['SCO1', 'SCO2', 'SCO3']
+                ).aggregate(total=Sum('montant'))['total'] or 0
+
+                # Calculate the CAN exigible separately
+                can_exigible = Tarif.objects.filter(
+                    classe=classe, 
+                    causal='CAN'
+                ).aggregate(total=Sum('montant'))['total'] or 0
+
+                # Correct difference calculations
+                diff_sco = sco_exigible - sco_paid  # Remaining SCO amount to be paid
+                diff_can = can_exigible - can_paid  # Remaining CAN amount to be paid
                 retards = diff_sco + diff_can
 
-                if retards != 0:  # Only include students with a balance
-                    percentage_paid = int(100 * (sco_paid + can_paid) / (sco_exigible + can_exigible)) if (sco_exigible + can_exigible) > 0 else 0
+                # Only include students who have retards (not fully paid)
+                if retards > 0:  # Adjusted condition to show students with outstanding amounts
+                    percentage_paid = int(
+                        100 * (sco_paid + can_paid) / (sco_exigible + can_exigible)
+                    ) if (sco_exigible + can_exigible) > 0 else 0
 
                     student_data.append({
                         'id': student.id,
@@ -1105,20 +1135,25 @@ def late_payment_report(request):
                         'cs_py': student.cs_py,
                         'sco_paid': sco_paid,
                         'sco_exigible': sco_exigible,
-                        'diff_sco': diff_sco,
+                        'diff_sco': diff_sco,  # Remaining SCO amount
                         'can_paid': can_paid,
                         'can_exigible': can_exigible,
-                        'diff_can': diff_can,
+                        'diff_can': diff_can,  # Remaining CAN amount
                         'retards': retards,
                         'percentage_paid': percentage_paid,
                         'note': student.note_eleve,
                     })
-            if student_data:  # Only add classes with students who have late payments
-                class_data[classe.nom] = student_data
-        if class_data:  # Only add schools with classes that have students with late payments
-            data[school.nom] = class_data
             
-    return render(request, 'scuelo/late_payment.html',  {'data': data})
+            # Only add the class if there are students with late payments
+            if student_data:
+                class_data[classe.nom] = student_data
+
+        # Only add the school if there are classes with students having late payments
+        if class_data:
+            data[school.nom] = class_data
+
+    return render(request, 'scuelo/late_payment.html', {'data': data})
+
 
 # =======================
 # 5. School Management
