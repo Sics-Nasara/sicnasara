@@ -1,6 +1,88 @@
 {% extends "../layout.html" %}
 
+
+
 {% block content %}
-<h1>Late Payment</h1>
-<p>This is the late payment page.</p>
+<style>
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+    }
+
+    th {
+        background-color: #007bff;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .progressive-data {
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+    }
+</style>
+<h2>Late Payment Report - {{ current_annee_scolaire.nom }}</h2>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Causal</th>
+                <th>Expected Amount</th>
+                <th>Paid Amount</th>
+                <th>Difference</th>
+                <th>Ratio (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in report_data %}
+            <tr>
+                <td rowspan="{{ data.details|length }}">
+                    {{ data.student.nom }} {{ data.student.prenom }}
+                </td>
+                {% for detail in data.details %}
+                <td>{{ detail.causal }}</td>
+                <td>{{ detail.expected }} FCFA</td>
+                <td>{{ detail.paid }} FCFA</td>
+                <td>{{ detail.difference }} FCFA</td>
+                <td>{{ detail.ratio }}%</td>
+            </tr>
+            <tr>
+                {% endfor %}
+                <td colspan="5"><strong>Total</strong></td>
+                <td><strong>{{ data.total.ratio }}%</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

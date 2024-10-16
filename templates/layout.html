@@ -220,7 +220,10 @@
             </a>
           
     
-        
+            <a href="{% url 'late_payment_report' %}" class="{% if request.path == '/scuelo/late_payment_report/' %}active{% endif %}">
+                <i class="fas fa-tshirt"></i> <span>late Payment</span>
+            </a>
+          
         </div>
        
         <button class="dropdown-btn">

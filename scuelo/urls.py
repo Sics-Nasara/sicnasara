@@ -65,7 +65,7 @@ urlpatterns = [
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
   
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
-
+ path('late_payment_report/', views.late_payment_report, name='late_payment_report'),
     path('class/<int:pk>/manage-tarifs/', views.manage_tarifs, name='manage_tarifs'),
    # path('class/<int:pk>/add-tarif/', TarifCreateView.as_view(), name='add_tarif'),
    # path('tarif/<int:pk>/edit/', TarifUpdateView.as_view(), name='edit_tarif'),
