@@ -1074,29 +1074,29 @@ def delete_mouvement(request, pk):
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
                                                                       'page_identifier': 'S14' })
 
-
 @login_required
 def late_payment_report(request):
     # Get the current school year
     current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
     
-    # Fetch all classes, irrespective of their school
+    # Fetch all classes, including students from external schools
     classes = Classe.objects.all()
 
     # Prepare data structure for report
     report_data = []
 
     for classe in classes:
-        # Get students registered in the class for the current school year, excluding those with CS_PY = 'CS'
+        # Get students registered in the class for the current school year, excluding CS students
         inscriptions = Inscription.objects.filter(
             classe=classe, 
             annee_scolaire=current_annee_scolaire
-        ).exclude(eleve__cs_py='CS')  # Exclude CS students
+        ).exclude(eleve__cs_py='CS')
 
-        class_report = {
+        class_data = {
             'classe': classe,
-            'ecole': classe.ecole,  # Add school information for grouping
-            'students': []
+            'students': [],
+            'class_total_exigible': 0,
+            'class_total_difference': 0,
         }
 
         for inscription in inscriptions:
@@ -1107,11 +1107,8 @@ def late_payment_report(request):
                 paid_amount=Sum('montant')
             )
 
-            # Get the expected amount the student needs to pay by type (based on tarifs)
-            expected_amounts = Tarif.objects.filter(
-                classe=classe, 
-                annee_scolaire=current_annee_scolaire
-            ).values('causal').annotate(
+            # Get the expected amount the student needs to pay by type (based on tariffs)
+            expected_amounts = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire).values('causal').annotate(
                 expected_amount=Sum('montant')
             )
 
@@ -1120,48 +1117,40 @@ def late_payment_report(request):
             total_paid_dict = {item['causal']: item['paid_amount'] for item in total_paid}
 
             # Calculate differences and ratio
-            student_report = {
-                'student': student,
-                'details': []
-            }
-            
             total_payable = 0
             total_paid_sum = 0
+            total_difference = 0
 
             for causal, expected in expected_amount_dict.items():
                 paid = total_paid_dict.get(causal, 0)
-                difference = expected - paid
-                ratio = (difference / expected) * 100 if expected else 0
-                
-                student_report['details'].append({
-                    'causal': causal,
-                    'expected': expected,
-                    'paid': paid,
-                    'difference': difference,
-                    'ratio': round(ratio, 2)
-                })
-
                 total_payable += expected
                 total_paid_sum += paid
 
-            # Calculate total difference and ratio for the student
             total_difference = total_payable - total_paid_sum
-            total_ratio = (total_difference / total_payable) * 100 if total_payable else 0
+            total_ratio = (total_paid_sum / total_payable) * 100 if total_payable else 0
 
-            # Add the overall total to the student's report
-            student_report['total'] = {
-                'expected': total_payable,
-                'paid': total_paid_sum,
-                'difference': total_difference,
-                'ratio': round(total_ratio, 2)
-            }
+            # Prepare student data only if the ratio is less than 100% (indicating a late payment)
+            if total_ratio < 100:
+                student_report = {
+                    'id': student.id,
+                    'nom': student.nom,
+                    'prenom': student.prenom,
+                    'sex': student.get_sex_display(),
+                    'cs_py': student.cs_py,
+                    'total_exigible': total_payable,
+                    'total_paid': total_paid_sum,
+                    'difference': total_difference,
+                    'ratio': round(total_ratio, 2),
+                }
 
-            # Only add students who have a ratio less than 100%
-            if student_report['total']['ratio'] < 100:
-                class_report['students'].append(student_report)
+                # Add student to the class data
+                class_data['students'].append(student_report)
+                class_data['class_total_exigible'] += total_payable
+                class_data['class_total_difference'] += total_difference
 
-        if class_report['students']:
-            report_data.append(class_report)
+        # Only add class data if there are students with late payments
+        if class_data['students']:
+            report_data.append(class_data)
 
     return render(request, 'scuelo/late_payment.html', {
         'report_data': report_data,

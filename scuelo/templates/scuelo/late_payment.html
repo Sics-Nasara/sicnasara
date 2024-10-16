@@ -73,6 +73,7 @@
             </thead>
             <tbody>
                 {% for student in class_data.students %}
+                    {% if student.ratio < 100 %}
                     <tr>
                         <td>{{ student.id }}</td>
                         <td>{{ student.nom }}</td>
@@ -84,6 +85,7 @@
                         <td>{{ student.difference }} FCFA</td>
                         <td>{{ student.ratio }}%</td>
                     </tr>
+                    {% endif %}
                 {% endfor %}
                 <tr class="totals-row">
                     <td colspan="5">Class Total</td>
