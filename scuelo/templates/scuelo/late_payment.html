@@ -1,7 +1,6 @@
 {% extends "../layout.html" %}
 
 
-
 {% block content %}
 <style>
     .table-container {
@@ -48,41 +47,58 @@
         border: 1px solid #dee2e6;
         border-radius: 10px;
     }
+
+    h2, h3 {
+        text-align: left;
+        margin-top: 30px;
+        font-weight: bold;
+    }
 </style>
+
 <h2>Late Payment Report - {{ current_annee_scolaire.nom }}</h2>
 
 <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>Student</th>
-                <th>Causal</th>
-                <th>Expected Amount</th>
-                <th>Paid Amount</th>
-                <th>Difference</th>
-                <th>Ratio (%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for data in report_data %}
-            <tr>
-                <td rowspan="{{ data.details|length }}">
-                    {{ data.student.nom }} {{ data.student.prenom }}
-                </td>
-                {% for detail in data.details %}
-                <td>{{ detail.causal }}</td>
-                <td>{{ detail.expected }} FCFA</td>
-                <td>{{ detail.paid }} FCFA</td>
-                <td>{{ detail.difference }} FCFA</td>
-                <td>{{ detail.ratio }}%</td>
-            </tr>
-            <tr>
+    {% for class_data in report_data %}
+        <h3>Class: {{ class_data.classe.nom }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Causal</th>
+                    <th>Expected Amount</th>
+                    <th>Paid Amount</th>
+                    <th>Difference</th>
+                    <th>Ratio (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in class_data.students %}
+                    {% if data.total.ratio != 100 %}
+                        <tr>
+                            <td rowspan="{{ data.details|length }}">
+                                {{ data.student.nom }} {{ data.student.prenom }}
+                            </td>
+                            {% for detail in data.details %}
+                            <td>{{ detail.causal }}</td>
+                            <td>{{ detail.expected }} FCFA</td>
+                            <td>{{ detail.paid }} FCFA</td>
+                            <td>{{ detail.difference }} FCFA</td>
+                            <td>{{ detail.ratio }}%</td>
+                        </tr>
+                        <tr>
+                            {% endfor %}
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td><strong>{{ data.total.expected }} FCFA</strong></td>
+                            <td><strong>{{ data.total.paid }} FCFA</strong></td>
+                            <td><strong>{{ data.total.difference }} FCFA</strong></td>
+                            <td><strong>{{ data.total.ratio }}%</strong></td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
-                <td colspan="5"><strong>Total</strong></td>
-                <td><strong>{{ data.total.ratio }}%</strong></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {% empty %}
+        <p>No students with outstanding payments in this class.</p>
+    {% endfor %}
 </div>
 {% endblock %}

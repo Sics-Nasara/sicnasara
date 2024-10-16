@@ -10950,3 +10950,2057 @@ DETAIL:  Key (legacy_id)=(F361C50C-85A5-654C-9C4E-CE42325E57F3) already exists.
 2024-09-24 23:08:39,648 - INFO - Payment for Sofiane Sam  imported successfully.
 2024-09-24 23:08:39,654 - INFO - Payment for Cheik Tidiane Zampalegre imported successfully.
 2024-09-24 23:08:39,655 - INFO - Import SICS END
+2024-10-16 00:19:13,293 - INFO - Starting import from /home/ye/sis/scuelo/export_sics/Export SICS 2.1.75 V2.xlsx
+2024-10-16 00:19:13,405 - INFO - Eleve 1582 already exists.
+2024-10-16 00:19:13,406 - INFO - Eleve 1302 already exists.
+2024-10-16 00:19:13,408 - INFO - Eleve 1307 already exists.
+2024-10-16 00:19:13,409 - INFO - Eleve 1308 already exists.
+2024-10-16 00:19:13,410 - INFO - Eleve 1309 already exists.
+2024-10-16 00:19:13,411 - INFO - Eleve 1311 already exists.
+2024-10-16 00:19:13,413 - INFO - Eleve 1314 already exists.
+2024-10-16 00:19:13,414 - INFO - Eleve 1315 already exists.
+2024-10-16 00:19:13,415 - INFO - Eleve 1335 already exists.
+2024-10-16 00:19:13,416 - INFO - Eleve 1338 already exists.
+2024-10-16 00:19:13,418 - INFO - Eleve 1339 already exists.
+2024-10-16 00:19:13,419 - INFO - Eleve 1342 already exists.
+2024-10-16 00:19:13,420 - INFO - Eleve 1343 already exists.
+2024-10-16 00:19:13,421 - INFO - Eleve 1344 already exists.
+2024-10-16 00:19:13,422 - INFO - Eleve 1349 already exists.
+2024-10-16 00:19:13,423 - INFO - Eleve 1350 already exists.
+2024-10-16 00:19:13,423 - INFO - Eleve 1357 already exists.
+2024-10-16 00:19:13,425 - INFO - Eleve 1362 already exists.
+2024-10-16 00:19:13,426 - INFO - Eleve 1366 already exists.
+2024-10-16 00:19:13,427 - INFO - Eleve 1369 already exists.
+2024-10-16 00:19:13,428 - INFO - Eleve 1371 already exists.
+2024-10-16 00:19:13,429 - INFO - Eleve 1142 already exists.
+2024-10-16 00:19:13,430 - INFO - Eleve 1155 already exists.
+2024-10-16 00:19:13,431 - INFO - Eleve 1188 already exists.
+2024-10-16 00:19:13,432 - INFO - Eleve 1194 already exists.
+2024-10-16 00:19:13,433 - INFO - Eleve 1214 already exists.
+2024-10-16 00:19:13,434 - INFO - Eleve 1216 already exists.
+2024-10-16 00:19:13,435 - INFO - Eleve 1218 already exists.
+2024-10-16 00:19:13,436 - INFO - Eleve 1219 already exists.
+2024-10-16 00:19:13,437 - INFO - Eleve 1220 already exists.
+2024-10-16 00:19:13,438 - INFO - Eleve 1221 already exists.
+2024-10-16 00:19:13,439 - INFO - Eleve 1222 already exists.
+2024-10-16 00:19:13,440 - INFO - Eleve 1223 already exists.
+2024-10-16 00:19:13,441 - INFO - Eleve 1224 already exists.
+2024-10-16 00:19:13,442 - INFO - Eleve 1225 already exists.
+2024-10-16 00:19:13,443 - INFO - Eleve 1226 already exists.
+2024-10-16 00:19:13,443 - INFO - Eleve 1227 already exists.
+2024-10-16 00:19:13,444 - INFO - Eleve 1228 already exists.
+2024-10-16 00:19:13,445 - INFO - Eleve 1229 already exists.
+2024-10-16 00:19:13,446 - INFO - Eleve 1230 already exists.
+2024-10-16 00:19:13,447 - INFO - Eleve 1231 already exists.
+2024-10-16 00:19:13,448 - INFO - Eleve 1232 already exists.
+2024-10-16 00:19:13,449 - INFO - Eleve 1233 already exists.
+2024-10-16 00:19:13,450 - INFO - Eleve 1235 already exists.
+2024-10-16 00:19:13,451 - INFO - Eleve 1236 already exists.
+2024-10-16 00:19:13,452 - INFO - Eleve 1238 already exists.
+2024-10-16 00:19:13,453 - INFO - Eleve 1239 already exists.
+2024-10-16 00:19:13,454 - INFO - Eleve 1241 already exists.
+2024-10-16 00:19:13,456 - INFO - Eleve 1242 already exists.
+2024-10-16 00:19:13,457 - INFO - Eleve 1243 already exists.
+2024-10-16 00:19:13,458 - INFO - Eleve 1244 already exists.
+2024-10-16 00:19:13,459 - INFO - Eleve 1245 already exists.
+2024-10-16 00:19:13,460 - INFO - Eleve 1246 already exists.
+2024-10-16 00:19:13,461 - INFO - Eleve 1247 already exists.
+2024-10-16 00:19:13,462 - INFO - Eleve 1248 already exists.
+2024-10-16 00:19:13,463 - INFO - Eleve 1249 already exists.
+2024-10-16 00:19:13,464 - INFO - Eleve 1250 already exists.
+2024-10-16 00:19:13,465 - INFO - Eleve 1251 already exists.
+2024-10-16 00:19:13,466 - INFO - Eleve 1253 already exists.
+2024-10-16 00:19:13,467 - INFO - Eleve 1254 already exists.
+2024-10-16 00:19:13,468 - INFO - Eleve 1255 already exists.
+2024-10-16 00:19:13,469 - INFO - Eleve 1256 already exists.
+2024-10-16 00:19:13,470 - INFO - Eleve 1257 already exists.
+2024-10-16 00:19:13,471 - INFO - Eleve 1258 already exists.
+2024-10-16 00:19:13,472 - INFO - Eleve 1259 already exists.
+2024-10-16 00:19:13,473 - INFO - Eleve 1260 already exists.
+2024-10-16 00:19:13,474 - INFO - Eleve 1261 already exists.
+2024-10-16 00:19:13,475 - INFO - Eleve 1262 already exists.
+2024-10-16 00:19:13,476 - INFO - Eleve 1263 already exists.
+2024-10-16 00:19:13,477 - INFO - Eleve 1265 already exists.
+2024-10-16 00:19:13,478 - INFO - Eleve 1266 already exists.
+2024-10-16 00:19:13,479 - INFO - Eleve 1269 already exists.
+2024-10-16 00:19:13,480 - INFO - Eleve 1270 already exists.
+2024-10-16 00:19:13,481 - INFO - Eleve 1271 already exists.
+2024-10-16 00:19:13,482 - INFO - Eleve 1272 already exists.
+2024-10-16 00:19:13,483 - INFO - Eleve 1273 already exists.
+2024-10-16 00:19:13,484 - INFO - Eleve 1275 already exists.
+2024-10-16 00:19:13,485 - INFO - Eleve 1276 already exists.
+2024-10-16 00:19:13,486 - INFO - Eleve 1277 already exists.
+2024-10-16 00:19:13,487 - INFO - Eleve 1281 already exists.
+2024-10-16 00:19:13,489 - INFO - Eleve 1282 already exists.
+2024-10-16 00:19:13,490 - INFO - Eleve 1283 already exists.
+2024-10-16 00:19:13,491 - INFO - Eleve 1286 already exists.
+2024-10-16 00:19:13,492 - INFO - Eleve 1290 already exists.
+2024-10-16 00:19:13,493 - INFO - Eleve 1291 already exists.
+2024-10-16 00:19:13,494 - INFO - Eleve 1293 already exists.
+2024-10-16 00:19:13,495 - INFO - Eleve 1138 already exists.
+2024-10-16 00:19:13,496 - INFO - Eleve 1139 already exists.
+2024-10-16 00:19:13,497 - INFO - Eleve 1140 already exists.
+2024-10-16 00:19:13,498 - INFO - Eleve 1141 already exists.
+2024-10-16 00:19:13,499 - INFO - Eleve 1144 already exists.
+2024-10-16 00:19:13,500 - INFO - Eleve 1145 already exists.
+2024-10-16 00:19:13,507 - INFO - Eleve 1146 already exists.
+2024-10-16 00:19:13,510 - INFO - Eleve 1147 already exists.
+2024-10-16 00:19:13,512 - INFO - Eleve 1148 already exists.
+2024-10-16 00:19:13,514 - INFO - Eleve 1150 already exists.
+2024-10-16 00:19:13,515 - INFO - Eleve 1151 already exists.
+2024-10-16 00:19:13,516 - INFO - Eleve 1152 already exists.
+2024-10-16 00:19:13,517 - INFO - Eleve 1153 already exists.
+2024-10-16 00:19:13,519 - INFO - Eleve 1156 already exists.
+2024-10-16 00:19:13,520 - INFO - Eleve 1157 already exists.
+2024-10-16 00:19:13,521 - INFO - Eleve 1158 already exists.
+2024-10-16 00:19:13,522 - INFO - Eleve 1159 already exists.
+2024-10-16 00:19:13,523 - INFO - Eleve 1160 already exists.
+2024-10-16 00:19:13,524 - INFO - Eleve 1162 already exists.
+2024-10-16 00:19:13,525 - INFO - Eleve 1164 already exists.
+2024-10-16 00:19:13,526 - INFO - Eleve 1165 already exists.
+2024-10-16 00:19:13,527 - INFO - Eleve 1166 already exists.
+2024-10-16 00:19:13,528 - INFO - Eleve 1167 already exists.
+2024-10-16 00:19:13,529 - INFO - Eleve 1168 already exists.
+2024-10-16 00:19:13,530 - INFO - Eleve 1169 already exists.
+2024-10-16 00:19:13,531 - INFO - Eleve 1170 already exists.
+2024-10-16 00:19:13,532 - INFO - Eleve 1171 already exists.
+2024-10-16 00:19:13,533 - INFO - Eleve 1173 already exists.
+2024-10-16 00:19:13,534 - INFO - Eleve 1175 already exists.
+2024-10-16 00:19:13,535 - INFO - Eleve 1176 already exists.
+2024-10-16 00:19:13,536 - INFO - Eleve 1177 already exists.
+2024-10-16 00:19:13,538 - INFO - Eleve 1178 already exists.
+2024-10-16 00:19:13,539 - INFO - Eleve 1179 already exists.
+2024-10-16 00:19:13,540 - INFO - Eleve 1180 already exists.
+2024-10-16 00:19:13,541 - INFO - Eleve 1181 already exists.
+2024-10-16 00:19:13,542 - INFO - Eleve 1182 already exists.
+2024-10-16 00:19:13,543 - INFO - Eleve 1183 already exists.
+2024-10-16 00:19:13,544 - INFO - Eleve 1184 already exists.
+2024-10-16 00:19:13,546 - INFO - Eleve 1185 already exists.
+2024-10-16 00:19:13,547 - INFO - Eleve 1186 already exists.
+2024-10-16 00:19:13,548 - INFO - Eleve 1187 already exists.
+2024-10-16 00:19:13,549 - INFO - Eleve 1189 already exists.
+2024-10-16 00:19:13,550 - INFO - Eleve 1190 already exists.
+2024-10-16 00:19:13,551 - INFO - Eleve 1191 already exists.
+2024-10-16 00:19:13,553 - INFO - Eleve 1192 already exists.
+2024-10-16 00:19:13,554 - INFO - Eleve 1193 already exists.
+2024-10-16 00:19:13,555 - INFO - Eleve 1195 already exists.
+2024-10-16 00:19:13,556 - INFO - Eleve 1198 already exists.
+2024-10-16 00:19:13,557 - INFO - Eleve 1199 already exists.
+2024-10-16 00:19:13,558 - INFO - Eleve 1202 already exists.
+2024-10-16 00:19:13,558 - INFO - Eleve 1203 already exists.
+2024-10-16 00:19:13,559 - INFO - Eleve 1204 already exists.
+2024-10-16 00:19:13,559 - INFO - Eleve 1205 already exists.
+2024-10-16 00:19:13,560 - INFO - Eleve 1206 already exists.
+2024-10-16 00:19:13,560 - INFO - Eleve 1207 already exists.
+2024-10-16 00:19:13,561 - INFO - Eleve 1209 already exists.
+2024-10-16 00:19:13,561 - INFO - Eleve 1210 already exists.
+2024-10-16 00:19:13,562 - INFO - Eleve 1211 already exists.
+2024-10-16 00:19:13,562 - INFO - Eleve 1212 already exists.
+2024-10-16 00:19:13,563 - INFO - Eleve 1213 already exists.
+2024-10-16 00:19:13,563 - INFO - Eleve 1071 already exists.
+2024-10-16 00:19:13,564 - INFO - Eleve 1072 already exists.
+2024-10-16 00:19:13,564 - INFO - Eleve 1073 already exists.
+2024-10-16 00:19:13,565 - INFO - Eleve 1074 already exists.
+2024-10-16 00:19:13,565 - INFO - Eleve 1075 already exists.
+2024-10-16 00:19:13,566 - INFO - Eleve 1076 already exists.
+2024-10-16 00:19:13,567 - INFO - Eleve 1077 already exists.
+2024-10-16 00:19:13,568 - INFO - Eleve 1078 already exists.
+2024-10-16 00:19:13,569 - INFO - Eleve 1079 already exists.
+2024-10-16 00:19:13,571 - INFO - Eleve 1080 already exists.
+2024-10-16 00:19:13,572 - INFO - Eleve 1081 already exists.
+2024-10-16 00:19:13,573 - INFO - Eleve 1082 already exists.
+2024-10-16 00:19:13,575 - INFO - Eleve 1083 already exists.
+2024-10-16 00:19:13,576 - INFO - Eleve 1084 already exists.
+2024-10-16 00:19:13,577 - INFO - Eleve 1085 already exists.
+2024-10-16 00:19:13,578 - INFO - Eleve 1086 already exists.
+2024-10-16 00:19:13,579 - INFO - Eleve 1087 already exists.
+2024-10-16 00:19:13,580 - INFO - Eleve 1088 already exists.
+2024-10-16 00:19:13,581 - INFO - Eleve 1089 already exists.
+2024-10-16 00:19:13,582 - INFO - Eleve 1090 already exists.
+2024-10-16 00:19:13,583 - INFO - Eleve 1091 already exists.
+2024-10-16 00:19:13,585 - INFO - Eleve 1092 already exists.
+2024-10-16 00:19:13,586 - INFO - Eleve 1093 already exists.
+2024-10-16 00:19:13,588 - INFO - Eleve 1094 already exists.
+2024-10-16 00:19:13,589 - INFO - Eleve 1095 already exists.
+2024-10-16 00:19:13,590 - INFO - Eleve 1096 already exists.
+2024-10-16 00:19:13,591 - INFO - Eleve 1097 already exists.
+2024-10-16 00:19:13,592 - INFO - Eleve 1098 already exists.
+2024-10-16 00:19:13,593 - INFO - Eleve 1099 already exists.
+2024-10-16 00:19:13,594 - INFO - Eleve 1100 already exists.
+2024-10-16 00:19:13,595 - INFO - Eleve 1101 already exists.
+2024-10-16 00:19:13,596 - INFO - Eleve 1102 already exists.
+2024-10-16 00:19:13,597 - INFO - Eleve 1103 already exists.
+2024-10-16 00:19:13,598 - INFO - Eleve 1104 already exists.
+2024-10-16 00:19:13,599 - INFO - Eleve 1106 already exists.
+2024-10-16 00:19:13,600 - INFO - Eleve 1107 already exists.
+2024-10-16 00:19:13,601 - INFO - Eleve 1108 already exists.
+2024-10-16 00:19:13,603 - INFO - Eleve 1109 already exists.
+2024-10-16 00:19:13,605 - INFO - Eleve 1110 already exists.
+2024-10-16 00:19:13,606 - INFO - Eleve 1111 already exists.
+2024-10-16 00:19:13,607 - INFO - Eleve 1113 already exists.
+2024-10-16 00:19:13,608 - INFO - Eleve 1114 already exists.
+2024-10-16 00:19:13,609 - INFO - Eleve 1115 already exists.
+2024-10-16 00:19:13,610 - INFO - Eleve 1116 already exists.
+2024-10-16 00:19:13,611 - INFO - Eleve 1117 already exists.
+2024-10-16 00:19:13,611 - INFO - Eleve 1118 already exists.
+2024-10-16 00:19:13,612 - INFO - Eleve 1119 already exists.
+2024-10-16 00:19:13,612 - INFO - Eleve 1120 already exists.
+2024-10-16 00:19:13,613 - INFO - Eleve 1121 already exists.
+2024-10-16 00:19:13,614 - INFO - Eleve 1122 already exists.
+2024-10-16 00:19:13,614 - INFO - Eleve 1123 already exists.
+2024-10-16 00:19:13,615 - INFO - Eleve 1124 already exists.
+2024-10-16 00:19:13,616 - INFO - Eleve 1125 already exists.
+2024-10-16 00:19:13,616 - INFO - Eleve 1126 already exists.
+2024-10-16 00:19:13,617 - INFO - Eleve 1127 already exists.
+2024-10-16 00:19:13,618 - INFO - Eleve 1128 already exists.
+2024-10-16 00:19:13,618 - INFO - Eleve 1129 already exists.
+2024-10-16 00:19:13,619 - INFO - Eleve 1130 already exists.
+2024-10-16 00:19:13,620 - INFO - Eleve 1131 already exists.
+2024-10-16 00:19:13,621 - INFO - Eleve 1132 already exists.
+2024-10-16 00:19:13,621 - INFO - Eleve 1133 already exists.
+2024-10-16 00:19:13,623 - INFO - Eleve 1134 already exists.
+2024-10-16 00:19:13,624 - INFO - Eleve 1135 already exists.
+2024-10-16 00:19:13,625 - INFO - Eleve 1136 already exists.
+2024-10-16 00:19:13,626 - INFO - Eleve 1137 already exists.
+2024-10-16 00:19:13,626 - INFO - Eleve 1161 already exists.
+2024-10-16 00:19:13,627 - INFO - Eleve 1196 already exists.
+2024-10-16 00:19:13,628 - INFO - Eleve 1215 already exists.
+2024-10-16 00:19:13,628 - INFO - Eleve 1234 already exists.
+2024-10-16 00:19:13,629 - INFO - Eleve 1237 already exists.
+2024-10-16 00:19:13,630 - INFO - Eleve 1252 already exists.
+2024-10-16 00:19:13,630 - INFO - Eleve 1264 already exists.
+2024-10-16 00:19:13,631 - INFO - Eleve 1305 already exists.
+2024-10-16 00:19:13,632 - INFO - Eleve 1306 already exists.
+2024-10-16 00:19:13,632 - INFO - Eleve 1322 already exists.
+2024-10-16 00:19:13,633 - INFO - Eleve 1333 already exists.
+2024-10-16 00:19:13,634 - INFO - Eleve 1347 already exists.
+2024-10-16 00:19:13,634 - INFO - Eleve 1348 already exists.
+2024-10-16 00:19:13,635 - INFO - Eleve 1354 already exists.
+2024-10-16 00:19:13,636 - INFO - Eleve 1355 already exists.
+2024-10-16 00:19:13,637 - INFO - Eleve 1356 already exists.
+2024-10-16 00:19:13,638 - INFO - Eleve 1363 already exists.
+2024-10-16 00:19:13,639 - INFO - Eleve 1373 already exists.
+2024-10-16 00:19:13,640 - INFO - Eleve 1376 already exists.
+2024-10-16 00:19:13,641 - INFO - Eleve 1001 already exists.
+2024-10-16 00:19:13,642 - INFO - Eleve 1002 already exists.
+2024-10-16 00:19:13,644 - INFO - Eleve 1003 already exists.
+2024-10-16 00:19:13,645 - INFO - Eleve 1004 already exists.
+2024-10-16 00:19:13,646 - INFO - Eleve 1005 already exists.
+2024-10-16 00:19:13,647 - INFO - Eleve 1006 already exists.
+2024-10-16 00:19:13,648 - INFO - Eleve 1007 already exists.
+2024-10-16 00:19:13,649 - INFO - Eleve 1008 already exists.
+2024-10-16 00:19:13,650 - INFO - Eleve 1009 already exists.
+2024-10-16 00:19:13,651 - INFO - Eleve 1010 already exists.
+2024-10-16 00:19:13,652 - INFO - Eleve 1011 already exists.
+2024-10-16 00:19:13,653 - INFO - Eleve 1012 already exists.
+2024-10-16 00:19:13,654 - INFO - Eleve 1013 already exists.
+2024-10-16 00:19:13,655 - INFO - Eleve 1014 already exists.
+2024-10-16 00:19:13,656 - INFO - Eleve 1015 already exists.
+2024-10-16 00:19:13,656 - INFO - Eleve 1016 already exists.
+2024-10-16 00:19:13,657 - INFO - Eleve 1017 already exists.
+2024-10-16 00:19:13,658 - INFO - Eleve 1018 already exists.
+2024-10-16 00:19:13,658 - INFO - Eleve 1019 already exists.
+2024-10-16 00:19:13,659 - INFO - Eleve 1020 already exists.
+2024-10-16 00:19:13,659 - INFO - Eleve 1021 already exists.
+2024-10-16 00:19:13,660 - INFO - Eleve 1022 already exists.
+2024-10-16 00:19:13,661 - INFO - Eleve 1023 already exists.
+2024-10-16 00:19:13,661 - INFO - Eleve 1024 already exists.
+2024-10-16 00:19:13,662 - INFO - Eleve 1025 already exists.
+2024-10-16 00:19:13,662 - INFO - Eleve 1026 already exists.
+2024-10-16 00:19:13,663 - INFO - Eleve 1027 already exists.
+2024-10-16 00:19:13,664 - INFO - Eleve 1028 already exists.
+2024-10-16 00:19:13,664 - INFO - Eleve 1029 already exists.
+2024-10-16 00:19:13,665 - INFO - Eleve 1030 already exists.
+2024-10-16 00:19:13,665 - INFO - Eleve 1031 already exists.
+2024-10-16 00:19:13,666 - INFO - Eleve 1032 already exists.
+2024-10-16 00:19:13,667 - INFO - Eleve 1033 already exists.
+2024-10-16 00:19:13,667 - INFO - Eleve 1034 already exists.
+2024-10-16 00:19:13,668 - INFO - Eleve 1035 already exists.
+2024-10-16 00:19:13,669 - INFO - Eleve 1036 already exists.
+2024-10-16 00:19:13,670 - INFO - Eleve 1037 already exists.
+2024-10-16 00:19:13,671 - INFO - Eleve 1038 already exists.
+2024-10-16 00:19:13,672 - INFO - Eleve 1039 already exists.
+2024-10-16 00:19:13,673 - INFO - Eleve 1040 already exists.
+2024-10-16 00:19:13,673 - INFO - Eleve 1041 already exists.
+2024-10-16 00:19:13,674 - INFO - Eleve 1042 already exists.
+2024-10-16 00:19:13,674 - INFO - Eleve 1043 already exists.
+2024-10-16 00:19:13,675 - INFO - Eleve 1044 already exists.
+2024-10-16 00:19:13,676 - INFO - Eleve 1045 already exists.
+2024-10-16 00:19:13,676 - INFO - Eleve 1046 already exists.
+2024-10-16 00:19:13,677 - INFO - Eleve 1047 already exists.
+2024-10-16 00:19:13,678 - INFO - Eleve 1048 already exists.
+2024-10-16 00:19:13,678 - INFO - Eleve 1049 already exists.
+2024-10-16 00:19:13,679 - INFO - Eleve 1050 already exists.
+2024-10-16 00:19:13,679 - INFO - Eleve 1051 already exists.
+2024-10-16 00:19:13,680 - INFO - Eleve 1052 already exists.
+2024-10-16 00:19:13,681 - INFO - Eleve 1053 already exists.
+2024-10-16 00:19:13,681 - INFO - Eleve 1054 already exists.
+2024-10-16 00:19:13,682 - INFO - Eleve 1055 already exists.
+2024-10-16 00:19:13,682 - INFO - Eleve 1056 already exists.
+2024-10-16 00:19:13,683 - INFO - Eleve 1057 already exists.
+2024-10-16 00:19:13,684 - INFO - Eleve 1058 already exists.
+2024-10-16 00:19:13,685 - INFO - Eleve 1059 already exists.
+2024-10-16 00:19:13,686 - INFO - Eleve 1060 already exists.
+2024-10-16 00:19:13,686 - INFO - Eleve 1061 already exists.
+2024-10-16 00:19:13,687 - INFO - Eleve 1062 already exists.
+2024-10-16 00:19:13,688 - INFO - Eleve 1063 already exists.
+2024-10-16 00:19:13,689 - INFO - Eleve 1064 already exists.
+2024-10-16 00:19:13,690 - INFO - Eleve 1065 already exists.
+2024-10-16 00:19:13,691 - INFO - Eleve 1066 already exists.
+2024-10-16 00:19:13,692 - INFO - Eleve 1067 already exists.
+2024-10-16 00:19:13,693 - INFO - Eleve 1068 already exists.
+2024-10-16 00:19:13,694 - INFO - Eleve 1069 already exists.
+2024-10-16 00:19:13,695 - INFO - Eleve 1070 already exists.
+2024-10-16 00:19:13,697 - INFO - Eleve 1105 already exists.
+2024-10-16 00:19:13,698 - INFO - Eleve 1112 already exists.
+2024-10-16 00:19:13,699 - INFO - Eleve 1143 already exists.
+2024-10-16 00:19:13,699 - INFO - Eleve 1149 already exists.
+2024-10-16 00:19:13,700 - INFO - Eleve 1154 already exists.
+2024-10-16 00:19:13,701 - INFO - Eleve 1163 already exists.
+2024-10-16 00:19:13,703 - INFO - Eleve 1172 already exists.
+2024-10-16 00:19:13,704 - INFO - Eleve 1174 already exists.
+2024-10-16 00:19:13,705 - INFO - Eleve 1197 already exists.
+2024-10-16 00:19:13,706 - INFO - Eleve 1200 already exists.
+2024-10-16 00:19:13,707 - INFO - Eleve 1201 already exists.
+2024-10-16 00:19:13,708 - INFO - Eleve 1208 already exists.
+2024-10-16 00:19:13,709 - INFO - Eleve 1217 already exists.
+2024-10-16 00:19:13,710 - INFO - Eleve 1267 already exists.
+2024-10-16 00:19:13,711 - INFO - Eleve 1268 already exists.
+2024-10-16 00:19:13,712 - INFO - Eleve 1274 already exists.
+2024-10-16 00:19:13,713 - INFO - Eleve 1278 already exists.
+2024-10-16 00:19:13,714 - INFO - Eleve 1279 already exists.
+2024-10-16 00:19:13,714 - INFO - Eleve 1280 already exists.
+2024-10-16 00:19:13,715 - INFO - Eleve 1284 already exists.
+2024-10-16 00:19:13,716 - INFO - Eleve 1285 already exists.
+2024-10-16 00:19:13,716 - INFO - Eleve 1287 already exists.
+2024-10-16 00:19:13,717 - INFO - Eleve 1288 already exists.
+2024-10-16 00:19:13,718 - INFO - Eleve 1289 already exists.
+2024-10-16 00:19:13,719 - INFO - Eleve 1292 already exists.
+2024-10-16 00:19:13,720 - INFO - Eleve 1294 already exists.
+2024-10-16 00:19:13,721 - INFO - Eleve 1296 already exists.
+2024-10-16 00:19:13,722 - INFO - Eleve 1297 already exists.
+2024-10-16 00:19:13,723 - INFO - Eleve 1298 already exists.
+2024-10-16 00:19:13,723 - INFO - Eleve 1299 already exists.
+2024-10-16 00:19:13,724 - INFO - Eleve 1304 already exists.
+2024-10-16 00:19:13,725 - INFO - Eleve 1312 already exists.
+2024-10-16 00:19:13,726 - INFO - Eleve 1318 already exists.
+2024-10-16 00:19:13,726 - INFO - Eleve 1320 already exists.
+2024-10-16 00:19:13,727 - INFO - Eleve 1328 already exists.
+2024-10-16 00:19:13,728 - INFO - Eleve 1334 already exists.
+2024-10-16 00:19:13,728 - INFO - Eleve 1336 already exists.
+2024-10-16 00:19:13,729 - INFO - Eleve 1340 already exists.
+2024-10-16 00:19:13,730 - INFO - Eleve 1345 already exists.
+2024-10-16 00:19:13,731 - INFO - Eleve 1364 already exists.
+2024-10-16 00:19:13,731 - INFO - Eleve 1370 already exists.
+2024-10-16 00:19:13,732 - INFO - Eleve 1372 already exists.
+2024-10-16 00:19:13,733 - INFO - Eleve 1377 already exists.
+2024-10-16 00:19:13,733 - INFO - Eleve 1378 already exists.
+2024-10-16 00:19:13,734 - INFO - Eleve 1385 already exists.
+2024-10-16 00:19:13,735 - INFO - Eleve 1387 already exists.
+2024-10-16 00:19:13,736 - INFO - Eleve 1393 already exists.
+2024-10-16 00:19:13,737 - INFO - Eleve 1396 already exists.
+2024-10-16 00:19:13,738 - INFO - Eleve 1398 already exists.
+2024-10-16 00:19:13,740 - INFO - Eleve 1401 already exists.
+2024-10-16 00:19:13,741 - INFO - Eleve 1402 already exists.
+2024-10-16 00:19:13,743 - INFO - Eleve 1403 already exists.
+2024-10-16 00:19:13,745 - INFO - Eleve 1406 already exists.
+2024-10-16 00:19:13,746 - INFO - Eleve 1407 already exists.
+2024-10-16 00:19:13,748 - INFO - Eleve 1420 already exists.
+2024-10-16 00:19:13,749 - INFO - Eleve 1421 already exists.
+2024-10-16 00:19:13,752 - INFO - Eleve 1424 already exists.
+2024-10-16 00:19:13,754 - INFO - Eleve 1425 already exists.
+2024-10-16 00:19:13,757 - INFO - Eleve 1432 already exists.
+2024-10-16 00:19:13,759 - INFO - Eleve 1435 already exists.
+2024-10-16 00:19:13,763 - INFO - Eleve 1436 already exists.
+2024-10-16 00:19:13,766 - INFO - Eleve 1437 already exists.
+2024-10-16 00:19:13,768 - INFO - Eleve 1439 already exists.
+2024-10-16 00:19:13,772 - INFO - Eleve 1441 already exists.
+2024-10-16 00:19:13,774 - INFO - Eleve 1442 already exists.
+2024-10-16 00:19:13,777 - INFO - Eleve 1443 already exists.
+2024-10-16 00:19:13,779 - INFO - Eleve 1446 already exists.
+2024-10-16 00:19:13,781 - INFO - Eleve 1450 already exists.
+2024-10-16 00:19:13,782 - INFO - Eleve 1455 already exists.
+2024-10-16 00:19:13,784 - INFO - Eleve 1458 already exists.
+2024-10-16 00:19:13,786 - INFO - Eleve 1460 already exists.
+2024-10-16 00:19:13,788 - INFO - Eleve 1461 already exists.
+2024-10-16 00:19:13,789 - INFO - Eleve 1465 already exists.
+2024-10-16 00:19:13,792 - INFO - Eleve 1466 already exists.
+2024-10-16 00:19:13,794 - INFO - Eleve 1467 already exists.
+2024-10-16 00:19:13,796 - INFO - Eleve 1468 already exists.
+2024-10-16 00:19:13,798 - INFO - Eleve 1469 already exists.
+2024-10-16 00:19:13,799 - INFO - Eleve 1470 already exists.
+2024-10-16 00:19:13,801 - INFO - Eleve 1473 already exists.
+2024-10-16 00:19:13,802 - INFO - Eleve 1475 already exists.
+2024-10-16 00:19:13,803 - INFO - Eleve 1476 already exists.
+2024-10-16 00:19:13,804 - INFO - Eleve 1477 already exists.
+2024-10-16 00:19:13,805 - INFO - Eleve 1481 already exists.
+2024-10-16 00:19:13,806 - INFO - Eleve 1482 already exists.
+2024-10-16 00:19:13,806 - INFO - Eleve 1483 already exists.
+2024-10-16 00:19:13,807 - INFO - Eleve 1487 already exists.
+2024-10-16 00:19:13,808 - INFO - Eleve 1488 already exists.
+2024-10-16 00:19:13,809 - INFO - Eleve 1492 already exists.
+2024-10-16 00:19:13,809 - INFO - Eleve 1500 already exists.
+2024-10-16 00:19:13,810 - INFO - Eleve 1501 already exists.
+2024-10-16 00:19:13,811 - INFO - Eleve 1502 already exists.
+2024-10-16 00:19:13,812 - INFO - Eleve 1505 already exists.
+2024-10-16 00:19:13,812 - INFO - Eleve 1506 already exists.
+2024-10-16 00:19:13,813 - INFO - Eleve 1515 already exists.
+2024-10-16 00:19:13,814 - INFO - Eleve 1527 already exists.
+2024-10-16 00:19:13,815 - INFO - Eleve 1529 already exists.
+2024-10-16 00:19:13,815 - INFO - Eleve 1535 already exists.
+2024-10-16 00:19:13,816 - INFO - Eleve 1536 already exists.
+2024-10-16 00:19:13,817 - INFO - Eleve 1540 already exists.
+2024-10-16 00:19:13,818 - INFO - Eleve 1544 already exists.
+2024-10-16 00:19:13,819 - INFO - Eleve 1546 already exists.
+2024-10-16 00:19:13,820 - INFO - Eleve 1547 already exists.
+2024-10-16 00:19:13,820 - INFO - Eleve 1549 already exists.
+2024-10-16 00:19:13,821 - INFO - Eleve 1550 already exists.
+2024-10-16 00:19:13,822 - INFO - Eleve 1553 already exists.
+2024-10-16 00:19:13,823 - INFO - Eleve 1554 already exists.
+2024-10-16 00:19:13,823 - INFO - Eleve 1555 already exists.
+2024-10-16 00:19:13,824 - INFO - Eleve 1556 already exists.
+2024-10-16 00:19:13,825 - INFO - Eleve 1559 already exists.
+2024-10-16 00:19:13,826 - INFO - Eleve 1563 already exists.
+2024-10-16 00:19:13,826 - INFO - Eleve 1564 already exists.
+2024-10-16 00:19:13,827 - INFO - Eleve 1565 already exists.
+2024-10-16 00:19:13,828 - INFO - Eleve 1566 already exists.
+2024-10-16 00:19:13,829 - INFO - Eleve 1568 already exists.
+2024-10-16 00:19:13,829 - INFO - Eleve 1569 already exists.
+2024-10-16 00:19:13,830 - INFO - Eleve 1572 already exists.
+2024-10-16 00:19:13,831 - INFO - Eleve 1575 already exists.
+2024-10-16 00:19:13,832 - INFO - Eleve 1576 already exists.
+2024-10-16 00:19:13,832 - INFO - Eleve 1578 already exists.
+2024-10-16 00:19:13,833 - INFO - Eleve 1579 already exists.
+2024-10-16 00:19:13,834 - INFO - Eleve 1580 already exists.
+2024-10-16 00:19:13,835 - INFO - Eleve 1584 already exists.
+2024-10-16 00:19:13,836 - INFO - Eleve 1585 already exists.
+2024-10-16 00:19:13,837 - INFO - Eleve 1586 already exists.
+2024-10-16 00:19:13,838 - INFO - Eleve 1587 already exists.
+2024-10-16 00:19:13,839 - INFO - Eleve 1588 already exists.
+2024-10-16 00:19:13,839 - INFO - Eleve 1589 already exists.
+2024-10-16 00:19:13,840 - INFO - Eleve 1551 already exists.
+2024-10-16 00:19:13,841 - INFO - Eleve 1577 already exists.
+2024-10-16 00:19:13,842 - INFO - Eleve 1623 already exists.
+2024-10-16 00:19:13,843 - INFO - Eleve 1624 already exists.
+2024-10-16 00:19:13,843 - INFO - Eleve 1625 already exists.
+2024-10-16 00:19:13,844 - INFO - Eleve 1626 already exists.
+2024-10-16 00:19:13,845 - INFO - Eleve 1627 already exists.
+2024-10-16 00:19:13,846 - INFO - Eleve 1628 already exists.
+2024-10-16 00:19:13,846 - INFO - Eleve 1629 already exists.
+2024-10-16 00:19:13,847 - INFO - Eleve 1630 already exists.
+2024-10-16 00:19:13,848 - INFO - Eleve 1631 already exists.
+2024-10-16 00:19:13,849 - INFO - Eleve 1632 already exists.
+2024-10-16 00:19:13,849 - INFO - Eleve 1633 already exists.
+2024-10-16 00:19:13,850 - INFO - Eleve 1634 already exists.
+2024-10-16 00:19:13,851 - INFO - Eleve 1635 already exists.
+2024-10-16 00:19:13,852 - INFO - Eleve 1636 already exists.
+2024-10-16 00:19:13,853 - INFO - Eleve 1637 already exists.
+2024-10-16 00:19:13,853 - INFO - Eleve 1638 already exists.
+2024-10-16 00:19:13,854 - INFO - Eleve 1639 already exists.
+2024-10-16 00:19:13,855 - INFO - Eleve 1640 already exists.
+2024-10-16 00:19:13,857 - INFO - Eleve 1641 already exists.
+2024-10-16 00:19:13,857 - INFO - Eleve 1642 already exists.
+2024-10-16 00:19:13,858 - INFO - Eleve 1643 already exists.
+2024-10-16 00:19:13,859 - INFO - Eleve 1644 already exists.
+2024-10-16 00:19:13,860 - INFO - Eleve 1645 already exists.
+2024-10-16 00:19:13,862 - INFO - Eleve 1646 already exists.
+2024-10-16 00:19:13,863 - INFO - Eleve 1647 already exists.
+2024-10-16 00:19:13,864 - INFO - Eleve 1648 already exists.
+2024-10-16 00:19:13,865 - INFO - Eleve 1649 already exists.
+2024-10-16 00:19:13,867 - INFO - Eleve 1650 already exists.
+2024-10-16 00:19:13,868 - INFO - Eleve 1651 already exists.
+2024-10-16 00:19:13,870 - INFO - Eleve 1652 already exists.
+2024-10-16 00:19:13,871 - INFO - Eleve 1653 already exists.
+2024-10-16 00:19:13,873 - INFO - Eleve 1654 already exists.
+2024-10-16 00:19:13,875 - INFO - Eleve 1655 already exists.
+2024-10-16 00:19:13,876 - INFO - Eleve 1656 already exists.
+2024-10-16 00:19:13,878 - INFO - Eleve 1657 already exists.
+2024-10-16 00:19:13,879 - INFO - Eleve 1658 already exists.
+2024-10-16 00:19:13,880 - INFO - Eleve 1659 already exists.
+2024-10-16 00:19:13,881 - INFO - Eleve 1660 already exists.
+2024-10-16 00:19:13,882 - INFO - Eleve 1661 already exists.
+2024-10-16 00:19:13,883 - INFO - Eleve 1662 already exists.
+2024-10-16 00:19:13,883 - INFO - Eleve 1663 already exists.
+2024-10-16 00:19:13,884 - INFO - Eleve 1664 already exists.
+2024-10-16 00:19:13,885 - INFO - Eleve 1665 already exists.
+2024-10-16 00:19:13,886 - INFO - Eleve 1666 already exists.
+2024-10-16 00:19:13,886 - INFO - Eleve 1667 already exists.
+2024-10-16 00:19:13,887 - INFO - Eleve 1668 already exists.
+2024-10-16 00:19:13,888 - INFO - Eleve 1669 already exists.
+2024-10-16 00:19:13,889 - INFO - Eleve 1670 already exists.
+2024-10-16 00:19:13,890 - INFO - Eleve 1671 already exists.
+2024-10-16 00:19:13,892 - INFO - Eleve 1672 already exists.
+2024-10-16 00:19:13,892 - INFO - Eleve 1673 already exists.
+2024-10-16 00:19:13,893 - INFO - Eleve 1674 already exists.
+2024-10-16 00:19:13,894 - INFO - Eleve 1675 already exists.
+2024-10-16 00:19:13,894 - INFO - Eleve 1676 already exists.
+2024-10-16 00:19:13,895 - INFO - Eleve 1677 already exists.
+2024-10-16 00:19:13,896 - INFO - Eleve 1678 already exists.
+2024-10-16 00:19:13,897 - INFO - Eleve 1679 already exists.
+2024-10-16 00:19:13,897 - INFO - Eleve 1680 already exists.
+2024-10-16 00:19:13,898 - INFO - Eleve 1681 already exists.
+2024-10-16 00:19:13,899 - INFO - Eleve 1682 already exists.
+2024-10-16 00:19:13,900 - INFO - Eleve 1683 already exists.
+2024-10-16 00:19:13,900 - INFO - Eleve 1684 already exists.
+2024-10-16 00:19:13,901 - INFO - Eleve 1685 already exists.
+2024-10-16 00:19:13,902 - INFO - Eleve 1686 already exists.
+2024-10-16 00:19:13,903 - INFO - Eleve 1687 already exists.
+2024-10-16 00:19:13,903 - INFO - Eleve 1688 already exists.
+2024-10-16 00:19:13,905 - INFO - Eleve 1689 already exists.
+2024-10-16 00:19:13,906 - INFO - Eleve 1690 already exists.
+2024-10-16 00:19:13,907 - INFO - Eleve 1691 already exists.
+2024-10-16 00:19:13,908 - INFO - Eleve 1692 already exists.
+2024-10-16 00:19:13,909 - INFO - Eleve 1693 already exists.
+2024-10-16 00:19:13,910 - INFO - Eleve 1694 already exists.
+2024-10-16 00:19:13,910 - INFO - Eleve 1695 already exists.
+2024-10-16 00:19:13,911 - INFO - Eleve 1696 already exists.
+2024-10-16 00:19:13,912 - INFO - Eleve 1697 already exists.
+2024-10-16 00:19:13,913 - INFO - Eleve 1698 already exists.
+2024-10-16 00:19:13,913 - INFO - Eleve 1699 already exists.
+2024-10-16 00:19:13,914 - INFO - Eleve 1700 already exists.
+2024-10-16 00:19:13,915 - INFO - Eleve 1701 already exists.
+2024-10-16 00:19:13,916 - INFO - Eleve 1702 already exists.
+2024-10-16 00:19:13,917 - INFO - Eleve 1703 already exists.
+2024-10-16 00:19:13,917 - INFO - Eleve 1704 already exists.
+2024-10-16 00:19:13,918 - INFO - Eleve 1705 already exists.
+2024-10-16 00:19:13,919 - INFO - Eleve 1706 already exists.
+2024-10-16 00:19:13,920 - INFO - Eleve 1707 already exists.
+2024-10-16 00:19:13,921 - INFO - Eleve 1708 already exists.
+2024-10-16 00:19:13,922 - INFO - Eleve 1709 already exists.
+2024-10-16 00:19:13,922 - INFO - Eleve 1710 already exists.
+2024-10-16 00:19:13,923 - INFO - Eleve 1711 already exists.
+2024-10-16 00:19:13,924 - INFO - Eleve 1712 already exists.
+2024-10-16 00:19:13,925 - INFO - Eleve 1240 already exists.
+2024-10-16 00:19:13,925 - INFO - Eleve 1295 already exists.
+2024-10-16 00:19:13,926 - INFO - Eleve 1300 already exists.
+2024-10-16 00:19:13,927 - INFO - Eleve 1301 already exists.
+2024-10-16 00:19:13,928 - INFO - Eleve 1303 already exists.
+2024-10-16 00:19:13,929 - INFO - Eleve 1310 already exists.
+2024-10-16 00:19:13,929 - INFO - Eleve 1313 already exists.
+2024-10-16 00:19:13,930 - INFO - Eleve 1316 already exists.
+2024-10-16 00:19:13,931 - INFO - Eleve 1317 already exists.
+2024-10-16 00:19:13,932 - INFO - Eleve 1319 already exists.
+2024-10-16 00:19:13,932 - INFO - Eleve 1321 already exists.
+2024-10-16 00:19:13,933 - INFO - Eleve 1323 already exists.
+2024-10-16 00:19:13,934 - INFO - Eleve 1324 already exists.
+2024-10-16 00:19:13,935 - INFO - Eleve 1325 already exists.
+2024-10-16 00:19:13,936 - INFO - Eleve 1326 already exists.
+2024-10-16 00:19:13,937 - INFO - Eleve 1327 already exists.
+2024-10-16 00:19:13,937 - INFO - Eleve 1329 already exists.
+2024-10-16 00:19:13,938 - INFO - Eleve 1330 already exists.
+2024-10-16 00:19:13,940 - INFO - Eleve 1331 already exists.
+2024-10-16 00:19:13,941 - INFO - Eleve 1332 already exists.
+2024-10-16 00:19:13,942 - INFO - Eleve 1337 already exists.
+2024-10-16 00:19:13,943 - INFO - Eleve 1341 already exists.
+2024-10-16 00:19:13,943 - INFO - Eleve 1346 already exists.
+2024-10-16 00:19:13,944 - INFO - Eleve 1351 already exists.
+2024-10-16 00:19:13,945 - INFO - Eleve 1352 already exists.
+2024-10-16 00:19:13,946 - INFO - Eleve 1353 already exists.
+2024-10-16 00:19:13,946 - INFO - Eleve 1358 already exists.
+2024-10-16 00:19:13,947 - INFO - Eleve 1359 already exists.
+2024-10-16 00:19:13,948 - INFO - Eleve 1360 already exists.
+2024-10-16 00:19:13,948 - INFO - Eleve 1361 already exists.
+2024-10-16 00:19:13,949 - INFO - Eleve 1365 already exists.
+2024-10-16 00:19:13,950 - INFO - Eleve 1367 already exists.
+2024-10-16 00:19:13,951 - INFO - Eleve 1368 already exists.
+2024-10-16 00:19:13,951 - INFO - Eleve 1374 already exists.
+2024-10-16 00:19:13,952 - INFO - Eleve 1375 already exists.
+2024-10-16 00:19:13,953 - INFO - Eleve 1379 already exists.
+2024-10-16 00:19:13,954 - INFO - Eleve 1380 already exists.
+2024-10-16 00:19:13,955 - INFO - Eleve 1381 already exists.
+2024-10-16 00:19:13,956 - INFO - Eleve 1382 already exists.
+2024-10-16 00:19:13,957 - INFO - Eleve 1383 already exists.
+2024-10-16 00:19:13,957 - INFO - Eleve 1384 already exists.
+2024-10-16 00:19:13,958 - INFO - Eleve 1386 already exists.
+2024-10-16 00:19:13,959 - INFO - Eleve 1388 already exists.
+2024-10-16 00:19:13,959 - INFO - Eleve 1389 already exists.
+2024-10-16 00:19:13,960 - INFO - Eleve 1390 already exists.
+2024-10-16 00:19:13,960 - INFO - Eleve 1391 already exists.
+2024-10-16 00:19:13,961 - INFO - Eleve 1392 already exists.
+2024-10-16 00:19:13,962 - INFO - Eleve 1394 already exists.
+2024-10-16 00:19:13,962 - INFO - Eleve 1395 already exists.
+2024-10-16 00:19:13,963 - INFO - Eleve 1397 already exists.
+2024-10-16 00:19:13,964 - INFO - Eleve 1399 already exists.
+2024-10-16 00:19:13,965 - INFO - Eleve 1400 already exists.
+2024-10-16 00:19:13,965 - INFO - Eleve 1404 already exists.
+2024-10-16 00:19:13,966 - INFO - Eleve 1405 already exists.
+2024-10-16 00:19:13,967 - INFO - Eleve 1416 already exists.
+2024-10-16 00:19:13,968 - INFO - Eleve 1417 already exists.
+2024-10-16 00:19:13,969 - INFO - Eleve 1418 already exists.
+2024-10-16 00:19:13,970 - INFO - Eleve 1419 already exists.
+2024-10-16 00:19:13,972 - INFO - Eleve 1422 already exists.
+2024-10-16 00:19:13,973 - INFO - Eleve 1423 already exists.
+2024-10-16 00:19:13,973 - INFO - Eleve 1426 already exists.
+2024-10-16 00:19:13,974 - INFO - Eleve 1427 already exists.
+2024-10-16 00:19:13,975 - INFO - Eleve 1428 already exists.
+2024-10-16 00:19:13,976 - INFO - Eleve 1429 already exists.
+2024-10-16 00:19:13,976 - INFO - Eleve 1430 already exists.
+2024-10-16 00:19:13,977 - INFO - Eleve 1431 already exists.
+2024-10-16 00:19:13,978 - INFO - Eleve 1433 already exists.
+2024-10-16 00:19:13,978 - INFO - Eleve 1434 already exists.
+2024-10-16 00:19:13,979 - INFO - Eleve 1438 already exists.
+2024-10-16 00:19:13,980 - INFO - Eleve 1440 already exists.
+2024-10-16 00:19:13,981 - INFO - Eleve 1444 already exists.
+2024-10-16 00:19:13,981 - INFO - Eleve 1445 already exists.
+2024-10-16 00:19:13,982 - INFO - Eleve 1447 already exists.
+2024-10-16 00:19:13,983 - INFO - Eleve 1448 already exists.
+2024-10-16 00:19:13,984 - INFO - Eleve 1449 already exists.
+2024-10-16 00:19:13,984 - INFO - Eleve 1451 already exists.
+2024-10-16 00:19:13,985 - INFO - Eleve 1452 already exists.
+2024-10-16 00:19:13,986 - INFO - Eleve 1453 already exists.
+2024-10-16 00:19:13,987 - INFO - Eleve 1454 already exists.
+2024-10-16 00:19:13,988 - INFO - Eleve 1456 already exists.
+2024-10-16 00:19:13,988 - INFO - Eleve 1457 already exists.
+2024-10-16 00:19:13,989 - INFO - Eleve 1459 already exists.
+2024-10-16 00:19:13,990 - INFO - Eleve 1462 already exists.
+2024-10-16 00:19:13,993 - INFO - Eleve 1463 already exists.
+2024-10-16 00:19:13,996 - INFO - Eleve 1464 already exists.
+2024-10-16 00:19:14,001 - INFO - Eleve 1471 already exists.
+2024-10-16 00:19:14,005 - INFO - Eleve 1472 already exists.
+2024-10-16 00:19:14,007 - INFO - Eleve 1474 already exists.
+2024-10-16 00:19:14,009 - INFO - Eleve 1478 already exists.
+2024-10-16 00:19:14,010 - INFO - Eleve 1480 already exists.
+2024-10-16 00:19:14,012 - INFO - Eleve 1484 already exists.
+2024-10-16 00:19:14,013 - INFO - Eleve 1485 already exists.
+2024-10-16 00:19:14,015 - INFO - Eleve 1486 already exists.
+2024-10-16 00:19:14,016 - INFO - Eleve 1489 already exists.
+2024-10-16 00:19:14,018 - INFO - Eleve 1490 already exists.
+2024-10-16 00:19:14,019 - INFO - Eleve 1491 already exists.
+2024-10-16 00:19:14,020 - INFO - Eleve 1493 already exists.
+2024-10-16 00:19:14,021 - INFO - Eleve 1494 already exists.
+2024-10-16 00:19:14,022 - INFO - Eleve 1495 already exists.
+2024-10-16 00:19:14,024 - INFO - Eleve 1496 already exists.
+2024-10-16 00:19:14,025 - INFO - Eleve 1498 already exists.
+2024-10-16 00:19:14,026 - INFO - Eleve 1499 already exists.
+2024-10-16 00:19:14,028 - INFO - Eleve 1503 already exists.
+2024-10-16 00:19:14,029 - INFO - Eleve 1504 already exists.
+2024-10-16 00:19:14,030 - INFO - Eleve 1507 already exists.
+2024-10-16 00:19:14,031 - INFO - Eleve 1508 already exists.
+2024-10-16 00:19:14,033 - INFO - Eleve 1509 already exists.
+2024-10-16 00:19:14,034 - INFO - Eleve 1510 already exists.
+2024-10-16 00:19:14,036 - INFO - Eleve 1511 already exists.
+2024-10-16 00:19:14,037 - INFO - Eleve 1512 already exists.
+2024-10-16 00:19:14,038 - INFO - Eleve 1513 already exists.
+2024-10-16 00:19:14,040 - INFO - Eleve 1514 already exists.
+2024-10-16 00:19:14,041 - INFO - Eleve 1516 already exists.
+2024-10-16 00:19:14,042 - INFO - Eleve 1517 already exists.
+2024-10-16 00:19:14,042 - INFO - Eleve 1518 already exists.
+2024-10-16 00:19:14,043 - INFO - Eleve 1519 already exists.
+2024-10-16 00:19:14,044 - INFO - Eleve 1520 already exists.
+2024-10-16 00:19:14,045 - INFO - Eleve 1521 already exists.
+2024-10-16 00:19:14,045 - INFO - Eleve 1522 already exists.
+2024-10-16 00:19:14,046 - INFO - Eleve 1523 already exists.
+2024-10-16 00:19:14,047 - INFO - Eleve 1524 already exists.
+2024-10-16 00:19:14,047 - INFO - Eleve 1525 already exists.
+2024-10-16 00:19:14,048 - INFO - Eleve 1526 already exists.
+2024-10-16 00:19:14,049 - INFO - Eleve 1528 already exists.
+2024-10-16 00:19:14,050 - INFO - Eleve 1530 already exists.
+2024-10-16 00:19:14,051 - INFO - Eleve 1531 already exists.
+2024-10-16 00:19:14,051 - INFO - Eleve 1532 already exists.
+2024-10-16 00:19:14,052 - INFO - Eleve 1533 already exists.
+2024-10-16 00:19:14,053 - INFO - Eleve 1534 already exists.
+2024-10-16 00:19:14,054 - INFO - Eleve 1537 already exists.
+2024-10-16 00:19:14,055 - INFO - Eleve 1538 already exists.
+2024-10-16 00:19:14,056 - INFO - Eleve 1539 already exists.
+2024-10-16 00:19:14,057 - INFO - Eleve 1541 already exists.
+2024-10-16 00:19:14,057 - INFO - Eleve 1542 already exists.
+2024-10-16 00:19:14,058 - INFO - Eleve 1543 already exists.
+2024-10-16 00:19:14,059 - INFO - Eleve 1545 already exists.
+2024-10-16 00:19:14,060 - INFO - Eleve 1548 already exists.
+2024-10-16 00:19:14,060 - INFO - Eleve 1552 already exists.
+2024-10-16 00:19:14,061 - INFO - Eleve 1557 already exists.
+2024-10-16 00:19:14,061 - INFO - Eleve 1558 already exists.
+2024-10-16 00:19:14,062 - INFO - Eleve 1560 already exists.
+2024-10-16 00:19:14,063 - INFO - Eleve 1561 already exists.
+2024-10-16 00:19:14,063 - INFO - Eleve 1562 already exists.
+2024-10-16 00:19:14,064 - INFO - Eleve 1567 already exists.
+2024-10-16 00:19:14,064 - INFO - Eleve 1570 already exists.
+2024-10-16 00:19:14,065 - INFO - Eleve 1571 already exists.
+2024-10-16 00:19:14,066 - INFO - Eleve 1573 already exists.
+2024-10-16 00:19:14,066 - INFO - Eleve 1574 already exists.
+2024-10-16 00:19:14,067 - INFO - Eleve 1581 already exists.
+2024-10-16 00:19:14,068 - INFO - Eleve 1583 already exists.
+2024-10-16 00:19:14,070 - ERROR - Inscription for Eleve ID 1529 in NULL not found.
+2024-10-16 00:19:14,072 - ERROR - Inscription for Eleve ID 1544 in NULL not found.
+2024-10-16 00:19:14,073 - ERROR - Inscription for Eleve ID 1547 in NULL not found.
+2024-10-16 00:19:14,074 - ERROR - Inscription for Eleve ID 1551 in NULL not found.
+2024-10-16 00:19:14,075 - ERROR - Inscription for Eleve ID 1553 in NULL not found.
+2024-10-16 00:19:14,076 - ERROR - Inscription for Eleve ID 1554 in NULL not found.
+2024-10-16 00:19:14,077 - ERROR - Inscription for Eleve ID 1555 in NULL not found.
+2024-10-16 00:19:14,078 - ERROR - Inscription for Eleve ID 1556 in NULL not found.
+2024-10-16 00:19:14,079 - ERROR - Inscription for Eleve ID 1559 in NULL not found.
+2024-10-16 00:19:14,080 - ERROR - Inscription for Eleve ID 1564 in NULL not found.
+2024-10-16 00:19:14,081 - ERROR - Inscription for Eleve ID 1565 in NULL not found.
+2024-10-16 00:19:14,082 - ERROR - Inscription for Eleve ID 1569 in NULL not found.
+2024-10-16 00:19:14,083 - ERROR - Inscription for Eleve ID 1572 in NULL not found.
+2024-10-16 00:19:14,084 - ERROR - Inscription for Eleve ID 1585 in NULL not found.
+2024-10-16 00:19:14,085 - ERROR - Inscription for Eleve ID 1586 in NULL not found.
+2024-10-16 00:19:14,086 - ERROR - Inscription for Eleve ID 1587 in NULL not found.
+2024-10-16 00:19:14,087 - ERROR - Inscription for Eleve ID 1588 in NULL not found.
+2024-10-16 00:19:14,088 - ERROR - Inscription for Eleve ID 1589 in NULL not found.
+2024-10-16 00:19:14,089 - ERROR - Inscription for Eleve ID 1458 in NULL not found.
+2024-10-16 00:19:14,091 - ERROR - Inscription for Eleve ID 1464 in NULL not found.
+2024-10-16 00:19:14,092 - ERROR - Inscription for Eleve ID 1465 in NULL not found.
+2024-10-16 00:19:14,093 - ERROR - Inscription for Eleve ID 1466 in NULL not found.
+2024-10-16 00:19:14,094 - ERROR - Inscription for Eleve ID 1467 in NULL not found.
+2024-10-16 00:19:14,095 - ERROR - Inscription for Eleve ID 1468 in NULL not found.
+2024-10-16 00:19:14,096 - ERROR - Inscription for Eleve ID 1469 in NULL not found.
+2024-10-16 00:19:14,097 - ERROR - Inscription for Eleve ID 1470 in NULL not found.
+2024-10-16 00:19:14,098 - ERROR - Inscription for Eleve ID 1473 in NULL not found.
+2024-10-16 00:19:14,099 - ERROR - Inscription for Eleve ID 1475 in NULL not found.
+2024-10-16 00:19:14,101 - ERROR - Inscription for Eleve ID 1477 in NULL not found.
+2024-10-16 00:19:14,102 - ERROR - Inscription for Eleve ID 1478 in NULL not found.
+2024-10-16 00:19:14,103 - ERROR - Inscription for Eleve ID 1480 in NULL not found.
+2024-10-16 00:19:14,104 - ERROR - Inscription for Eleve ID 1481 in NULL not found.
+2024-10-16 00:19:14,105 - ERROR - Inscription for Eleve ID 1482 in NULL not found.
+2024-10-16 00:19:14,106 - ERROR - Inscription for Eleve ID 1487 in NULL not found.
+2024-10-16 00:19:14,107 - ERROR - Inscription for Eleve ID 1488 in NULL not found.
+2024-10-16 00:19:14,108 - ERROR - Inscription for Eleve ID 1501 in NULL not found.
+2024-10-16 00:19:14,109 - ERROR - Inscription for Eleve ID 1502 in NULL not found.
+2024-10-16 00:19:14,110 - ERROR - Inscription for Eleve ID 1506 in NULL not found.
+2024-10-16 00:19:14,111 - ERROR - Inscription for Eleve ID 1510 in NULL not found.
+2024-10-16 00:19:14,112 - ERROR - Inscription for Eleve ID 1513 in NULL not found.
+2024-10-16 00:19:14,113 - ERROR - Inscription for Eleve ID 1515 in NULL not found.
+2024-10-16 00:19:14,114 - ERROR - Inscription for Eleve ID 1526 in NULL not found.
+2024-10-16 00:19:14,115 - ERROR - Inscription for Eleve ID 1526 in NULL not found.
+2024-10-16 00:19:14,116 - ERROR - Inscription for Eleve ID 1392 in NULL not found.
+2024-10-16 00:19:14,117 - ERROR - Inscription for Eleve ID 1396 in NULL not found.
+2024-10-16 00:19:14,118 - ERROR - Inscription for Eleve ID 1406 in NULL not found.
+2024-10-16 00:19:14,120 - ERROR - Inscription for Eleve ID 1407 in NULL not found.
+2024-10-16 00:19:14,120 - ERROR - Eleve with ID 1409 does not exist.
+2024-10-16 00:19:14,121 - ERROR - Eleve with ID 1414 does not exist.
+2024-10-16 00:19:14,121 - ERROR - Eleve with ID 1414 does not exist.
+2024-10-16 00:19:14,122 - ERROR - Inscription for Eleve ID 1420 in NULL not found.
+2024-10-16 00:19:14,123 - ERROR - Inscription for Eleve ID 1421 in NULL not found.
+2024-10-16 00:19:14,124 - ERROR - Inscription for Eleve ID 1425 in NULL not found.
+2024-10-16 00:19:14,125 - ERROR - Inscription for Eleve ID 1432 in NULL not found.
+2024-10-16 00:19:14,126 - ERROR - Inscription for Eleve ID 1435 in NULL not found.
+2024-10-16 00:19:14,127 - ERROR - Inscription for Eleve ID 1437 in NULL not found.
+2024-10-16 00:19:14,128 - ERROR - Inscription for Eleve ID 1441 in NULL not found.
+2024-10-16 00:19:14,129 - ERROR - Inscription for Eleve ID 1442 in NULL not found.
+2024-10-16 00:19:14,130 - ERROR - Inscription for Eleve ID 1448 in NULL not found.
+2024-10-16 00:19:14,131 - ERROR - Inscription for Eleve ID 1298 in NULL not found.
+2024-10-16 00:19:14,131 - ERROR - Inscription for Eleve ID 1312 in NULL not found.
+2024-10-16 00:19:14,132 - ERROR - Inscription for Eleve ID 1318 in NULL not found.
+2024-10-16 00:19:14,133 - ERROR - Inscription for Eleve ID 1325 in NULL not found.
+2024-10-16 00:19:14,134 - ERROR - Inscription for Eleve ID 1331 in NULL not found.
+2024-10-16 00:19:14,136 - ERROR - Inscription for Eleve ID 1336 in NULL not found.
+2024-10-16 00:19:14,137 - ERROR - Inscription for Eleve ID 1345 in NULL not found.
+2024-10-16 00:19:14,138 - ERROR - Inscription for Eleve ID 1353 in NULL not found.
+2024-10-16 00:19:14,139 - ERROR - Inscription for Eleve ID 1364 in NULL not found.
+2024-10-16 00:19:14,140 - ERROR - Inscription for Eleve ID 1374 in NULL not found.
+2024-10-16 00:19:14,141 - ERROR - Inscription for Eleve ID 1374 in NULL not found.
+2024-10-16 00:19:14,142 - ERROR - Inscription for Eleve ID 1381 in NULL not found.
+2024-10-16 00:19:14,143 - ERROR - Inscription for Eleve ID 1382 in NULL not found.
+2024-10-16 00:19:14,144 - ERROR - Inscription for Eleve ID 1383 in NULL not found.
+2024-10-16 00:19:14,145 - ERROR - Inscription for Eleve ID 1384 in NULL not found.
+2024-10-16 00:19:14,146 - ERROR - Inscription for Eleve ID 1217 in NULL not found.
+2024-10-16 00:19:14,147 - ERROR - Inscription for Eleve ID 1222 in NULL not found.
+2024-10-16 00:19:14,148 - ERROR - Inscription for Eleve ID 1222 in NULL not found.
+2024-10-16 00:19:14,149 - ERROR - Inscription for Eleve ID 1227 in NULL not found.
+2024-10-16 00:19:14,150 - ERROR - Inscription for Eleve ID 1232 in NULL not found.
+2024-10-16 00:19:14,151 - ERROR - Inscription for Eleve ID 1232 in NULL not found.
+2024-10-16 00:19:14,152 - ERROR - Inscription for Eleve ID 1249 in NULL not found.
+2024-10-16 00:19:14,154 - ERROR - Inscription for Eleve ID 1249 in NULL not found.
+2024-10-16 00:19:14,156 - ERROR - Inscription for Eleve ID 1253 in NULL not found.
+2024-10-16 00:19:14,157 - ERROR - Inscription for Eleve ID 1270 in NULL not found.
+2024-10-16 00:19:14,159 - ERROR - Inscription for Eleve ID 1270 in NULL not found.
+2024-10-16 00:19:14,161 - ERROR - Inscription for Eleve ID 1272 in NULL not found.
+2024-10-16 00:19:14,162 - ERROR - Inscription for Eleve ID 1273 in NULL not found.
+2024-10-16 00:19:14,164 - ERROR - Inscription for Eleve ID 1274 in NULL not found.
+2024-10-16 00:19:14,166 - ERROR - Inscription for Eleve ID 1274 in NULL not found.
+2024-10-16 00:19:14,167 - ERROR - Inscription for Eleve ID 1279 in NULL not found.
+2024-10-16 00:19:14,169 - ERROR - Inscription for Eleve ID 1281 in NULL not found.
+2024-10-16 00:19:14,171 - ERROR - Inscription for Eleve ID 1284 in NULL not found.
+2024-10-16 00:19:14,173 - ERROR - Inscription for Eleve ID 1285 in NULL not found.
+2024-10-16 00:19:14,174 - ERROR - Inscription for Eleve ID 1287 in NULL not found.
+2024-10-16 00:19:14,176 - ERROR - Inscription for Eleve ID 1291 in NULL not found.
+2024-10-16 00:19:14,177 - ERROR - Inscription for Eleve ID 1138 in NULL not found.
+2024-10-16 00:19:14,178 - ERROR - Inscription for Eleve ID 1141 in NULL not found.
+2024-10-16 00:19:14,179 - ERROR - Inscription for Eleve ID 1142 in NULL not found.
+2024-10-16 00:19:14,180 - ERROR - Inscription for Eleve ID 1146 in NULL not found.
+2024-10-16 00:19:14,181 - ERROR - Inscription for Eleve ID 1146 in NULL not found.
+2024-10-16 00:19:14,182 - ERROR - Inscription for Eleve ID 1148 in NULL not found.
+2024-10-16 00:19:14,183 - ERROR - Inscription for Eleve ID 1149 in NULL not found.
+2024-10-16 00:19:14,184 - ERROR - Inscription for Eleve ID 1149 in NULL not found.
+2024-10-16 00:19:14,186 - ERROR - Inscription for Eleve ID 1153 in NULL not found.
+2024-10-16 00:19:14,188 - ERROR - Inscription for Eleve ID 1156 in NULL not found.
+2024-10-16 00:19:14,189 - ERROR - Inscription for Eleve ID 1164 in NULL not found.
+2024-10-16 00:19:14,191 - ERROR - Inscription for Eleve ID 1165 in NULL not found.
+2024-10-16 00:19:14,192 - ERROR - Inscription for Eleve ID 1165 in NULL not found.
+2024-10-16 00:19:14,194 - ERROR - Inscription for Eleve ID 1166 in NULL not found.
+2024-10-16 00:19:14,195 - ERROR - Inscription for Eleve ID 1168 in NULL not found.
+2024-10-16 00:19:14,197 - ERROR - Inscription for Eleve ID 1174 in NULL not found.
+2024-10-16 00:19:14,198 - ERROR - Inscription for Eleve ID 1177 in NULL not found.
+2024-10-16 00:19:14,199 - ERROR - Inscription for Eleve ID 1178 in NULL not found.
+2024-10-16 00:19:14,201 - ERROR - Inscription for Eleve ID 1181 in NULL not found.
+2024-10-16 00:19:14,203 - ERROR - Inscription for Eleve ID 1182 in NULL not found.
+2024-10-16 00:19:14,204 - ERROR - Inscription for Eleve ID 1185 in NULL not found.
+2024-10-16 00:19:14,205 - ERROR - Inscription for Eleve ID 1189 in NULL not found.
+2024-10-16 00:19:14,207 - ERROR - Inscription for Eleve ID 1189 in NULL not found.
+2024-10-16 00:19:14,208 - ERROR - Inscription for Eleve ID 1193 in NULL not found.
+2024-10-16 00:19:14,210 - ERROR - Inscription for Eleve ID 1193 in NULL not found.
+2024-10-16 00:19:14,211 - ERROR - Inscription for Eleve ID 1195 in NULL not found.
+2024-10-16 00:19:14,212 - ERROR - Inscription for Eleve ID 1199 in NULL not found.
+2024-10-16 00:19:14,213 - ERROR - Inscription for Eleve ID 1202 in NULL not found.
+2024-10-16 00:19:14,214 - ERROR - Inscription for Eleve ID 1202 in NULL not found.
+2024-10-16 00:19:14,215 - ERROR - Inscription for Eleve ID 1213 in NULL not found.
+2024-10-16 00:19:14,217 - ERROR - Inscription for Eleve ID 1096 in NULL not found.
+2024-10-16 00:19:14,218 - ERROR - Inscription for Eleve ID 1096 in NULL not found.
+2024-10-16 00:19:14,220 - ERROR - Inscription for Eleve ID 1097 in NULL not found.
+2024-10-16 00:19:14,222 - ERROR - Inscription for Eleve ID 1097 in NULL not found.
+2024-10-16 00:19:14,223 - ERROR - Inscription for Eleve ID 1103 in NULL not found.
+2024-10-16 00:19:14,224 - ERROR - Inscription for Eleve ID 1103 in NULL not found.
+2024-10-16 00:19:14,225 - ERROR - Inscription for Eleve ID 1112 in NULL not found.
+2024-10-16 00:19:14,226 - ERROR - Inscription for Eleve ID 1114 in NULL not found.
+2024-10-16 00:19:14,227 - ERROR - Inscription for Eleve ID 1114 in NULL not found.
+2024-10-16 00:19:14,228 - ERROR - Inscription for Eleve ID 1115 in NULL not found.
+2024-10-16 00:19:14,228 - ERROR - Inscription for Eleve ID 1115 in NULL not found.
+2024-10-16 00:19:14,229 - ERROR - Inscription for Eleve ID 1119 in NULL not found.
+2024-10-16 00:19:14,230 - ERROR - Inscription for Eleve ID 1119 in NULL not found.
+2024-10-16 00:19:14,232 - ERROR - Inscription for Eleve ID 1120 in NULL not found.
+2024-10-16 00:19:14,233 - ERROR - Inscription for Eleve ID 1120 in NULL not found.
+2024-10-16 00:19:14,234 - ERROR - Inscription for Eleve ID 1127 in NULL not found.
+2024-10-16 00:19:14,237 - ERROR - Inscription for Eleve ID 1127 in NULL not found.
+2024-10-16 00:19:14,239 - ERROR - Inscription for Eleve ID 1127 in NULL not found.
+2024-10-16 00:19:14,241 - ERROR - Inscription for Eleve ID 1128 in NULL not found.
+2024-10-16 00:19:14,243 - ERROR - Inscription for Eleve ID 1128 in NULL not found.
+2024-10-16 00:19:14,244 - ERROR - Inscription for Eleve ID 1136 in NULL not found.
+2024-10-16 00:19:14,246 - ERROR - Inscription for Eleve ID 1136 in NULL not found.
+2024-10-16 00:19:14,248 - ERROR - Inscription for Eleve ID 1044 in NULL not found.
+2024-10-16 00:19:14,249 - ERROR - Inscription for Eleve ID 1044 in NULL not found.
+2024-10-16 00:19:14,251 - ERROR - Inscription for Eleve ID 1043 in NULL not found.
+2024-10-16 00:19:14,254 - ERROR - Inscription for Eleve ID 1043 in NULL not found.
+2024-10-16 00:19:14,262 - ERROR - Inscription for Eleve ID 1041 in NULL not found.
+2024-10-16 00:19:14,265 - ERROR - Inscription for Eleve ID 1049 in NULL not found.
+2024-10-16 00:19:14,266 - ERROR - Inscription for Eleve ID 1051 in NULL not found.
+2024-10-16 00:19:14,267 - ERROR - Inscription for Eleve ID 1052 in NULL not found.
+2024-10-16 00:19:14,268 - ERROR - Inscription for Eleve ID 1052 in NULL not found.
+2024-10-16 00:19:14,270 - ERROR - Inscription for Eleve ID 1060 in NULL not found.
+2024-10-16 00:19:14,272 - ERROR - Inscription for Eleve ID 1060 in NULL not found.
+2024-10-16 00:19:14,273 - ERROR - Inscription for Eleve ID 1061 in NULL not found.
+2024-10-16 00:19:14,275 - ERROR - Inscription for Eleve ID 1061 in NULL not found.
+2024-10-16 00:19:14,276 - ERROR - Inscription for Eleve ID 1069 in NULL not found.
+2024-10-16 00:19:14,277 - ERROR - Inscription for Eleve ID 1069 in NULL not found.
+2024-10-16 00:19:14,278 - ERROR - Inscription for Eleve ID 1032 in NULL not found.
+2024-10-16 00:19:14,279 - ERROR - Inscription for Eleve ID 1032 in NULL not found.
+2024-10-16 00:19:14,280 - ERROR - Inscription for Eleve ID 1313 in NULL not found.
+2024-10-16 00:19:14,281 - ERROR - Inscription for Eleve ID 1042 in NULL not found.
+2024-10-16 00:19:14,282 - ERROR - Inscription for Eleve ID 1042 in NULL not found.
+2024-10-16 00:19:14,283 - ERROR - Inscription for Eleve ID 1235 in NULL not found.
+2024-10-16 00:19:14,285 - ERROR - Inscription for Eleve ID 1324 in NULL not found.
+2024-10-16 00:19:14,287 - ERROR - Inscription for Eleve ID 1443 in NULL not found.
+2024-10-16 00:19:14,288 - ERROR - Inscription for Eleve ID 1436 in NULL not found.
+2024-10-16 00:19:14,290 - ERROR - Inscription for Eleve ID 1225 in NULL not found.
+2024-10-16 00:19:14,291 - ERROR - Inscription for Eleve ID 1576 in NULL not found.
+2024-10-16 00:19:14,293 - ERROR - Inscription for Eleve ID 1068 in NULL not found.
+2024-10-16 00:19:14,294 - ERROR - Inscription for Eleve ID 1068 in NULL not found.
+2024-10-16 00:19:14,295 - ERROR - Inscription for Eleve ID 1439 in NULL not found.
+2024-10-16 00:19:14,297 - ERROR - Inscription for Eleve ID 1257 in NULL not found.
+2024-10-16 00:19:14,298 - ERROR - Inscription for Eleve ID 1184 in NULL not found.
+2024-10-16 00:19:14,300 - ERROR - Inscription for Eleve ID 1393 in NULL not found.
+2024-10-16 00:19:14,302 - ERROR - Inscription for Eleve ID 1144 in NULL not found.
+2024-10-16 00:19:14,304 - ERROR - Inscription for Eleve ID 1144 in NULL not found.
+2024-10-16 00:19:14,306 - ERROR - Inscription for Eleve ID 1379 in NULL not found.
+2024-10-16 00:19:14,308 - ERROR - Inscription for Eleve ID 1250 in NULL not found.
+2024-10-16 00:19:14,309 - ERROR - Inscription for Eleve ID 1134 in NULL not found.
+2024-10-16 00:19:14,311 - ERROR - Inscription for Eleve ID 1550 in NULL not found.
+2024-10-16 00:19:14,312 - ERROR - Inscription for Eleve ID 1055 in NULL not found.
+2024-10-16 00:19:14,313 - ERROR - Inscription for Eleve ID 1055 in NULL not found.
+2024-10-16 00:19:14,314 - ERROR - Inscription for Eleve ID 1104 in NULL not found.
+2024-10-16 00:19:14,315 - ERROR - Inscription for Eleve ID 1104 in NULL not found.
+2024-10-16 00:19:14,316 - ERROR - Inscription for Eleve ID 1399 in NULL not found.
+2024-10-16 00:19:14,317 - ERROR - Inscription for Eleve ID 1399 in NULL not found.
+2024-10-16 00:19:14,319 - ERROR - Inscription for Eleve ID 1385 in NULL not found.
+2024-10-16 00:19:14,321 - ERROR - Inscription for Eleve ID 1256 in NULL not found.
+2024-10-16 00:19:14,322 - ERROR - Inscription for Eleve ID 1104 in NULL not found.
+2024-10-16 00:19:14,323 - ERROR - Inscription for Eleve ID 1260 in NULL not found.
+2024-10-16 00:19:14,324 - ERROR - Inscription for Eleve ID 1471 in NULL not found.
+2024-10-16 00:19:14,325 - ERROR - Inscription for Eleve ID 1106 in NULL not found.
+2024-10-16 00:19:14,326 - ERROR - Inscription for Eleve ID 1106 in NULL not found.
+2024-10-16 00:19:14,327 - ERROR - Inscription for Eleve ID 1134 in NULL not found.
+2024-10-16 00:19:14,328 - ERROR - Inscription for Eleve ID 1134 in NULL not found.
+2024-10-16 00:19:14,329 - ERROR - Inscription for Eleve ID 1623 in NULL not found.
+2024-10-16 00:19:14,330 - ERROR - Inscription for Eleve ID 1623 in NULL not found.
+2024-10-16 00:19:14,331 - ERROR - Inscription for Eleve ID 1623 in NULL not found.
+2024-10-16 00:19:14,333 - ERROR - Inscription for Eleve ID 1623 in NULL not found.
+2024-10-16 00:19:14,334 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:14,335 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:14,336 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:14,339 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:14,340 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:14,342 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:14,344 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:14,345 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:14,347 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:14,348 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:14,349 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:14,350 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:14,352 - ERROR - Inscription for Eleve ID 1627 in NULL not found.
+2024-10-16 00:19:14,353 - ERROR - Inscription for Eleve ID 1627 in NULL not found.
+2024-10-16 00:19:14,354 - ERROR - Inscription for Eleve ID 1627 in NULL not found.
+2024-10-16 00:19:14,355 - ERROR - Inscription for Eleve ID 1627 in NULL not found.
+2024-10-16 00:19:14,356 - ERROR - Inscription for Eleve ID 1628 in NULL not found.
+2024-10-16 00:19:14,357 - ERROR - Inscription for Eleve ID 1628 in NULL not found.
+2024-10-16 00:19:14,359 - ERROR - Inscription for Eleve ID 1628 in NULL not found.
+2024-10-16 00:19:14,361 - ERROR - Inscription for Eleve ID 1628 in NULL not found.
+2024-10-16 00:19:14,362 - ERROR - Inscription for Eleve ID 1629 in NULL not found.
+2024-10-16 00:19:14,364 - ERROR - Inscription for Eleve ID 1629 in NULL not found.
+2024-10-16 00:19:14,366 - ERROR - Inscription for Eleve ID 1633 in NULL not found.
+2024-10-16 00:19:14,368 - ERROR - Inscription for Eleve ID 1633 in NULL not found.
+2024-10-16 00:19:14,370 - ERROR - Inscription for Eleve ID 1633 in NULL not found.
+2024-10-16 00:19:14,371 - ERROR - Inscription for Eleve ID 1633 in NULL not found.
+2024-10-16 00:19:14,373 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:14,375 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:14,376 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:14,378 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:14,380 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:14,381 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:14,382 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:14,384 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:14,385 - ERROR - Inscription for Eleve ID 1631 in NULL not found.
+2024-10-16 00:19:14,388 - ERROR - Inscription for Eleve ID 1631 in NULL not found.
+2024-10-16 00:19:14,389 - ERROR - Inscription for Eleve ID 1631 in NULL not found.
+2024-10-16 00:19:14,390 - ERROR - Inscription for Eleve ID 1631 in NULL not found.
+2024-10-16 00:19:14,391 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:14,392 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:14,393 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:14,394 - ERROR - Inscription for Eleve ID 1635 in NULL not found.
+2024-10-16 00:19:14,395 - ERROR - Inscription for Eleve ID 1635 in NULL not found.
+2024-10-16 00:19:14,396 - ERROR - Inscription for Eleve ID 1635 in NULL not found.
+2024-10-16 00:19:14,397 - ERROR - Inscription for Eleve ID 1635 in NULL not found.
+2024-10-16 00:19:14,398 - ERROR - Inscription for Eleve ID 1636 in NULL not found.
+2024-10-16 00:19:14,399 - ERROR - Inscription for Eleve ID 1636 in NULL not found.
+2024-10-16 00:19:14,400 - ERROR - Inscription for Eleve ID 1636 in NULL not found.
+2024-10-16 00:19:14,401 - ERROR - Inscription for Eleve ID 1636 in NULL not found.
+2024-10-16 00:19:14,402 - ERROR - Inscription for Eleve ID 1637 in NULL not found.
+2024-10-16 00:19:14,403 - ERROR - Inscription for Eleve ID 1637 in NULL not found.
+2024-10-16 00:19:14,404 - ERROR - Inscription for Eleve ID 1637 in NULL not found.
+2024-10-16 00:19:14,405 - ERROR - Inscription for Eleve ID 1637 in NULL not found.
+2024-10-16 00:19:14,406 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:14,407 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:14,408 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:14,409 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:14,410 - ERROR - Inscription for Eleve ID 1639 in NULL not found.
+2024-10-16 00:19:14,411 - ERROR - Inscription for Eleve ID 1639 in NULL not found.
+2024-10-16 00:19:14,412 - ERROR - Inscription for Eleve ID 1639 in NULL not found.
+2024-10-16 00:19:14,413 - ERROR - Inscription for Eleve ID 1639 in NULL not found.
+2024-10-16 00:19:14,413 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:14,415 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:14,416 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:14,417 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:14,418 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:14,419 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:14,420 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:14,421 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:14,422 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:14,423 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:14,424 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:14,425 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:14,426 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:14,427 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:14,428 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:14,429 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:14,430 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:14,431 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:14,432 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:14,433 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:14,434 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:14,435 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:14,437 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:14,437 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:14,438 - ERROR - Inscription for Eleve ID 1645 in NULL not found.
+2024-10-16 00:19:14,439 - ERROR - Inscription for Eleve ID 1645 in NULL not found.
+2024-10-16 00:19:14,440 - ERROR - Inscription for Eleve ID 1645 in NULL not found.
+2024-10-16 00:19:14,441 - ERROR - Inscription for Eleve ID 1645 in NULL not found.
+2024-10-16 00:19:14,442 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:14,442 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:14,443 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:14,444 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:14,445 - ERROR - Inscription for Eleve ID 1647 in NULL not found.
+2024-10-16 00:19:14,446 - ERROR - Inscription for Eleve ID 1647 in NULL not found.
+2024-10-16 00:19:14,447 - ERROR - Inscription for Eleve ID 1647 in NULL not found.
+2024-10-16 00:19:14,448 - ERROR - Inscription for Eleve ID 1647 in NULL not found.
+2024-10-16 00:19:14,448 - ERROR - Inscription for Eleve ID 1647 in NULL not found.
+2024-10-16 00:19:14,449 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:14,450 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:14,452 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:14,453 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:14,454 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:14,455 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:14,456 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:14,457 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:14,458 - ERROR - Inscription for Eleve ID 1649 in NULL not found.
+2024-10-16 00:19:14,459 - ERROR - Inscription for Eleve ID 1649 in NULL not found.
+2024-10-16 00:19:14,460 - ERROR - Inscription for Eleve ID 1649 in NULL not found.
+2024-10-16 00:19:14,461 - ERROR - Inscription for Eleve ID 1649 in NULL not found.
+2024-10-16 00:19:14,462 - ERROR - Inscription for Eleve ID 1650 in NULL not found.
+2024-10-16 00:19:14,463 - ERROR - Inscription for Eleve ID 1650 in NULL not found.
+2024-10-16 00:19:14,463 - ERROR - Inscription for Eleve ID 1650 in NULL not found.
+2024-10-16 00:19:14,464 - ERROR - Inscription for Eleve ID 1650 in NULL not found.
+2024-10-16 00:19:14,466 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:14,467 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:14,468 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:14,470 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:14,471 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:14,472 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:14,474 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:14,474 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:14,475 - ERROR - Inscription for Eleve ID 1655 in NULL not found.
+2024-10-16 00:19:14,476 - ERROR - Inscription for Eleve ID 1655 in NULL not found.
+2024-10-16 00:19:14,477 - ERROR - Inscription for Eleve ID 1655 in NULL not found.
+2024-10-16 00:19:14,478 - ERROR - Inscription for Eleve ID 1655 in NULL not found.
+2024-10-16 00:19:14,479 - ERROR - Inscription for Eleve ID 1655 in NULL not found.
+2024-10-16 00:19:14,480 - ERROR - Inscription for Eleve ID 1656 in NULL not found.
+2024-10-16 00:19:14,481 - ERROR - Inscription for Eleve ID 1656 in NULL not found.
+2024-10-16 00:19:14,482 - ERROR - Inscription for Eleve ID 1656 in NULL not found.
+2024-10-16 00:19:14,483 - ERROR - Inscription for Eleve ID 1656 in NULL not found.
+2024-10-16 00:19:14,485 - ERROR - Inscription for Eleve ID 1656 in NULL not found.
+2024-10-16 00:19:14,486 - ERROR - Inscription for Eleve ID 1657 in NULL not found.
+2024-10-16 00:19:14,487 - ERROR - Inscription for Eleve ID 1657 in NULL not found.
+2024-10-16 00:19:14,488 - ERROR - Inscription for Eleve ID 1657 in NULL not found.
+2024-10-16 00:19:14,489 - ERROR - Inscription for Eleve ID 1657 in NULL not found.
+2024-10-16 00:19:14,490 - ERROR - Inscription for Eleve ID 1657 in NULL not found.
+2024-10-16 00:19:14,491 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:14,492 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:14,493 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:14,494 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:14,495 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:14,496 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:14,496 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:14,497 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:14,498 - ERROR - Inscription for Eleve ID 1660 in NULL not found.
+2024-10-16 00:19:14,499 - ERROR - Inscription for Eleve ID 1660 in NULL not found.
+2024-10-16 00:19:14,500 - ERROR - Inscription for Eleve ID 1660 in NULL not found.
+2024-10-16 00:19:14,501 - ERROR - Inscription for Eleve ID 1660 in NULL not found.
+2024-10-16 00:19:14,503 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:14,505 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:14,508 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:14,512 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:14,514 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:14,519 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:14,521 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:14,522 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:14,524 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:14,525 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:14,527 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:14,528 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:14,529 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:14,530 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:14,531 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:14,533 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:14,534 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:14,536 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:14,537 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:14,539 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:14,540 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:14,542 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:14,543 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:14,545 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:14,546 - ERROR - Inscription for Eleve ID 1116 in NULL not found.
+2024-10-16 00:19:14,547 - ERROR - Inscription for Eleve ID 1116 in NULL not found.
+2024-10-16 00:19:14,549 - ERROR - Inscription for Eleve ID 1171 in NULL not found.
+2024-10-16 00:19:14,550 - ERROR - Inscription for Eleve ID 1119 in NULL not found.
+2024-10-16 00:19:14,552 - ERROR - Inscription for Eleve ID 1535 in NULL not found.
+2024-10-16 00:19:14,553 - ERROR - Inscription for Eleve ID 1535 in NULL not found.
+2024-10-16 00:19:14,554 - ERROR - Inscription for Eleve ID 1450 in NULL not found.
+2024-10-16 00:19:14,556 - ERROR - Inscription for Eleve ID 1450 in NULL not found.
+2024-10-16 00:19:14,557 - ERROR - Inscription for Eleve ID 1447 in NULL not found.
+2024-10-16 00:19:14,559 - ERROR - Inscription for Eleve ID 1447 in NULL not found.
+2024-10-16 00:19:14,560 - ERROR - Inscription for Eleve ID 1228 in NULL not found.
+2024-10-16 00:19:14,562 - ERROR - Inscription for Eleve ID 1124 in NULL not found.
+2024-10-16 00:19:14,563 - ERROR - Inscription for Eleve ID 1124 in NULL not found.
+2024-10-16 00:19:14,565 - ERROR - Inscription for Eleve ID 1216 in NULL not found.
+2024-10-16 00:19:14,567 - ERROR - Inscription for Eleve ID 1205 in NULL not found.
+2024-10-16 00:19:14,569 - ERROR - Inscription for Eleve ID 1130 in NULL not found.
+2024-10-16 00:19:14,571 - ERROR - Inscription for Eleve ID 1130 in NULL not found.
+2024-10-16 00:19:14,572 - ERROR - Inscription for Eleve ID 1036 in NULL not found.
+2024-10-16 00:19:14,573 - ERROR - Inscription for Eleve ID 1036 in NULL not found.
+2024-10-16 00:19:14,574 - ERROR - Inscription for Eleve ID 1224 in NULL not found.
+2024-10-16 00:19:14,575 - ERROR - Inscription for Eleve ID 1242 in NULL not found.
+2024-10-16 00:19:14,576 - ERROR - Inscription for Eleve ID 1341 in NULL not found.
+2024-10-16 00:19:14,577 - ERROR - Inscription for Eleve ID 1341 in NULL not found.
+2024-10-16 00:19:14,578 - ERROR - Inscription for Eleve ID 1341 in NULL not found.
+2024-10-16 00:19:14,579 - ERROR - Inscription for Eleve ID 1303 in NULL not found.
+2024-10-16 00:19:14,580 - ERROR - Inscription for Eleve ID 1303 in NULL not found.
+2024-10-16 00:19:14,581 - ERROR - Inscription for Eleve ID 1163 in NULL not found.
+2024-10-16 00:19:14,582 - ERROR - Inscription for Eleve ID 1401 in NULL not found.
+2024-10-16 00:19:14,583 - ERROR - Inscription for Eleve ID 1403 in NULL not found.
+2024-10-16 00:19:14,584 - ERROR - Inscription for Eleve ID 1233 in NULL not found.
+2024-10-16 00:19:14,585 - ERROR - Inscription for Eleve ID 1398 in NULL not found.
+2024-10-16 00:19:14,586 - ERROR - Inscription for Eleve ID 1050 in NULL not found.
+2024-10-16 00:19:14,587 - ERROR - Inscription for Eleve ID 1050 in NULL not found.
+2024-10-16 00:19:14,589 - ERROR - Inscription for Eleve ID 1143 in NULL not found.
+2024-10-16 00:19:14,590 - ERROR - Inscription for Eleve ID 1143 in NULL not found.
+2024-10-16 00:19:14,591 - ERROR - Inscription for Eleve ID 1143 in NULL not found.
+2024-10-16 00:19:14,592 - ERROR - Inscription for Eleve ID 1420 in NULL not found.
+2024-10-16 00:19:14,593 - ERROR - Inscription for Eleve ID 1421 in NULL not found.
+2024-10-16 00:19:14,594 - ERROR - Inscription for Eleve ID 1370 in NULL not found.
+2024-10-16 00:19:14,595 - ERROR - Inscription for Eleve ID 1515 in NULL not found.
+2024-10-16 00:19:14,596 - ERROR - Inscription for Eleve ID 1399 in NULL not found.
+2024-10-16 00:19:14,597 - ERROR - Inscription for Eleve ID 1244 in NULL not found.
+2024-10-16 00:19:14,598 - ERROR - Inscription for Eleve ID 1244 in NULL not found.
+2024-10-16 00:19:14,600 - ERROR - Inscription for Eleve ID 1131 in NULL not found.
+2024-10-16 00:19:14,601 - ERROR - Inscription for Eleve ID 1132 in NULL not found.
+2024-10-16 00:19:14,602 - ERROR - Inscription for Eleve ID 1301 in NULL not found.
+2024-10-16 00:19:14,603 - ERROR - Inscription for Eleve ID 1660 in NULL not found.
+2024-10-16 00:19:14,604 - ERROR - Inscription for Eleve ID 1310 in NULL not found.
+2024-10-16 00:19:14,605 - ERROR - Inscription for Eleve ID 1101 in NULL not found.
+2024-10-16 00:19:14,607 - ERROR - Inscription for Eleve ID 1298 in NULL not found.
+2024-10-16 00:19:14,608 - ERROR - Inscription for Eleve ID 1142 in NULL not found.
+2024-10-16 00:19:14,609 - ERROR - Inscription for Eleve ID 1453 in NULL not found.
+2024-10-16 00:19:14,611 - ERROR - Inscription for Eleve ID 1365 in NULL not found.
+2024-10-16 00:19:14,612 - ERROR - Inscription for Eleve ID 1649 in NULL not found.
+2024-10-16 00:19:14,613 - ERROR - Inscription for Eleve ID 1424 in NULL not found.
+2024-10-16 00:19:14,614 - ERROR - Inscription for Eleve ID 1034 in NULL not found.
+2024-10-16 00:19:14,616 - ERROR - Inscription for Eleve ID 1034 in NULL not found.
+2024-10-16 00:19:14,617 - ERROR - Inscription for Eleve ID 1063 in NULL not found.
+2024-10-16 00:19:14,620 - ERROR - Inscription for Eleve ID 1066 in NULL not found.
+2024-10-16 00:19:14,621 - ERROR - Inscription for Eleve ID 1066 in NULL not found.
+2024-10-16 00:19:14,623 - ERROR - Inscription for Eleve ID 1375 in NULL not found.
+2024-10-16 00:19:14,625 - ERROR - Inscription for Eleve ID 1170 in NULL not found.
+2024-10-16 00:19:14,627 - ERROR - Inscription for Eleve ID 1056 in NULL not found.
+2024-10-16 00:19:14,628 - ERROR - Inscription for Eleve ID 1056 in NULL not found.
+2024-10-16 00:19:14,630 - ERROR - Inscription for Eleve ID 1056 in NULL not found.
+2024-10-16 00:19:14,631 - ERROR - Inscription for Eleve ID 1433 in NULL not found.
+2024-10-16 00:19:14,632 - ERROR - Inscription for Eleve ID 1433 in NULL not found.
+2024-10-16 00:19:14,634 - ERROR - Inscription for Eleve ID 1433 in NULL not found.
+2024-10-16 00:19:14,635 - ERROR - Inscription for Eleve ID 1054 in NULL not found.
+2024-10-16 00:19:14,637 - ERROR - Inscription for Eleve ID 1278 in NULL not found.
+2024-10-16 00:19:14,638 - ERROR - Inscription for Eleve ID 1169 in NULL not found.
+2024-10-16 00:19:14,640 - ERROR - Inscription for Eleve ID 1107 in NULL not found.
+2024-10-16 00:19:14,641 - ERROR - Inscription for Eleve ID 1117 in NULL not found.
+2024-10-16 00:19:14,643 - ERROR - Inscription for Eleve ID 1117 in NULL not found.
+2024-10-16 00:19:14,644 - ERROR - Inscription for Eleve ID 1233 in NULL not found.
+2024-10-16 00:19:14,646 - ERROR - Inscription for Eleve ID 1102 in NULL not found.
+2024-10-16 00:19:14,647 - ERROR - Inscription for Eleve ID 1296 in NULL not found.
+2024-10-16 00:19:14,648 - ERROR - Inscription for Eleve ID 1297 in NULL not found.
+2024-10-16 00:19:14,649 - ERROR - Inscription for Eleve ID 1390 in NULL not found.
+2024-10-16 00:19:14,651 - ERROR - Inscription for Eleve ID 1165 in NULL not found.
+2024-10-16 00:19:14,653 - ERROR - Inscription for Eleve ID 1589 in NULL not found.
+2024-10-16 00:19:14,654 - ERROR - Inscription for Eleve ID 1383 in NULL not found.
+2024-10-16 00:19:14,655 - ERROR - Inscription for Eleve ID 1212 in NULL not found.
+2024-10-16 00:19:14,657 - ERROR - Inscription for Eleve ID 1416 in NULL not found.
+2024-10-16 00:19:14,659 - ERROR - Inscription for Eleve ID 1223 in NULL not found.
+2024-10-16 00:19:14,661 - ERROR - Inscription for Eleve ID 1337 in NULL not found.
+2024-10-16 00:19:14,662 - ERROR - Inscription for Eleve ID 1484 in NULL not found.
+2024-10-16 00:19:14,663 - ERROR - Inscription for Eleve ID 1208 in NULL not found.
+2024-10-16 00:19:14,664 - ERROR - Inscription for Eleve ID 1580 in NULL not found.
+2024-10-16 00:19:14,665 - ERROR - Inscription for Eleve ID 1519 in NULL not found.
+2024-10-16 00:19:14,666 - ERROR - Inscription for Eleve ID 1100 in NULL not found.
+2024-10-16 00:19:14,667 - ERROR - Inscription for Eleve ID 1100 in NULL not found.
+2024-10-16 00:19:14,668 - ERROR - Inscription for Eleve ID 1100 in NULL not found.
+2024-10-16 00:19:14,669 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:14,670 - ERROR - Inscription for Eleve ID 1254 in NULL not found.
+2024-10-16 00:19:14,672 - ERROR - Inscription for Eleve ID 1254 in NULL not found.
+2024-10-16 00:19:14,673 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:14,674 - ERROR - Inscription for Eleve ID 1451 in NULL not found.
+2024-10-16 00:19:14,675 - ERROR - Inscription for Eleve ID 1035 in NULL not found.
+2024-10-16 00:19:14,676 - ERROR - Inscription for Eleve ID 1035 in NULL not found.
+2024-10-16 00:19:14,677 - ERROR - Inscription for Eleve ID 1053 in NULL not found.
+2024-10-16 00:19:14,678 - ERROR - Inscription for Eleve ID 1053 in NULL not found.
+2024-10-16 00:19:14,679 - ERROR - Inscription for Eleve ID 1053 in NULL not found.
+2024-10-16 00:19:14,680 - ERROR - Inscription for Eleve ID 1045 in NULL not found.
+2024-10-16 00:19:14,681 - ERROR - Inscription for Eleve ID 1045 in NULL not found.
+2024-10-16 00:19:14,682 - ERROR - Inscription for Eleve ID 1108 in NULL not found.
+2024-10-16 00:19:14,683 - ERROR - Inscription for Eleve ID 1108 in NULL not found.
+2024-10-16 00:19:14,684 - ERROR - Inscription for Eleve ID 1266 in NULL not found.
+2024-10-16 00:19:14,685 - ERROR - Inscription for Eleve ID 1245 in NULL not found.
+2024-10-16 00:19:14,686 - ERROR - Inscription for Eleve ID 1048 in NULL not found.
+2024-10-16 00:19:14,688 - ERROR - Inscription for Eleve ID 1048 in NULL not found.
+2024-10-16 00:19:14,691 - ERROR - Inscription for Eleve ID 1166 in NULL not found.
+2024-10-16 00:19:14,692 - ERROR - Inscription for Eleve ID 1060 in NULL not found.
+2024-10-16 00:19:14,693 - ERROR - Inscription for Eleve ID 1037 in NULL not found.
+2024-10-16 00:19:14,695 - ERROR - Inscription for Eleve ID 1037 in NULL not found.
+2024-10-16 00:19:14,696 - ERROR - Inscription for Eleve ID 1170 in NULL not found.
+2024-10-16 00:19:14,697 - ERROR - Inscription for Eleve ID 1378 in NULL not found.
+2024-10-16 00:19:14,698 - ERROR - Inscription for Eleve ID 1113 in NULL not found.
+2024-10-16 00:19:14,700 - ERROR - Inscription for Eleve ID 1113 in NULL not found.
+2024-10-16 00:19:14,702 - ERROR - Inscription for Eleve ID 1113 in NULL not found.
+2024-10-16 00:19:14,703 - ERROR - Inscription for Eleve ID 1252 in NULL not found.
+2024-10-16 00:19:14,705 - ERROR - Inscription for Eleve ID 1252 in NULL not found.
+2024-10-16 00:19:14,706 - ERROR - Inscription for Eleve ID 1041 in NULL not found.
+2024-10-16 00:19:14,707 - ERROR - Inscription for Eleve ID 1041 in NULL not found.
+2024-10-16 00:19:14,708 - ERROR - Inscription for Eleve ID 1288 in NULL not found.
+2024-10-16 00:19:14,709 - ERROR - Inscription for Eleve ID 1288 in NULL not found.
+2024-10-16 00:19:14,710 - ERROR - Inscription for Eleve ID 1584 in NULL not found.
+2024-10-16 00:19:14,711 - ERROR - Inscription for Eleve ID 1584 in NULL not found.
+2024-10-16 00:19:14,713 - ERROR - Inscription for Eleve ID 1334 in NULL not found.
+2024-10-16 00:19:14,714 - ERROR - Inscription for Eleve ID 1387 in NULL not found.
+2024-10-16 00:19:14,715 - ERROR - Inscription for Eleve ID 1387 in NULL not found.
+2024-10-16 00:19:14,717 - ERROR - Inscription for Eleve ID 1387 in NULL not found.
+2024-10-16 00:19:14,718 - ERROR - Inscription for Eleve ID 1506 in NULL not found.
+2024-10-16 00:19:14,720 - ERROR - Inscription for Eleve ID 1267 in NULL not found.
+2024-10-16 00:19:14,722 - ERROR - Inscription for Eleve ID 1062 in NULL not found.
+2024-10-16 00:19:14,723 - ERROR - Inscription for Eleve ID 1062 in NULL not found.
+2024-10-16 00:19:14,725 - ERROR - Inscription for Eleve ID 1062 in NULL not found.
+2024-10-16 00:19:14,727 - ERROR - Inscription for Eleve ID 1271 in NULL not found.
+2024-10-16 00:19:14,728 - ERROR - Inscription for Eleve ID 1367 in NULL not found.
+2024-10-16 00:19:14,729 - ERROR - Inscription for Eleve ID 1064 in NULL not found.
+2024-10-16 00:19:14,730 - ERROR - Inscription for Eleve ID 1064 in NULL not found.
+2024-10-16 00:19:14,731 - ERROR - Inscription for Eleve ID 1265 in NULL not found.
+2024-10-16 00:19:14,732 - ERROR - Inscription for Eleve ID 1540 in NULL not found.
+2024-10-16 00:19:14,734 - ERROR - Inscription for Eleve ID 1327 in NULL not found.
+2024-10-16 00:19:14,736 - ERROR - Inscription for Eleve ID 1153 in NULL not found.
+2024-10-16 00:19:14,737 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:14,738 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:14,739 - ERROR - Inscription for Eleve ID 1125 in NULL not found.
+2024-10-16 00:19:14,740 - ERROR - Inscription for Eleve ID 1549 in NULL not found.
+2024-10-16 00:19:14,741 - ERROR - Inscription for Eleve ID 1247 in NULL not found.
+2024-10-16 00:19:14,742 - ERROR - Inscription for Eleve ID 1416 in NULL not found.
+2024-10-16 00:19:14,743 - ERROR - Eleve with ID 1412 does not exist.
+2024-10-16 00:19:14,743 - ERROR - Eleve with ID 1412 does not exist.
+2024-10-16 00:19:14,744 - ERROR - Inscription for Eleve ID 1046 in NULL not found.
+2024-10-16 00:19:14,745 - ERROR - Inscription for Eleve ID 1046 in NULL not found.
+2024-10-16 00:19:14,746 - ERROR - Inscription for Eleve ID 1046 in NULL not found.
+2024-10-16 00:19:14,747 - ERROR - Inscription for Eleve ID 1426 in NULL not found.
+2024-10-16 00:19:14,748 - ERROR - Inscription for Eleve ID 1637 in NULL not found.
+2024-10-16 00:19:14,749 - ERROR - Inscription for Eleve ID 1451 in NULL not found.
+2024-10-16 00:19:14,751 - ERROR - Inscription for Eleve ID 1451 in NULL not found.
+2024-10-16 00:19:14,753 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:14,756 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:14,760 - ERROR - Inscription for Eleve ID 1058 in NULL not found.
+2024-10-16 00:19:14,764 - ERROR - Inscription for Eleve ID 1058 in NULL not found.
+2024-10-16 00:19:14,766 - ERROR - Inscription for Eleve ID 1098 in NULL not found.
+2024-10-16 00:19:14,768 - ERROR - Inscription for Eleve ID 1098 in NULL not found.
+2024-10-16 00:19:14,770 - ERROR - Inscription for Eleve ID 1517 in NULL not found.
+2024-10-16 00:19:14,771 - ERROR - Inscription for Eleve ID 1517 in NULL not found.
+2024-10-16 00:19:14,773 - ERROR - Inscription for Eleve ID 1057 in NULL not found.
+2024-10-16 00:19:14,774 - ERROR - Inscription for Eleve ID 1057 in NULL not found.
+2024-10-16 00:19:14,775 - ERROR - Inscription for Eleve ID 1057 in NULL not found.
+2024-10-16 00:19:14,775 - ERROR - Inscription for Eleve ID 1065 in NULL not found.
+2024-10-16 00:19:14,776 - ERROR - Inscription for Eleve ID 1065 in NULL not found.
+2024-10-16 00:19:14,777 - ERROR - Inscription for Eleve ID 1228 in NULL not found.
+2024-10-16 00:19:14,778 - ERROR - Inscription for Eleve ID 1233 in NULL not found.
+2024-10-16 00:19:14,779 - ERROR - Inscription for Eleve ID 1200 in NULL not found.
+2024-10-16 00:19:14,779 - ERROR - Inscription for Eleve ID 1483 in NULL not found.
+2024-10-16 00:19:14,780 - ERROR - Inscription for Eleve ID 1483 in NULL not found.
+2024-10-16 00:19:14,781 - ERROR - Inscription for Eleve ID 1579 in NULL not found.
+2024-10-16 00:19:14,782 - ERROR - Inscription for Eleve ID 1568 in NULL not found.
+2024-10-16 00:19:14,783 - ERROR - Inscription for Eleve ID 1500 in NULL not found.
+2024-10-16 00:19:14,784 - ERROR - Inscription for Eleve ID 1375 in NULL not found.
+2024-10-16 00:19:14,786 - ERROR - Inscription for Eleve ID 1293 in NULL not found.
+2024-10-16 00:19:14,788 - ERROR - Inscription for Eleve ID 1461 in NULL not found.
+2024-10-16 00:19:14,788 - ERROR - Inscription for Eleve ID 1225 in NULL not found.
+2024-10-16 00:19:14,789 - ERROR - Inscription for Eleve ID 1332 in NULL not found.
+2024-10-16 00:19:14,790 - ERROR - Inscription for Eleve ID 1332 in NULL not found.
+2024-10-16 00:19:14,791 - ERROR - Inscription for Eleve ID 1361 in NULL not found.
+2024-10-16 00:19:14,792 - ERROR - Inscription for Eleve ID 1222 in NULL not found.
+2024-10-16 00:19:14,793 - ERROR - Inscription for Eleve ID 1096 in NULL not found.
+2024-10-16 00:19:14,794 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:14,795 - ERROR - Inscription for Eleve ID 1326 in NULL not found.
+2024-10-16 00:19:14,796 - ERROR - Inscription for Eleve ID 1635 in NULL not found.
+2024-10-16 00:19:14,797 - ERROR - Inscription for Eleve ID 1667 in NULL not found.
+2024-10-16 00:19:14,798 - ERROR - Inscription for Eleve ID 1667 in NULL not found.
+2024-10-16 00:19:14,800 - ERROR - Inscription for Eleve ID 1667 in NULL not found.
+2024-10-16 00:19:14,802 - ERROR - Inscription for Eleve ID 1667 in NULL not found.
+2024-10-16 00:19:14,804 - ERROR - Inscription for Eleve ID 1221 in NULL not found.
+2024-10-16 00:19:14,806 - ERROR - Inscription for Eleve ID 1095 in NULL not found.
+2024-10-16 00:19:14,807 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:14,808 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:14,809 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:14,811 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:14,812 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:14,814 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:14,815 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:14,817 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:14,818 - ERROR - Inscription for Eleve ID 1460 in NULL not found.
+2024-10-16 00:19:14,820 - ERROR - Inscription for Eleve ID 1320 in NULL not found.
+2024-10-16 00:19:14,821 - ERROR - Inscription for Eleve ID 1320 in NULL not found.
+2024-10-16 00:19:14,823 - ERROR - Inscription for Eleve ID 1321 in NULL not found.
+2024-10-16 00:19:14,824 - ERROR - Inscription for Eleve ID 1321 in NULL not found.
+2024-10-16 00:19:14,826 - ERROR - Inscription for Eleve ID 1505 in NULL not found.
+2024-10-16 00:19:14,827 - ERROR - Inscription for Eleve ID 1099 in NULL not found.
+2024-10-16 00:19:14,828 - ERROR - Inscription for Eleve ID 1508 in NULL not found.
+2024-10-16 00:19:14,829 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:14,831 - ERROR - Inscription for Eleve ID 1698 in NULL not found.
+2024-10-16 00:19:14,832 - ERROR - Inscription for Eleve ID 1699 in NULL not found.
+2024-10-16 00:19:14,834 - ERROR - Inscription for Eleve ID 1188 in NULL not found.
+2024-10-16 00:19:14,836 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:14,837 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:14,839 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:14,840 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:14,841 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:14,843 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:14,844 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:14,845 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:14,846 - ERROR - Inscription for Eleve ID 1701 in NULL not found.
+2024-10-16 00:19:14,847 - ERROR - Inscription for Eleve ID 1701 in NULL not found.
+2024-10-16 00:19:14,847 - ERROR - Inscription for Eleve ID 1701 in NULL not found.
+2024-10-16 00:19:14,848 - ERROR - Inscription for Eleve ID 1701 in NULL not found.
+2024-10-16 00:19:14,849 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:14,850 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:14,852 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:14,853 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:14,854 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:14,856 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:14,857 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:14,858 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:14,859 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:14,859 - ERROR - Inscription for Eleve ID 1706 in NULL not found.
+2024-10-16 00:19:14,860 - ERROR - Inscription for Eleve ID 1706 in NULL not found.
+2024-10-16 00:19:14,861 - ERROR - Inscription for Eleve ID 1706 in NULL not found.
+2024-10-16 00:19:14,862 - ERROR - Inscription for Eleve ID 1268 in NULL not found.
+2024-10-16 00:19:14,863 - ERROR - Inscription for Eleve ID 1268 in NULL not found.
+2024-10-16 00:19:14,864 - ERROR - Inscription for Eleve ID 1268 in NULL not found.
+2024-10-16 00:19:14,865 - ERROR - Inscription for Eleve ID 1707 in NULL not found.
+2024-10-16 00:19:14,866 - ERROR - Inscription for Eleve ID 1181 in NULL not found.
+2024-10-16 00:19:14,867 - ERROR - Inscription for Eleve ID 1182 in NULL not found.
+2024-10-16 00:19:14,868 - ERROR - Inscription for Eleve ID 1536 in NULL not found.
+2024-10-16 00:19:14,869 - ERROR - Inscription for Eleve ID 1319 in NULL not found.
+2024-10-16 00:19:14,871 - ERROR - Inscription for Eleve ID 1153 in NULL not found.
+2024-10-16 00:19:14,872 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:14,872 - ERROR - Inscription for Eleve ID 1040 in NULL not found.
+2024-10-16 00:19:14,873 - ERROR - Inscription for Eleve ID 1040 in NULL not found.
+2024-10-16 00:19:14,874 - ERROR - Inscription for Eleve ID 1040 in NULL not found.
+2024-10-16 00:19:14,875 - ERROR - Inscription for Eleve ID 1162 in NULL not found.
+2024-10-16 00:19:14,876 - ERROR - Inscription for Eleve ID 1162 in NULL not found.
+2024-10-16 00:19:14,877 - ERROR - Inscription for Eleve ID 1487 in NULL not found.
+2024-10-16 00:19:14,878 - ERROR - Inscription for Eleve ID 1553 in NULL not found.
+2024-10-16 00:19:14,879 - ERROR - Inscription for Eleve ID 1112 in NULL not found.
+2024-10-16 00:19:14,880 - ERROR - Inscription for Eleve ID 1112 in NULL not found.
+2024-10-16 00:19:14,881 - ERROR - Inscription for Eleve ID 1569 in NULL not found.
+2024-10-16 00:19:14,881 - ERROR - Inscription for Eleve ID 1510 in NULL not found.
+2024-10-16 00:19:14,882 - ERROR - Inscription for Eleve ID 1114 in NULL not found.
+2024-10-16 00:19:14,883 - ERROR - Inscription for Eleve ID 1578 in NULL not found.
+2024-10-16 00:19:14,884 - ERROR - Inscription for Eleve ID 1340 in NULL not found.
+2024-10-16 00:19:14,885 - ERROR - Inscription for Eleve ID 1177 in NULL not found.
+2024-10-16 00:19:14,887 - ERROR - Inscription for Eleve ID 1039 in NULL not found.
+2024-10-16 00:19:14,888 - ERROR - Inscription for Eleve ID 1039 in NULL not found.
+2024-10-16 00:19:14,889 - ERROR - Inscription for Eleve ID 1212 in NULL not found.
+2024-10-16 00:19:14,890 - ERROR - Inscription for Eleve ID 1707 in NULL not found.
+2024-10-16 00:19:14,890 - ERROR - Inscription for Eleve ID 1707 in NULL not found.
+2024-10-16 00:19:14,891 - ERROR - Inscription for Eleve ID 1044 in NULL not found.
+2024-10-16 00:19:14,892 - ERROR - Inscription for Eleve ID 1233 in NULL not found.
+2024-10-16 00:19:14,893 - ERROR - Inscription for Eleve ID 1069 in NULL not found.
+2024-10-16 00:19:14,893 - ERROR - Inscription for Eleve ID 1710 in NULL not found.
+2024-10-16 00:19:14,894 - ERROR - Inscription for Eleve ID 1278 in NULL not found.
+2024-10-16 00:19:14,895 - ERROR - Inscription for Eleve ID 1441 in NULL not found.
+2024-10-16 00:19:14,896 - ERROR - Inscription for Eleve ID 1453 in NULL not found.
+2024-10-16 00:19:14,897 - ERROR - Inscription for Eleve ID 1332 in NULL not found.
+2024-10-16 00:19:14,897 - ERROR - Inscription for Eleve ID 1512 in NULL not found.
+2024-10-16 00:19:14,898 - ERROR - Inscription for Eleve ID 1512 in NULL not found.
+2024-10-16 00:19:14,899 - ERROR - Inscription for Eleve ID 1275 in NULL not found.
+2024-10-16 00:19:14,900 - ERROR - Inscription for Eleve ID 1275 in NULL not found.
+2024-10-16 00:19:14,901 - ERROR - Inscription for Eleve ID 1444 in NULL not found.
+2024-10-16 00:19:14,902 - ERROR - Inscription for Eleve ID 1445 in NULL not found.
+2024-10-16 00:19:14,903 - ERROR - Inscription for Eleve ID 1360 in NULL not found.
+2024-10-16 00:19:14,904 - ERROR - Inscription for Eleve ID 1119 in NULL not found.
+2024-10-16 00:19:14,905 - ERROR - Eleve with ID 1411 does not exist.
+2024-10-16 00:19:14,906 - ERROR - Inscription for Eleve ID 1566 in NULL not found.
+2024-10-16 00:19:14,907 - ERROR - Inscription for Eleve ID 1378 in NULL not found.
+2024-10-16 00:19:14,908 - ERROR - Inscription for Eleve ID 1550 in NULL not found.
+2024-10-16 00:19:14,909 - ERROR - Inscription for Eleve ID 1711 in NULL not found.
+2024-10-16 00:19:14,910 - ERROR - Inscription for Eleve ID 1271 in NULL not found.
+2024-10-16 00:19:14,911 - ERROR - Inscription for Eleve ID 1367 in NULL not found.
+2024-10-16 00:19:14,912 - ERROR - Inscription for Eleve ID 1508 in NULL not found.
+2024-10-16 00:19:14,913 - ERROR - Inscription for Eleve ID 1710 in NULL not found.
+2024-10-16 00:19:14,914 - ERROR - Inscription for Eleve ID 1711 in NULL not found.
+2024-10-16 00:19:14,916 - ERROR - Inscription for Eleve ID 1707 in NULL not found.
+2024-10-16 00:19:14,917 - ERROR - Inscription for Eleve ID 1067 in NULL not found.
+2024-10-16 00:19:14,919 - ERROR - Inscription for Eleve ID 1328 in NULL not found.
+2024-10-16 00:19:14,921 - ERROR - Inscription for Eleve ID 1386 in NULL not found.
+2024-10-16 00:19:14,922 - ERROR - Inscription for Eleve ID 1310 in NULL not found.
+2024-10-16 00:19:14,924 - ERROR - Inscription for Eleve ID 1564 in NULL not found.
+2024-10-16 00:19:14,925 - ERROR - Inscription for Eleve ID 1352 in NULL not found.
+2024-10-16 00:19:14,927 - ERROR - Inscription for Eleve ID 1292 in NULL not found.
+2024-10-16 00:19:14,928 - ERROR - Inscription for Eleve ID 1258 in NULL not found.
+2024-10-16 00:19:14,929 - ERROR - Inscription for Eleve ID 1478 in NULL not found.
+2024-10-16 00:19:14,931 - ERROR - Inscription for Eleve ID 1168 in NULL not found.
+2024-10-16 00:19:14,932 - ERROR - Inscription for Eleve ID 1197 in NULL not found.
+2024-10-16 00:19:14,934 - ERROR - Inscription for Eleve ID 1145 in NULL not found.
+2024-10-16 00:19:14,936 - ERROR - Inscription for Eleve ID 1522 in NULL not found.
+2024-10-16 00:19:14,937 - ERROR - Inscription for Eleve ID 1200 in NULL not found.
+2024-10-16 00:19:14,939 - ERROR - Inscription for Eleve ID 1200 in NULL not found.
+2024-10-16 00:19:14,940 - ERROR - Inscription for Eleve ID 1229 in NULL not found.
+2024-10-16 00:19:14,941 - ERROR - Inscription for Eleve ID 1110 in NULL not found.
+2024-10-16 00:19:14,942 - ERROR - Inscription for Eleve ID 1110 in NULL not found.
+2024-10-16 00:19:14,943 - ERROR - Inscription for Eleve ID 1158 in NULL not found.
+2024-10-16 00:19:14,944 - ERROR - Inscription for Eleve ID 1158 in NULL not found.
+2024-10-16 00:19:14,945 - ERROR - Inscription for Eleve ID 1629 in NULL not found.
+2024-10-16 00:19:14,946 - ERROR - Inscription for Eleve ID 1629 in NULL not found.
+2024-10-16 00:19:14,946 - ERROR - Inscription for Eleve ID 1577 in NULL not found.
+2024-10-16 00:19:14,947 - ERROR - Inscription for Eleve ID 1572 in NULL not found.
+2024-10-16 00:19:14,948 - ERROR - Inscription for Eleve ID 1095 in NULL not found.
+2024-10-16 00:19:14,949 - ERROR - Inscription for Eleve ID 1064 in NULL not found.
+2024-10-16 00:19:14,951 - ERROR - Inscription for Eleve ID 1107 in NULL not found.
+2024-10-16 00:19:14,954 - ERROR - Inscription for Eleve ID 1285 in NULL not found.
+2024-10-16 00:19:14,956 - ERROR - Inscription for Eleve ID 1628 in NULL not found.
+2024-10-16 00:19:14,958 - ERROR - Inscription for Eleve ID 1492 in NULL not found.
+2024-10-16 00:19:14,959 - ERROR - Inscription for Eleve ID 1422 in NULL not found.
+2024-10-16 00:19:14,961 - ERROR - Inscription for Eleve ID 1346 in NULL not found.
+2024-10-16 00:19:14,962 - ERROR - Inscription for Eleve ID 1295 in NULL not found.
+2024-10-16 00:19:14,964 - ERROR - Inscription for Eleve ID 1509 in NULL not found.
+2024-10-16 00:19:14,965 - ERROR - Inscription for Eleve ID 1434 in NULL not found.
+2024-10-16 00:19:14,967 - ERROR - Inscription for Eleve ID 1527 in NULL not found.
+2024-10-16 00:19:14,969 - ERROR - Inscription for Eleve ID 1194 in NULL not found.
+2024-10-16 00:19:14,970 - ERROR - Inscription for Eleve ID 1330 in NULL not found.
+2024-10-16 00:19:14,972 - ERROR - Eleve with ID 1410 does not exist.
+2024-10-16 00:19:14,974 - ERROR - Inscription for Eleve ID 1312 in NULL not found.
+2024-10-16 00:19:14,975 - ERROR - Inscription for Eleve ID 1372 in NULL not found.
+2024-10-16 00:19:14,976 - ERROR - Inscription for Eleve ID 1390 in NULL not found.
+2024-10-16 00:19:14,978 - ERROR - Inscription for Eleve ID 1503 in NULL not found.
+2024-10-16 00:19:14,979 - ERROR - Inscription for Eleve ID 1254 in NULL not found.
+2024-10-16 00:19:14,981 - ERROR - Inscription for Eleve ID 1181 in NULL not found.
+2024-10-16 00:19:14,982 - ERROR - Inscription for Eleve ID 1182 in NULL not found.
+2024-10-16 00:19:14,984 - ERROR - Inscription for Eleve ID 1585 in NULL not found.
+2024-10-16 00:19:14,986 - ERROR - Inscription for Eleve ID 1169 in NULL not found.
+2024-10-16 00:19:14,986 - ERROR - Eleve with ID 1410 does not exist.
+2024-10-16 00:19:14,988 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:14,990 - ERROR - Inscription for Eleve ID 1047 in NULL not found.
+2024-10-16 00:19:14,991 - ERROR - Inscription for Eleve ID 1047 in NULL not found.
+2024-10-16 00:19:14,992 - ERROR - Inscription for Eleve ID 1038 in NULL not found.
+2024-10-16 00:19:14,993 - ERROR - Inscription for Eleve ID 1038 in NULL not found.
+2024-10-16 00:19:14,994 - ERROR - Inscription for Eleve ID 1059 in NULL not found.
+2024-10-16 00:19:14,995 - ERROR - Inscription for Eleve ID 1059 in NULL not found.
+2024-10-16 00:19:14,996 - ERROR - Inscription for Eleve ID 1035 in NULL not found.
+2024-10-16 00:19:14,997 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:14,998 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:15,002 - ERROR - Inscription for Eleve ID 1131 in NULL not found.
+2024-10-16 00:19:15,004 - ERROR - Inscription for Eleve ID 1132 in NULL not found.
+2024-10-16 00:19:15,013 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:15,017 - ERROR - Inscription for Eleve ID 1054 in NULL not found.
+2024-10-16 00:19:15,022 - ERROR - Inscription for Eleve ID 1101 in NULL not found.
+2024-10-16 00:19:15,026 - ERROR - Inscription for Eleve ID 1102 in NULL not found.
+2024-10-16 00:19:15,029 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:15,031 - ERROR - Inscription for Eleve ID 1425 in NULL not found.
+2024-10-16 00:19:15,033 - ERROR - Inscription for Eleve ID 1444 in NULL not found.
+2024-10-16 00:19:15,034 - ERROR - Inscription for Eleve ID 1445 in NULL not found.
+2024-10-16 00:19:15,036 - ERROR - Inscription for Eleve ID 1518 in NULL not found.
+2024-10-16 00:19:15,038 - ERROR - Inscription for Eleve ID 1283 in NULL not found.
+2024-10-16 00:19:15,038 - ERROR - Eleve with ID 1409 does not exist.
+2024-10-16 00:19:15,040 - ERROR - Inscription for Eleve ID 1099 in NULL not found.
+2024-10-16 00:19:15,042 - ERROR - Inscription for Eleve ID 1099 in NULL not found.
+2024-10-16 00:19:15,043 - ERROR - Inscription for Eleve ID 1467 in NULL not found.
+2024-10-16 00:19:15,045 - ERROR - Inscription for Eleve ID 1712 in NULL not found.
+2024-10-16 00:19:15,046 - ERROR - Inscription for Eleve ID 1407 in NULL not found.
+2024-10-16 00:19:15,047 - ERROR - Inscription for Eleve ID 1051 in NULL not found.
+2024-10-16 00:19:15,049 - ERROR - Inscription for Eleve ID 1503 in NULL not found.
+2024-10-16 00:19:15,051 - ERROR - Inscription for Eleve ID 1556 in NULL not found.
+2024-10-16 00:19:15,052 - ERROR - Inscription for Eleve ID 1588 in NULL not found.
+2024-10-16 00:19:15,054 - ERROR - Inscription for Eleve ID 1041 in NULL not found.
+2024-10-16 00:19:15,055 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:15,057 - ERROR - Inscription for Eleve ID 1116 in NULL not found.
+2024-10-16 00:19:15,058 - ERROR - Inscription for Eleve ID 1476 in NULL not found.
+2024-10-16 00:19:15,059 - ERROR - Inscription for Eleve ID 1476 in NULL not found.
+2024-10-16 00:19:15,060 - ERROR - Inscription for Eleve ID 1701 in NULL not found.
+2024-10-16 00:19:15,061 - ERROR - Inscription for Eleve ID 1131 in NULL not found.
+2024-10-16 00:19:15,062 - ERROR - Inscription for Eleve ID 1132 in NULL not found.
+2024-10-16 00:19:15,063 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:15,064 - ERROR - Inscription for Eleve ID 1033 in NULL not found.
+2024-10-16 00:19:15,065 - ERROR - Inscription for Eleve ID 1033 in NULL not found.
+2024-10-16 00:19:15,066 - ERROR - Inscription for Eleve ID 1058 in NULL not found.
+2024-10-16 00:19:15,067 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:15,068 - ERROR - Inscription for Eleve ID 1102 in NULL not found.
+2024-10-16 00:19:15,069 - ERROR - Inscription for Eleve ID 1378 in NULL not found.
+2024-10-16 00:19:15,070 - ERROR - Inscription for Eleve ID 1063 in NULL not found.
+2024-10-16 00:19:15,071 - ERROR - Inscription for Eleve ID 1063 in NULL not found.
+2024-10-16 00:19:15,072 - ERROR - Inscription for Eleve ID 1447 in NULL not found.
+2024-10-16 00:19:15,073 - ERROR - Inscription for Eleve ID 1712 in NULL not found.
+2024-10-16 00:19:15,074 - ERROR - Inscription for Eleve ID 1435 in NULL not found.
+2024-10-16 00:19:15,075 - ERROR - Inscription for Eleve ID 1636 in NULL not found.
+2024-10-16 00:19:15,076 - ERROR - Inscription for Eleve ID 1043 in NULL not found.
+2024-10-16 00:19:15,076 - ERROR - Inscription for Eleve ID 1406 in NULL not found.
+2024-10-16 00:19:15,077 - ERROR - Inscription for Eleve ID 1148 in NULL not found.
+2024-10-16 00:19:15,078 - ERROR - Inscription for Eleve ID 1061 in NULL not found.
+2024-10-16 00:19:15,079 - ERROR - Inscription for Eleve ID 1645 in NULL not found.
+2024-10-16 00:19:15,080 - ERROR - Inscription for Eleve ID 1036 in NULL not found.
+2024-10-16 00:19:15,080 - ERROR - Inscription for Eleve ID 1224 in NULL not found.
+2024-10-16 00:19:15,081 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:15,082 - ERROR - Inscription for Eleve ID 1056 in NULL not found.
+2024-10-16 00:19:15,083 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:15,084 - ERROR - Inscription for Eleve ID 1278 in NULL not found.
+2024-10-16 00:19:15,085 - ERROR - Inscription for Eleve ID 1242 in NULL not found.
+2024-10-16 00:19:15,086 - ERROR - Inscription for Eleve ID 1544 in NULL not found.
+2024-10-16 00:19:15,087 - ERROR - Inscription for Eleve ID 1181 in NULL not found.
+2024-10-16 00:19:15,088 - ERROR - Inscription for Eleve ID 1182 in NULL not found.
+2024-10-16 00:19:15,089 - ERROR - Inscription for Eleve ID 1138 in NULL not found.
+2024-10-16 00:19:15,090 - ERROR - Inscription for Eleve ID 1227 in NULL not found.
+2024-10-16 00:19:15,091 - ERROR - Inscription for Eleve ID 1469 in NULL not found.
+2024-10-16 00:19:15,091 - ERROR - Inscription for Eleve ID 1392 in NULL not found.
+2024-10-16 00:19:15,092 - ERROR - Inscription for Eleve ID 1627 in NULL not found.
+2024-10-16 00:19:15,093 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:15,094 - ERROR - Inscription for Eleve ID 1312 in NULL not found.
+2024-10-16 00:19:15,094 - ERROR - Inscription for Eleve ID 1205 in NULL not found.
+2024-10-16 00:19:15,095 - ERROR - Inscription for Eleve ID 1130 in NULL not found.
+2024-10-16 00:19:15,096 - ERROR - Inscription for Eleve ID 1043 in NULL not found.
+2024-10-16 00:19:15,097 - ERROR - Inscription for Eleve ID 1406 in NULL not found.
+2024-10-16 00:19:15,098 - ERROR - Inscription for Eleve ID 1382 in NULL not found.
+2024-10-16 00:19:15,099 - ERROR - Inscription for Eleve ID 1163 in NULL not found.
+2024-10-16 00:19:15,100 - ERROR - Inscription for Eleve ID 1401 in NULL not found.
+2024-10-16 00:19:15,102 - ERROR - Inscription for Eleve ID 1403 in NULL not found.
+2024-10-16 00:19:15,104 - ERROR - Inscription for Eleve ID 1213 in NULL not found.
+2024-10-16 00:19:15,105 - ERROR - Inscription for Eleve ID 1527 in NULL not found.
+2024-10-16 00:19:15,107 - ERROR - Inscription for Eleve ID 1042 in NULL not found.
+2024-10-16 00:19:15,108 - ERROR - Inscription for Eleve ID 1184 in NULL not found.
+2024-10-16 00:19:15,110 - ERROR - Inscription for Eleve ID 1108 in NULL not found.
+2024-10-16 00:19:15,111 - ERROR - Inscription for Eleve ID 1260 in NULL not found.
+2024-10-16 00:19:15,113 - ERROR - Inscription for Eleve ID 1149 in NULL not found.
+2024-10-16 00:19:15,113 - ERROR - Inscription for Eleve ID 1096 in NULL not found.
+2024-10-16 00:19:15,115 - ERROR - Inscription for Eleve ID 1222 in NULL not found.
+2024-10-16 00:19:15,116 - ERROR - Inscription for Eleve ID 1068 in NULL not found.
+2024-10-16 00:19:15,117 - ERROR - Inscription for Eleve ID 1416 in NULL not found.
+2024-10-16 00:19:15,118 - ERROR - Inscription for Eleve ID 1037 in NULL not found.
+2024-10-16 00:19:15,121 - ERROR - Inscription for Eleve ID 1327 in NULL not found.
+2024-10-16 00:19:15,122 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:15,124 - ERROR - Inscription for Eleve ID 1199 in NULL not found.
+2024-10-16 00:19:15,125 - ERROR - Inscription for Eleve ID 1228 in NULL not found.
+2024-10-16 00:19:15,126 - ERROR - Inscription for Eleve ID 1252 in NULL not found.
+2024-10-16 00:19:15,128 - ERROR - Inscription for Eleve ID 1166 in NULL not found.
+2024-10-16 00:19:15,129 - ERROR - Inscription for Eleve ID 1156 in NULL not found.
+2024-10-16 00:19:15,130 - ERROR - Inscription for Eleve ID 1164 in NULL not found.
+2024-10-16 00:19:15,132 - ERROR - Inscription for Eleve ID 1195 in NULL not found.
+2024-10-16 00:19:15,134 - ERROR - Inscription for Eleve ID 1569 in NULL not found.
+2024-10-16 00:19:15,135 - ERROR - Inscription for Eleve ID 1510 in NULL not found.
+2024-10-16 00:19:15,137 - ERROR - Inscription for Eleve ID 1115 in NULL not found.
+2024-10-16 00:19:15,138 - ERROR - Inscription for Eleve ID 1200 in NULL not found.
+2024-10-16 00:19:15,140 - ERROR - Inscription for Eleve ID 1267 in NULL not found.
+2024-10-16 00:19:15,141 - ERROR - Inscription for Eleve ID 1439 in NULL not found.
+2024-10-16 00:19:15,141 - ERROR - Inscription for Eleve ID 1223 in NULL not found.
+2024-10-16 00:19:15,142 - ERROR - Inscription for Eleve ID 1171 in NULL not found.
+2024-10-16 00:19:15,143 - ERROR - Inscription for Eleve ID 1054 in NULL not found.
+2024-10-16 00:19:15,144 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:15,144 - ERROR - Inscription for Eleve ID 1289 in NULL not found.
+2024-10-16 00:19:15,145 - ERROR - Inscription for Eleve ID 1153 in NULL not found.
+2024-10-16 00:19:15,146 - ERROR - Inscription for Eleve ID 1035 in NULL not found.
+2024-10-16 00:19:15,147 - ERROR - Inscription for Eleve ID 1298 in NULL not found.
+2024-10-16 00:19:15,147 - ERROR - Inscription for Eleve ID 1142 in NULL not found.
+2024-10-16 00:19:15,149 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:15,151 - ERROR - Inscription for Eleve ID 1062 in NULL not found.
+2024-10-16 00:19:15,153 - ERROR - Inscription for Eleve ID 1271 in NULL not found.
+2024-10-16 00:19:15,155 - ERROR - Inscription for Eleve ID 1367 in NULL not found.
+2024-10-16 00:19:15,157 - ERROR - Inscription for Eleve ID 1508 in NULL not found.
+2024-10-16 00:19:15,158 - ERROR - Inscription for Eleve ID 1633 in NULL not found.
+2024-10-16 00:19:15,159 - ERROR - Inscription for Eleve ID 1398 in NULL not found.
+2024-10-16 00:19:15,161 - ERROR - Inscription for Eleve ID 1372 in NULL not found.
+2024-10-16 00:19:15,162 - ERROR - Inscription for Eleve ID 1432 in NULL not found.
+2024-10-16 00:19:15,164 - ERROR - Inscription for Eleve ID 1265 in NULL not found.
+2024-10-16 00:19:15,165 - ERROR - Inscription for Eleve ID 1370 in NULL not found.
+2024-10-16 00:19:15,167 - ERROR - Inscription for Eleve ID 1256 in NULL not found.
+2024-10-16 00:19:15,169 - ERROR - Inscription for Eleve ID 1393 in NULL not found.
+2024-10-16 00:19:15,171 - ERROR - Inscription for Eleve ID 1442 in NULL not found.
+2024-10-16 00:19:15,172 - ERROR - Inscription for Eleve ID 1444 in NULL not found.
+2024-10-16 00:19:15,173 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:15,174 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:15,175 - ERROR - Inscription for Eleve ID 1055 in NULL not found.
+2024-10-16 00:19:15,176 - ERROR - Inscription for Eleve ID 1384 in NULL not found.
+2024-10-16 00:19:15,178 - ERROR - Inscription for Eleve ID 1639 in NULL not found.
+2024-10-16 00:19:15,179 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:15,180 - ERROR - Inscription for Eleve ID 1117 in NULL not found.
+2024-10-16 00:19:15,181 - ERROR - Inscription for Eleve ID 1045 in NULL not found.
+2024-10-16 00:19:15,182 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:15,183 - ERROR - Inscription for Eleve ID 1120 in NULL not found.
+2024-10-16 00:19:15,184 - ERROR - Inscription for Eleve ID 1500 in NULL not found.
+2024-10-16 00:19:15,186 - ERROR - Inscription for Eleve ID 1178 in NULL not found.
+2024-10-16 00:19:15,188 - ERROR - Inscription for Eleve ID 1136 in NULL not found.
+2024-10-16 00:19:15,190 - ERROR - Inscription for Eleve ID 1383 in NULL not found.
+2024-10-16 00:19:15,191 - ERROR - Inscription for Eleve ID 1589 in NULL not found.
+2024-10-16 00:19:15,192 - ERROR - Inscription for Eleve ID 1202 in NULL not found.
+2024-10-16 00:19:15,193 - ERROR - Inscription for Eleve ID 1522 in NULL not found.
+2024-10-16 00:19:15,195 - ERROR - Inscription for Eleve ID 1232 in NULL not found.
+2024-10-16 00:19:15,196 - ERROR - Inscription for Eleve ID 1141 in NULL not found.
+2024-10-16 00:19:15,197 - ERROR - Inscription for Eleve ID 1067 in NULL not found.
+2024-10-16 00:19:15,198 - ERROR - Inscription for Eleve ID 1067 in NULL not found.
+2024-10-16 00:19:15,199 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:15,200 - ERROR - Inscription for Eleve ID 1291 in NULL not found.
+2024-10-16 00:19:15,201 - ERROR - Inscription for Eleve ID 1586 in NULL not found.
+2024-10-16 00:19:15,202 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:15,203 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:15,204 - ERROR - Inscription for Eleve ID 1451 in NULL not found.
+2024-10-16 00:19:15,205 - ERROR - Inscription for Eleve ID 1623 in NULL not found.
+2024-10-16 00:19:15,206 - ERROR - Inscription for Eleve ID 1050 in NULL not found.
+2024-10-16 00:19:15,207 - ERROR - Inscription for Eleve ID 1272 in NULL not found.
+2024-10-16 00:19:15,208 - ERROR - Inscription for Eleve ID 1125 in NULL not found.
+2024-10-16 00:19:15,209 - ERROR - Inscription for Eleve ID 1549 in NULL not found.
+2024-10-16 00:19:15,210 - ERROR - Inscription for Eleve ID 1247 in NULL not found.
+2024-10-16 00:19:15,211 - ERROR - Inscription for Eleve ID 1471 in NULL not found.
+2024-10-16 00:19:15,212 - ERROR - Inscription for Eleve ID 1106 in NULL not found.
+2024-10-16 00:19:15,213 - ERROR - Inscription for Eleve ID 1340 in NULL not found.
+2024-10-16 00:19:15,214 - ERROR - Inscription for Eleve ID 1034 in NULL not found.
+2024-10-16 00:19:15,215 - ERROR - Inscription for Eleve ID 1148 in NULL not found.
+2024-10-16 00:19:15,216 - ERROR - Inscription for Eleve ID 1707 in NULL not found.
+2024-10-16 00:19:15,217 - ERROR - Inscription for Eleve ID 1650 in NULL not found.
+2024-10-16 00:19:15,218 - ERROR - Inscription for Eleve ID 1318 in NULL not found.
+2024-10-16 00:19:15,219 - ERROR - Inscription for Eleve ID 1529 in NULL not found.
+2024-10-16 00:19:15,221 - ERROR - Inscription for Eleve ID 1051 in NULL not found.
+2024-10-16 00:19:15,221 - ERROR - Inscription for Eleve ID 1667 in NULL not found.
+2024-10-16 00:19:15,222 - ERROR - Inscription for Eleve ID 1377 in NULL not found.
+2024-10-16 00:19:15,223 - ERROR - Inscription for Eleve ID 1110 in NULL not found.
+2024-10-16 00:19:15,224 - ERROR - Inscription for Eleve ID 1460 in NULL not found.
+2024-10-16 00:19:15,225 - ERROR - Inscription for Eleve ID 1385 in NULL not found.
+2024-10-16 00:19:15,226 - ERROR - Inscription for Eleve ID 1587 in NULL not found.
+2024-10-16 00:19:15,227 - ERROR - Inscription for Eleve ID 1301 in NULL not found.
+2024-10-16 00:19:15,228 - ERROR - Inscription for Eleve ID 1145 in NULL not found.
+2024-10-16 00:19:15,229 - ERROR - Inscription for Eleve ID 1100 in NULL not found.
+2024-10-16 00:19:15,230 - ERROR - Inscription for Eleve ID 1426 in NULL not found.
+2024-10-16 00:19:15,231 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:15,232 - ERROR - Inscription for Eleve ID 1710 in NULL not found.
+2024-10-16 00:19:15,233 - ERROR - Inscription for Eleve ID 1185 in NULL not found.
+2024-10-16 00:19:15,234 - ERROR - Inscription for Eleve ID 1216 in NULL not found.
+2024-10-16 00:19:15,235 - ERROR - Inscription for Eleve ID 1478 in NULL not found.
+2024-10-16 00:19:15,236 - ERROR - Inscription for Eleve ID 1168 in NULL not found.
+2024-10-16 00:19:15,237 - ERROR - Inscription for Eleve ID 1424 in NULL not found.
+2024-10-16 00:19:15,238 - ERROR - Inscription for Eleve ID 1273 in NULL not found.
+2024-10-16 00:19:15,239 - ERROR - Inscription for Eleve ID 1057 in NULL not found.
+2024-10-16 00:19:15,240 - ERROR - Inscription for Eleve ID 1107 in NULL not found.
+2024-10-16 00:19:15,241 - ERROR - Inscription for Eleve ID 1488 in NULL not found.
+2024-10-16 00:19:15,242 - ERROR - Inscription for Eleve ID 1555 in NULL not found.
+2024-10-16 00:19:15,243 - ERROR - Inscription for Eleve ID 1436 in NULL not found.
+2024-10-16 00:19:15,244 - ERROR - Inscription for Eleve ID 1330 in NULL not found.
+2024-10-16 00:19:15,245 - ERROR - Inscription for Eleve ID 1346 in NULL not found.
+2024-10-16 00:19:15,246 - ERROR - Inscription for Eleve ID 1422 in NULL not found.
+2024-10-16 00:19:15,247 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:15,248 - ERROR - Inscription for Eleve ID 1576 in NULL not found.
+2024-10-16 00:19:15,249 - ERROR - Inscription for Eleve ID 1698 in NULL not found.
+2024-10-16 00:19:15,250 - ERROR - Inscription for Eleve ID 1699 in NULL not found.
+2024-10-16 00:19:15,251 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:15,252 - ERROR - Inscription for Eleve ID 1053 in NULL not found.
+2024-10-16 00:19:15,253 - ERROR - Inscription for Eleve ID 1249 in NULL not found.
+2024-10-16 00:19:15,254 - ERROR - Eleve with ID 1414 does not exist.
+2024-10-16 00:19:15,256 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:15,259 - ERROR - Inscription for Eleve ID 1711 in NULL not found.
+2024-10-16 00:19:15,263 - ERROR - Inscription for Eleve ID 1257 in NULL not found.
+2024-10-16 00:19:15,266 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:15,268 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:15,270 - ERROR - Inscription for Eleve ID 1144 in NULL not found.
+2024-10-16 00:19:15,272 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:15,273 - ERROR - Inscription for Eleve ID 1065 in NULL not found.
+2024-10-16 00:19:15,274 - ERROR - Inscription for Eleve ID 1121 in NULL not found.
+2024-10-16 00:19:15,275 - ERROR - Inscription for Eleve ID 1121 in NULL not found.
+2024-10-16 00:19:15,276 - ERROR - Inscription for Eleve ID 1513 in NULL not found.
+2024-10-16 00:19:15,278 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:15,279 - ERROR - Inscription for Eleve ID 1565 in NULL not found.
+2024-10-16 00:19:15,280 - ERROR - Inscription for Eleve ID 1101 in NULL not found.
+2024-10-16 00:19:15,281 - ERROR - Inscription for Eleve ID 1103 in NULL not found.
+2024-10-16 00:19:15,283 - ERROR - Inscription for Eleve ID 1114 in NULL not found.
+2024-10-16 00:19:15,285 - ERROR - Inscription for Eleve ID 1319 in NULL not found.
+2024-10-16 00:19:15,287 - ERROR - Inscription for Eleve ID 1536 in NULL not found.
+2024-10-16 00:19:15,289 - ERROR - Inscription for Eleve ID 1458 in NULL not found.
+2024-10-16 00:19:15,290 - ERROR - Inscription for Eleve ID 1170 in NULL not found.
+2024-10-16 00:19:15,292 - ERROR - Inscription for Eleve ID 1585 in NULL not found.
+2024-10-16 00:19:15,294 - ERROR - Inscription for Eleve ID 1483 in NULL not found.
+2024-10-16 00:19:15,295 - ERROR - Inscription for Eleve ID 1212 in NULL not found.
+2024-10-16 00:19:15,297 - ERROR - Inscription for Eleve ID 1515 in NULL not found.
+2024-10-16 00:19:15,298 - ERROR - Inscription for Eleve ID 1451 in NULL not found.
+2024-10-16 00:19:15,299 - ERROR - Inscription for Eleve ID 1540 in NULL not found.
+2024-10-16 00:19:15,301 - ERROR - Inscription for Eleve ID 1468 in NULL not found.
+2024-10-16 00:19:15,303 - ERROR - Inscription for Eleve ID 1568 in NULL not found.
+2024-10-16 00:19:15,305 - ERROR - Inscription for Eleve ID 1509 in NULL not found.
+2024-10-16 00:19:15,307 - ERROR - Inscription for Eleve ID 1396 in NULL not found.
+2024-10-16 00:19:15,309 - ERROR - Inscription for Eleve ID 1265 in NULL not found.
+2024-10-16 00:19:15,310 - ERROR - Inscription for Eleve ID 1517 in NULL not found.
+2024-10-16 00:19:15,312 - ERROR - Inscription for Eleve ID 1505 in NULL not found.
+2024-10-16 00:19:15,313 - ERROR - Inscription for Eleve ID 1587 in NULL not found.
+2024-10-16 00:19:15,315 - ERROR - Inscription for Eleve ID 1197 in NULL not found.
+2024-10-16 00:19:15,316 - ERROR - Inscription for Eleve ID 1266 in NULL not found.
+2024-10-16 00:19:15,318 - ERROR - Inscription for Eleve ID 1194 in NULL not found.
+2024-10-16 00:19:15,321 - ERROR - Inscription for Eleve ID 1551 in NULL not found.
+2024-10-16 00:19:15,322 - ERROR - Inscription for Eleve ID 1174 in NULL not found.
+2024-10-16 00:19:15,323 - ERROR - Inscription for Eleve ID 1464 in NULL not found.
+2024-10-16 00:19:15,324 - ERROR - Inscription for Eleve ID 1258 in NULL not found.
+2024-10-16 00:19:15,325 - ERROR - Inscription for Eleve ID 1292 in NULL not found.
+2024-10-16 00:19:15,326 - ERROR - Inscription for Eleve ID 1360 in NULL not found.
+2024-10-16 00:19:15,327 - ERROR - Inscription for Eleve ID 1295 in NULL not found.
+2024-10-16 00:19:15,328 - ERROR - Inscription for Eleve ID 1384 in NULL not found.
+2024-10-16 00:19:15,329 - ERROR - Inscription for Eleve ID 1435 in NULL not found.
+2024-10-16 00:19:15,330 - ERROR - Inscription for Eleve ID 1477 in NULL not found.
+2024-10-16 00:19:15,331 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:15,332 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:15,333 - ERROR - Inscription for Eleve ID 1522 in NULL not found.
+2024-10-16 00:19:15,334 - ERROR - Inscription for Eleve ID 1125 in NULL not found.
+2024-10-16 00:19:15,337 - ERROR - Inscription for Eleve ID 1125 in NULL not found.
+2024-10-16 00:19:15,338 - ERROR - Inscription for Eleve ID 1258 in NULL not found.
+2024-10-16 00:19:15,339 - ERROR - Inscription for Eleve ID 1420 in NULL not found.
+2024-10-16 00:19:15,340 - ERROR - Inscription for Eleve ID 1421 in NULL not found.
+2024-10-16 00:19:15,342 - ERROR - Inscription for Eleve ID 1381 in NULL not found.
+2024-10-16 00:19:15,343 - ERROR - Inscription for Eleve ID 1127 in NULL not found.
+2024-10-16 00:19:15,344 - ERROR - Inscription for Eleve ID 1642 in NULL not found.
+2024-10-16 00:19:15,346 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:15,347 - ERROR - Eleve with ID 1411 does not exist.
+2024-10-16 00:19:15,348 - ERROR - Inscription for Eleve ID 1097 in NULL not found.
+2024-10-16 00:19:15,350 - ERROR - Inscription for Eleve ID 1473 in NULL not found.
+2024-10-16 00:19:15,352 - ERROR - Inscription for Eleve ID 1503 in NULL not found.
+2024-10-16 00:19:15,354 - ERROR - Inscription for Eleve ID 1443 in NULL not found.
+2024-10-16 00:19:15,355 - ERROR - Inscription for Eleve ID 1169 in NULL not found.
+2024-10-16 00:19:15,356 - ERROR - Inscription for Eleve ID 1095 in NULL not found.
+2024-10-16 00:19:15,357 - ERROR - Inscription for Eleve ID 1221 in NULL not found.
+2024-10-16 00:19:15,359 - ERROR - Inscription for Eleve ID 1115 in NULL not found.
+2024-10-16 00:19:15,360 - ERROR - Inscription for Eleve ID 1208 in NULL not found.
+2024-10-16 00:19:15,361 - ERROR - Inscription for Eleve ID 1554 in NULL not found.
+2024-10-16 00:19:15,362 - ERROR - Inscription for Eleve ID 1470 in NULL not found.
+2024-10-16 00:19:15,364 - ERROR - Inscription for Eleve ID 1434 in NULL not found.
+2024-10-16 00:19:15,365 - ERROR - Inscription for Eleve ID 1102 in NULL not found.
+2024-10-16 00:19:15,366 - ERROR - Inscription for Eleve ID 1441 in NULL not found.
+2024-10-16 00:19:15,368 - ERROR - Inscription for Eleve ID 1229 in NULL not found.
+2024-10-16 00:19:15,369 - ERROR - Inscription for Eleve ID 1549 in NULL not found.
+2024-10-16 00:19:15,370 - ERROR - Inscription for Eleve ID 1513 in NULL not found.
+2024-10-16 00:19:15,371 - ERROR - Inscription for Eleve ID 1250 in NULL not found.
+2024-10-16 00:19:15,374 - ERROR - Inscription for Eleve ID 1235 in NULL not found.
+2024-10-16 00:19:15,377 - ERROR - Inscription for Eleve ID 1324 in NULL not found.
+2024-10-16 00:19:15,379 - ERROR - Inscription for Eleve ID 1386 in NULL not found.
+2024-10-16 00:19:15,382 - ERROR - Inscription for Eleve ID 1526 in NULL not found.
+2024-10-16 00:19:15,384 - ERROR - Inscription for Eleve ID 1481 in NULL not found.
+2024-10-16 00:19:15,387 - ERROR - Inscription for Eleve ID 1228 in NULL not found.
+2024-10-16 00:19:15,390 - ERROR - Inscription for Eleve ID 1453 in NULL not found.
+2024-10-16 00:19:15,392 - ERROR - Inscription for Eleve ID 1244 in NULL not found.
+2024-10-16 00:19:15,394 - ERROR - Inscription for Eleve ID 1519 in NULL not found.
+2024-10-16 00:19:15,395 - ERROR - Inscription for Eleve ID 1580 in NULL not found.
+2024-10-16 00:19:15,397 - ERROR - Inscription for Eleve ID 1320 in NULL not found.
+2024-10-16 00:19:15,399 - ERROR - Inscription for Eleve ID 1321 in NULL not found.
+2024-10-16 00:19:15,401 - ERROR - Inscription for Eleve ID 1328 in NULL not found.
+2024-10-16 00:19:15,403 - ERROR - Inscription for Eleve ID 1044 in NULL not found.
+2024-10-16 00:19:15,404 - ERROR - Inscription for Eleve ID 1406 in NULL not found.
+2024-10-16 00:19:15,406 - ERROR - Inscription for Eleve ID 1465 in NULL not found.
+2024-10-16 00:19:15,408 - ERROR - Inscription for Eleve ID 1466 in NULL not found.
+2024-10-16 00:19:15,409 - ERROR - Inscription for Eleve ID 1461 in NULL not found.
+2024-10-16 00:19:15,411 - ERROR - Inscription for Eleve ID 1492 in NULL not found.
+2024-10-16 00:19:15,413 - ERROR - Inscription for Eleve ID 1310 in NULL not found.
+2024-10-16 00:19:15,416 - ERROR - Inscription for Eleve ID 1038 in NULL not found.
+2024-10-16 00:19:15,419 - ERROR - Inscription for Eleve ID 1664 in NULL not found.
+2024-10-16 00:19:15,421 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:15,423 - ERROR - Inscription for Eleve ID 1651 in NULL not found.
+2024-10-16 00:19:15,425 - ERROR - Inscription for Eleve ID 1169 in NULL not found.
+2024-10-16 00:19:15,427 - ERROR - Inscription for Eleve ID 1059 in NULL not found.
+2024-10-16 00:19:15,429 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:15,431 - ERROR - Inscription for Eleve ID 1098 in NULL not found.
+2024-10-16 00:19:15,432 - ERROR - Inscription for Eleve ID 1099 in NULL not found.
+2024-10-16 00:19:15,434 - ERROR - Inscription for Eleve ID 1066 in NULL not found.
+2024-10-16 00:19:15,436 - ERROR - Inscription for Eleve ID 1578 in NULL not found.
+2024-10-16 00:19:15,437 - ERROR - Inscription for Eleve ID 1284 in NULL not found.
+2024-10-16 00:19:15,438 - ERROR - Inscription for Eleve ID 1037 in NULL not found.
+2024-10-16 00:19:15,440 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:15,441 - ERROR - Inscription for Eleve ID 1460 in NULL not found.
+2024-10-16 00:19:15,442 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:15,443 - ERROR - Inscription for Eleve ID 1313 in NULL not found.
+2024-10-16 00:19:15,443 - ERROR - Inscription for Eleve ID 1361 in NULL not found.
+2024-10-16 00:19:15,444 - ERROR - Inscription for Eleve ID 1540 in NULL not found.
+2024-10-16 00:19:15,445 - ERROR - Eleve with ID 1410 does not exist.
+2024-10-16 00:19:15,446 - ERROR - Inscription for Eleve ID 1475 in NULL not found.
+2024-10-16 00:19:15,447 - ERROR - Inscription for Eleve ID 1188 in NULL not found.
+2024-10-16 00:19:15,448 - ERROR - Inscription for Eleve ID 1045 in NULL not found.
+2024-10-16 00:19:15,449 - ERROR - Inscription for Eleve ID 1579 in NULL not found.
+2024-10-16 00:19:15,450 - ERROR - Inscription for Eleve ID 1287 in NULL not found.
+2024-10-16 00:19:15,451 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:15,452 - ERROR - Inscription for Eleve ID 1296 in NULL not found.
+2024-10-16 00:19:15,453 - ERROR - Inscription for Eleve ID 1297 in NULL not found.
+2024-10-16 00:19:15,454 - ERROR - Inscription for Eleve ID 1634 in NULL not found.
+2024-10-16 00:19:15,455 - ERROR - Inscription for Eleve ID 1337 in NULL not found.
+2024-10-16 00:19:15,456 - ERROR - Inscription for Eleve ID 1484 in NULL not found.
+2024-10-16 00:19:15,457 - ERROR - Inscription for Eleve ID 1285 in NULL not found.
+2024-10-16 00:19:15,458 - ERROR - Inscription for Eleve ID 1432 in NULL not found.
+2024-10-16 00:19:15,459 - ERROR - Inscription for Eleve ID 1056 in NULL not found.
+2024-10-16 00:19:15,460 - ERROR - Inscription for Eleve ID 1502 in NULL not found.
+2024-10-16 00:19:15,461 - ERROR - Inscription for Eleve ID 1047 in NULL not found.
+2024-10-16 00:19:15,462 - ERROR - Inscription for Eleve ID 1043 in NULL not found.
+2024-10-16 00:19:15,463 - ERROR - Inscription for Eleve ID 1033 in NULL not found.
+2024-10-16 00:19:15,464 - ERROR - Inscription for Eleve ID 1103 in NULL not found.
+2024-10-16 00:19:15,465 - ERROR - Inscription for Eleve ID 1624 in NULL not found.
+2024-10-16 00:19:15,466 - ERROR - Inscription for Eleve ID 1654 in NULL not found.
+2024-10-16 00:19:15,468 - ERROR - Inscription for Eleve ID 1641 in NULL not found.
+2024-10-16 00:19:15,469 - ERROR - Inscription for Eleve ID 1482 in NULL not found.
+2024-10-16 00:19:15,470 - ERROR - Inscription for Eleve ID 1069 in NULL not found.
+2024-10-16 00:19:15,471 - ERROR - Inscription for Eleve ID 1696 in NULL not found.
+2024-10-16 00:19:15,472 - ERROR - Inscription for Eleve ID 1632 in NULL not found.
+2024-10-16 00:19:15,473 - ERROR - Inscription for Eleve ID 1068 in NULL not found.
+2024-10-16 00:19:15,475 - ERROR - Inscription for Eleve ID 1662 in NULL not found.
+2024-10-16 00:19:15,476 - ERROR - Inscription for Eleve ID 1659 in NULL not found.
+2024-10-16 00:19:15,477 - ERROR - Inscription for Eleve ID 1200 in NULL not found.
+2024-10-16 00:19:15,478 - ERROR - Inscription for Eleve ID 1328 in NULL not found.
+2024-10-16 00:19:15,479 - ERROR - Inscription for Eleve ID 1501 in NULL not found.
+2024-10-16 00:19:15,480 - ERROR - Inscription for Eleve ID 1055 in NULL not found.
+2024-10-16 00:19:15,481 - ERROR - Inscription for Eleve ID 1117 in NULL not found.
+2024-10-16 00:19:15,482 - ERROR - Inscription for Eleve ID 1646 in NULL not found.
+2024-10-16 00:19:15,483 - ERROR - Inscription for Eleve ID 1577 in NULL not found.
+2024-10-16 00:19:15,484 - ERROR - Inscription for Eleve ID 1051 in NULL not found.
+2024-10-16 00:19:15,485 - ERROR - Inscription for Eleve ID 1130 in NULL not found.
+2024-10-16 00:19:15,487 - ERROR - Inscription for Eleve ID 1422 in NULL not found.
+2024-10-16 00:19:15,488 - ERROR - Inscription for Eleve ID 1346 in NULL not found.
+2024-10-16 00:19:15,489 - ERROR - Inscription for Eleve ID 1625 in NULL not found.
+2024-10-16 00:19:15,490 - ERROR - Inscription for Eleve ID 1638 in NULL not found.
+2024-10-16 00:19:15,491 - ERROR - Inscription for Eleve ID 1104 in NULL not found.
+2024-10-16 00:19:15,492 - ERROR - Inscription for Eleve ID 1058 in NULL not found.
+2024-10-16 00:19:15,493 - ERROR - Inscription for Eleve ID 1544 in NULL not found.
+2024-10-16 00:19:15,494 - ERROR - Inscription for Eleve ID 1242 in NULL not found.
+2024-10-16 00:19:15,495 - ERROR - Inscription for Eleve ID 1057 in NULL not found.
+2024-10-16 00:19:15,496 - ERROR - Inscription for Eleve ID 1518 in NULL not found.
+2024-10-16 00:19:15,497 - ERROR - Inscription for Eleve ID 1283 in NULL not found.
+2024-10-16 00:19:15,498 - ERROR - Inscription for Eleve ID 1450 in NULL not found.
+2024-10-16 00:19:15,500 - ERROR - Inscription for Eleve ID 1370 in NULL not found.
+2024-10-16 00:19:15,501 - ERROR - Inscription for Eleve ID 1666 in NULL not found.
+2024-10-16 00:19:15,502 - ERROR - Inscription for Eleve ID 1291 in NULL not found.
+2024-10-16 00:19:15,503 - ERROR - Inscription for Eleve ID 1586 in NULL not found.
+2024-10-16 00:19:15,504 - ERROR - Inscription for Eleve ID 1648 in NULL not found.
+2024-10-16 00:19:15,508 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:15,511 - ERROR - Inscription for Eleve ID 1686 in NULL not found.
+2024-10-16 00:19:15,514 - ERROR - Inscription for Eleve ID 1470 in NULL not found.
+2024-10-16 00:19:15,515 - ERROR - Inscription for Eleve ID 1447 in NULL not found.
+2024-10-16 00:19:15,517 - ERROR - Inscription for Eleve ID 1458 in NULL not found.
+2024-10-16 00:19:15,518 - ERROR - Inscription for Eleve ID 1653 in NULL not found.
+2024-10-16 00:19:15,519 - ERROR - Inscription for Eleve ID 1045 in NULL not found.
+2024-10-16 00:19:15,521 - ERROR - Inscription for Eleve ID 1184 in NULL not found.
+2024-10-16 00:19:15,522 - ERROR - Inscription for Eleve ID 1626 in NULL not found.
+2024-10-16 00:19:15,523 - ERROR - Inscription for Eleve ID 1665 in NULL not found.
+2024-10-16 00:19:15,524 - ERROR - Inscription for Eleve ID 1099 in NULL not found.
+2024-10-16 00:19:15,525 - ERROR - Inscription for Eleve ID 1529 in NULL not found.
+2024-10-16 00:19:15,526 - ERROR - Inscription for Eleve ID 1383 in NULL not found.
+2024-10-16 00:19:15,527 - ERROR - Inscription for Eleve ID 1589 in NULL not found.
+2024-10-16 00:19:15,528 - ERROR - Inscription for Eleve ID 1467 in NULL not found.
+2024-10-16 00:19:15,529 - ERROR - Inscription for Eleve ID 1223 in NULL not found.
+2024-10-16 00:19:15,530 - ERROR - Inscription for Eleve ID 1385 in NULL not found.
+2024-10-16 00:19:15,531 - ERROR - Inscription for Eleve ID 1407 in NULL not found.
+2024-10-16 00:19:15,532 - ERROR - Inscription for Eleve ID 1663 in NULL not found.
+2024-10-16 00:19:15,534 - ERROR - Inscription for Eleve ID 1224 in NULL not found.
+2024-10-16 00:19:15,535 - ERROR - Inscription for Eleve ID 1036 in NULL not found.
+2024-10-16 00:19:15,536 - ERROR - Inscription for Eleve ID 1500 in NULL not found.
+2024-10-16 00:19:15,538 - ERROR - Inscription for Eleve ID 1120 in NULL not found.
+2024-10-16 00:19:15,539 - ERROR - Inscription for Eleve ID 1166 in NULL not found.
+2024-10-16 00:19:15,540 - ERROR - Inscription for Eleve ID 1393 in NULL not found.
+2024-10-16 00:19:15,541 - ERROR - Inscription for Eleve ID 1435 in NULL not found.
+2024-10-16 00:19:15,542 - ERROR - Inscription for Eleve ID 1399 in NULL not found.
+2024-10-16 00:19:15,543 - ERROR - Inscription for Eleve ID 1095 in NULL not found.
+2024-10-16 00:19:15,544 - ERROR - Inscription for Eleve ID 1221 in NULL not found.
+2024-10-16 00:19:15,545 - ERROR - Inscription for Eleve ID 1515 in NULL not found.
+2024-10-16 00:19:15,546 - ERROR - Inscription for Eleve ID 1540 in NULL not found.
+2024-10-16 00:19:15,547 - ERROR - Inscription for Eleve ID 1327 in NULL not found.
+2024-10-16 00:19:15,549 - ERROR - Inscription for Eleve ID 1390 in NULL not found.
+2024-10-16 00:19:15,551 - ERROR - Inscription for Eleve ID 1587 in NULL not found.
+2024-10-16 00:19:15,553 - ERROR - Inscription for Eleve ID 1445 in NULL not found.
+2024-10-16 00:19:15,554 - ERROR - Inscription for Eleve ID 1313 in NULL not found.
+2024-10-16 00:19:15,555 - ERROR - Inscription for Eleve ID 1361 in NULL not found.
+2024-10-16 00:19:15,556 - ERROR - Inscription for Eleve ID 1035 in NULL not found.
+2024-10-16 00:19:15,557 - ERROR - Inscription for Eleve ID 1273 in NULL not found.
+2024-10-16 00:19:15,558 - ERROR - Inscription for Eleve ID 1131 in NULL not found.
+2024-10-16 00:19:15,559 - ERROR - Inscription for Eleve ID 1132 in NULL not found.
+2024-10-16 00:19:15,560 - ERROR - Inscription for Eleve ID 1551 in NULL not found.
+2024-10-16 00:19:15,561 - ERROR - Inscription for Eleve ID 1174 in NULL not found.
+2024-10-16 00:19:15,562 - ERROR - Inscription for Eleve ID 1247 in NULL not found.
+2024-10-16 00:19:15,563 - ERROR - Inscription for Eleve ID 1353 in NULL not found.
+2024-10-16 00:19:15,563 - ERROR - Eleve with ID 1409 does not exist.
+2024-10-16 00:19:15,564 - ERROR - Inscription for Eleve ID 1372 in NULL not found.
+2024-10-16 00:19:15,565 - ERROR - Inscription for Eleve ID 1053 in NULL not found.
+2024-10-16 00:19:15,566 - ERROR - Inscription for Eleve ID 1185 in NULL not found.
+2024-10-16 00:19:15,567 - ERROR - Inscription for Eleve ID 1260 in NULL not found.
+2024-10-16 00:19:15,569 - ERROR - Inscription for Eleve ID 1101 in NULL not found.
+2024-10-16 00:19:15,570 - ERROR - Inscription for Eleve ID 1296 in NULL not found.
+2024-10-16 00:19:15,572 - ERROR - Inscription for Eleve ID 1297 in NULL not found.
+2024-10-16 00:19:15,573 - ERROR - Inscription for Eleve ID 1640 in NULL not found.
+2024-10-16 00:19:15,574 - ERROR - Inscription for Eleve ID 1461 in NULL not found.
+2024-10-16 00:19:15,575 - ERROR - Inscription for Eleve ID 1478 in NULL not found.
+2024-10-16 00:19:15,576 - ERROR - Inscription for Eleve ID 1168 in NULL not found.
+2024-10-16 00:19:15,577 - ERROR - Inscription for Eleve ID 1352 in NULL not found.
+2024-10-16 00:19:15,578 - ERROR - Inscription for Eleve ID 1318 in NULL not found.
+2024-10-16 00:19:15,579 - ERROR - Inscription for Eleve ID 1334 in NULL not found.
+2024-10-16 00:19:15,580 - ERROR - Inscription for Eleve ID 1652 in NULL not found.
+2024-10-16 00:19:15,581 - ERROR - Inscription for Eleve ID 1062 in NULL not found.
+2024-10-16 00:19:15,582 - ERROR - Inscription for Eleve ID 1702 in NULL not found.
+2024-10-16 00:19:15,583 - ERROR - Inscription for Eleve ID 1216 in NULL not found.
+2024-10-16 00:19:15,584 - ERROR - Inscription for Eleve ID 1136 in NULL not found.
+2024-10-16 00:19:15,586 - ERROR - Inscription for Eleve ID 1067 in NULL not found.
+2024-10-16 00:19:15,587 - ERROR - Inscription for Eleve ID 1164 in NULL not found.
+2024-10-16 00:19:15,588 - ERROR - Inscription for Eleve ID 1271 in NULL not found.
+2024-10-16 00:19:15,589 - ERROR - Inscription for Eleve ID 1367 in NULL not found.
+2024-10-16 00:19:15,590 - ERROR - Inscription for Eleve ID 1508 in NULL not found.
+2024-10-16 00:19:15,591 - ERROR - Inscription for Eleve ID 1661 in NULL not found.
+2024-10-16 00:19:15,592 - ERROR - Inscription for Eleve ID 1453 in NULL not found.
+2024-10-16 00:19:15,593 - ERROR - Inscription for Eleve ID 1576 in NULL not found.
+2024-10-16 00:19:15,594 - ERROR - Inscription for Eleve ID 1698 in NULL not found.
+2024-10-16 00:19:15,595 - ERROR - Inscription for Eleve ID 1699 in NULL not found.
+2024-10-16 00:19:15,596 - ERROR - Inscription for Eleve ID 1232 in NULL not found.
+2024-10-16 00:19:15,597 - ERROR - Inscription for Eleve ID 1178 in NULL not found.
+2024-10-16 00:19:15,599 - ERROR - Inscription for Eleve ID 1513 in NULL not found.
+2024-10-16 00:19:15,600 - ERROR - Inscription for Eleve ID 1442 in NULL not found.
+2024-10-16 00:19:15,601 - ERROR - Inscription for Eleve ID 1156 in NULL not found.
+2024-10-16 00:19:15,603 - ERROR - Inscription for Eleve ID 1249 in NULL not found.
+2024-10-16 00:19:15,604 - ERROR - Eleve with ID 1414 does not exist.
+2024-10-16 00:19:15,605 - ERROR - Inscription for Eleve ID 1483 in NULL not found.
+2024-10-16 00:19:15,606 - ERROR - Inscription for Eleve ID 1569 in NULL not found.
+2024-10-16 00:19:15,607 - ERROR - Inscription for Eleve ID 1510 in NULL not found.
+2024-10-16 00:19:15,608 - ERROR - Inscription for Eleve ID 1443 in NULL not found.
+2024-10-16 00:19:15,609 - ERROR - Inscription for Eleve ID 1048 in NULL not found.
+2024-10-16 00:19:15,610 - ERROR - Inscription for Eleve ID 1245 in NULL not found.
+2024-10-16 00:19:15,611 - ERROR - Inscription for Eleve ID 1138 in NULL not found.
+2024-10-16 00:19:15,613 - ERROR - Inscription for Eleve ID 1416 in NULL not found.
+2024-10-16 00:19:15,614 - ERROR - Inscription for Eleve ID 1360 in NULL not found.
+2024-10-16 00:19:15,615 - ERROR - Inscription for Eleve ID 1194 in NULL not found.
+2024-10-16 00:19:15,616 - ERROR - Inscription for Eleve ID 1382 in NULL not found.
+2024-10-16 00:19:15,618 - ERROR - Inscription for Eleve ID 1310 in NULL not found.
+2024-10-16 00:19:15,619 - ERROR - Inscription for Eleve ID 1470 in NULL not found.
+2024-10-16 00:19:15,621 - ERROR - Inscription for Eleve ID 1184 in NULL not found.
+2024-10-16 00:19:15,622 - ERROR - Inscription for Eleve ID 1510 in NULL not found.
+2024-10-16 00:19:15,623 - ERROR - Inscription for Eleve ID 1569 in NULL not found.
+2024-10-16 00:19:15,624 - ERROR - Inscription for Eleve ID 1225 in NULL not found.
+2024-10-16 00:19:15,626 - ERROR - Inscription for Eleve ID 1407 in NULL not found.
+2024-10-16 00:19:15,627 - ERROR - Inscription for Eleve ID 1406 in NULL not found.
+2024-10-16 00:19:15,628 - ERROR - Inscription for Eleve ID 1330 in NULL not found.
+2024-10-16 00:19:15,629 - ERROR - Inscription for Eleve ID 1287 in NULL not found.
+2024-10-16 00:19:15,630 - ERROR - Inscription for Eleve ID 1420 in NULL not found.
+2024-10-16 00:19:15,631 - ERROR - Inscription for Eleve ID 1421 in NULL not found.
+2024-10-16 00:19:15,632 - ERROR - Inscription for Eleve ID 1471 in NULL not found.
+2024-10-16 00:19:15,633 - ERROR - Inscription for Eleve ID 1522 in NULL not found.
+2024-10-16 00:19:15,634 - ERROR - Inscription for Eleve ID 1292 in NULL not found.
+2024-10-16 00:19:15,636 - ERROR - Inscription for Eleve ID 1193 in NULL not found.
+2024-10-16 00:19:15,637 - ERROR - Inscription for Eleve ID 1164 in NULL not found.
+2024-10-16 00:19:15,638 - ERROR - Inscription for Eleve ID 1401 in NULL not found.
+2024-10-16 00:19:15,639 - ERROR - Inscription for Eleve ID 1403 in NULL not found.
+2024-10-16 00:19:15,641 - ERROR - Inscription for Eleve ID 1163 in NULL not found.
+2024-10-16 00:19:15,642 - ERROR - Inscription for Eleve ID 1265 in NULL not found.
+2024-10-16 00:19:15,643 - ERROR - Inscription for Eleve ID 1424 in NULL not found.
+2024-10-16 00:19:15,644 - ERROR - Inscription for Eleve ID 1436 in NULL not found.
+2024-10-16 00:19:15,645 - ERROR - Inscription for Eleve ID 1425 in NULL not found.
+2024-10-16 00:19:15,646 - ERROR - Inscription for Eleve ID 1124 in NULL not found.
+2024-10-16 00:19:15,647 - ERROR - Inscription for Eleve ID 1477 in NULL not found.
+2024-10-16 00:19:15,648 - ERROR - Inscription for Eleve ID 1272 in NULL not found.
+2024-10-16 00:19:15,650 - ERROR - Inscription for Eleve ID 1337 in NULL not found.
+2024-10-16 00:19:15,651 - ERROR - Inscription for Eleve ID 1484 in NULL not found.
+2024-10-16 00:19:15,652 - ERROR - Inscription for Eleve ID 1386 in NULL not found.
+2024-10-16 00:19:15,653 - ERROR - Inscription for Eleve ID 1464 in NULL not found.
+2024-10-16 00:19:15,654 - ERROR - Inscription for Eleve ID 1475 in NULL not found.
+2024-10-16 00:19:15,656 - ERROR - Inscription for Eleve ID 1284 in NULL not found.
+2024-10-16 00:19:15,657 - ERROR - Inscription for Eleve ID 1153 in NULL not found.
+2024-10-16 00:19:15,658 - ERROR - Inscription for Eleve ID 1522 in NULL not found.
+2024-10-16 00:19:15,659 - ERROR - Inscription for Eleve ID 1227 in NULL not found.
+2024-10-16 00:19:15,660 - ERROR - Inscription for Eleve ID 1469 in NULL not found.
+2024-10-16 00:19:15,661 - ERROR - Inscription for Eleve ID 1587 in NULL not found.
+2024-10-16 00:19:15,662 - ERROR - Inscription for Eleve ID 1385 in NULL not found.
+2024-10-16 00:19:15,663 - ERROR - Inscription for Eleve ID 1197 in NULL not found.
+2024-10-16 00:19:15,664 - ERROR - Inscription for Eleve ID 1468 in NULL not found.
+2024-10-16 00:19:15,665 - ERROR - Inscription for Eleve ID 1212 in NULL not found.
+2024-10-16 00:19:15,666 - ERROR - Inscription for Eleve ID 1162 in NULL not found.
+2024-10-16 00:19:15,668 - ERROR - Inscription for Eleve ID 1585 in NULL not found.
+2024-10-16 00:19:15,669 - ERROR - Inscription for Eleve ID 1518 in NULL not found.
+2024-10-16 00:19:15,670 - ERROR - Inscription for Eleve ID 1283 in NULL not found.
+2024-10-16 00:19:15,671 - ERROR - Inscription for Eleve ID 1340 in NULL not found.
+2024-10-16 00:19:15,672 - ERROR - Inscription for Eleve ID 1034 in NULL not found.
+2024-10-16 00:19:15,673 - ERROR - Inscription for Eleve ID 1288 in NULL not found.
+2024-10-16 00:19:15,675 - ERROR - Inscription for Eleve ID 1584 in NULL not found.
+2024-10-16 00:19:15,676 - ERROR - Inscription for Eleve ID 1266 in NULL not found.
+2024-10-16 00:19:15,677 - ERROR - Inscription for Eleve ID 1447 in NULL not found.
+2024-10-16 00:19:15,678 - ERROR - Inscription for Eleve ID 1106 in NULL not found.
+2024-10-16 00:19:15,679 - ERROR - Inscription for Eleve ID 1181 in NULL not found.
+2024-10-16 00:19:15,680 - ERROR - Inscription for Eleve ID 1182 in NULL not found.
+2024-10-16 00:19:15,681 - ERROR - Inscription for Eleve ID 1250 in NULL not found.
+2024-10-16 00:19:15,682 - ERROR - Inscription for Eleve ID 1145 in NULL not found.
+2024-10-16 00:19:15,683 - ERROR - Inscription for Eleve ID 1580 in NULL not found.
+2024-10-16 00:19:15,684 - ERROR - Inscription for Eleve ID 1519 in NULL not found.
+2024-10-16 00:19:15,686 - ERROR - Inscription for Eleve ID 1579 in NULL not found.
+2024-10-16 00:19:15,687 - ERROR - Inscription for Eleve ID 1556 in NULL not found.
+2024-10-16 00:19:15,688 - ERROR - Inscription for Eleve ID 1565 in NULL not found.
+2024-10-16 00:19:15,689 - ERROR - Inscription for Eleve ID 1577 in NULL not found.
+2024-10-16 00:19:15,690 - ERROR - Inscription for Eleve ID 1555 in NULL not found.
+2024-10-16 00:19:15,691 - ERROR - Inscription for Eleve ID 1488 in NULL not found.
+2024-10-16 00:19:15,692 - ERROR - Inscription for Eleve ID 1566 in NULL not found.
+2024-10-16 00:19:15,693 - ERROR - Inscription for Eleve ID 1658 in NULL not found.
+2024-10-16 00:19:15,694 - ERROR - Inscription for Eleve ID 1346 in NULL not found.
+2024-10-16 00:19:15,695 - ERROR - Inscription for Eleve ID 1422 in NULL not found.
+2024-10-16 00:19:15,696 - ERROR - Inscription for Eleve ID 1039 in NULL not found.
+2024-10-16 00:19:15,697 - ERROR - Inscription for Eleve ID 1169 in NULL not found.
+2024-10-16 00:19:15,698 - ERROR - Inscription for Eleve ID 1047 in NULL not found.
+2024-10-16 00:19:15,699 - ERROR - Inscription for Eleve ID 1420 in NULL not found.
+2024-10-16 00:19:15,700 - ERROR - Inscription for Eleve ID 1421 in NULL not found.
+2024-10-16 00:19:15,701 - ERROR - Inscription for Eleve ID 1058 in NULL not found.
+2024-10-16 00:19:15,702 - ERROR - Inscription for Eleve ID 1100 in NULL not found.
+2024-10-16 00:19:15,704 - ERROR - Inscription for Eleve ID 1040 in NULL not found.
+2024-10-16 00:19:15,705 - ERROR - Inscription for Eleve ID 1292 in NULL not found.
+2024-10-16 00:19:15,706 - ERROR - Inscription for Eleve ID 1108 in NULL not found.
+2024-10-16 00:19:15,707 - ERROR - Inscription for Eleve ID 1396 in NULL not found.
+2024-10-16 00:19:15,708 - ERROR - Inscription for Eleve ID 1481 in NULL not found.
+2024-10-16 00:19:15,709 - ERROR - Inscription for Eleve ID 1465 in NULL not found.
+2024-10-16 00:19:15,710 - ERROR - Inscription for Eleve ID 1466 in NULL not found.
+2024-10-16 00:19:15,711 - ERROR - Inscription for Eleve ID 1710 in NULL not found.
+2024-10-16 00:19:15,712 - ERROR - Inscription for Eleve ID 1444 in NULL not found.
+2024-10-16 00:19:15,713 - ERROR - Inscription for Eleve ID 1050 in NULL not found.
+2024-10-16 00:19:15,714 - ERROR - Inscription for Eleve ID 1318 in NULL not found.
+2024-10-16 00:19:15,715 - ERROR - Eleve with ID 1410 does not exist.
+2024-10-16 00:19:15,716 - ERROR - Inscription for Eleve ID 1097 in NULL not found.
+2024-10-16 00:19:15,717 - ERROR - Inscription for Eleve ID 1133 in NULL not found.
+2024-10-16 00:19:15,718 - ERROR - Inscription for Eleve ID 1441 in NULL not found.
+2024-10-16 00:19:15,719 - ERROR - Inscription for Eleve ID 1352 in NULL not found.
+2024-10-16 00:19:15,720 - ERROR - Inscription for Eleve ID 1325 in NULL not found.
+2024-10-16 00:19:15,722 - ERROR - Inscription for Eleve ID 1468 in NULL not found.
+2024-10-16 00:19:15,723 - ERROR - Inscription for Eleve ID 1228 in NULL not found.
+2024-10-16 00:19:15,724 - ERROR - Inscription for Eleve ID 1213 in NULL not found.
+2024-10-16 00:19:15,725 - ERROR - Inscription for Eleve ID 1527 in NULL not found.
+2024-10-16 00:19:15,726 - ERROR - Inscription for Eleve ID 1385 in NULL not found.
+2024-10-16 00:19:15,727 - ERROR - Inscription for Eleve ID 1381 in NULL not found.
+2024-10-16 00:19:15,728 - ERROR - Inscription for Eleve ID 1568 in NULL not found.
+2024-10-16 00:19:15,728 - ERROR - Eleve with ID 1411 does not exist.
+2024-10-16 00:19:15,729 - ERROR - Inscription for Eleve ID 1320 in NULL not found.
+2024-10-16 00:19:15,730 - ERROR - Inscription for Eleve ID 1321 in NULL not found.
+2024-10-16 00:19:15,731 - ERROR - Inscription for Eleve ID 1295 in NULL not found.
+2024-10-16 00:19:15,733 - ERROR - Inscription for Eleve ID 1469 in NULL not found.
+2024-10-16 00:19:15,734 - ERROR - Inscription for Eleve ID 1144 in NULL not found.
+2024-10-16 00:19:15,735 - ERROR - Inscription for Eleve ID 1704 in NULL not found.
+2024-10-16 00:19:15,736 - ERROR - Inscription for Eleve ID 1284 in NULL not found.
+2024-10-16 00:19:15,737 - ERROR - Inscription for Eleve ID 1177 in NULL not found.
+2024-10-16 00:19:15,738 - ERROR - Inscription for Eleve ID 1488 in NULL not found.
+2024-10-16 00:19:15,739 - ERROR - Inscription for Eleve ID 1630 in NULL not found.
+2024-10-16 00:19:15,741 - ERROR - Inscription for Eleve ID 1643 in NULL not found.
+2024-10-16 00:19:15,742 - ERROR - Inscription for Eleve ID 1503 in NULL not found.
+2024-10-16 00:19:15,743 - ERROR - Inscription for Eleve ID 1059 in NULL not found.
+2024-10-16 00:19:15,744 - ERROR - Inscription for Eleve ID 1257 in NULL not found.
+2024-10-16 00:19:15,745 - ERROR - Inscription for Eleve ID 1060 in NULL not found.
+2024-10-16 00:19:15,746 - ERROR - Inscription for Eleve ID 1070 in NULL not found.
+2024-10-16 00:19:15,747 - ERROR - Inscription for Eleve ID 1033 in NULL not found.
+2024-10-16 00:19:15,748 - ERROR - Inscription for Eleve ID 1067 in NULL not found.
+2024-10-16 00:19:15,749 - ERROR - Inscription for Eleve ID 1377 in NULL not found.
+2024-10-16 00:19:15,750 - ERROR - Inscription for Eleve ID 1296 in NULL not found.
+2024-10-16 00:19:15,752 - ERROR - Inscription for Eleve ID 1297 in NULL not found.
+2024-10-16 00:19:15,753 - ERROR - Inscription for Eleve ID 1566 in NULL not found.
+2024-10-16 00:19:15,754 - ERROR - Inscription for Eleve ID 1426 in NULL not found.
+2024-10-16 00:19:15,755 - ERROR - Inscription for Eleve ID 1372 in NULL not found.
+2024-10-16 00:19:15,757 - ERROR - Inscription for Eleve ID 1502 in NULL not found.
+2024-10-16 00:19:15,760 - ERROR - Inscription for Eleve ID 1034 in NULL not found.
+2024-10-16 00:19:15,763 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:15,766 - ERROR - Inscription for Eleve ID 1047 in NULL not found.
+2024-10-16 00:19:15,769 - ERROR - Inscription for Eleve ID 1258 in NULL not found.
+2024-10-16 00:19:15,771 - ERROR - Inscription for Eleve ID 1377 in NULL not found.
+2024-10-16 00:19:15,773 - ERROR - Inscription for Eleve ID 1434 in NULL not found.
+2024-10-16 00:19:15,775 - ERROR - Inscription for Eleve ID 1705 in NULL not found.
+2024-10-16 00:19:15,777 - ERROR - Inscription for Eleve ID 1188 in NULL not found.
+2024-10-16 00:19:15,779 - ERROR - Inscription for Eleve ID 1513 in NULL not found.
+2024-10-16 00:19:15,780 - ERROR - Inscription for Eleve ID 1107 in NULL not found.
+2024-10-16 00:19:15,781 - ERROR - Inscription for Eleve ID 1098 in NULL not found.
+2024-10-16 00:19:15,784 - ERROR - Inscription for Eleve ID 1125 in NULL not found.
+2024-10-16 00:19:15,786 - ERROR - Inscription for Eleve ID 1509 in NULL not found.
+2024-10-16 00:19:15,788 - ERROR - Inscription for Eleve ID 1272 in NULL not found.
+2024-10-16 00:19:15,790 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:15,791 - ERROR - Inscription for Eleve ID 1208 in NULL not found.
+2024-10-16 00:19:15,792 - ERROR - Inscription for Eleve ID 1296 in NULL not found.
+2024-10-16 00:19:15,794 - ERROR - Inscription for Eleve ID 1297 in NULL not found.
+2024-10-16 00:19:15,795 - ERROR - Inscription for Eleve ID 1577 in NULL not found.
+2024-10-16 00:19:15,796 - ERROR - Inscription for Eleve ID 1577 in NULL not found.
+2024-10-16 00:19:15,797 - ERROR - Inscription for Eleve ID 1328 in NULL not found.
+2024-10-16 00:19:15,799 - ERROR - Inscription for Eleve ID 1461 in NULL not found.
+2024-10-16 00:19:15,800 - ERROR - Inscription for Eleve ID 1208 in NULL not found.
+2024-10-16 00:19:15,801 - ERROR - Inscription for Eleve ID 1289 in NULL not found.
+2024-10-16 00:19:15,802 - ERROR - Inscription for Eleve ID 1229 in NULL not found.
+2024-10-16 00:19:15,804 - ERROR - Inscription for Eleve ID 1473 in NULL not found.
+2024-10-16 00:19:15,805 - ERROR - Inscription for Eleve ID 1711 in NULL not found.
+2024-10-16 00:19:15,807 - ERROR - Inscription for Eleve ID 1585 in NULL not found.
+2024-10-16 00:19:15,808 - ERROR - Inscription for Eleve ID 1134 in NULL not found.
+2024-10-16 00:19:15,809 - ERROR - Inscription for Eleve ID 1550 in NULL not found.
+2024-10-16 00:19:15,811 - ERROR - Inscription for Eleve ID 1269 in NULL not found.
+2024-10-16 00:19:15,811 - ERROR - Inscription for Eleve ID 1267 in NULL not found.
+2024-10-16 00:19:15,812 - ERROR - Inscription for Eleve ID 1037 in NULL not found.
+2024-10-16 00:19:15,813 - ERROR - Inscription for Eleve ID 1492 in NULL not found.
+2024-10-16 00:19:15,814 - ERROR - Inscription for Eleve ID 1121 in NULL not found.
+2024-10-16 00:19:15,815 - ERROR - Inscription for Eleve ID 1063 in NULL not found.
+2024-10-16 00:19:15,817 - ERROR - Inscription for Eleve ID 1142 in NULL not found.
+2024-10-16 00:19:15,818 - ERROR - Inscription for Eleve ID 1298 in NULL not found.
+2024-10-16 00:19:15,819 - ERROR - Inscription for Eleve ID 1223 in NULL not found.
+2024-10-16 00:19:15,821 - ERROR - Inscription for Eleve ID 1467 in NULL not found.
+2024-10-16 00:19:15,823 - ERROR - Inscription for Eleve ID 1644 in NULL not found.
+2024-10-16 00:19:15,824 - ERROR - Inscription for Eleve ID 1048 in NULL not found.
+2024-10-16 00:19:15,825 - ERROR - Inscription for Eleve ID 1245 in NULL not found.
+2024-10-16 00:19:15,826 - ERROR - Inscription for Eleve ID 1229 in NULL not found.
+2024-10-16 00:19:15,827 - ERROR - Inscription for Eleve ID 1478 in NULL not found.
+2024-10-16 00:19:15,829 - ERROR - Inscription for Eleve ID 1168 in NULL not found.
+2024-10-16 00:19:15,830 - ERROR - Inscription for Eleve ID 1549 in NULL not found.
+2024-10-16 00:19:15,831 - ERROR - Inscription for Eleve ID 1700 in NULL not found.
+2024-10-16 00:19:15,832 - ERROR - Inscription for Eleve ID 1038 in NULL not found.
+2024-10-16 00:19:15,833 - ERROR - Inscription for Eleve ID 1197 in NULL not found.
+2024-10-16 00:19:15,834 - ERROR - Inscription for Eleve ID 1326 in NULL not found.
+2024-10-16 00:19:15,836 - ERROR - Inscription for Eleve ID 1267 in NULL not found.
+2024-10-16 00:19:15,837 - ERROR - Inscription for Eleve ID 1059 in NULL not found.
+2024-10-16 00:19:15,838 - ERROR - Inscription for Eleve ID 1134 in NULL not found.
+2024-10-16 00:19:15,839 - INFO - Import SICS END
