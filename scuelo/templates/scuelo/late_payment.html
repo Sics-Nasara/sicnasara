@@ -7,6 +7,8 @@
         overflow-x: auto;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        margin-bottom: 20px;
     }
 
     table {
@@ -25,66 +27,71 @@
     }
 
     th {
-        background-color: #007bff;
+        background-color: #333;
         color: #fff;
         text-transform: uppercase;
         font-weight: bold;
     }
 
-    .table tbody tr:hover {
-        background-color: #e9ecef;
-    }
-
     .table tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
+        background-color: #f2f2f2;
     }
 
-    h2, h3 {
-        text-align: left;
-        margin-top: 30px;
+    .class-header, .school-header {
+        background-color: #333;
+        color: #fff;
         font-weight: bold;
+        text-align: left;
+        padding: 12px;
+    }
+
+    .totals-row {
+        font-weight: bold;
+        background-color: #e74c3c;
+        color: white;
     }
 </style>
 
-<h2>Late Payment Report - {{ current_annee_scolaire.nom }}</h2>
+<h2>Liste Générale Retards Paiements - {{ current_annee_scolaire.nom }}</h2>
 
 <div class="table-container">
     {% for class_data in report_data %}
-        <h3>Class: {{ class_data.classe.nom }}</h3>
+        <div class="class-header">{{ class_data.classe.nom }} - {{ class_data.classe.ecole.nom }}</div>
         <table>
             <thead>
                 <tr>
-                    <th>Student</th>
-                    <th>Causal</th>
-                    <th>Expected Amount</th>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Sex</th>
+                    <th>CS_PY</th>
+                    <th>SCO Exigible</th>
                     <th>Paid Amount</th>
                     <th>Difference</th>
                     <th>Ratio (%)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for data in class_data.students %}
+                {% for student in class_data.students %}
                     <tr>
-                        <td rowspan="{{ data.details|length }}">
-                            {{ data.student.nom }} {{ data.student.prenom }}
-                        </td>
-                        {% for detail in data.details %}
-                        <tr>
-                            <td>{{ detail.causal }}</td>
-                            <td>{{ detail.expected }} FCFA</td>
-                            <td>{{ detail.paid }} FCFA</td>
-                            <td>{{ detail.difference }} FCFA</td>
-                            <td>{{ detail.ratio }}%</td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <td colspan="2"><strong>Total</strong></td>
-                            <td><strong>{{ data.total.expected }} FCFA</strong></td>
-                            <td><strong>{{ data.total.paid }} FCFA</strong></td>
-                            <td><strong>{{ data.total.difference }} FCFA</strong></td>
-                            <td><strong>{{ data.total.ratio }}%</strong></td>
-                        </tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.nom }}</td>
+                        <td>{{ student.prenom }}</td>
+                        <td>{{ student.sex }}</td>
+                        <td>{{ student.cs_py }}</td>
+                        <td>{{ student.total_exigible }} FCFA</td>
+                        <td>{{ student.total_paid }} FCFA</td>
+                        <td>{{ student.difference }} FCFA</td>
+                        <td>{{ student.ratio }}%</td>
+                    </tr>
                 {% endfor %}
+                <tr class="totals-row">
+                    <td colspan="5">Class Total</td>
+                    <td>{{ class_data.class_total_exigible }} FCFA</td>
+                    <td></td>
+                    <td>{{ class_data.class_total_difference }} FCFA</td>
+                    <td></td>
+                </tr>
             </tbody>
         </table>
     {% endfor %}
