@@ -1073,15 +1073,19 @@ def delete_mouvement(request, pk):
         return redirect('mouvement_list')
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
                                                                       'page_identifier': 'S14' })
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Sum
-from .models import Ecole, Classe, Eleve, Mouvement, Tarif
+from .models import Ecole, Classe, Eleve, Mouvement, Tarif, AnneeScolaire
 
 @login_required
 def late_payment_report(request):
     data = {}
     schools = Ecole.objects.all()
+
+    # Get the current school year
+    current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
     for school in schools:
         classes = Classe.objects.filter(ecole=school)
@@ -1104,17 +1108,17 @@ def late_payment_report(request):
                     causal='CAN'
                 ).aggregate(total=Sum('montant'))['total'] or 0
 
-                # Calculate the SCO exigible as the sum of SCO1, SCO2, and SCO3
-                sco_exigible = Tarif.objects.filter(
+                # Fetch all tariffs for the class in the current school year
+                tarifs = Tarif.objects.filter(
                     classe=classe, 
-                    causal__in=['SCO1', 'SCO2', 'SCO3']
-                ).aggregate(total=Sum('montant'))['total'] or 0
+                    annee_scolaire=current_annee_scolaire
+                )
+
+                # Calculate the SCO exigible as the sum of SCO1, SCO2, and SCO3 for the current school year
+                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
 
                 # Calculate the CAN exigible separately
-                can_exigible = Tarif.objects.filter(
-                    classe=classe, 
-                    causal='CAN'
-                ).aggregate(total=Sum('montant'))['total'] or 0
+                can_exigible = tarifs.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
 
                 # Correct difference calculations
                 diff_sco = sco_exigible - sco_paid  # Remaining SCO amount to be paid
