@@ -1080,71 +1080,43 @@ def late_payment_report(request):
     schools = Ecole.objects.all()
     for school in schools:
         classes = Classe.objects.filter(ecole=school)
-    class_data = {}
+        class_data = {}
+        for classe in classes:
+            students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
+            student_data = []
+            for student in students:
+                sco_paid = Mouvement.objects.filter(inscription__eleve=student, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                sco_exigible = Tarif.objects.filter(classe=classe, causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+                can_paid = Mouvement.objects.filter(inscription__eleve=student, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+                can_exigible = Tarif.objects.filter(classe=classe, causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
 
-    for classe in classes:
-    # Fetch only students with CS_PY = 'PY' for the class
-        students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
-    student_data = []
+                diff_sco = sco_paid - sco_exigible
+                diff_can = can_paid - can_exigible
+                retards = diff_sco + diff_can
 
-    for student in students:
-        # Calculate the total amounts paid and expected for SCO (Inscription, SCO1, SCO2, SCO3)
-        sco_paid = Mouvement.objects.filter(
-            inscription__eleve=student,
-            causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']
-        ).aggregate(total=Sum('montant'))['total'] or 0
+                if retards != 0:  # Only include students with a balance
+                    percentage_paid = int(100 * (sco_paid + can_paid) / (sco_exigible + can_exigible)) if (sco_exigible + can_exigible) > 0 else 0
 
-        sco_exigible = Tarif.objects.filter(
-            classe=classe,
-            causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']
-        ).aggregate(total=Sum('montant'))['total'] or 0
-
-        # Calculate the total amounts paid and expected for CAN (Canteen)
-        can_paid = Mouvement.objects.filter(
-            inscription__eleve=student,
-            causal='CAN'
-        ).aggregate(total=Sum('montant'))['total'] or 0
-
-        can_exigible = Tarif.objects.filter(
-            classe=classe,
-            causal='CAN'
-        ).aggregate(total=Sum('montant'))['total'] or 0
-
-        # Calculate differences and total retards
-        diff_sco = sco_paid - sco_exigible
-        diff_can = can_paid - can_exigible
-        retards = diff_sco + diff_can
-
-        # Only include students with a balance (retards != 0)
-        if retards != 0:
-            total_exigible = sco_exigible + can_exigible
-            total_paid = sco_paid + can_paid
-            percentage_paid = int(100 * total_paid / total_exigible) if total_exigible > 0 else 0
-
-            student_data.append({
-                'id': student.id,
-                'nom': student.nom,
-                'prenom': student.prenom,
-                'sex': student.get_sex_display(),
-                'cs_py': student.cs_py,
-                'sco_paid': sco_paid,
-                'sco_exigible': sco_exigible,
-                'diff_sco': diff_sco,
-                'can_paid': can_paid,
-                'can_exigible': can_exigible,
-                'diff_can': diff_can,
-                'retards': retards,
-                'percentage_paid': percentage_paid,
-                'note': student.note_eleve,
-            })
-
-    # Add class data only if there are students with late payments
-    if student_data:
-        class_data[classe.nom] = student_data
-
-    # Add school data only if there are classes with late payments
-    if class_data:
-        data[school.nom] = class_data
+                    student_data.append({
+                        'id': student.id,
+                        'nom': student.nom,
+                        'prenom': student.prenom,
+                        'sex': student.sex,
+                        'cs_py': student.cs_py,
+                        'sco_paid': sco_paid,
+                        'sco_exigible': sco_exigible,
+                        'diff_sco': diff_sco,
+                        'can_paid': can_paid,
+                        'can_exigible': can_exigible,
+                        'diff_can': diff_can,
+                        'retards': retards,
+                        'percentage_paid': percentage_paid,
+                        'note': student.note_eleve,
+                    })
+            if student_data:  # Only add classes with students who have late payments
+                class_data[classe.nom] = student_data
+        if class_data:  # Only add schools with classes that have students with late payments
+            data[school.nom] = class_data
             
     return render(request, 'scuelo/late_payment.html',  {'data': data})
 

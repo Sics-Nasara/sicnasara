@@ -1,111 +1,55 @@
 {% extends "../layout.html" %}
-
+{% block title %}List of Delays (Late Payments){% endblock %}
 {% block content %}
-<style>
-    .table-container {
-        max-width: 100%;
-        overflow-x: auto;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        font-size: 14px;
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: center;
-        border: 1px solid #dee2e6;
-        background-color: #f9f9f9;
-        transition: background-color 0.3s;
-    }
-
-    th {
-        background-color: #333;
-        color: #fff;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    .table tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .class-header, .school-header {
-        background-color: #333;
-        color: #fff;
-        font-weight: bold;
-        text-align: left;
-        padding: 12px;
-    }
-
-    .totals-row {
-        font-weight: bold;
-        background-color: #e74c3c;
-        color: white;
-    }
-
-    h2 {
-        text-align: center;
-        font-weight: bold;
-        margin-top: 30px;
-    }
-</style>
-
-<h2>Liste Générale Retards Paiements - Année scolaire {{ current_annee_scolaire.nom }}</h2>
-
-<div class="table-container">
-    {% for school_name, school_data in data.items %}
-        <div class="school-header">{{ school_name }}</div>
-        {% for class_name, students in school_data.items %}
-            <div class="class-header">{{ class_name }}</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Sex</th>
-                        <th>CS_PY</th>
-                        <th>SCO Paid</th>
-                        <th>SCO Exigible</th>
-                        <th>Difference SCO</th>
-                        <th>CAN Paid</th>
-                        <th>CAN Exigible</th>
-                        <th>Difference CAN</th>
-                        <th>Retards</th>
-                        <th>% Paid</th>
-                        <th>Note</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                        <tr>
-                            <td>{{ student.id }}</td>
-                            <td>{{ student.nom }}</td>
-                            <td>{{ student.prenom }}</td>
-                            <td>{{ student.sex }}</td>
-                            <td>{{ student.cs_py }}</td>
-                            <td>{{ student.sco_paid }} FCFA</td>
-                            <td>{{ student.sco_exigible }} FCFA</td>
-                            <td>{{ student.diff_sco }} FCFA</td>
-                            <td>{{ student.can_paid }} FCFA</td>
-                            <td>{{ student.can_exigible }} FCFA</td>
-                            <td>{{ student.diff_can }} FCFA</td>
-                            <td>{{ student.retards }} FCFA</td>
-                            <td>{{ student.percentage_paid }}%</td>
-                            <td>{{ student.note|default:"-" }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+  <h2>Liste générale retards paiements</h2>
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Prenom</th>
+          <th>Sex</th>
+          <th>CS_PY</th>
+          <th>SCO</th>
+          <th>SCO_exigible</th>
+          <th>Diff.</th>
+          <th>CAN</th>
+          <th>CAN_exigible</th>
+          <th>Diff.</th>
+          <th>Retards</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for school, classes in data.items %}
+          <tr>
+            <td colspan="13"><strong>{{ school }}</strong></td>
+          </tr>
+          {% for classe, students in classes.items %}
+            <tr>
+              <td colspan="13">{{ classe }}</td>
+            </tr>
+            {% for student in students %}
+              <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.nom }}</td>
+                <td>{{ student.prenom }}</td>
+                <td>{{ student.sex }}</td>
+                <td>{{ student.cs_py }}</td>
+                <td>{{ student.sco }}</td>
+                <td>{{ student.sco_exigible }}</td>
+                <td>{{ student.diff_sco }}</td>
+                <td>{{ student.can }}</td>
+                <td>{{ student.can_exigible }}</td>
+                <td>{{ student.diff_can }}</td>
+                <td>{{ student.retards }}</td>
+                <td>{{ student.note }}</td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
         {% endfor %}
-    {% endfor %}
-</div>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
