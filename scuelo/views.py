@@ -1099,10 +1099,8 @@ def late_payment_report(request):
             total_class_remaining = 0  # Track the total rest to be paid for the class
 
             for student in students:
-                # Calculate the total amount paid by the student (sco_paid)
                 payments = Mouvement.objects.filter(inscription__eleve=student)
-                sco_paid = payments.filter(causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
-
+                sco_paid = payments.aggregate(Sum('montant'))['montant__sum'] or 0
                 # Calculate CAN paid specifically
                 can_paid = payments.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
 
