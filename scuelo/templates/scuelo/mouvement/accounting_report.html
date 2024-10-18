@@ -1,27 +1,23 @@
-{% extends "../layout.html" %}
+{% extends "../../layout.html" %}
 
 {% block content %}
-<h2>Extended C_SCO Report</h2>
+<h2>Accounting C_SCO Report ({{ period }})</h2>
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Period Start Date</th>
             <th>Type</th>
             <th>Causal</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Progressive Balance</th>
+            <th>Total</th>
         </tr>
     </thead>
     <tbody>
         {% for item in report_data %}
         <tr>
-            <td>{{ item.id }}</td>
+            <td>{{ item.period_start }}</td>
             <td>{{ item.type }}</td>
             <td>{{ item.causal }}</td>
-            <td>{{ item.amount }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.progressive_balance }}</td>
+            <td>{{ item.total }}</td>
         </tr>
         {% endfor %}
     </tbody>

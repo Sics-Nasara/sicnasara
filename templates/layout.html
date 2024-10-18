@@ -202,7 +202,12 @@
             <a href="{% url 'cash_flow_report' %}" class="dropdown-item {% if request.path == '/scuelo/cash/flow_report/' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i> <span>Cash Flow Report</span>
             </a>
-          
+            <a href="{% url 'accounting_c_sco_report_weekly' %}" class="dropdown-item {% if request.path == '/c_sco/accounting/weekly/' %}active{% endif %}">
+                <i class="fas fa-calendar-week"></i> <span>Weekly Accounting Report</span>
+            </a>
+            <a href="{% url 'accounting_c_sco_report_bi_monthly' %}" class="dropdown-item {% if request.path == '/c_sco/accounting/bi_monthly/' %}active{% endif %}">
+                <i class="fas fa-calendar-alt"></i> <span>Bi-Monthly Accounting Report</span>
+            </a>
         </div>
 
         <button class="dropdown-btn">
