@@ -50,6 +50,11 @@
         background-color: #e74c3c;
         color: white;
     }
+
+    .text-red {
+        color: #e74c3c;
+        font-weight: bold;
+    }
 </style>
 
 <h2>Liste Générale Retards Paiements - {{ current_annee_scolaire.nom }}</h2>
@@ -88,16 +93,16 @@
                             <td>{{ student.cs_py }}</td>
                             <td>{{ student.sco_paid }} FCFA</td>
                             <td>{{ student.sco_exigible }} FCFA</td>
-                            <td>{{ student.diff_sco }} FCFA</td>
+                            <td class="{% if student.diff_sco != 0 %}text-red{% endif %}">{{ student.diff_sco }} FCFA</td>
                             <td>{{ student.can_paid }} FCFA</td>
                             <td>{{ student.can_exigible }} FCFA</td>
-                            <td>{{ student.diff_can }} FCFA</td>
+                            <td class="{% if student.diff_can != 0 %}text-red{% endif %}">{{ student.diff_can }} FCFA</td>
                             <td>{{ student.retards }} FCFA</td>
                             <td>{{ student.percentage_paid }}%</td>
                             <td>{{ student.note }}</td>
                         </tr>
                     {% endfor %}
-                    <tr class="totals-row">
+                    <tr class="totals-row text-black-50">
                         <td colspan="11">Class Total Restant à Payer</td>
                         <td colspan="3">{{ class_info.total_class_remaining }} FCFA</td>
                     </tr>
