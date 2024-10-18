@@ -1074,10 +1074,12 @@ def delete_mouvement(request, pk):
     return render(request, 'scuelo/mouvement/delete_mouvement.html', {'mouvement': mouvement ,
                                                                       'page_identifier': 'S14' })
 
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Sum
 from .models import Ecole, Classe, Eleve, Mouvement, Tarif, AnneeScolaire
+
 @login_required
 def late_payment_report(request):
     data = {}
@@ -1099,7 +1101,7 @@ def late_payment_report(request):
             for student in students:
                 # Calculate the total amount paid by the student (sco_paid)
                 payments = Mouvement.objects.filter(inscription__eleve=student)
-                sco_paid = payments.aggregate(Sum('montant'))['montant__sum'] or 0
+                sco_paid = payments.filter(causal__in=['INS', 'SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
 
                 # Calculate CAN paid specifically
                 can_paid = payments.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
@@ -1159,6 +1161,7 @@ def late_payment_report(request):
             data[school.nom] = class_data
 
     return render(request, 'scuelo/late_payment.html', {'data': data})
+
 
 # =======================
 # 5. School Management

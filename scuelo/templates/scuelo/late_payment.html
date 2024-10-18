@@ -67,10 +67,15 @@
                         <th>Prénom</th>
                         <th>Sex</th>
                         <th>CS_PY</th>
+                        <th>SCO Paid</th>
                         <th>SCO Exigible</th>
-                        <th>Paid Amount</th>
-                        <th>Difference</th>
+                        <th>Diff. SCO</th>
+                        <th>CAN Paid</th>
+                        <th>CAN Exigible</th>
+                        <th>Diff. CAN</th>
+                        <th>Retards</th>
                         <th>Ratio (%)</th>
+                        <th>Note</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,14 +86,19 @@
                             <td>{{ student.prenom }}</td>
                             <td>{{ student.sex }}</td>
                             <td>{{ student.cs_py }}</td>
-                            <td>{{ student.sco_exigible }} FCFA</td>
                             <td>{{ student.sco_paid }} FCFA</td>
+                            <td>{{ student.sco_exigible }} FCFA</td>
                             <td>{{ student.diff_sco }} FCFA</td>
+                            <td>{{ student.can_paid }} FCFA</td>
+                            <td>{{ student.can_exigible }} FCFA</td>
+                            <td>{{ student.diff_can }} FCFA</td>
+                            <td>{{ student.retards }} FCFA</td>
                             <td>{{ student.percentage_paid }}%</td>
+                            <td>{{ student.note }}</td>
                         </tr>
                     {% endfor %}
-                    <tr class="totals-row text-black-50">
-                        <td colspan="6">Class Total Restant à Payer</td>
+                    <tr class="totals-row">
+                        <td colspan="11">Class Total Restant à Payer</td>
                         <td colspan="3">{{ class_info.total_class_remaining }} FCFA</td>
                     </tr>
                 </tbody>
