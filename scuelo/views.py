@@ -1094,6 +1094,7 @@ def late_payment_report(request):
             # Get all students who are 'PY' in the current class
             students = Eleve.objects.filter(inscription__classe=classe, cs_py='PY')
             student_data = []
+            total_class_remaining = 0  # Track the total rest to be paid for the class
 
             for student in students:
                 # Calculate the total amount paid by the student (sco_paid)
@@ -1120,6 +1121,9 @@ def late_payment_report(request):
                 diff_can = can_exigible - can_paid  # Remaining CAN amount to be paid
                 retards = diff_sco + diff_can
 
+                # Accumulate the total remaining for the class
+                total_class_remaining += retards
+
                 # Only include students who have retards (not fully paid)
                 if retards > 0:  # Adjusted condition to show students with outstanding amounts
                     percentage_paid = int(
@@ -1142,10 +1146,13 @@ def late_payment_report(request):
                         'percentage_paid': percentage_paid,
                         'note': student.note_eleve,
                     })
-            
+
             # Only add the class if there are students with late payments
             if student_data:
-                class_data[classe.nom] = student_data
+                class_data[classe.nom] = {
+                    'students': student_data,
+                    'total_class_remaining': total_class_remaining  # Add total remaining amount for the class
+                }
 
         # Only add the school if there are classes with students having late payments
         if class_data:
