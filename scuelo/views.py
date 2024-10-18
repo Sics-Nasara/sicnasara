@@ -1152,11 +1152,20 @@ def add_mouvement(request):
     if request.method == 'POST':
         form = MouvementForm(request.POST)
         if form.is_valid():
-            form.save()
+            mouvement = form.save(commit=False)
+            # Set the type to 'R' (Income) if causal is one of the income categories
+            if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN']:
+                mouvement.type = 'R'  # Income
+            else:
+                mouvement.type = 'D'  # Expense
+            mouvement.save()
             return redirect('mouvement_list')
     else:
         form = MouvementForm()
+
     return render(request, 'scuelo/mouvement/add_mouvement.html', {'form': form , 'page_identifier': 'S12'})
+        
+
 @login_required
 def update_mouvement(request, pk):
     mouvement = get_object_or_404(Mouvement, pk=pk)

@@ -269,7 +269,7 @@ class Mouvement(TimeStampedModel):
     )
     type = models.CharField(max_length=1, choices=TYPE, db_index=True)
     # If D also destination
-    destination = models.CharField(max_length=1, choices=DESTINATION, db_index=True)
+    #destination = models.CharField(max_length=1, choices=DESTINATION, db_index=True)
     causal = models.CharField(max_length=5, choices=CAUSAL, db_index=True, null=True, blank=True)
     montant = models.PositiveBigIntegerField()
     date_paye = models.DateField(db_index=True, default="")

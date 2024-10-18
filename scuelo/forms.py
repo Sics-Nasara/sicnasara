@@ -161,7 +161,16 @@ class TarifForm(forms.ModelForm):
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement
-        fields = ['montant','type', 'destination' ,'causal', 'date_paye', 'note', 'inscription']
+        fields = ['montant', 'type', 'causal', 'date_paye', 'note', 'inscription']
         widgets = {
-            'date_paye': forms.DateInput(attrs={'type': 'date'}),
+            'date_paye': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'montant': forms.NumberInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'causal': forms.Select(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={
+                'class': 'form-control note-field',
+                'rows': 4,  # Height control
+                'style': 'width: 100%;',  # Full width
+            }),
+            'inscription': forms.Select(attrs={'class': 'form-control select2'}),  # Added `select2` class
         }
