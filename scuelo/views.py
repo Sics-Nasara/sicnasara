@@ -1009,7 +1009,7 @@ def mouvement_list(request):
             mouvement.save()
 
         # Define the type based on the causal:
-        # All causals related to "Scolarité" or "Classe" fees are considered "Recette" (Inflow)
+        # All causals related to school fees (CAN, SCO1, SCO2, SCO3, TEN) are considered income (Recette)
         if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN']:  # Add any other causals as needed
             mouvement.type = 'R'  # Recette (Inflow)
         else:
@@ -1041,7 +1041,6 @@ def mouvement_list(request):
         'search_query': search_query,
         'page_identifier': 'S11'
     })
-
 
 from datetime import datetime, timedelta
 from django.utils import timezone
