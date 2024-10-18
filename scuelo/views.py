@@ -987,7 +987,7 @@ def mouvement_list(request):
     search_query = request.GET.get('search', '')
 
     # Fetch all movements ordered by payment date
-    movements = Mouvement.objects.all().order_by('-date_paye')
+    movements = Mouvement.objects.all().order_by('date_paye')
 
     # Apply search filters if search_query is provided
     if search_query:
@@ -1001,6 +1001,9 @@ def mouvement_list(request):
     # Initialize progressive total
     progressive_total = 0
 
+    # Create a list to store processed movements with extra information
+    processed_movements = []
+
     # Loop over movements to calculate the progressive total and build description
     for mouvement in movements:
         # If the causal is missing but linked to a tarif, set it
@@ -1013,31 +1016,38 @@ def mouvement_list(request):
         if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN']:  # Add any other causals as needed
             mouvement.type = 'R'  # Recette (Inflow)
         else:
-            mouvement.type = 'D'  # Dépense (Outflow)
+            mouvement.type = 'R'  # Dépense (Outflow)
 
         # Adjust the progressive total based on the movement type
         if mouvement.type == 'R':
             progressive_total += mouvement.montant  # Add inflows
+            entry = mouvement.montant
+            exit = ''
         elif mouvement.type == 'D':
             progressive_total -= mouvement.montant  # Subtract outflows
-
-        # Assign the computed progressive total as a dynamic attribute
-        mouvement.progressive_total = progressive_total
+            entry = ''
+            exit = mouvement.montant
 
         # Create a dynamic description combining student's full name, school name, and class
         if mouvement.inscription and mouvement.inscription.classe:
             student_name = f"{mouvement.inscription.eleve.nom} {mouvement.inscription.eleve.prenom}"
             school_name = mouvement.inscription.classe.ecole.nom if mouvement.inscription.classe.ecole else "Unknown School"
             class_name = mouvement.inscription.classe.nom
-            mouvement.description = f"{student_name} - {school_name} - {class_name}"
+            description = f"{student_name} - {school_name} - {class_name}"
         else:
-            mouvement.description = f"Unknown Student - No Class Info"
-        
-        # Save movement after adding the description and calculating the progressive total
-        mouvement.save()
+            description = f"Unknown Student - No Class Info"
+
+        # Append processed data to the list
+        processed_movements.append({
+            'date': mouvement.date_paye,
+            'description': description,
+            'entry': entry,
+            'exit': exit,
+            'progressive_total': progressive_total
+        })
 
     return render(request, 'scuelo/mouvement/mouvement_list.html', {
-        'movements': movements,
+        'movements': processed_movements,
         'search_query': search_query,
         'page_identifier': 'S11'
     })

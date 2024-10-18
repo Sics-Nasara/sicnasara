@@ -79,16 +79,16 @@
         <tbody>
             {% for mouvement in movements %}
             <tr>
-                <td>{{ mouvement.date_paye|date:"d/m/Y" }}</td>
+                <td>{{ mouvement.date|date:"d/m/Y" }}</td>
                 <td>{{ mouvement.description }}</td>
                 <td class="text-right">
-                    {% if mouvement.type == 'R' %}
-                        {{ mouvement.montant|intcomma }} FCFA
+                    {% if mouvement.entry %}
+                        {{ mouvement.entry|intcomma }} FCFA
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    {% if mouvement.type == 'D' %}
-                        {{ mouvement.montant|intcomma }} FCFA
+                    {% if mouvement.exit %}
+                        {{ mouvement.exit|intcomma }} FCFA
                     {% endif %}
                 </td>
                 <td class="text-right">{{ mouvement.progressive_total|intcomma }} FCFA</td>
@@ -96,6 +96,7 @@
             {% endfor %}
         </tbody>
     </table>
+    
     
 </div>
 {% endblock %}
