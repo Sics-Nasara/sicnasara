@@ -984,11 +984,10 @@ def export_accounting_report(request):
 
 @login_required
 def mouvement_list(request):
-
     search_query = request.GET.get('search', '')
 
     # Fetch all movements ordered by payment date
-    movements = Mouvement.objects.all().order_by('date_paye')
+    movements = Mouvement.objects.all().order_by('-date_paye')
 
     # Apply search filters if search_query is provided
     if search_query:
@@ -999,35 +998,49 @@ def mouvement_list(request):
             Q(inscription__eleve__prenom__icontains=search_query)
         )
 
-    # Initialize progressive balance
-    progressive_balance = 0
-    report_data = []
+    # Initialize progressive total
+    progressive_total = 0
 
-    # Loop over movements to categorize and calculate
+    # Loop over movements to calculate the progressive total and build description
     for mouvement in movements:
-        # Define the type based on the causal:
-        if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'CAN']:  # Income types
-            mouvement.type = 'Income'
-            progressive_balance += mouvement.montant
-        else:  # Expense types
-            mouvement.type = 'Expense'
-            progressive_balance -= mouvement.montant
+        # If the causal is missing but linked to a tarif, set it
+        if mouvement.tarif and not mouvement.causal:
+            mouvement.causal = mouvement.tarif.causal
+            mouvement.save()
 
-        # Prepare data to be rendered
-        report_data.append({
-            'id': mouvement.id,
-            'type': mouvement.type,
-            'causal': mouvement.causal,
-            'amount': mouvement.montant,
-            'date': mouvement.date_paye,
-            'progressive_balance': progressive_balance,
-        })
+        # Define the type based on the causal:
+        # All causals related to "Scolarité" or "Classe" fees are considered "Recette" (Inflow)
+        if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN']:  # Add any other causals as needed
+            mouvement.type = 'R'  # Recette (Inflow)
+        else:
+            mouvement.type = 'D'  # Dépense (Outflow)
+
+        # Adjust the progressive total based on the movement type
+        if mouvement.type == 'R':
+            progressive_total += mouvement.montant  # Add inflows
+        elif mouvement.type == 'D':
+            progressive_total -= mouvement.montant  # Subtract outflows
+
+        # Assign the computed progressive total as a dynamic attribute
+        mouvement.progressive_total = progressive_total
+
+        # Create a dynamic description combining student's full name, school name, and class
+        if mouvement.inscription and mouvement.inscription.classe:
+            student_name = f"{mouvement.inscription.eleve.nom} {mouvement.inscription.eleve.prenom}"
+            school_name = mouvement.inscription.classe.ecole.nom if mouvement.inscription.classe.ecole else "Unknown School"
+            class_name = mouvement.inscription.classe.nom
+            mouvement.description = f"{student_name} - {school_name} - {class_name}"
+        else:
+            mouvement.description = f"Unknown Student - No Class Info"
+        
+        # Save movement after adding the description and calculating the progressive total
+        mouvement.save()
 
     return render(request, 'scuelo/mouvement/mouvement_list.html', {
-        'report_data': report_data,
-        'search_query': search_query
+        'movements': movements,
+        'search_query': search_query,
+        'page_identifier': 'S11'
     })
-
 
 
 from datetime import datetime, timedelta
