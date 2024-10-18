@@ -1,25 +1,68 @@
 {% extends "../../layout.html" %}
+{% load humanize %}
 
 {% block content %}
-<h2>Accounting C_SCO Report ({{ period }})</h2>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Period Start Date</th>
-            <th>Type</th>
-            <th>Causal</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in report_data %}
-        <tr>
-            <td>{{ item.period_start }}</td>
-            <td>{{ item.type }}</td>
-            <td>{{ item.causal }}</td>
-            <td>{{ item.total }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<style>
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+    }
+
+    th {
+        background-color: #333;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<h2>Accounting C_SCO Report - {{ period|capfirst }}</h2>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Income (R)</th>
+                <th>Expenses (D)</th>
+                <th>Progressive Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mouvement in movements %}
+            <tr>
+                <td>{{ mouvement.date_paye }}</td>
+                <td>{{ mouvement.description }}</td>
+                <td>{% if mouvement.type == 'R' %}{{ mouvement.montant|intcomma }} FCFA{% endif %}</td>
+                <td>{% if mouvement.type == 'D' %}{{ mouvement.montant|intcomma }} FCFA{% endif %}</td>
+                <td>{{ mouvement.progressive_total|intcomma }} FCFA</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

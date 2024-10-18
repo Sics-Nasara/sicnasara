@@ -71,8 +71,8 @@ urlpatterns = [
    # path('tarif/<int:pk>/edit/', TarifUpdateView.as_view(), name='edit_tarif'),
    # path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='delete_tarif'),
     #path('tarif/<int:pk>/delete/', TarifDeleteView.as_view(), name='tarif_delete'),
-   
-    path('c_sco/accounting/weekly/', views.accounting_c_sco_report, {'period': 'weekly'}, name='accounting_c_sco_report_weekly'),
+     path('accounting_c_sco_report/', views.accounting_c_sco_report, name='accounting_c_sco_report'),
+   path('accounting_c_sco_report/<str:period>/', views.accounting_c_sco_report, name='accounting_c_sco_report_period'),
 
     # Accounting Report - Bi-Monthly
     path('c_sco/accounting/bi_monthly/', views.accounting_c_sco_report, {'period': 'bi_monthly'}, name='accounting_c_sco_report_bi_monthly'),

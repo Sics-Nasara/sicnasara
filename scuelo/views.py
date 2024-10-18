@@ -1052,56 +1052,99 @@ def mouvement_list(request):
         'page_identifier': 'S11'
     })
 
-from datetime import datetime, timedelta
-from django.utils import timezone
-from collections import defaultdict
-
 @login_required
-def accounting_c_sco_report(request, period='weekly'):
-    # Define grouping periods: Weekly or Bi-Monthly
+def accounting_c_sco_report(request, period=None):
+    search_query = request.GET.get('search', '')
+
+    # Fetch all movements ordered by payment date
+    movements = Mouvement.objects.all().order_by('date_paye')
+
+    # Apply search filters if search_query is provided
+    if search_query:
+        movements = movements.filter(
+            Q(causal__icontains=search_query) | 
+            Q(note__icontains=search_query) |
+            Q(inscription__eleve__nom__icontains=search_query) |
+            Q(inscription__eleve__prenom__icontains=search_query)
+        )
+
+    # Initialize progressive total
+    progressive_total = 0
+    processed_movements = []
+
+    # Group data by period if specified
     if period == 'weekly':
-        grouping_func = lambda dt: dt - timedelta(days=dt.weekday())
-    else:  # Bi-monthly: first half (1-15), second half (16-end)
-        grouping_func = lambda dt: dt.replace(day=1) if dt.day <= 15 else dt.replace(day=16)
+        # Define the start of the current week
+        current_date = timezone.now().date()
+        start_of_week = current_date - timedelta(days=current_date.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
 
-    # Fetch all expenses and group them unchanged
-    expenses = Mouvement.objects.filter(type='Expense').order_by('date_paye')
+        # Group movements by week
+        movements = movements.filter(date_paye__range=[start_of_week, end_of_week])
+        grouping_key = 'WEEKLY'
 
-    # Group incomes by type and period
-    incomes = Mouvement.objects.filter(type='Income')
-    grouped_incomes = defaultdict(lambda: defaultdict(float))  # {period_start_date: {causal: sum}}
+    elif period == 'bi-monthly':
+        # Define ranges for 1st to 15th and 16th to end of the month
+        current_date = timezone.now().date()
+        if current_date.day <= 15:
+            start_of_period = current_date.replace(day=1)
+            end_of_period = current_date.replace(day=15)
+        else:
+            start_of_period = current_date.replace(day=16)
+            last_day = (current_date.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            end_of_period = last_day
 
-    for income in incomes:
-        period_start = grouping_func(income.date_paye)
-        grouped_incomes[period_start][income.causal] += income.montant
+        # Group movements within the period range
+        movements = movements.filter(date_paye__range=[start_of_period, end_of_period])
+        grouping_key = 'BI-MONTHLY'
 
-    # Prepare report data
-    report_data = []
-    for period_start, income_data in grouped_incomes.items():
-        for causal, total in income_data.items():
-            report_data.append({
-                'period_start': period_start,
-                'type': 'Income',
-                'causal': causal,
-                'total': total
-            })
+    else:
+        grouping_key = 'ALL'
 
-    # Add all expenses directly to the report
-    for expense in expenses:
-        report_data.append({
-            'period_start': expense.date_paye,
-            'type': 'Expense',
-            'causal': expense.causal,
-            'total': expense.montant
+    # Loop over movements to calculate the progressive total and build description
+    for mouvement in movements:
+        # Ensure the correct type is assigned (R for inflows, D for outflows)
+        if mouvement.causal in ['INS', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN']:
+            mouvement.type = 'R'  # Recette (Inflow)
+        else:
+            mouvement.type = 'D'  # Dépense (Outflow)
+
+        # Adjust the progressive total based on the movement type
+        if mouvement.type == 'R':
+            progressive_total += mouvement.montant  # Add inflows
+            entry = mouvement.montant
+            exit = ''
+        elif mouvement.type == 'D':
+            progressive_total -= mouvement.montant  # Subtract outflows
+            entry = ''
+            exit = mouvement.montant
+
+        # Create a dynamic description combining student's full name, school name, and class
+        if mouvement.inscription and mouvement.inscription.classe:
+            student_name = f"{mouvement.inscription.eleve.nom} {mouvement.inscription.eleve.prenom}"
+            school_name = mouvement.inscription.classe.ecole.nom if mouvement.inscription.classe.ecole else "Unknown School"
+            class_name = mouvement.inscription.classe.nom
+            description = f"{student_name} - {school_name} - {class_name}"
+        else:
+            description = "Unknown Student - No Class Info"
+
+        # Append processed data to the list
+        processed_movements.append({
+            'date': mouvement.date_paye,
+            'description': description,
+            'entry': entry,
+            'exit': exit,
+            'progressive_total': progressive_total,
+            'grouping': grouping_key
         })
 
-    # Sort the final report data by date
-    report_data = sorted(report_data, key=lambda x: x['period_start'])
-
     return render(request, 'scuelo/mouvement/accounting_report.html', {
-        'report_data': report_data,
-        'period': period
+        'movements': processed_movements,
+        'search_query': search_query,
+        'page_identifier': 'SCO Accounting',
+        'grouping_key': grouping_key
     })
+
 
 
 @login_required
