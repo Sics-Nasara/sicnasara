@@ -1,3 +1,9 @@
 
 # to the in sics stage database 
 psql -U nasara -d sicsnasara_stage
+
+sudo nano  /etc/apache2/sites-available/sicsnasaraprod.conf
+sudo cat  /etc/apache2/sites-available/sicsnasaraprod.conf
+find . -type f -name "postgis-2.0.0"
+
+sudo  tail -f /var/log/sicsnasara/prod/uwsgi.log
