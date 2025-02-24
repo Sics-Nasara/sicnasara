@@ -98,7 +98,7 @@ class Command(BaseCommand):
             logger.error("No previous school year found.")
             return
 
-        # 1. Manually Create Ecole
+        '''# 1. Manually Create Ecole
         ecole_logger.info("Creating Ecoles...")
         ecole_data = [
             {"nom": "Sc_TBD", "ville": "TBD"},
@@ -268,7 +268,7 @@ class Command(BaseCommand):
                 classe_logger.error(f"TypeClasse with nom {data['type_classe_nom']} not found.")
                 continue
             except Exception as e:
-                classe_logger.error(f"Error creating Classe {data['nom']}: {e}")
+                classe_logger.error(f"Error creating Classe {data['nom']}: {e}")'''
 
         # 4. Import Eleve
         eleve_logger.info("Importing Eleves...")
