@@ -65,7 +65,7 @@ class Ecole(TimeStampedModel):
 class Classe(TimeStampedModel):
     ecole = models.ForeignKey(Ecole, on_delete=models.CASCADE)
     type = models.ForeignKey(TypeClasse, on_delete=models.CASCADE)
-    nom = models.CharField(max_length=10, null=False)
+    nom = models.CharField(max_length=30, null=False)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
 
     def __str__(self):
