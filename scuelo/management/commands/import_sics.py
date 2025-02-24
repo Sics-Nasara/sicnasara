@@ -60,7 +60,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
-        file_path = f'{BASE_DIR}/export_sics/combined_excel.xlsx'  # Use the combined Excel file
+        #file_path = f'{BASE_DIR}/export_sics/combined_excel.xlsx'  # Use the combined Excel file
+        file_path = f'{BASE_DIR}/export_sics/combined_students_payments.xlsx' 
         failed_eleves = []
 
         # Create logs directory if it doesn't exist
@@ -74,8 +75,8 @@ class Command(BaseCommand):
             wb = load_workbook(file_path)
 
             # Load worksheets
-            ws_eleve = wb['BcK Studente']
-            ws_paiement = wb['BcK Pagamento']
+            ws_eleve = wb['Students']
+            ws_paiement = wb['Payments']
 
         except FileNotFoundError:
             logger.error(f"File not found: {file_path}")
@@ -272,7 +273,7 @@ class Command(BaseCommand):
         # 4. Import Eleve
         eleve_logger.info("Importing Eleves...")
         columns_eleve = {}
-        ws_eleve = wb['BcK Studente']
+        ws_eleve = wb['Students']
         failed_eleves_data = [] # List to store dictionaries of failed eleves
 
         for row in ws_eleve.iter_rows(min_row=1):
@@ -399,7 +400,7 @@ class Command(BaseCommand):
         # 6. Process Paiement
         paiement_logger.info("Importing Paiements...")
         columns_paiement = {}
-        ws_paiement = wb['BcK Pagamento']
+        ws_paiement = wb['Payments']
         for row in ws_paiement.iter_rows(min_row=1):
             row_values = [cell.value for cell in row]  # Extract values manually
 
