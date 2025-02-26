@@ -102,9 +102,11 @@
         width: 1% !important;
     }
 
-    .col-sex {
-        width: 1% !important;
+    
+    .dat {
+        width: 5% !important;
     }
+
 </style>
 
 <div class="">
@@ -119,10 +121,11 @@
                             <tr>
                                 <th class='action'></th>
                                 <th class='id'>ID</th>
-                                <th class="prenom">Prénom</th>
                                 <th class="nom">Nom</th>
+                                <th class="prenom">Prenom</th>
+                             
                                 <th class="col-sex">Sexe</th>
-                                <th class="col-sex">Date nais</th>
+                                <th class="dat ">Date nais</th>
                                 <th class="cs_py">CS_PY</th>
                                 <th class="hand">Handicap</th>
                               {% comment %}
@@ -142,8 +145,10 @@
                                     <td>{{ inscription.eleve.id }}</td>
                                     <td>{{ inscription.eleve.prenom }}</td>
                                     <td>{{ inscription.eleve.nom }}</td>
+                                  
+                               
                                     <td>{{ inscription.eleve.get_sex_display }}</td>
-                                    <td>{{ inscription.eleve.date_naissance|date:"d/m/Y" }}</td>
+                                    <td>{{ inscription.eleve.date_naissance|date:'Y-m-d'}}</td>
                                     <td>{{ inscription.eleve.get_cs_py_display }}</td>
                                     <td>{% if inscription.eleve.hand %}{{ inscription.eleve.hand }}{% else %}-{% endif %}</td>
                                  {% comment %}

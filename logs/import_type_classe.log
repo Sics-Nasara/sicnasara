@@ -1,85 +1,17 @@
-2025-02-24 01:49:38,480 - INFO - Creating TypeClasses...
-2025-02-24 01:49:38,496 - INFO - Created TypeClasse: PS
-2025-02-24 01:49:38,510 - INFO - Created TypeClasse: MS
-2025-02-24 01:49:38,522 - INFO - Created TypeClasse: GS
-2025-02-24 01:49:38,535 - INFO - Created TypeClasse: CP1
-2025-02-24 01:49:38,547 - INFO - Created TypeClasse: CP2
-2025-02-24 01:49:38,560 - INFO - Created TypeClasse: CE1
-2025-02-24 01:49:38,571 - INFO - Created TypeClasse: CE2
-2025-02-24 01:49:38,582 - INFO - Created TypeClasse: CM1
-2025-02-24 01:49:38,594 - INFO - Created TypeClasse: CM2
-2025-02-24 01:49:38,605 - INFO - Created TypeClasse: 6me
-2025-02-24 01:49:38,615 - INFO - Created TypeClasse: 5me
-2025-02-24 01:49:38,626 - INFO - Created TypeClasse: 4me
-2025-02-24 01:49:38,636 - INFO - Created TypeClasse: 3me
-2025-02-24 01:49:38,646 - INFO - Created TypeClasse: 2me
-2025-02-24 01:49:38,657 - INFO - Created TypeClasse: 1ere
-2025-02-24 01:49:38,667 - INFO - Created TypeClasse: Term
-2025-02-24 03:29:10,110 - INFO - Creating TypeClasses...
-2025-02-24 03:29:10,119 - INFO - Created TypeClasse: PS
-2025-02-24 03:29:10,129 - INFO - Created TypeClasse: MS
-2025-02-24 03:29:10,140 - INFO - Created TypeClasse: GS
-2025-02-24 03:29:10,152 - INFO - Created TypeClasse: CP1
-2025-02-24 03:29:10,164 - INFO - Created TypeClasse: CP2
-2025-02-24 03:29:10,176 - INFO - Created TypeClasse: CE1
-2025-02-24 03:29:10,186 - INFO - Created TypeClasse: CE2
-2025-02-24 03:29:10,197 - INFO - Created TypeClasse: CM1
-2025-02-24 03:29:10,208 - INFO - Created TypeClasse: CM2
-2025-02-24 03:29:10,218 - INFO - Created TypeClasse: 6me
-2025-02-24 03:29:10,229 - INFO - Created TypeClasse: 5me
-2025-02-24 03:29:10,240 - INFO - Created TypeClasse: 4me
-2025-02-24 03:29:10,253 - INFO - Created TypeClasse: 3me
-2025-02-24 03:29:10,261 - INFO - Created TypeClasse: 2me
-2025-02-24 03:29:10,269 - INFO - Created TypeClasse: 1ere
-2025-02-24 03:29:10,278 - INFO - Created TypeClasse: Term
-2025-02-24 03:30:21,351 - INFO - Creating TypeClasses...
-2025-02-24 03:30:21,351 - INFO - TypeClasse already exists: PS
-2025-02-24 03:30:21,352 - INFO - TypeClasse already exists: MS
-2025-02-24 03:30:21,352 - INFO - TypeClasse already exists: GS
-2025-02-24 03:30:21,352 - INFO - TypeClasse already exists: CP1
-2025-02-24 03:30:21,352 - INFO - TypeClasse already exists: CP2
-2025-02-24 03:30:21,353 - INFO - TypeClasse already exists: CE1
-2025-02-24 03:30:21,353 - INFO - TypeClasse already exists: CE2
-2025-02-24 03:30:21,353 - INFO - TypeClasse already exists: CM1
-2025-02-24 03:30:21,353 - INFO - TypeClasse already exists: CM2
-2025-02-24 03:30:21,353 - INFO - TypeClasse already exists: 6me
-2025-02-24 03:30:21,354 - INFO - TypeClasse already exists: 5me
-2025-02-24 03:30:21,354 - INFO - TypeClasse already exists: 4me
-2025-02-24 03:30:21,354 - INFO - TypeClasse already exists: 3me
-2025-02-24 03:30:21,354 - INFO - TypeClasse already exists: 2me
-2025-02-24 03:30:21,355 - INFO - TypeClasse already exists: 1ere
-2025-02-24 03:30:21,355 - INFO - TypeClasse already exists: Term
-2025-02-24 03:34:43,248 - INFO - Creating TypeClasses...
-2025-02-24 03:34:43,258 - INFO - Created TypeClasse: PS
-2025-02-24 03:34:43,268 - INFO - Created TypeClasse: MS
-2025-02-24 03:34:43,279 - INFO - Created TypeClasse: GS
-2025-02-24 03:34:43,290 - INFO - Created TypeClasse: CP1
-2025-02-24 03:34:43,300 - INFO - Created TypeClasse: CP2
-2025-02-24 03:34:43,311 - INFO - Created TypeClasse: CE1
-2025-02-24 03:34:43,322 - INFO - Created TypeClasse: CE2
-2025-02-24 03:34:43,333 - INFO - Created TypeClasse: CM1
-2025-02-24 03:34:43,344 - INFO - Created TypeClasse: CM2
-2025-02-24 03:34:43,354 - INFO - Created TypeClasse: 6me
-2025-02-24 03:34:43,363 - INFO - Created TypeClasse: 5me
-2025-02-24 03:34:43,373 - INFO - Created TypeClasse: 4me
-2025-02-24 03:34:43,382 - INFO - Created TypeClasse: 3me
-2025-02-24 03:34:43,392 - INFO - Created TypeClasse: 2me
-2025-02-24 03:34:43,402 - INFO - Created TypeClasse: 1ere
-2025-02-24 03:34:43,412 - INFO - Created TypeClasse: Term
-2025-02-24 03:37:17,702 - INFO - Creating TypeClasses...
-2025-02-24 03:37:17,703 - INFO - TypeClasse already exists: PS
-2025-02-24 03:37:17,703 - INFO - TypeClasse already exists: MS
-2025-02-24 03:37:17,703 - INFO - TypeClasse already exists: GS
-2025-02-24 03:37:17,704 - INFO - TypeClasse already exists: CP1
-2025-02-24 03:37:17,704 - INFO - TypeClasse already exists: CP2
-2025-02-24 03:37:17,704 - INFO - TypeClasse already exists: CE1
-2025-02-24 03:37:17,704 - INFO - TypeClasse already exists: CE2
-2025-02-24 03:37:17,705 - INFO - TypeClasse already exists: CM1
-2025-02-24 03:37:17,705 - INFO - TypeClasse already exists: CM2
-2025-02-24 03:37:17,705 - INFO - TypeClasse already exists: 6me
-2025-02-24 03:37:17,705 - INFO - TypeClasse already exists: 5me
-2025-02-24 03:37:17,706 - INFO - TypeClasse already exists: 4me
-2025-02-24 03:37:17,706 - INFO - TypeClasse already exists: 3me
-2025-02-24 03:37:17,706 - INFO - TypeClasse already exists: 2me
-2025-02-24 03:37:17,707 - INFO - TypeClasse already exists: 1ere
-2025-02-24 03:37:17,707 - INFO - TypeClasse already exists: Term
+2025-02-26 13:00:37,854 - INFO - Creating TypeClasses...
+2025-02-26 13:00:37,856 - INFO - TypeClasse already exists: PS
+2025-02-26 13:00:37,857 - INFO - TypeClasse already exists: MS
+2025-02-26 13:00:37,858 - INFO - TypeClasse already exists: GS
+2025-02-26 13:00:37,858 - INFO - TypeClasse already exists: CP1
+2025-02-26 13:00:37,859 - INFO - TypeClasse already exists: CP2
+2025-02-26 13:00:37,860 - INFO - TypeClasse already exists: CE1
+2025-02-26 13:00:37,860 - INFO - TypeClasse already exists: CE2
+2025-02-26 13:00:37,861 - INFO - TypeClasse already exists: CM1
+2025-02-26 13:00:37,861 - INFO - TypeClasse already exists: CM2
+2025-02-26 13:00:37,862 - INFO - TypeClasse already exists: 6me
+2025-02-26 13:00:37,862 - INFO - TypeClasse already exists: 5me
+2025-02-26 13:00:37,863 - INFO - TypeClasse already exists: 4me
+2025-02-26 13:00:37,864 - INFO - TypeClasse already exists: 3me
+2025-02-26 13:00:37,865 - INFO - TypeClasse already exists: 2me
+2025-02-26 13:00:37,866 - INFO - TypeClasse already exists: 1ere
+2025-02-26 13:00:37,866 - INFO - TypeClasse already exists: Term

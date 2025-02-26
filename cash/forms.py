@@ -6,7 +6,9 @@ from crispy_forms.layout import Layout, Submit, Row, Column
 from django.contrib.auth.models import User, Group 
 from django.contrib.auth.forms import UserCreationForm
 from scuelo.models import AnneeScolaire
-class PaiementPerStudentForm(forms.ModelForm):
+from datetime import datetime, timezone
+from django.utils import timezone
+'''class PaiementPerStudentForm(forms.ModelForm):
     class Meta:
         model = Mouvement
         fields = ['montant', 'date_paye', 'note', 'causal']  # Include date_paye and other necessary fields
@@ -15,8 +17,26 @@ class PaiementPerStudentForm(forms.ModelForm):
             'date_paye': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
             'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
             'causal': forms.Select(attrs={'class': 'form-control'})  # Dropdown for causal choices
+        }'''
+        
+class PaiementPerStudentForm(forms.ModelForm):
+    class Meta:
+        model = Mouvement
+        fields = ['causal', 'montant', 'date_paye', 'note']
+        widgets = {
+            'causal': forms.Select(attrs={'class': 'form-control'}), 
+            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),# Dropdown for causal choices
+            'date_paye': forms.DateInput(format='%d/%m/%Y', attrs={'type': 'date' , 'class': 'form-control'}),
+             'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
+            
         }
-        # You can add custom attributes or initial values if needed
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Optionally, set the initial value for the date field
+        # to the current date, formatted correctly
+        if not self.initial.get('date_paye'):
+            self.initial['date_paye'] = timezone.now().strftime('%d/%m/%Y')
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement
@@ -88,6 +108,11 @@ class ExpenseForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter notes'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Correctly format the initial date if an instance is provided
+        if self.instance and self.instance.date_paye:
+            self.initial['date_paye'] = self.instance.date_paye.strftime('%d/%m/%Y')
             
 class TransferForm(forms.ModelForm):
     class Meta:

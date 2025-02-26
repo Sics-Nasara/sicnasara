@@ -40,53 +40,9 @@
 
     <form method="post">
         {% csrf_token %}
-        
-        <!-- Causal Field -->
-        <div class="form-group">
-            <label for="id_causal">Causal:</label>
-            {{ form.causal }} <!-- Render causal field as a dropdown -->
-            {% if form.causal.errors %}
-                <div class="invalid-feedback">
-                    {{ form.causal.errors.0 }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Montant Field -->
-        <div class="form-group">
-            <label for="id_montant">Amount:</label>
-            {{ form.montant }} <!-- Render montant field -->
-            {% if form.montant.errors %}
-                <div class="invalid-feedback">
-                    {{ form.montant.errors.0 }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Date Paye Field -->
-        <div class="form-group">
-            <label for="id_date_paye">Date of Payment:</label>
-            {{ form.date_paye }} <!-- Render date_paye field -->
-            {% if form.date_paye.errors %}
-                <div class="invalid-feedback">
-                    {{ form.date_paye.errors.0 }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Note Field as Textarea -->
-        <div class="form-group">
-            <label for="id_note">Note:</label>
-            {{ form.note }} <!-- Render note field as textarea -->
-            {% if form.note.errors %}
-                <div class="invalid-feedback">
-                    {{ form.note.errors.0 }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Add Payment</button>
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
     </form>
+    
 </div>
 {% endblock %}

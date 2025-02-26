@@ -98,6 +98,7 @@
                                 <label for="id_date_naissance">Date de naissance</label>
                                 <input type="date" class="form-control" id="id_date_naissance" name="date_naissance" value="{{ form.instance.date_naissance }}">
                             </div>
+                            
                             <div class="form-group">
                                 <label for="id_cs_py">CS/PY</label>
                                 <select class="form-control" id="id_cs_py" name="cs_py" required>
@@ -105,6 +106,10 @@
                                         <option value="{{ key }}" {% if form.instance.cs_py == key %}selected{% endif %}>{{ value }}</option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_date_naissance">Date enquete</label>
+                                <input type="date" class="form-control" id="id_date_enquete" name="date_enquete" value="{{ form.instance.date_enquete }}">
                             </div>
                             <div class="form-group">
                                 <label for="id_hand">Hand</label>

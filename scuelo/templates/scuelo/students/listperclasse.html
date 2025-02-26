@@ -195,15 +195,17 @@
                 <thead class="thead-dark">
                     <tr><th class="action" ></th>
                         <th class=" dt-left id">id</th>
-                        <th class=" dt-left prenom">Prénom</th>
+                     
                         <th class=" dt-left nom">Nom</th>
+                        <th class=" dt-left prenom">Prénom</th>
+                        <th class='col-1 dt-left'>Cond</th>
                         <th class='col-sex '>Sexe</th>
                         <th class='col-1'>Date naiss</th>
                       
                         <th class="col-1 dt-left cs_py">CS_PY</th>
                    
                         <th class=" dt-left hand">Hand</th>
-                        <th class='col-1 dt-left'>Cond</th>
+                   
                       
                         <th class='col-1 amount-col'>Tot pay</th>
                     
@@ -220,13 +222,14 @@
                             </a>
                         </td>
                         <td class=" dt-left">{{ student.pk }}   
+                            <td class=" dt-left">{{ student.prenom }}</td>
                         <td class=" dt-left">{{ student.nom }}</td>
-                        <td class=" dt-left">{{ student.prenom }}</td>
+                        <td class=" dt-left cs_py">{{ student.get_condition_eleve_display }}</td>
                         <td class=" dt-left">{{ student.get_sex_display }}</td>
-                        <td class=" dt-left">{{ student.date_naissance|format_date_obj }}</td>
+                        <td class=" dt-left">{{ student.date_naissance|date:'Y-m-d' }}</td>
                         <td class=" dt-left cs_py">{{ student.get_cs_py_display }}</td>
                         <td class=" dt-left">{% if student.get_hand_display %}{{ student.get_hand_display }}{% else %}-{% endif %}</td>
-                        <td class=" dt-left cs_py">{{ student.get_condition_eleve_display }}</td>
+                     
                         
                         <td class=" amount-col">{% if student.total_payment > 0 %}{{ student.total_payment|format_amount }}{% else %}-{% endif %}</td>
                       

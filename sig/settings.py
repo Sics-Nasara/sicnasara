@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'cash',
     'scuelo',
     'accounts',
-
+  'simple_history',
     'crispy_forms',
     'whitenoise.runserver_nostatic',
     'bootstrap5',
@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',  # Enables user tracking
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,7 +79,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'sig.wsgi.application'
 
 # Database
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sicsnasara_prod',
@@ -88,14 +89,14 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+'''
 
-
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
-}'''
+}
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

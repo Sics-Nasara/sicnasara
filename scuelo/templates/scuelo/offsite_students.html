@@ -135,6 +135,10 @@
     .cs_py {
         width: 1% !important;
     }
+    .dat {
+        width: 5% !important;
+    }
+
 
     .col-sex {
         width: 1% !important;
@@ -166,16 +170,19 @@
         <thead>
             <tr>
                 <th class="action dt-left"></th>
+                <th class='scuelo'>classe</th>
+                <th class='scuelo'>École</th>
                 <th class='id dt-left'>ID</th>
-                <th class='prenom dt-left'>Prénom</th>
+              
                 <th class='nom dt-left' >Nom</th>
-
+                <th class='prenom dt-left'>Prénom</th>
+                <th class='cs_py'>CS_PY</th>
                 <th class='cs_py dt-left'>Cond</th>
                 <th class='col-sex dt-left'>Sexe</th>
-                <th class='cs_py dt-left'>Dat Nais</th>
-                <th class='cs_py'>CS_PY</th>
-                <th class='scuelo'>École</th>
-                <th class='scuelo'>classe</th>
+                <th class='dat dt-left'>Date Naiss</th>
+              
+           
+              
 
                 <th class='hand'>Hand</th>
                 <th>Note</th>
@@ -191,16 +198,18 @@
                     </a>
 
                 </td>
+                <td>{{ student.classe_name|default:"-" }}</td>
+                <td>{{ student.school_name|default:"-" }}</td>
                 <td class='dt-left'>{{ student.id }}</td>
                 <td class='dt-left'>{{ student.prenom }}</td>
                 <td class='dt-left'>{{ student.nom }}</td>
-
+                <td>{{ student.cs_py }}</td>
                 <td class='dt-lef'>{{ student.condition_eleve }}</td>
                 <td class='dt-let'>{{ student.sex }}</td>
-                <td class='dt-left'>{{ student.date_naissance|format_date_obj }}</td>
-                <td>{{ student.cs_py }}</td>
-                <td>{{ student.school_name|default:"-" }}</td>
-                <td>{{ student.classe_name|default:"-" }}</td>
+                <td class='dt-left'>{{ student.date_naissance|date:'Y-m-d' }}</td>
+             
+            
+            
 
                 <td>{{ student.get_hand_display|default:'-' }}</td>
                 <!-- Ensure blank if no handicap -->

@@ -97,7 +97,7 @@ class Mouvement(TimeStampedModel):
     tarif = models.ForeignKey(Tarif, on_delete=models.SET_NULL, null=True, blank=True)
     cashier = models.ForeignKey(Cashier, on_delete=models.CASCADE, null=True, blank=True)
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE, null=True, blank=True)  # Add this field
-    
+
     #mouvement is a student base payment registering model 
     # 
     def save(self, *args, **kwargs):
@@ -125,10 +125,7 @@ class Mouvement(TimeStampedModel):
     def __str__(self):
         return f"{self.causal} {self.montant:,}"
 
-    @property
-    def formatted_date_paye(self):
-        return self.date_paye.strftime('%d/%m/%y')
-    
+
     
 class Expense(TimeStampedModel):
     legacy_id = models.CharField(max_length=36, unique=True ,default='')  # Store UUIDs here
@@ -153,10 +150,7 @@ class Expense(TimeStampedModel):
     def __str__(self):
         return f"{self.description} - {self.amount:,}"    
     
-    @property
-    def formatted_date(self):
-        # Format the date as "DD/MM/YYYY"
-        return self.date.strftime('%d/%m/%Y')
+
 class Transfer(TimeStampedModel):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=timezone.now)

@@ -101,7 +101,7 @@
                     <h5>Prénom: {{ student.prenom }}</h5>
                     <h5>Condition: {{ student.get_condition_eleve_display }}</h5>
                     <h5>Sexe: {{ student.get_sex_display }}</h5>
-                    <h5>Date de Naissance: {{ student.date_naissance|format_date_obj }}</h5>
+                    <h5>Date de Naissance: {{ student.date_naissance|date:'Y-m-d' }}</h5>
                     <h5>CS PY: {{ student.get_cs_py_display }}</h5>
                     {% if student.hand %}
                     <h5>Hand: {{ student.get_hand_display }}</h5>
@@ -109,7 +109,7 @@
                     <h5 style="color: black;">Hand:</h5>
                     {% endif %}
                     {% if student.date_enquete %}
-                    <h5>Date enquete: {{ student.date_enquete|format_date_obj }}</h5>
+                    <h5>Date enquete: {{ student.date_enquete|date:'Y-m-d' }}</h5>
                     {% else %}
                     <h5 style="color: black;">Date enquete:</h5>
                     {% endif %}
@@ -149,26 +149,34 @@
                                     <th>Causal</th>
                                     <th>Montant</th>
                                     <th>Note</th>
-                                    <th>Actions</th>
+                                {% comment %}
+                                        <th>Actions</th>
+                                {% endcomment %}
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for payment in payments %}
                                 <tr>
-                                    <td>{{ payment.date_paye|format_date_obj }}</td>
+                                    <td>{{ payment.date_paye|date:'Y-m-d' }}</td>
                                     <td>{{ payment.causal }}</td>
                                     <td>{{ payment.montant|format_amount }}</td>
                                     <td>{% if payment.note %}{{ payment.note }}{% else %}<span style="color: black;"></span>{% endif %}</td>
-                                    <td>
-                                        <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a>
-                                        <form method="POST" action="{% url 'student_detail' student.pk %}" style="display:inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="payment_id" value="{{ payment.id }}">
-                                            <button type="submit" name="print_receipt" class="btn btn-print btn-sm">
-                                                <i class="fas fa-print"></i>
-                                            </button>
-                                        </form>
+                                  {% comment %}
+                                      <td>
+                                          <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a>
+                                          <form method="POST" action="{% url 'student_detail' student.pk %}" style="display:inline;">
+                                              {% csrf_token %}
+                                          {% comment %}
+                                                  <input type="hidden" name="payment_id" value="{{ payment.id }}">
+                                                     <button type="submit" name="print_receipt" class="btn btn-print btn-sm">
+                                                  <i class="fas fa-print"></i>
+                                              </button>
+                                
+                                           
+                                          </form>
+                              
                                     </td>
+                                    {% endcomment %}
                                 </tr>
                                 {% endfor %}
                             </tbody>

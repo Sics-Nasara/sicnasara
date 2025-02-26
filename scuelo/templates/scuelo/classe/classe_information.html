@@ -85,7 +85,7 @@
                                     <tr>
                                         <td>{{ tarif.get_causal_display }}</td>
                                         <td>{{ tarif.montant|intcomma }}</td>
-                                        <td>{{ tarif.date_expiration|date:"d/m/Y" }}</td>
+                                        <td>{{ tarif.date_expiration|date:'Y-m-d' }}</td>
                                     </tr>
                                     {% empty %}
                                     <tr>

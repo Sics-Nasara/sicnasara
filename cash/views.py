@@ -55,28 +55,28 @@ from .forms import (
 # =======================
 # 4. Payment Management
 # =======================
-@csrf_exempt
 @login_required
 def add_payment(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
-    inscription = Inscription.objects.filter(eleve=student).last()  # Get the last inscription for the student
-    school_name = inscription.classe.ecole.nom if inscription and inscription.classe else "Unknown School"
-    class_type = inscription.classe.type.nom if inscription and inscription.classe else "Unknown Class"
+    inscription = Inscription.objects.filter(eleve=student).last()
+
+    if inscription:
+        school_name = inscription.classe.ecole.nom if inscription.classe else "Unknown School"
+        class_type = inscription.classe.type.nom if inscription.classe else "Unknown Class"
+    else:
+        school_name = "Unknown School"
+        class_type = "Unknown Class"
 
     if request.method == 'POST':
         form = PaiementPerStudentForm(request.POST)
         if form.is_valid():
-            mouvement = form.save(commit=False)  # Don't save yet; we need to set additional fields
-            
-            if inscription:
-                mouvement.inscription = inscription
-                
-                # Set causal based on user selection from the form
-                mouvement.causal = form.cleaned_data['causal']  # Get causal from cleaned data
-                
-                mouvement.save()  # Now save it to the database
+            mouvement = form.save(commit=False)
+            mouvement.inscription = inscription  # Ensure inscription is set
+            mouvement.causal = form.cleaned_data['causal']
 
-                # Log the payment
+            if inscription:
+                mouvement.save()
+                print(f"Payment saved for {student.nom} {student.prenom}")  # Debug: Confirm payment saved
                 StudentLog.objects.create(
                     student=student,
                     user=request.user,
@@ -84,11 +84,12 @@ def add_payment(request, pk):
                     old_value="",
                     new_value=f"Payment - {mouvement.montant} - {mouvement.note} - {mouvement.date_paye}"
                 )
-
-                # Redirect to the student's detail page after successful payment
                 return redirect('student_detail', pk=student.pk)
             else:
                 form.add_error(None, "No active inscription found for this student.")
+        else:
+            print(form.errors)  # Debug: Print form errors
+
     else:
         form = PaiementPerStudentForm()
 
@@ -99,29 +100,30 @@ def add_payment(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
+
 @login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)
-    student = paiement.inscription.eleve  # Get associated student
+    student = paiement.inscription.eleve
     school_name = paiement.inscription.classe.ecole.nom if paiement.inscription.classe else "Unknown School"
     class_type = paiement.inscription.classe.type.nom if paiement.inscription.classe else "Unknown Class"
 
     if request.method == 'POST':
         form = PaiementPerStudentForm(request.POST, instance=paiement)
         if form.is_valid():
-            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye}"
-            updated_payment = form.save()  # Save updated payment
-            
-            # Log the update
+            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye.strftime('%d/%m/%Y')}"
+            updated_payment = form.save()
+
             StudentLog.objects.create(
                 student=student,
                 user=request.user,
                 action="Updated Payment",
                 old_value=old_value,
-                new_value=f"{updated_payment.causal} - {form.cleaned_data['montant']} - {form.cleaned_data['note']} - {form.cleaned_data['date_paye']}"
+                new_value=f"{updated_payment.causal} - {updated_payment.montant} - {updated_payment.note} - {updated_payment.date_paye.strftime('%d/%m/%Y')}"
             )
             return redirect('student_detail', pk=student.pk)
     else:
+        # Correctly initialize the form
         form = PaiementPerStudentForm(instance=paiement)
 
     return render(request, 'cash/paiements/updatepaiment.html', {
@@ -131,7 +133,7 @@ def update_paiement(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
-    
+
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
     model = Mouvement
@@ -560,7 +562,43 @@ def expense_list(request):
         'total_expense': total_expense, 
         'page_identifier': 'S31'# Pass the total expense to the template
     })
+    
+def get_sorted_expenses(request):
+    sort_by = request.GET.get("sort_by", "date")  # Default sorting by date
+    order = request.GET.get("order", "asc")  # Default to ascending order
+    
+    # Apply sorting dynamically
+    if order == "desc":
+        sort_by = f"-{sort_by}"  # Prefix '-' for descending order
+    
+    expenses = Expense.objects.all().order_by(sort_by)
 
+    expense_list = []
+    progressive_total = 0  # Track running total
+    
+    if order == "asc":  # Calculate normally for ascending
+        for exp in expenses:
+            progressive_total += exp.amount
+            expense_list.append({
+                "date": exp.date.strftime("%Y-%m-%d"),
+                "description": f"COMPT-{exp.description}",
+                "amount": exp.amount,
+                "progressive_total": progressive_total
+            })
+    else:  # Calculate progressive total from bottom to top
+        reversed_expenses = list(expenses)[::-1]
+        progressive_total = sum(exp.amount for exp in reversed_expenses)  # Start from full total
+        
+        for exp in reversed_expenses:
+            expense_list.append({
+                "date": exp.date.strftime("%Y-%m-%d"),
+                "description": f"COMPT-{exp.description}",
+                "amount": exp.amount,
+                "progressive_total": progressive_total
+            })
+            progressive_total -= exp.amount  # Subtract backwards
+
+    return JsonResponse({"expenses": expense_list})
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Expense, Cashier, Mouvement
@@ -650,13 +688,6 @@ def income_list_view(request):
     # Calculate the total montant
     total_montant = Mouvement.objects.aggregate(total=Sum('montant'))['total'] or 0
 
-    # Debugging: Print montant values
-    print("All Mouvement Records:")
-    if incomes:
-        for income in incomes:
-            print(f"Causal: {income.causal}, Montant: {income.montant}, Date: {income.date_paye}, Cashier: {income.cashier}")
-    else:
-        print("No Mouvement records found.")
 
     # Prepare data for the template
     income_list = []
@@ -675,7 +706,7 @@ def income_list_view(request):
             inscription_info = f"{student_info} - {class_info}"
 
         income_list.append({
-            'date': income.formatted_date_paye,
+            'date': income.date_paye,
             'causal': income.causal,
             'montant': income.montant,
             'progressive': progressive_total,

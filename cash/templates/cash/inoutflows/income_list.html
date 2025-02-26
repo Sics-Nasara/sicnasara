@@ -5,7 +5,7 @@
 {% block header %}
 <div class="d-flex justify-content-between align-items-center w-100">
     <div class="d-flex align-items-center">
-        <h2 class='navbar-brand mb-0 h1 text-white'>Entrées et Sorties (C-SCO Cashier)</h2>
+        <h2 class='navbar-brand mb-0 h1 text-white'>Entrées  (C-SCO Cashier)</h2>
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>
     <h1 class='navbar-brand mb-0 h1 text-white'>Total: {{ total_montant|format_amount }}</h1>
@@ -79,7 +79,7 @@
         <tbody>
             {% for income in income_list %}
             <tr>
-                <td class=' dt-left'>{{ income.date }}</td>
+                <td class=' dt-left'>{{ income.date|date:'Y-m-d' }}</td>
                 <td class=' dt-left'>{{ income.causal }}</td>
                 <td class=' dt-right'>{{ income.montant|format_amount }}</td> <!-- Format montant -->
                 <td class=' dt-right'>{{ income.progressive|default:"0"|format_amount }}</td> <!-- Format progressive -->
@@ -120,8 +120,8 @@
                 { "className": "dt-left", "targets": [0, 1] }, // Date and Causal columns
                 { "className": "dt-right", "targets": [2, 3] } // Montant and Progressive columns
             ],
-           // "ordering": true,      // Enable sorting
-            "order": [[0, "desc"]], // Order by the first column (Date) in descending order
+            "ordering": true,      // Enable sorting
+            "order": [[0, "asc"]], // Order by the first column (Date) in descending order
             "paging": false,      // Disable pagination
             "info": false,        // Disable info
             "searching": true      // Enable searching

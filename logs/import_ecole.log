@@ -1,60 +1,12 @@
-2025-02-24 01:49:38,358 - INFO - Creating Ecoles...
-2025-02-24 01:49:38,369 - INFO - Created Ecole: Sc_TBD
-2025-02-24 01:49:38,378 - INFO - Created Ecole: Sc_Nas_Mat
-2025-02-24 01:49:38,388 - INFO - Created Ecole: Sc_Nas_Pri
-2025-02-24 01:49:38,398 - INFO - Created Ecole: Sc_LMS
-2025-02-24 01:49:38,408 - INFO - Created Ecole: Sc_WLM
-2025-02-24 01:49:38,419 - INFO - Created Ecole: Sc_LPMSBD
-2025-02-24 01:49:38,429 - INFO - Created Ecole: Sc_WP
-2025-02-24 01:49:38,442 - INFO - Created Ecole: Sc_EPCELP
-2025-02-24 01:49:38,454 - INFO - Created Ecole: Sc_EPPLE
-2025-02-24 01:49:38,466 - INFO - Created Ecole: Sc_YAMT
-2025-02-24 01:49:38,480 - INFO - Created Ecole: Sc_LSB
-2025-02-24 03:29:09,986 - INFO - Creating Ecoles...
-2025-02-24 03:29:09,999 - INFO - Created Ecole: Sc_TBD
-2025-02-24 03:29:10,008 - INFO - Created Ecole: Sc_Nas_Mat
-2025-02-24 03:29:10,017 - INFO - Created Ecole: Sc_Nas_Pri
-2025-02-24 03:29:10,027 - INFO - Created Ecole: Sc_LMS
-2025-02-24 03:29:10,040 - INFO - Created Ecole: Sc_WLM
-2025-02-24 03:29:10,051 - INFO - Created Ecole: Sc_LPMSBD
-2025-02-24 03:29:10,062 - INFO - Created Ecole: Sc_WP
-2025-02-24 03:29:10,074 - INFO - Created Ecole: Sc_EPCELP
-2025-02-24 03:29:10,086 - INFO - Created Ecole: Sc_EPPLE
-2025-02-24 03:29:10,097 - INFO - Created Ecole: Sc_YAMT
-2025-02-24 03:29:10,110 - INFO - Created Ecole: Sc_LSB
-2025-02-24 03:30:21,347 - INFO - Creating Ecoles...
-2025-02-24 03:30:21,348 - INFO - Ecole already exists: Sc_TBD
-2025-02-24 03:30:21,348 - INFO - Ecole already exists: Sc_Nas_Mat
-2025-02-24 03:30:21,349 - INFO - Ecole already exists: Sc_Nas_Pri
-2025-02-24 03:30:21,349 - INFO - Ecole already exists: Sc_LMS
-2025-02-24 03:30:21,349 - INFO - Ecole already exists: Sc_WLM
-2025-02-24 03:30:21,349 - INFO - Ecole already exists: Sc_LPMSBD
-2025-02-24 03:30:21,350 - INFO - Ecole already exists: Sc_WP
-2025-02-24 03:30:21,350 - INFO - Ecole already exists: Sc_EPCELP
-2025-02-24 03:30:21,350 - INFO - Ecole already exists: Sc_EPPLE
-2025-02-24 03:30:21,351 - INFO - Ecole already exists: Sc_YAMT
-2025-02-24 03:30:21,351 - INFO - Ecole already exists: Sc_LSB
-2025-02-24 03:34:43,142 - INFO - Creating Ecoles...
-2025-02-24 03:34:43,153 - INFO - Created Ecole: Sc_TBD
-2025-02-24 03:34:43,162 - INFO - Created Ecole: Sc_Nas_Mat
-2025-02-24 03:34:43,171 - INFO - Created Ecole: Sc_Nas_Pri
-2025-02-24 03:34:43,179 - INFO - Created Ecole: Sc_LMS
-2025-02-24 03:34:43,188 - INFO - Created Ecole: Sc_WLM
-2025-02-24 03:34:43,197 - INFO - Created Ecole: Sc_LPMSBD
-2025-02-24 03:34:43,207 - INFO - Created Ecole: Sc_WP
-2025-02-24 03:34:43,216 - INFO - Created Ecole: Sc_EPCELP
-2025-02-24 03:34:43,227 - INFO - Created Ecole: Sc_EPPLE
-2025-02-24 03:34:43,237 - INFO - Created Ecole: Sc_YAMT
-2025-02-24 03:34:43,247 - INFO - Created Ecole: Sc_LSB
-2025-02-24 03:37:17,699 - INFO - Creating Ecoles...
-2025-02-24 03:37:17,699 - INFO - Ecole already exists: Sc_TBD
-2025-02-24 03:37:17,700 - INFO - Ecole already exists: Sc_Nas_Mat
-2025-02-24 03:37:17,700 - INFO - Ecole already exists: Sc_Nas_Pri
-2025-02-24 03:37:17,700 - INFO - Ecole already exists: Sc_LMS
-2025-02-24 03:37:17,701 - INFO - Ecole already exists: Sc_WLM
-2025-02-24 03:37:17,701 - INFO - Ecole already exists: Sc_LPMSBD
-2025-02-24 03:37:17,701 - INFO - Ecole already exists: Sc_WP
-2025-02-24 03:37:17,701 - INFO - Ecole already exists: Sc_EPCELP
-2025-02-24 03:37:17,702 - INFO - Ecole already exists: Sc_EPPLE
-2025-02-24 03:37:17,702 - INFO - Ecole already exists: Sc_YAMT
-2025-02-24 03:37:17,702 - INFO - Ecole already exists: Sc_LSB
+2025-02-26 13:00:37,836 - INFO - Creating Ecoles...
+2025-02-26 13:00:37,840 - INFO - Ecole already exists: Sc_TBD
+2025-02-26 13:00:37,843 - INFO - Ecole already exists: Sc_Nas_Mat
+2025-02-26 13:00:37,845 - INFO - Ecole already exists: Sc_Nas_Pri
+2025-02-26 13:00:37,846 - INFO - Ecole already exists: Sc_LMS
+2025-02-26 13:00:37,847 - INFO - Ecole already exists: Sc_WLM
+2025-02-26 13:00:37,848 - INFO - Ecole already exists: Sc_LPMSBD
+2025-02-26 13:00:37,849 - INFO - Ecole already exists: Sc_WP
+2025-02-26 13:00:37,850 - INFO - Ecole already exists: Sc_EPCELP
+2025-02-26 13:00:37,851 - INFO - Ecole already exists: Sc_EPPLE
+2025-02-26 13:00:37,852 - INFO - Ecole already exists: Sc_YAMT
+2025-02-26 13:00:37,854 - INFO - Ecole already exists: Sc_LSB

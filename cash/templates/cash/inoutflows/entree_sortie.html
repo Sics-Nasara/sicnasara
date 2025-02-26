@@ -1,5 +1,10 @@
 {% extends "../../layout.html" %}
 {% load custom_filters %}
+<!-- Include DataTables CSS and JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
 
 {% block header %}
 <div class="d-flex justify-content-between align-items-center w-100">
@@ -10,7 +15,9 @@
     <h1 class='navbar-brand mb-0 h1 text-white'>Total: {{ total_balance|format_amount }}</h1>
 
     <div class="d-flex align-items-stretch">
-        <button class="class-card mr-3 hidden-print" id="print-button" title="Print" onclick="myFunction()"><i class="fas fa-print"></i></button>
+        <button class="class-card mr-3 hidden-print" id="print-button" title="Print" onclick="myFunction()">
+            <i class="fas fa-print"></i>
+        </button>
         <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
         <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
@@ -34,7 +41,7 @@
 
     .table th,
     .table td {
-        padding: 2px 8px !important;
+        padding: 5px 10px !important;
         text-align: center;
         font-size: 12px;
     }
@@ -50,79 +57,71 @@
         background-color: #e9ecef;
     }
 
-    /* Custom CSS for left alignment */
+    /* Alignments */
     .dt-left {
         text-align: left !important;
     }
 
-    /* Custom CSS for right alignment */
     .dt-right {
         text-align: right !important;
     }
 </style>
 
-
-<div>
-
+<div class="table-container">
     <table id="entreeSortieTable" class="table table-striped display table-bordered compact">
         <thead>
             <tr>
-                <th class=' dt-left'>Date</th>
-                <th  class=' dt-left'>Description</th>
-                <th>Entrée (Income)</th>
-                <th>Sortie (Outcome)</th>
-                <th>Solde Progressif</th>
+                <th class='dt-left'>Date</th>
+                <th class='dt-left'>Description</th>
+                <th class='dt-right'>Entrée (Income)</th>
+                <th class='dt-right'>Sortie (Outcome)</th>
+                <th class='dt-right'>Solde Progressif</th>
                 <th class='w-50'></th>
             </tr>
         </thead>
         <tbody>
             {% for entry in entries %}
             <tr>
-                <td  class=' dt-left'>{{ entry.date|date:'d/m/Y' }}</td>
-                <td class=' dt-left'>{{ entry.description }}</td>
-                <td class=' dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}-{% endif %}</td>
-                <td class=' dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}-{% endif %}</td>
-                <td class=' dt-right'>{{ entry.progressive|default:"0"|format_amount }}</td>
+                <!-- Sorting uses YYYY-MM-DD format but displays French format -->
+                <td class='dt-left' data-order="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:'Y-m-d' }}</td>
+                <td class='dt-left'>{{ entry.description }}</td>
+                <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}-{% endif %}</td>
+                <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}-{% endif %}</td>
+                <td class='dt-right'>{{ entry.progressive|default:"0"|format_amount }}</td>
                 <td class='w-50'></td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">Aucune entrée disponible.</td>
+                <td colspan="6">Aucune entrée disponible.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
 </div>
 
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.11.5/sorting/datetime-moment.js"></script>
 
 <script>
-    $(document).ready(function() {
-        const table = $('#entreeSortieTable').DataTable({
-           // "order": [[3, "asc"]], // Initial order by date descending
-            "language": {
-                "search": "Search:",
-                "lengthMenu": "Display _MENU_ records per page",
-                "info": "Showing page _PAGE_ of _PAGES_",
-                "infoEmpty": "No records available",
-                "zeroRecords": "No matching records found",
-                "paginate": {
-                    "next": "Next",
-                    "previous": "Previous"
-                }
-            },
+    $(document).ready(function () {
+      //  $.fn.dataTable.moment('YYYY-MM-DD');  // Ensure sorting works with YYYY-MM-DD
+
+        $('#entreeSortieTable').DataTable({
+            "order": [[2, "asc"]],
+            // Enable sorting on all columns except the last one
             "columnDefs": [
-                { "className": "dt-left", "targets": [0, 1] }, // Date and Description columns
-                { "className": "dt-right", "targets": [2, 3, 4] } // Remaining columns (Entrée, Sortie, Solde)
-            ]
-            ordering: false, // Disable sorting
-            paging: false,   // Disable pagination
+                { "orderable": false, "targets": 5 }  // Disable sorting on the last column
+            ],
+            // Default sort by Description column
+            "pageLength": 40,  // Default: 40 entries per page
+            "lengthMenu": [[40, 100, -1], [40, 100, "All"]],  // Pagination options
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
+            }
         });
     });
-    </script>
-    
-
+</script>
 {% endblock %}

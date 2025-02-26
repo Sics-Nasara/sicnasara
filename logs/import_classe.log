@@ -1,345 +1,69 @@
-2025-02-24 01:49:38,667 - INFO - Creating Classes...
-2025-02-24 01:49:38,683 - INFO - Created Classe: 6me-TBD
-2025-02-24 01:49:38,697 - INFO - Created Classe: 5me-TBD
-2025-02-24 01:49:38,712 - INFO - Created Classe: 4me-TBD
-2025-02-24 01:49:38,729 - INFO - Created Classe: 3me-TBD
-2025-02-24 01:49:38,748 - INFO - Created Classe: 2me-TBD
-2025-02-24 01:49:38,765 - INFO - Created Classe: 1ere-TBD
-2025-02-24 01:49:38,779 - INFO - Created Classe: Term-TBD
-2025-02-24 01:49:38,793 - INFO - Created Classe: PS-Nas_Mat
-2025-02-24 01:49:38,808 - INFO - Created Classe: MS-Nas_Mat
-2025-02-24 01:49:38,822 - INFO - Created Classe: GS-Nas_Mat
-2025-02-24 01:49:38,837 - INFO - Created Classe: CP1-Nas_Pri
-2025-02-24 01:49:38,851 - INFO - Created Classe: CP2-Nas_Pri
-2025-02-24 01:49:38,866 - INFO - Created Classe: CE1-Nas_Pri
-2025-02-24 01:49:38,882 - INFO - Created Classe: CE2-Nas_Pri
-2025-02-24 01:49:38,897 - INFO - Created Classe: CM1-Nas_Pri
-2025-02-24 01:49:38,912 - INFO - Created Classe: CM2-Nas_Pri
-2025-02-24 01:49:38,927 - INFO - Created Classe: 6me-LMS
-2025-02-24 01:49:38,942 - INFO - Created Classe: 5me-LMS
-2025-02-24 01:49:38,957 - INFO - Created Classe: 4me-LMS
-2025-02-24 01:49:38,973 - INFO - Created Classe: 3me-LMS
-2025-02-24 01:49:38,988 - INFO - Created Classe: 2me-LMS
-2025-02-24 01:49:39,003 - INFO - Created Classe: 1ere-LMS
-2025-02-24 01:49:39,019 - INFO - Created Classe: Term-LMS
-2025-02-24 01:49:39,033 - INFO - Created Classe: 6me-WLM
-2025-02-24 01:49:39,047 - INFO - Created Classe: 5me-WLM
-2025-02-24 01:49:39,062 - INFO - Created Classe: 4me-WLM
-2025-02-24 01:49:39,077 - INFO - Created Classe: 3me-WLM
-2025-02-24 01:49:39,092 - INFO - Created Classe: 2me-WLM
-2025-02-24 01:49:39,105 - INFO - Created Classe: 1ere-WLM
-2025-02-24 01:49:39,120 - INFO - Created Classe: Term-WLM
-2025-02-24 01:49:39,133 - INFO - Created Classe: 6me-LPMSBD
-2025-02-24 01:49:39,147 - INFO - Created Classe: 5me-LPMSBD
-2025-02-24 01:49:39,165 - INFO - Created Classe: 4me-LPMSBD
-2025-02-24 01:49:39,180 - INFO - Created Classe: 3me-LPMSBD
-2025-02-24 01:49:39,196 - INFO - Created Classe: 2me-LPMSBD
-2025-02-24 01:49:39,213 - INFO - Created Classe: 1ere-LPMSBD
-2025-02-24 01:49:39,230 - INFO - Created Classe: Term-LPMSBD
-2025-02-24 01:49:39,247 - INFO - Created Classe: 6me-WP
-2025-02-24 01:49:39,263 - INFO - Created Classe: 5me-WP
-2025-02-24 01:49:39,278 - INFO - Created Classe: 4me-WP
-2025-02-24 01:49:39,295 - INFO - Created Classe: 3me-WP
-2025-02-24 01:49:39,316 - INFO - Created Classe: 2me-WP
-2025-02-24 01:49:39,333 - INFO - Created Classe: 1ere-WP
-2025-02-24 01:49:39,349 - INFO - Created Classe: Term-WP
-2025-02-24 01:49:39,365 - INFO - Created Classe: CP1-EPCELP
-2025-02-24 01:49:39,382 - INFO - Created Classe: CP2-EPCELP
-2025-02-24 01:49:39,397 - INFO - Created Classe: CE1-EPCELP
-2025-02-24 01:49:39,415 - INFO - Created Classe: CE2-EPCELP
-2025-02-24 01:49:39,431 - INFO - Created Classe: CM1-EPCELP
-2025-02-24 01:49:39,447 - INFO - Created Classe: CM2-EPCELP
-2025-02-24 01:49:39,465 - INFO - Created Classe: CP1-EPPLE
-2025-02-24 01:49:39,479 - INFO - Created Classe: CP2-EPPLE
-2025-02-24 01:49:39,494 - INFO - Created Classe: CE1-EPPLE
-2025-02-24 01:49:39,512 - INFO - Created Classe: CE2-EPPLE
-2025-02-24 01:49:39,527 - INFO - Created Classe: CM1-EPPLE
-2025-02-24 01:49:39,541 - INFO - Created Classe: CM2-EPPLE
-2025-02-24 01:49:39,554 - INFO - Created Classe: CP1-YAMT
-2025-02-24 01:49:39,568 - INFO - Created Classe: CP2-YAMT
-2025-02-24 01:49:39,583 - INFO - Created Classe: CE1-YAMT
-2025-02-24 01:49:39,597 - INFO - Created Classe: CE2-YAMT
-2025-02-24 01:49:39,612 - INFO - Created Classe: CM1-YAMT
-2025-02-24 01:49:39,628 - INFO - Created Classe: CM2-YAMT
-2025-02-24 01:49:39,643 - INFO - Created Classe: CP1-LSB
-2025-02-24 01:49:39,657 - INFO - Created Classe: CP2-LSB
-2025-02-24 01:49:39,671 - INFO - Created Classe: CE1-LSB
-2025-02-24 01:49:39,686 - INFO - Created Classe: CE2-LSB
-2025-02-24 01:49:39,700 - INFO - Created Classe: CM1-LSB
-2025-02-24 01:49:39,714 - INFO - Created Classe: CM2-LSB
-2025-02-24 03:29:10,279 - INFO - Creating Classes...
-2025-02-24 03:29:10,291 - INFO - Created Classe: 6me-TBD
-2025-02-24 03:29:10,301 - INFO - Created Classe: 5me-TBD
-2025-02-24 03:29:10,311 - INFO - Created Classe: 4me-TBD
-2025-02-24 03:29:10,321 - INFO - Created Classe: 3me-TBD
-2025-02-24 03:29:10,332 - INFO - Created Classe: 2me-TBD
-2025-02-24 03:29:10,342 - INFO - Created Classe: 1ere-TBD
-2025-02-24 03:29:10,351 - INFO - Created Classe: Term-TBD
-2025-02-24 03:29:10,362 - INFO - Created Classe: PS-Nas_Mat
-2025-02-24 03:29:10,373 - INFO - Created Classe: MS-Nas_Mat
-2025-02-24 03:29:10,385 - INFO - Created Classe: GS-Nas_Mat
-2025-02-24 03:29:10,396 - INFO - Created Classe: CP1-Nas_Pri
-2025-02-24 03:29:10,406 - INFO - Created Classe: CP2-Nas_Pri
-2025-02-24 03:29:10,415 - INFO - Created Classe: CE1-Nas_Pri
-2025-02-24 03:29:10,425 - INFO - Created Classe: CE2-Nas_Pri
-2025-02-24 03:29:10,435 - INFO - Created Classe: CM1-Nas_Pri
-2025-02-24 03:29:10,444 - INFO - Created Classe: CM2-Nas_Pri
-2025-02-24 03:29:10,456 - INFO - Created Classe: 6me-LMS
-2025-02-24 03:29:10,467 - INFO - Created Classe: 5me-LMS
-2025-02-24 03:29:10,479 - INFO - Created Classe: 4me-LMS
-2025-02-24 03:29:10,491 - INFO - Created Classe: 3me-LMS
-2025-02-24 03:29:10,505 - INFO - Created Classe: 2me-LMS
-2025-02-24 03:29:10,517 - INFO - Created Classe: 1ere-LMS
-2025-02-24 03:29:10,530 - INFO - Created Classe: Term-LMS
-2025-02-24 03:29:10,543 - INFO - Created Classe: 6me-WLM
-2025-02-24 03:29:10,555 - INFO - Created Classe: 5me-WLM
-2025-02-24 03:29:10,569 - INFO - Created Classe: 4me-WLM
-2025-02-24 03:29:10,579 - INFO - Created Classe: 3me-WLM
-2025-02-24 03:29:10,589 - INFO - Created Classe: 2me-WLM
-2025-02-24 03:29:10,598 - INFO - Created Classe: 1ere-WLM
-2025-02-24 03:29:10,607 - INFO - Created Classe: Term-WLM
-2025-02-24 03:29:10,616 - INFO - Created Classe: 6me-LPMSBD
-2025-02-24 03:29:10,625 - INFO - Created Classe: 5me-LPMSBD
-2025-02-24 03:29:10,634 - INFO - Created Classe: 4me-LPMSBD
-2025-02-24 03:29:10,643 - INFO - Created Classe: 3me-LPMSBD
-2025-02-24 03:29:10,652 - INFO - Created Classe: 2me-LPMSBD
-2025-02-24 03:29:10,661 - INFO - Created Classe: 1ere-LPMSBD
-2025-02-24 03:29:10,672 - INFO - Created Classe: Term-LPMSBD
-2025-02-24 03:29:10,687 - INFO - Created Classe: 6me-WP
-2025-02-24 03:29:10,700 - INFO - Created Classe: 5me-WP
-2025-02-24 03:29:10,710 - INFO - Created Classe: 4me-WP
-2025-02-24 03:29:10,723 - INFO - Created Classe: 3me-WP
-2025-02-24 03:29:10,733 - INFO - Created Classe: 2me-WP
-2025-02-24 03:29:10,744 - INFO - Created Classe: 1ere-WP
-2025-02-24 03:29:10,756 - INFO - Created Classe: Term-WP
-2025-02-24 03:29:10,768 - INFO - Created Classe: CP1-EPCELP
-2025-02-24 03:29:10,780 - INFO - Created Classe: CP2-EPCELP
-2025-02-24 03:29:10,790 - INFO - Created Classe: CE1-EPCELP
-2025-02-24 03:29:10,802 - INFO - Created Classe: CE2-EPCELP
-2025-02-24 03:29:10,815 - INFO - Created Classe: CM1-EPCELP
-2025-02-24 03:29:10,827 - INFO - Created Classe: CM2-EPCELP
-2025-02-24 03:29:10,838 - INFO - Created Classe: CP1-EPPLE
-2025-02-24 03:29:10,853 - INFO - Created Classe: CP2-EPPLE
-2025-02-24 03:29:10,863 - INFO - Created Classe: CE1-EPPLE
-2025-02-24 03:29:10,871 - INFO - Created Classe: CE2-EPPLE
-2025-02-24 03:29:10,881 - INFO - Created Classe: CM1-EPPLE
-2025-02-24 03:29:10,897 - INFO - Created Classe: CM2-EPPLE
-2025-02-24 03:29:10,908 - INFO - Created Classe: CP1-YAMT
-2025-02-24 03:29:10,918 - INFO - Created Classe: CP2-YAMT
-2025-02-24 03:29:10,927 - INFO - Created Classe: CE1-YAMT
-2025-02-24 03:29:10,941 - INFO - Created Classe: CE2-YAMT
-2025-02-24 03:29:10,954 - INFO - Created Classe: CM1-YAMT
-2025-02-24 03:29:10,966 - INFO - Created Classe: CM2-YAMT
-2025-02-24 03:29:10,977 - INFO - Created Classe: CP1-LSB
-2025-02-24 03:29:10,991 - INFO - Created Classe: CP2-LSB
-2025-02-24 03:29:11,002 - INFO - Created Classe: CE1-LSB
-2025-02-24 03:29:11,012 - INFO - Created Classe: CE2-LSB
-2025-02-24 03:29:11,023 - INFO - Created Classe: CM1-LSB
-2025-02-24 03:29:11,032 - INFO - Created Classe: CM2-LSB
-2025-02-24 03:30:21,355 - INFO - Creating Classes...
-2025-02-24 03:30:21,356 - INFO - Classe already exists: 6me-TBD
-2025-02-24 03:30:21,357 - INFO - Classe already exists: 5me-TBD
-2025-02-24 03:30:21,358 - INFO - Classe already exists: 4me-TBD
-2025-02-24 03:30:21,359 - INFO - Classe already exists: 3me-TBD
-2025-02-24 03:30:21,360 - INFO - Classe already exists: 2me-TBD
-2025-02-24 03:30:21,361 - INFO - Classe already exists: 1ere-TBD
-2025-02-24 03:30:21,361 - INFO - Classe already exists: Term-TBD
-2025-02-24 03:30:21,362 - INFO - Classe already exists: PS-Nas_Mat
-2025-02-24 03:30:21,365 - INFO - Classe already exists: MS-Nas_Mat
-2025-02-24 03:30:21,366 - INFO - Classe already exists: GS-Nas_Mat
-2025-02-24 03:30:21,367 - INFO - Classe already exists: CP1-Nas_Pri
-2025-02-24 03:30:21,368 - INFO - Classe already exists: CP2-Nas_Pri
-2025-02-24 03:30:21,369 - INFO - Classe already exists: CE1-Nas_Pri
-2025-02-24 03:30:21,370 - INFO - Classe already exists: CE2-Nas_Pri
-2025-02-24 03:30:21,371 - INFO - Classe already exists: CM1-Nas_Pri
-2025-02-24 03:30:21,372 - INFO - Classe already exists: CM2-Nas_Pri
-2025-02-24 03:30:21,372 - INFO - Classe already exists: 6me-LMS
-2025-02-24 03:30:21,373 - INFO - Classe already exists: 5me-LMS
-2025-02-24 03:30:21,374 - INFO - Classe already exists: 4me-LMS
-2025-02-24 03:30:21,375 - INFO - Classe already exists: 3me-LMS
-2025-02-24 03:30:21,376 - INFO - Classe already exists: 2me-LMS
-2025-02-24 03:30:21,377 - INFO - Classe already exists: 1ere-LMS
-2025-02-24 03:30:21,378 - INFO - Classe already exists: Term-LMS
-2025-02-24 03:30:21,379 - INFO - Classe already exists: 6me-WLM
-2025-02-24 03:30:21,380 - INFO - Classe already exists: 5me-WLM
-2025-02-24 03:30:21,381 - INFO - Classe already exists: 4me-WLM
-2025-02-24 03:30:21,382 - INFO - Classe already exists: 3me-WLM
-2025-02-24 03:30:21,383 - INFO - Classe already exists: 2me-WLM
-2025-02-24 03:30:21,383 - INFO - Classe already exists: 1ere-WLM
-2025-02-24 03:30:21,384 - INFO - Classe already exists: Term-WLM
-2025-02-24 03:30:21,385 - INFO - Classe already exists: 6me-LPMSBD
-2025-02-24 03:30:21,386 - INFO - Classe already exists: 5me-LPMSBD
-2025-02-24 03:30:21,387 - INFO - Classe already exists: 4me-LPMSBD
-2025-02-24 03:30:21,388 - INFO - Classe already exists: 3me-LPMSBD
-2025-02-24 03:30:21,389 - INFO - Classe already exists: 2me-LPMSBD
-2025-02-24 03:30:21,389 - INFO - Classe already exists: 1ere-LPMSBD
-2025-02-24 03:30:21,390 - INFO - Classe already exists: Term-LPMSBD
-2025-02-24 03:30:21,391 - INFO - Classe already exists: 6me-WP
-2025-02-24 03:30:21,392 - INFO - Classe already exists: 5me-WP
-2025-02-24 03:30:21,393 - INFO - Classe already exists: 4me-WP
-2025-02-24 03:30:21,394 - INFO - Classe already exists: 3me-WP
-2025-02-24 03:30:21,395 - INFO - Classe already exists: 2me-WP
-2025-02-24 03:30:21,396 - INFO - Classe already exists: 1ere-WP
-2025-02-24 03:30:21,397 - INFO - Classe already exists: Term-WP
-2025-02-24 03:30:21,398 - INFO - Classe already exists: CP1-EPCELP
-2025-02-24 03:30:21,399 - INFO - Classe already exists: CP2-EPCELP
-2025-02-24 03:30:21,400 - INFO - Classe already exists: CE1-EPCELP
-2025-02-24 03:30:21,401 - INFO - Classe already exists: CE2-EPCELP
-2025-02-24 03:30:21,402 - INFO - Classe already exists: CM1-EPCELP
-2025-02-24 03:30:21,403 - INFO - Classe already exists: CM2-EPCELP
-2025-02-24 03:30:21,404 - INFO - Classe already exists: CP1-EPPLE
-2025-02-24 03:30:21,405 - INFO - Classe already exists: CP2-EPPLE
-2025-02-24 03:30:21,406 - INFO - Classe already exists: CE1-EPPLE
-2025-02-24 03:30:21,407 - INFO - Classe already exists: CE2-EPPLE
-2025-02-24 03:30:21,408 - INFO - Classe already exists: CM1-EPPLE
-2025-02-24 03:30:21,409 - INFO - Classe already exists: CM2-EPPLE
-2025-02-24 03:30:21,409 - INFO - Classe already exists: CP1-YAMT
-2025-02-24 03:30:21,410 - INFO - Classe already exists: CP2-YAMT
-2025-02-24 03:30:21,411 - INFO - Classe already exists: CE1-YAMT
-2025-02-24 03:30:21,412 - INFO - Classe already exists: CE2-YAMT
-2025-02-24 03:30:21,413 - INFO - Classe already exists: CM1-YAMT
-2025-02-24 03:30:21,414 - INFO - Classe already exists: CM2-YAMT
-2025-02-24 03:30:21,415 - INFO - Classe already exists: CP1-LSB
-2025-02-24 03:30:21,416 - INFO - Classe already exists: CP2-LSB
-2025-02-24 03:30:21,417 - INFO - Classe already exists: CE1-LSB
-2025-02-24 03:30:21,418 - INFO - Classe already exists: CE2-LSB
-2025-02-24 03:30:21,419 - INFO - Classe already exists: CM1-LSB
-2025-02-24 03:30:21,420 - INFO - Classe already exists: CM2-LSB
-2025-02-24 03:34:43,413 - INFO - Creating Classes...
-2025-02-24 03:34:43,427 - INFO - Created Classe: 6me-TBD
-2025-02-24 03:34:43,439 - INFO - Created Classe: 5me-TBD
-2025-02-24 03:34:43,453 - INFO - Created Classe: 4me-TBD
-2025-02-24 03:34:43,465 - INFO - Created Classe: 3me-TBD
-2025-02-24 03:34:43,476 - INFO - Created Classe: 2me-TBD
-2025-02-24 03:34:43,486 - INFO - Created Classe: 1ere-TBD
-2025-02-24 03:34:43,496 - INFO - Created Classe: Term-TBD
-2025-02-24 03:34:43,506 - INFO - Created Classe: PS-Nas_Mat
-2025-02-24 03:34:43,516 - INFO - Created Classe: MS-Nas_Mat
-2025-02-24 03:34:43,527 - INFO - Created Classe: GS-Nas_Mat
-2025-02-24 03:34:43,537 - INFO - Created Classe: CP1-Nas_Pri
-2025-02-24 03:34:43,547 - INFO - Created Classe: CP2-Nas_Pri
-2025-02-24 03:34:43,556 - INFO - Created Classe: CE1-Nas_Pri
-2025-02-24 03:34:43,565 - INFO - Created Classe: CE2-Nas_Pri
-2025-02-24 03:34:43,574 - INFO - Created Classe: CM1-Nas_Pri
-2025-02-24 03:34:43,585 - INFO - Created Classe: CM2-Nas_Pri
-2025-02-24 03:34:43,598 - INFO - Created Classe: 6me-LMS
-2025-02-24 03:34:43,609 - INFO - Created Classe: 5me-LMS
-2025-02-24 03:34:43,620 - INFO - Created Classe: 4me-LMS
-2025-02-24 03:34:43,630 - INFO - Created Classe: 3me-LMS
-2025-02-24 03:34:43,644 - INFO - Created Classe: 2me-LMS
-2025-02-24 03:34:43,656 - INFO - Created Classe: 1ere-LMS
-2025-02-24 03:34:43,667 - INFO - Created Classe: Term-LMS
-2025-02-24 03:34:43,678 - INFO - Created Classe: 6me-WLM
-2025-02-24 03:34:43,692 - INFO - Created Classe: 5me-WLM
-2025-02-24 03:34:43,705 - INFO - Created Classe: 4me-WLM
-2025-02-24 03:34:43,716 - INFO - Created Classe: 3me-WLM
-2025-02-24 03:34:43,726 - INFO - Created Classe: 2me-WLM
-2025-02-24 03:34:43,738 - INFO - Created Classe: 1ere-WLM
-2025-02-24 03:34:43,752 - INFO - Created Classe: Term-WLM
-2025-02-24 03:34:43,766 - INFO - Created Classe: 6me-LPMSBD
-2025-02-24 03:34:43,779 - INFO - Created Classe: 5me-LPMSBD
-2025-02-24 03:34:43,791 - INFO - Created Classe: 4me-LPMSBD
-2025-02-24 03:34:43,805 - INFO - Created Classe: 3me-LPMSBD
-2025-02-24 03:34:43,816 - INFO - Created Classe: 2me-LPMSBD
-2025-02-24 03:34:43,827 - INFO - Created Classe: 1ere-LPMSBD
-2025-02-24 03:34:43,837 - INFO - Created Classe: Term-LPMSBD
-2025-02-24 03:34:43,846 - INFO - Created Classe: 6me-WP
-2025-02-24 03:34:43,856 - INFO - Created Classe: 5me-WP
-2025-02-24 03:34:43,867 - INFO - Created Classe: 4me-WP
-2025-02-24 03:34:43,877 - INFO - Created Classe: 3me-WP
-2025-02-24 03:34:43,888 - INFO - Created Classe: 2me-WP
-2025-02-24 03:34:43,898 - INFO - Created Classe: 1ere-WP
-2025-02-24 03:34:43,911 - INFO - Created Classe: Term-WP
-2025-02-24 03:34:43,923 - INFO - Created Classe: CP1-EPCELP
-2025-02-24 03:34:43,935 - INFO - Created Classe: CP2-EPCELP
-2025-02-24 03:34:43,945 - INFO - Created Classe: CE1-EPCELP
-2025-02-24 03:34:43,957 - INFO - Created Classe: CE2-EPCELP
-2025-02-24 03:34:43,969 - INFO - Created Classe: CM1-EPCELP
-2025-02-24 03:34:43,981 - INFO - Created Classe: CM2-EPCELP
-2025-02-24 03:34:43,992 - INFO - Created Classe: CP1-EPPLE
-2025-02-24 03:34:44,002 - INFO - Created Classe: CP2-EPPLE
-2025-02-24 03:34:44,012 - INFO - Created Classe: CE1-EPPLE
-2025-02-24 03:34:44,023 - INFO - Created Classe: CE2-EPPLE
-2025-02-24 03:34:44,033 - INFO - Created Classe: CM1-EPPLE
-2025-02-24 03:34:44,044 - INFO - Created Classe: CM2-EPPLE
-2025-02-24 03:34:44,054 - INFO - Created Classe: CP1-YAMT
-2025-02-24 03:34:44,064 - INFO - Created Classe: CP2-YAMT
-2025-02-24 03:34:44,074 - INFO - Created Classe: CE1-YAMT
-2025-02-24 03:34:44,084 - INFO - Created Classe: CE2-YAMT
-2025-02-24 03:34:44,094 - INFO - Created Classe: CM1-YAMT
-2025-02-24 03:34:44,107 - INFO - Created Classe: CM2-YAMT
-2025-02-24 03:34:44,117 - INFO - Created Classe: CP1-LSB
-2025-02-24 03:34:44,127 - INFO - Created Classe: CP2-LSB
-2025-02-24 03:34:44,136 - INFO - Created Classe: CE1-LSB
-2025-02-24 03:34:44,145 - INFO - Created Classe: CE2-LSB
-2025-02-24 03:34:44,155 - INFO - Created Classe: CM1-LSB
-2025-02-24 03:34:44,166 - INFO - Created Classe: CM2-LSB
-2025-02-24 03:37:17,707 - INFO - Creating Classes...
-2025-02-24 03:37:17,708 - INFO - Classe already exists: 6me-TBD
-2025-02-24 03:37:17,709 - INFO - Classe already exists: 5me-TBD
-2025-02-24 03:37:17,710 - INFO - Classe already exists: 4me-TBD
-2025-02-24 03:37:17,711 - INFO - Classe already exists: 3me-TBD
-2025-02-24 03:37:17,712 - INFO - Classe already exists: 2me-TBD
-2025-02-24 03:37:17,713 - INFO - Classe already exists: 1ere-TBD
-2025-02-24 03:37:17,714 - INFO - Classe already exists: Term-TBD
-2025-02-24 03:37:17,715 - INFO - Classe already exists: PS-Nas_Mat
-2025-02-24 03:37:17,716 - INFO - Classe already exists: MS-Nas_Mat
-2025-02-24 03:37:17,717 - INFO - Classe already exists: GS-Nas_Mat
-2025-02-24 03:37:17,718 - INFO - Classe already exists: CP1-Nas_Pri
-2025-02-24 03:37:17,719 - INFO - Classe already exists: CP2-Nas_Pri
-2025-02-24 03:37:17,720 - INFO - Classe already exists: CE1-Nas_Pri
-2025-02-24 03:37:17,721 - INFO - Classe already exists: CE2-Nas_Pri
-2025-02-24 03:37:17,722 - INFO - Classe already exists: CM1-Nas_Pri
-2025-02-24 03:37:17,723 - INFO - Classe already exists: CM2-Nas_Pri
-2025-02-24 03:37:17,724 - INFO - Classe already exists: 6me-LMS
-2025-02-24 03:37:17,724 - INFO - Classe already exists: 5me-LMS
-2025-02-24 03:37:17,725 - INFO - Classe already exists: 4me-LMS
-2025-02-24 03:37:17,726 - INFO - Classe already exists: 3me-LMS
-2025-02-24 03:37:17,727 - INFO - Classe already exists: 2me-LMS
-2025-02-24 03:37:17,728 - INFO - Classe already exists: 1ere-LMS
-2025-02-24 03:37:17,729 - INFO - Classe already exists: Term-LMS
-2025-02-24 03:37:17,729 - INFO - Classe already exists: 6me-WLM
-2025-02-24 03:37:17,730 - INFO - Classe already exists: 5me-WLM
-2025-02-24 03:37:17,731 - INFO - Classe already exists: 4me-WLM
-2025-02-24 03:37:17,732 - INFO - Classe already exists: 3me-WLM
-2025-02-24 03:37:17,733 - INFO - Classe already exists: 2me-WLM
-2025-02-24 03:37:17,734 - INFO - Classe already exists: 1ere-WLM
-2025-02-24 03:37:17,735 - INFO - Classe already exists: Term-WLM
-2025-02-24 03:37:17,735 - INFO - Classe already exists: 6me-LPMSBD
-2025-02-24 03:37:17,736 - INFO - Classe already exists: 5me-LPMSBD
-2025-02-24 03:37:17,737 - INFO - Classe already exists: 4me-LPMSBD
-2025-02-24 03:37:17,738 - INFO - Classe already exists: 3me-LPMSBD
-2025-02-24 03:37:17,739 - INFO - Classe already exists: 2me-LPMSBD
-2025-02-24 03:37:17,740 - INFO - Classe already exists: 1ere-LPMSBD
-2025-02-24 03:37:17,741 - INFO - Classe already exists: Term-LPMSBD
-2025-02-24 03:37:17,742 - INFO - Classe already exists: 6me-WP
-2025-02-24 03:37:17,743 - INFO - Classe already exists: 5me-WP
-2025-02-24 03:37:17,743 - INFO - Classe already exists: 4me-WP
-2025-02-24 03:37:17,744 - INFO - Classe already exists: 3me-WP
-2025-02-24 03:37:17,745 - INFO - Classe already exists: 2me-WP
-2025-02-24 03:37:17,746 - INFO - Classe already exists: 1ere-WP
-2025-02-24 03:37:17,747 - INFO - Classe already exists: Term-WP
-2025-02-24 03:37:17,748 - INFO - Classe already exists: CP1-EPCELP
-2025-02-24 03:37:17,749 - INFO - Classe already exists: CP2-EPCELP
-2025-02-24 03:37:17,750 - INFO - Classe already exists: CE1-EPCELP
-2025-02-24 03:37:17,751 - INFO - Classe already exists: CE2-EPCELP
-2025-02-24 03:37:17,751 - INFO - Classe already exists: CM1-EPCELP
-2025-02-24 03:37:17,752 - INFO - Classe already exists: CM2-EPCELP
-2025-02-24 03:37:17,753 - INFO - Classe already exists: CP1-EPPLE
-2025-02-24 03:37:17,754 - INFO - Classe already exists: CP2-EPPLE
-2025-02-24 03:37:17,755 - INFO - Classe already exists: CE1-EPPLE
-2025-02-24 03:37:17,756 - INFO - Classe already exists: CE2-EPPLE
-2025-02-24 03:37:17,757 - INFO - Classe already exists: CM1-EPPLE
-2025-02-24 03:37:17,758 - INFO - Classe already exists: CM2-EPPLE
-2025-02-24 03:37:17,758 - INFO - Classe already exists: CP1-YAMT
-2025-02-24 03:37:17,759 - INFO - Classe already exists: CP2-YAMT
-2025-02-24 03:37:17,760 - INFO - Classe already exists: CE1-YAMT
-2025-02-24 03:37:17,761 - INFO - Classe already exists: CE2-YAMT
-2025-02-24 03:37:17,762 - INFO - Classe already exists: CM1-YAMT
-2025-02-24 03:37:17,763 - INFO - Classe already exists: CM2-YAMT
-2025-02-24 03:37:17,763 - INFO - Classe already exists: CP1-LSB
-2025-02-24 03:37:17,764 - INFO - Classe already exists: CP2-LSB
-2025-02-24 03:37:17,765 - INFO - Classe already exists: CE1-LSB
-2025-02-24 03:37:17,766 - INFO - Classe already exists: CE2-LSB
-2025-02-24 03:37:17,767 - INFO - Classe already exists: CM1-LSB
-2025-02-24 03:37:17,768 - INFO - Classe already exists: CM2-LSB
+2025-02-26 13:00:37,867 - INFO - Creating Classes...
+2025-02-26 13:00:37,872 - INFO - Classe already exists: 6me-TBD
+2025-02-26 13:00:37,874 - INFO - Classe already exists: 5me-TBD
+2025-02-26 13:00:37,876 - INFO - Classe already exists: 4me-TBD
+2025-02-26 13:00:37,878 - INFO - Classe already exists: 3me-TBD
+2025-02-26 13:00:37,880 - INFO - Classe already exists: 2me-TBD
+2025-02-26 13:00:37,883 - INFO - Classe already exists: 1ere-TBD
+2025-02-26 13:00:37,885 - INFO - Classe already exists: Term-TBD
+2025-02-26 13:00:37,888 - INFO - Classe already exists: PS-Nas_Mat
+2025-02-26 13:00:37,890 - INFO - Classe already exists: MS-Nas_Mat
+2025-02-26 13:00:37,893 - INFO - Classe already exists: GS-Nas_Mat
+2025-02-26 13:00:37,895 - INFO - Classe already exists: CP1-Nas_Pri
+2025-02-26 13:00:37,898 - INFO - Classe already exists: CP2-Nas_Pri
+2025-02-26 13:00:37,901 - INFO - Classe already exists: CE1-Nas_Pri
+2025-02-26 13:00:37,903 - INFO - Classe already exists: CE2-Nas_Pri
+2025-02-26 13:00:37,905 - INFO - Classe already exists: CM1-Nas_Pri
+2025-02-26 13:00:37,907 - INFO - Classe already exists: CM2-Nas_Pri
+2025-02-26 13:00:37,910 - INFO - Classe already exists: 6me-LMS
+2025-02-26 13:00:37,911 - INFO - Classe already exists: 5me-LMS
+2025-02-26 13:00:37,914 - INFO - Classe already exists: 4me-LMS
+2025-02-26 13:00:37,916 - INFO - Classe already exists: 3me-LMS
+2025-02-26 13:00:37,918 - INFO - Classe already exists: 2me-LMS
+2025-02-26 13:00:37,920 - INFO - Classe already exists: 1ere-LMS
+2025-02-26 13:00:37,922 - INFO - Classe already exists: Term-LMS
+2025-02-26 13:00:37,924 - INFO - Classe already exists: 6me-WLM
+2025-02-26 13:00:37,926 - INFO - Classe already exists: 5me-WLM
+2025-02-26 13:00:37,928 - INFO - Classe already exists: 4me-WLM
+2025-02-26 13:00:37,930 - INFO - Classe already exists: 3me-WLM
+2025-02-26 13:00:37,932 - INFO - Classe already exists: 2me-WLM
+2025-02-26 13:00:37,935 - INFO - Classe already exists: 1ere-WLM
+2025-02-26 13:00:37,936 - INFO - Classe already exists: Term-WLM
+2025-02-26 13:00:37,939 - INFO - Classe already exists: 6me-LPMSBD
+2025-02-26 13:00:37,941 - INFO - Classe already exists: 5me-LPMSBD
+2025-02-26 13:00:37,943 - INFO - Classe already exists: 4me-LPMSBD
+2025-02-26 13:00:37,945 - INFO - Classe already exists: 3me-LPMSBD
+2025-02-26 13:00:37,947 - INFO - Classe already exists: 2me-LPMSBD
+2025-02-26 13:00:37,948 - INFO - Classe already exists: 1ere-LPMSBD
+2025-02-26 13:00:37,950 - INFO - Classe already exists: Term-LPMSBD
+2025-02-26 13:00:37,952 - INFO - Classe already exists: 6me-WP
+2025-02-26 13:00:37,954 - INFO - Classe already exists: 5me-WP
+2025-02-26 13:00:37,956 - INFO - Classe already exists: 4me-WP
+2025-02-26 13:00:37,958 - INFO - Classe already exists: 3me-WP
+2025-02-26 13:00:37,959 - INFO - Classe already exists: 2me-WP
+2025-02-26 13:00:37,962 - INFO - Classe already exists: 1ere-WP
+2025-02-26 13:00:37,963 - INFO - Classe already exists: Term-WP
+2025-02-26 13:00:37,965 - INFO - Classe already exists: CP1-EPCELP
+2025-02-26 13:00:37,967 - INFO - Classe already exists: CP2-EPCELP
+2025-02-26 13:00:37,968 - INFO - Classe already exists: CE1-EPCELP
+2025-02-26 13:00:37,971 - INFO - Classe already exists: CE2-EPCELP
+2025-02-26 13:00:37,973 - INFO - Classe already exists: CM1-EPCELP
+2025-02-26 13:00:37,975 - INFO - Classe already exists: CM2-EPCELP
+2025-02-26 13:00:37,976 - INFO - Classe already exists: CP1-EPPLE
+2025-02-26 13:00:37,978 - INFO - Classe already exists: CP2-EPPLE
+2025-02-26 13:00:37,980 - INFO - Classe already exists: CE1-EPPLE
+2025-02-26 13:00:37,982 - INFO - Classe already exists: CE2-EPPLE
+2025-02-26 13:00:37,984 - INFO - Classe already exists: CM1-EPPLE
+2025-02-26 13:00:37,985 - INFO - Classe already exists: CM2-EPPLE
+2025-02-26 13:00:37,987 - INFO - Classe already exists: CP1-YAMT
+2025-02-26 13:00:37,989 - INFO - Classe already exists: CP2-YAMT
+2025-02-26 13:00:37,992 - INFO - Classe already exists: CE1-YAMT
+2025-02-26 13:00:37,994 - INFO - Classe already exists: CE2-YAMT
+2025-02-26 13:00:37,995 - INFO - Classe already exists: CM1-YAMT
+2025-02-26 13:00:37,997 - INFO - Classe already exists: CM2-YAMT
+2025-02-26 13:00:37,999 - INFO - Classe already exists: CP1-LSB
+2025-02-26 13:00:38,000 - INFO - Classe already exists: CP2-LSB
+2025-02-26 13:00:38,002 - INFO - Classe already exists: CE1-LSB
+2025-02-26 13:00:38,004 - INFO - Classe already exists: CE2-LSB
+2025-02-26 13:00:38,006 - INFO - Classe already exists: CM1-LSB
+2025-02-26 13:00:38,008 - INFO - Classe already exists: CM2-LSB

@@ -61,7 +61,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
         #file_path = f'{BASE_DIR}/export_sics/combined_excel.xlsx'  # Use the combined Excel file
-        file_path = f'{BASE_DIR}/export_sics/combined_students_payments.xlsx' 
+        file_path = f'{BASE_DIR}/export_sics/combined_students_paymentsgood1.xlsx' 
         failed_eleves = []
 
         # Create logs directory if it doesn't exist
@@ -295,13 +295,13 @@ class Command(BaseCommand):
                         "sex_value": row_values[columns_eleve['Sex']],
                         "cs_py_value": row_values[columns_eleve['CS_PY']],
                         "hand_value": row_values[columns_eleve['Hand']],
-                        "D_enquete": row_values[columns_eleve['D_enquete']],
+                        "D_inchiesta": row_values[columns_eleve['D_inchiesta']],
                         "Nom": row_values[columns_eleve['Nom']],
                         "Prenom": row_values[columns_eleve['Prenom']],
                         "Date-Naissance": row_values[columns_eleve['Date-Naissance']],
                         "A_inscr": row_values[columns_eleve['A_inscr']],
                         "Parent": row_values[columns_eleve['Parent']],
-                        "Tel_parent": row_values[columns_eleve['Tel_parent']]
+                        "Tel_parent": row_values[columns_eleve['Tel_parente']]
                     }
                      #here transform cs_py_value
                     condition_eleve_value = student_data["condition_eleve_value"]
@@ -360,7 +360,7 @@ class Command(BaseCommand):
                         pk=eleve_id,
                         defaults={
                             'legacy_id': eleve_id,
-                            'date_enquete': parse_date(student_data['D_enquete']),
+                            'date_enquete': parse_date(student_data['D_inchiesta']),
                             'nom': student_data['Nom'],
                             'prenom': student_data['Prenom'],
                             'condition_eleve': condition_eleve_value,

@@ -7,10 +7,16 @@ from .views import (
         UniformReservationListView,
     UniformReservationCreateView,
     UniformReservationUpdateView,
-    UniformReservationDeleteView, student_search
+    UniformReservationDeleteView, student_search , get_sorted_expenses
     
 )
+
 urlpatterns = [
+    
+    #sorting api 
+    path("api/expenses/", get_sorted_expenses, name="get_sorted_expenses"),
+    
+    
     path('uniform_payments/', UniformPaymentListView.as_view(), name='uniform_payments'),
      path('reservations/', UniformReservationListView.as_view(), name='uniform-reservation-list'),
     path('api/student-search/', student_search, name='student-search'),
