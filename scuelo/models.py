@@ -4,8 +4,7 @@ from django.db.models import Q, Sum
 from model_utils.models import TimeStampedModel
 from django.contrib.auth.models import User
 from datetime import datetime
-from simple_history.utils import update_change_reason
-from simple_history.models import HistoricalRecords
+
 CONDITION_ELEVE = (
     ("CONF", "CONF"),
     ("ABAN", "ABAN"),
@@ -46,8 +45,7 @@ class TypeClasse(TimeStampedModel):
     nom = models.CharField(max_length=100, null=False)
     ordre = models.IntegerField(default=0)
     type_ecole = models.CharField(max_length=1, choices=TYPE_ECOLE, db_index=True)
-    history = HistoricalRecords()  # Enables history tracking
-
+   
 
     def __str__(self):
         return self.nom
@@ -61,8 +59,7 @@ class Ecole(TimeStampedModel):
     telephone_du_referent = models.CharField(max_length=100, null=False)
     note = models.TextField()
     externe = models.BooleanField(default=True)
-    history = HistoricalRecords()  # Enables history tracking
-
+    
     def __str__(self):
         return self.nom
 
@@ -72,7 +69,7 @@ class Classe(TimeStampedModel):
     nom = models.CharField(max_length=30, null=False)
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
 
-    history = HistoricalRecords()
+   
     def __str__(self):
         return '%s %s' % (self.nom, self.type.get_type_ecole_display())
 
@@ -137,7 +134,7 @@ class Eleve(TimeStampedModel):
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
 
     
-    history = HistoricalRecords()
+    
     def __str__(self):
         return f"{self.nom} {self.prenom} ({self.legacy_id})"
     @property
@@ -190,7 +187,7 @@ class AnneeScolaire(TimeStampedModel):
     date_finale = models.DateField(blank=True, null=True)
     actuel = models.BooleanField(default=False)
 
-    history = HistoricalRecords()
+    
     def __str__(self):
         return self.nom
 
@@ -210,7 +207,7 @@ class Inscription(TimeStampedModel):
     nombre_uniformes = models.IntegerField(default=0)
 
     
-    history = HistoricalRecords()
+    
     def __str__(self):
         return '%s - %s - %s' % (self.annee_scolaire.nom_bref, self.classe, self.eleve)
     @property
@@ -236,7 +233,7 @@ class UniformReservation(TimeStampedModel):
     date_reserved = models.DateField(default=timezone.now)
     school_year = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE, related_name="uniform_reservations")
 
-    history = HistoricalRecords()
+    
     @property
     def total_cost(self):
         return "{:,}".format(self.quantity * self.cost_per_uniform)
@@ -266,7 +263,7 @@ class StudentLog(TimeStampedModel):
     new_value = models.TextField(null=True, blank=True)
 
 
-    history = HistoricalRecords()
+    
     def __str__(self):
         return f"Log for {self.student.nom} by {self.user.username if self.user else 'System'}"
 

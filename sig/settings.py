@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'cash',
     'scuelo',
     'accounts',
-  'simple_history',
+ 
     'crispy_forms',
     'whitenoise.runserver_nostatic',
     'bootstrap5',
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'simple_history.middleware.HistoryRequestMiddleware',  # Enables user tracking
+   
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
