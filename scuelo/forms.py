@@ -144,7 +144,7 @@ class EleveCreateForm(forms.ModelForm):
         model = Eleve
         fields = [
             'nom', 'prenom', 'date_enquete', 'condition_eleve', 'sex',
-            'date_naissance', 'cs_py', 'hand', 
+            'date_naissance', 'cs_py', 'hand', 'annee_inscr',
             'parent', 'tel_parent', 'note_eleve', 'classe', 'annee_scolaire'
         ]
         widgets = {

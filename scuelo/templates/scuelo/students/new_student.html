@@ -100,8 +100,10 @@
                                 <label for="id_note">note</label>
                                 {{ form.note_eleve|add_class:"form-control" }}
                             </div>
-                        </div>
                        
+                            
+                        </div>
+                        
                         <!-- Class Selection and Display -->
                         <div class="col-md-6">
                             <!-- Selected Class Info -->
@@ -139,12 +141,17 @@
                                 {{ form.tel_parent|add_class:"form-control" }}
                             </div>
                             <div class="form-group">
+                                <label for="id_">annee_inscr</label>
+                                {{ form.annee_inscr|add_class:"form-control" }}
+                            </div>
+                            <div class="form-group">
                                 <label for="id_note">annee scolaire</label>
                                 <!-- Academic Year Selection -->
                                 {{ form.annee_scolaire|add_class:"form-control" }}
                                 <div class="form-buttons mt-3">
                                     <button type="submit" class="class-card">Créer Étudiant</button>
                                 </div>
+                             
                             </div>
                         
                         </div>

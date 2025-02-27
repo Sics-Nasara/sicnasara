@@ -73,8 +73,8 @@
             <tr>
                 <th class='dt-left'>Date</th>
                 <th class='dt-left'>Description</th>
-                <th class='dt-right'>Entrée (Income)</th>
-                <th class='dt-right'>Sortie (Outcome)</th>
+                <th class='dt-right'>Entrée</th>
+                <th class='dt-right'>Sortie </th>
                 <th class='dt-right'>Solde Progressif</th>
                 <th class='w-50'></th>
             </tr>
@@ -107,21 +107,66 @@
 
 <script>
     $(document).ready(function () {
-      //  $.fn.dataTable.moment('YYYY-MM-DD');  // Ensure sorting works with YYYY-MM-DD
-
+        // $.fn.dataTable.moment('YYYY-MM-DD');  // Ensure sorting works with YYYY-MM-DD
+    
         $('#entreeSortieTable').DataTable({
-            "order": [[2, "asc"]],
-            // Enable sorting on all columns except the last one
+            "order": [[2, "asc"]], // Sort by Entrée column initially
             "columnDefs": [
-                { "orderable": false, "targets": 5 }  // Disable sorting on the last column
+                { "orderable": false, "targets": 5 }, // Disable sorting on the last column
+                {
+                    "targets": [2, 3], // Apply custom sorting to Entrée and Sortie columns
+                    "render": function (data, type, row) {
+                        if (type === 'sort' || type === 'type') {
+                            return parseFloat(data.replace(/[^0-9.-]+/g, "")) || 0; // Remove non-numeric characters for sorting
+                        }
+                        return data; // Return original data for display
+                    }
+                },
+                {
+                    "targets": 4, // Apply custom sorting to Solde Progressif column
+                    "render": function (data, type, row) {
+                        if (type === 'sort' || type === 'type') {
+                            return parseFloat(data.replace(/[^0-9.-]+/g, "")) || 0; // Remove non-numeric characters for sorting
+                        }
+                        return data; // Return original data for display
+                    }
+                }
             ],
-            // Default sort by Description column
             "pageLength": 40,  // Default: 40 entries per page
             "lengthMenu": [[40, 100, -1], [40, 100, "All"]],  // Pagination options
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
+            },
+            "drawCallback": function(settings) {
+                calculateProgressiveBalance(this.api());
             }
         });
+    
+        function calculateProgressiveBalance(api) {
+            let progressive = 0;
+    
+            api.rows({ search: 'applied', order: 'applied' }).every(function () {
+                let data = this.data();
+                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g,"")) || 0;
+                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g,"")) || 0;
+                progressive += entree - sortie;
+    
+                let formattedProgressive = formatAmount(progressive);
+                $(this.node()).find('td.progressive-balance').text(formattedProgressive);
+            });
+    
+            // Display the total progressive balance
+            let totalProgressive = progressive;
+            let totalProgressiveElement = document.getElementById('totalProgressive');
+            if (totalProgressiveElement) {
+                totalProgressiveElement.textContent = formatAmount(totalProgressive);
+            }
+        }
+    
+        function formatAmount(amount) {
+            return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
     });
+    
 </script>
 {% endblock %}

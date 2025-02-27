@@ -10,3 +10,15 @@
 2025-02-26 13:00:37,851 - INFO - Ecole already exists: Sc_EPPLE
 2025-02-26 13:00:37,852 - INFO - Ecole already exists: Sc_YAMT
 2025-02-26 13:00:37,854 - INFO - Ecole already exists: Sc_LSB
+2025-02-27 10:46:55,097 - INFO - Creating Ecoles...
+2025-02-27 10:46:55,111 - INFO - Created Ecole: Sc_TBD
+2025-02-27 10:46:55,120 - INFO - Created Ecole: Sc_Nas_Mat
+2025-02-27 10:46:55,128 - INFO - Created Ecole: Sc_Nas_Pri
+2025-02-27 10:46:55,137 - INFO - Created Ecole: Sc_LMS
+2025-02-27 10:46:55,148 - INFO - Created Ecole: Sc_WLM
+2025-02-27 10:46:55,157 - INFO - Created Ecole: Sc_LPMSBD
+2025-02-27 10:46:55,166 - INFO - Created Ecole: Sc_WP
+2025-02-27 10:46:55,176 - INFO - Created Ecole: Sc_EPCELP
+2025-02-27 10:46:55,187 - INFO - Created Ecole: Sc_EPPLE
+2025-02-27 10:46:55,200 - INFO - Created Ecole: Sc_YAMT
+2025-02-27 10:46:55,211 - INFO - Created Ecole: Sc_LSB
