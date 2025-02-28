@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = PROD_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Allowed hosts
 ALLOWED_HOSTS = ['sics-stage-cl.nasaraperilburkina.org', '127.0.0.1' ,'0.0.0.0']
