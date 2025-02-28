@@ -79,7 +79,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'sig.wsgi.application'
 
 # Database
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sicsnasara_prod',
@@ -89,14 +89,13 @@ WSGI_APPLICATION = 'sig.wsgi.application'
         'PORT': '5432',
     }
 }
-'''
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
-}
+}'''
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

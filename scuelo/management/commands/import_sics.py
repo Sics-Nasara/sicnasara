@@ -61,7 +61,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
         #file_path = f'{BASE_DIR}/export_sics/combined_excel.xlsx'  # Use the combined Excel file
-        file_path = f'{BASE_DIR}/export_sics/combined_students_paymentsgood1.xlsx' 
+        file_path = f'{BASE_DIR}/export_sics/combined_students_paymentsprod.xlsx' 
         failed_eleves = []
 
         # Create logs directory if it doesn't exist

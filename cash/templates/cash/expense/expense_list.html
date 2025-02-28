@@ -37,25 +37,66 @@
 </div>
 {% endblock header %}
 {% block content %}
-<h5>Liste des Dépenses</h5>
+<style>
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .table th,
+    .table td {
+        padding: 5px 10px !important;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .table th {
+        background-color: #333;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    /* Alignments */
+    .dt-left {
+        text-align: left !important;
+    }
+
+    .dt-right {
+        text-align: right !important;
+    }
+</style>
 <div class="table-responsive">
-    <table id="expensesTable" class="display compact">
+    <table id="expensesTable" class="table table-striped display table-bordered compact">
         <thead>
             <tr>
-                <th>Date</th>
+                <th  class='dt-left'>Date</th>
                 <th>Description</th>
                 <th>Montant</th>
                 <th>Total Progressif</th>
+                <th class='w-50'></th>
             </tr>
         </thead>
         <tbody>
             {% for item in expenses %}
             <tr>
                 <!-- Ensures proper date sorting while displaying YYYY-MM-DD format -->
-                <td data-order="{{ item.expense.date|date:'Y-m-d' }}">{{ item.expense.date|date:'Y-m-d' }}</td>
-                <td>COMPT-{{ item.expense.description }}</td>
-                <td>{{ item.expense.amount|format_amount }}</td>
-                <td class="highlight-negative">{{ item.progressive_total|format_amount }}</td>
+                <td   class='dt-left' data-order="{{ item.expense.date|date:'Y-m-d' }}">{{ item.expense.date|date:'Y-m-d' }}</td>
+                <td  class='dt-left'>COMPT-{{ item.expense.description }}</td>
+                <td class='dt-right'>{{ item.expense.amount|format_amount }}</td>
+                <td class="highlight-negative dt-right">{{ item.progressive_total|format_amount }}</td>
+                <td></td>
             </tr>
             {% endfor %}
         </tbody>
