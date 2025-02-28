@@ -222,8 +222,9 @@
                             </a>
                         </td>
                         <td class=" dt-left">{{ student.pk }}   
+                            <td class=" dt-left">{{ student.nom }}</td>
                             <td class=" dt-left">{{ student.prenom }}</td>
-                        <td class=" dt-left">{{ student.nom }}</td>
+                   
                         <td class=" dt-left cs_py">{{ student.get_condition_eleve_display }}</td>
                         <td class=" dt-left">{{ student.get_sex_display }}</td>
                         <td class=" dt-left">{{ student.date_naissance|date:'Y-m-d' }}</td>

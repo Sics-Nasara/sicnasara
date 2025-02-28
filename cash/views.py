@@ -403,7 +403,6 @@ def delete_mouvement(request, pk):
         return redirect('mouvement_list')
     return render(request, 'cash/mouvement/delete_mouvement.html', {'mouvement': mouvement ,   'page_identifier': 'S14' })
 
-
 @login_required
 def late_payment_report(request):
     data = {}
@@ -470,7 +469,7 @@ def late_payment_report(request):
                 can_paid = can_payments.aggregate(Sum('montant'))['montant__sum'] or 0
 
                 tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
-                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))[
+                sco_exigible = tarifs.filter(causal__in=['SCO' ]).aggregate(Sum('montant'))[
                                     'montant__sum'] or 0
                 can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
 
@@ -538,6 +537,7 @@ def late_payment_report(request):
         'grand_total_diff_can': grand_total_diff_can,
         'current_annee_scolaire': current_annee_scolaire,
     })
+
 
 
 

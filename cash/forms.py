@@ -111,8 +111,8 @@ class ExpenseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Correctly format the initial date if an instance is provided
-        if self.instance and self.instance.date_paye:
-            self.initial['date_paye'] = self.instance.date_paye.strftime('%d/%m/%Y')
+        if self.instance and self.instance.date:
+            self.initial['date'] = self.instance.date.strftime('%d/%m/%Y')
             
 class TransferForm(forms.ModelForm):
     class Meta:
