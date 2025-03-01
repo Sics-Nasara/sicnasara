@@ -771,7 +771,7 @@ def expense_create(request):
             try:
                 expense.save()
                 messages.success(request, "Expense created successfully!")
-                return redirect('expense_create')
+                return redirect('home')
             except IntegrityError:
                 messages.error(request, "An error occurred: Duplicate legacy_id. Please try again.")
                 # Optionally, regenerate the legacy_id and try saving again
@@ -779,7 +779,7 @@ def expense_create(request):
                 try:
                     expense.save()
                     messages.success(request, "Expense created successfully after regenerating legacy_id!")
-                    return redirect('expense_create')
+                    return redirect('home')
                 except IntegrityError:
                     messages.error(request, "Failed to generate a unique legacy_id. Please contact support.")
                     # Log the error here if necessary

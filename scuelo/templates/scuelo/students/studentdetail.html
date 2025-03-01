@@ -3,69 +3,6 @@
 {% load custom_filters %}
 {% include 'scuelo/paiements/add_paiement_modal.html' %}
 
-<style>
-    .modal-lg .modal-dialog {
-        max-width: 80%;
-    }
-    .page-title {
-        text-align: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 40px;
-        color: #333;
-    }
-    .card {
-        border: none;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
-        background-color: #007bff;
-    }
-    .card-body {
-        padding: 20px;
-        color: #ffffff;
-        transition: transform 0.2s;
-    }
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-    .card-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-    .card-text {
-        font-size: 1rem;
-        margin-bottom: 10px;
-    }
-    .btn-print {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
-        color: white;
-        border-radius: 20px;
-        padding: 5px 10px;
-        font-size: 14px;
-    }
-    .btn-print:hover {
-        background-color: #138496;
-        border-color: #138496;
-    }
-    .card-body h5 {
-        font-size: 14px;
-    }
-    .dataTables_wrapper {
-        margin-top: 20px;
-    }
-    .dataTables_length, .dataTables_filter {
-        margin-bottom: 10px;
-    }
-    .dataTables_paginate {
-        margin-top: 10px;
-    }
-</style>
-
 {% block header %}
 <h2 class="navbar-brand mb-0 h1 text-white">Gestion Eleve</h2>
 <div class="ml-2 d-flex align-items-stretch">
@@ -82,7 +19,17 @@
 <style>
     .card-body h5 {
         font-size: 16px;
-        margin-bottom: 30px;
+        margin-bottom: 5px; /* Reduced for tighter spacing */
+    }
+
+    /* Style for labels to align them */
+    .info-label {
+        display: inline-block; /* Allows setting width */
+        width: 150px;       /* Adjust this value to control the label width */
+        font-weight: bold;   /* Optional: Make labels bold */
+        text-align: right; 
+        margin-bottom: 16px; 
+        margin-right: 16px;  /* Ensure labels are left-aligned within their width */
     }
 </style>
 <div class="d-flex justify-content-between mb-4">
@@ -96,36 +43,40 @@
                     Information de base
                 </div>
                 <div class="card-body">
-                    <h5>ID: {{ student.id }}</h5> <!-- Added Student ID -->
-                    <h5>Nom: {{ student.nom }}</h5>
-                    <h5>Prénom: {{ student.prenom }}</h5>
-                    <h5>Condition: {{ student.get_condition_eleve_display }}</h5>
-                    <h5>Sexe: {{ student.get_sex_display }}</h5>
-                    <h5>Date de Naissance: {{ student.date_naissance|date:'Y-m-d' }}</h5>
-                    <h5>CS PY: {{ student.get_cs_py_display }}</h5>
+                    <h5><span class="info-label">ID :</span> {{ student.id }}</h5>
+                    <h5><span class="info-label">Nom :</span> {{ student.nom }}</h5>
+                    <h5><span class="info-label">Prénom :</span> {{ student.prenom }}</h5>
+                    <h5><span class="info-label">Condition : </span> {{ student.get_condition_eleve_display }}</h5>
+                    <h5><span class="info-label">Sexe :</span> {{ student.get_sex_display }}</h5>
+                    <h5><span class="info-label">Date Naissance :</span> {{ student.date_naissance|date:'Y-m-d' }}</h5>
+                    <h5><span class="info-label">CS PY :</span> {{ student.get_cs_py_display }}</h5>
                     {% if student.hand %}
-                    <h5>Hand: {{ student.get_hand_display }}</h5>
+                    <h5><span class="info-label">Hand :</span> {{ student.get_hand_display }}</h5>
                     {% else %}
-                    <h5 style="color: black;">Hand:</h5>
+                    <h5><span class="info-label">Hand :</span></h5>
                     {% endif %}
                     {% if student.date_enquete %}
-                    <h5>Date enquete: {{ student.date_enquete|date:'Y-m-d' }}</h5>
+                    <h5><span class="info-label">Date enquete :</span> {{ student.date_enquete|date:'Y-m-d' }}</h5>
                     {% else %}
-                    <h5 style="color: black;">Date enquete:</h5>
+                    <h5><span class="info-label">Date enquete :</span></h5>
                     {% endif %}
                     {% if student.parent %}
-                    <h5>Parent: {{ student.parent }}</h5>
+                    <h5><span class="info-label">Parent :</span> {{ student.parent }}</h5>
                     {% else %}
-                    <h5 style="color: black;">Parent:</h5>
+                    <h5><span class="info-label">Parent :</span></h5>
                     {% endif %}
-                  {% comment %}
-                     <h5>Ann ée d'inscription: {{ student.annee_inscription }}</h5> <!-- Added Enrollment Year -->
-                  {% endcomment %}
+                    {% if student.tel_parent %}
+                    <h5><span class="info-label">Tel Parent :</span>      {{ student.tel_parent }}</h5>
+                    {% else %}
+                    <h5><span class="info-label">Tel Parent :</span></h5>
+                    {% endif %}
                     {% if student.note_eleve %}
-                    <h5>Notes: {{ student.note_eleve }}</h5>
+                    <h5><span class="info-label">Notes :</span> {{ student.note_eleve }}</h5>
                     {% else %}
-                    <h5 style="color: black;">Notes:</h5>
+                    <h5><span class="info-label">Notes :</span></h5>
                     {% endif %}
+
+               
                 </div>
             </div>
         </div>
@@ -138,54 +89,31 @@
                     <h5><strong>École:</strong> {{ current_school_name }}</h5>
                     <h5><strong>Classe:</strong> {{ current_class_name }}</h5>
                 </div>
-            </div>
+            </div> 
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="col-md-12 mb-5">
                         <table id="payments-table" class="table table-striped table-bordered" style="width:100%">
                             <thead class="thead-light">
                                 <tr>
+                                    <th></th>
                                     <th>Date</th>
                                     <th>Causal</th>
                                     <th>Montant</th>
                                     <th>Note</th>
-                                {% comment %}
-                                        <th>Actions</th>
-                                {% endcomment %}
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for payment in payments %}
                                 <tr>
+                                    <td class='action'><a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a></td>
                                     <td>{{ payment.date_paye|date:'Y-m-d' }}</td>
                                     <td>{{ payment.causal }}</td>
-                                    <td>{{ payment.montant|format_amount }}</td>
+                                    <td class='dt-right'>{{ payment.montant|format_amount }}</td>
                                     <td>{% if payment.note %}{{ payment.note }}{% else %}<span style="color: black;"></span>{% endif %}</td>
-                                  {% comment %}
-                                      <td>
-                                          <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a>
-                                          <form method="POST" action="{% url 'student_detail' student.pk %}" style="display:inline;">
-                                              {% csrf_token %}
-                                          {% comment %}
-                                                  <input type="hidden" name="payment_id" value="{{ payment.id }}">
-                                                     <button type="submit" name="print_receipt" class="btn btn-print btn-sm">
-                                                  <i class="fas fa-print"></i>
-                                              </button>
-                                
-                                           
-                                          </form>
-                              
-                                    </td>
-                                    {% endcomment %}
                                 </tr>
                                 {% endfor %}
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2"><strong>Total paiement:</strong></td>
-                                    <td><strong>{{ total_payment }} FCFA</strong></td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -193,11 +121,6 @@
         </div>
     </div>
 </div>
-
-<!-- Include DataTables CSS and JS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
 <script>
     $(document).ready(function() {
         // Initialize DataTable

@@ -28,6 +28,29 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import seaborn as sns
 from django.db import models
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+# from .models import Classe, AnneeScolaire, Inscription, Eleve  # Ensure these are imported
+# from cash.models import Mouvement, Tarif  # Ensure these are imported
+
+# Assuming these models are in the same app or properly imported
+# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
+# from cash.models import Mouvement, Tarif
+
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
+from django.utils import timezone
+
+# Assuming these models are in the same app or properly imported
+# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
+# from cash.models import Mouvement, Tarif
+
 from datetime import datetime
 from django.db.models import  Case, When, Value
 from django.db.models.functions import TruncDay
@@ -200,66 +223,8 @@ def home(request):
     })
 
 
-'''@login_required
-def class_detail(request, pk):
-    # Get the class based on the provided primary key (pk)
-    classe = get_object_or_404(Classe, pk=pk)
 
-    # Get all academic years to display in the selection dropdown
-    all_annee_scolaires = AnneeScolaire.objects.all()
 
-    # Get the selected academic year, default to the current year if none is selected
-    selected_annee_scolaire_id = request.GET.get('annee_scolaire')
-    selected_annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_annee_scolaire_id) if selected_annee_scolaire_id else AnneeScolaire.objects.get(actuel=True)
-
-    # Get students registered in this class during the selected academic year
-    inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
-    students = [inscription.eleve for inscription in inscriptions]
-    # here it will be student who are registered also student who  have at least ma
-    # Calculate total payments for each student and get details of each payment
-    for student in students:
-        payments = Mouvement.objects.filter(inscription__eleve=student, inscription__classe=classe, inscription__annee_scolaire=selected_annee_scolaire)
-        student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
-        student.payment_details = payments.values('causal', 'montant', 'date_paye')  # Detailed payment info
-        student.tenues = payments.filter(causal='TEN').values('montant')  # Only "tenues" payments
-        student.notes = student.note_eleve  # Fetch student's notes if available
-
-    # Calculate the total payment amount for the class in the selected academic year
-    total_class_payment = Mouvement.objects.filter(
-        inscription__classe=classe,
-        inscription__annee_scolaire=selected_annee_scolaire
-    ).aggregate(total=Sum('montant'))['total'] or 0
-
-    # Get tarifs related to this class for the selected academic year
-    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
-        # Calculate counts for each category
-    cs_count = sum(1 for student in students if student.get_cs_py_display() == 'CS' )
-    py_count = sum(1 for student in students if student.get_cs_py_display() == 'PY')
-    aut_count = len(students) - cs_count - py_count 
-    # Breadcrumb navigation (for template rendering)
-    breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
-    total_students = len(students)
-    student_count_display = f"{total_students}({cs_count}-{py_count}-{aut_count})"
-    return render(request, 'scuelo/students/listperclasse.html', {
-        'classe': classe,
-        'students': students,  # List of students registered this year
-        'tarifs': tarifs,  # Tarifs related to this class for this year
-        'breadcrumbs': breadcrumbs,
-        'total_class_payment': total_class_payment,
-        'student_count_display':student_count_display,
-        'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
-        'selected_annee_scolaire': selected_annee_scolaire,  # Pass the selected academic year
-        'total_class_payment': total_class_payment,  # Total amount of payments for the class in the selected year
-        'page_identifier': 'S02'  # Unique page identifier
-    })
-'''
-
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-# from .models import Classe, AnneeScolaire, Inscription, Eleve  # Ensure these are imported
-# from cash.models import Mouvement, Tarif  # Ensure these are imported
 
 @login_required
 def class_detail(request, pk):
@@ -316,29 +281,7 @@ def class_detail(request, pk):
         'page_identifier': 'S02'  # Unique page identifier
     })
 
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
-from django.utils import timezone
 
-# Assuming these models are in the same app or properly imported
-# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
-# from cash.models import Mouvement, Tarif
-
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
-from django.utils import timezone
-
-# Assuming these models are in the same app or properly imported
-# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
-# from cash.models import Mouvement, Tarif
 
 class ClasseInformation(LoginRequiredMixin, DetailView):
     model = Classe
