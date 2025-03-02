@@ -110,7 +110,7 @@
         // $.fn.dataTable.moment('YYYY-MM-DD');  // Ensure sorting works with YYYY-MM-DD
     
         $('#entreeSortieTable').DataTable({
-            "order": [[2, "asc"]], // Sort by Entrée column initially
+            "order": [[0, "desc"]], // Sort by Entrée column initially
             "columnDefs": [
                 { "orderable": false, "targets": 5 }, // Disable sorting on the last column
                 {

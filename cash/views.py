@@ -864,10 +864,10 @@ def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
     # Fetch all incomes (Mouvement with positive amounts)
-    incomes = Mouvement.objects.filter(montant__gt=0).order_by('date_paye')
+    incomes = Mouvement.objects.filter(montant__gt=0).order_by('-date_paye')
 
     # Fetch all outcomes (Expense)
-    expenses = Expense.objects.filter().order_by('date')
+    expenses = Expense.objects.filter().order_by('-date')
 
     # Prepare entries for the report
     entries = []
