@@ -24,19 +24,22 @@ class PaiementPerStudentForm(forms.ModelForm):
         model = Mouvement
         fields = ['causal', 'montant', 'date_paye', 'note']
         widgets = {
-            'causal': forms.Select(attrs={'class': 'form-control'}), 
-            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),# Dropdown for causal choices
-            'date_paye': forms.DateInput(format='%d/%m/%Y', attrs={'type': 'date' , 'class': 'form-control'}),
-             'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
-            
+            'causal': forms.Select(attrs={'class': 'form-control'}),
+            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
+            'date_paye': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control'
+                }
+            ),
+            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Optionally, set the initial value for the date field
-        # to the current date, formatted correctly
+        # Set initial value for date_paye to current date and time
         if not self.initial.get('date_paye'):
-            self.initial['date_paye'] = timezone.now().strftime('%d/%m/%Y')
+            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement
@@ -105,15 +108,21 @@ class ExpenseForm(forms.ModelForm):
         widgets = {
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter description'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control'
+                },
+                format='%Y-%m-%dT%H:%M'  # Specify the expected format
+            ),
             'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter notes'}),
         }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Correctly format the initial date if an instance is provided
         if self.instance and self.instance.date:
-            self.initial['date'] = self.instance.date.strftime('%d/%m/%Y')
-            
+            self.initial['date'] = self.instance.date.strftime('%Y-%m-%dT%H:%M')
 class TransferForm(forms.ModelForm):
     class Meta:
         model = Transfer

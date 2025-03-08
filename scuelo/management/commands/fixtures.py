@@ -33,52 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            ''' # Insert class data (TypeClasse)
-            ps, _ = TypeClasse.objects.get_or_create(nom='PS', ordre=1, type_ecole='M')
-            ms, _ = TypeClasse.objects.get_or_create(nom='MS', ordre=2, type_ecole='M')
-            gs, _ = TypeClasse.objects.get_or_create(nom='GS', ordre=3, type_ecole='M')
-            cp1, _ = TypeClasse.objects.get_or_create(nom='CP1', ordre=4, type_ecole='P')
-            cp2, _ = TypeClasse.objects.get_or_create(nom='CP2', ordre=5, type_ecole='P')
-            ce1, _ = TypeClasse.objects.get_or_create(nom='CE1', ordre=6, type_ecole='P')
-            ce2, _ = TypeClasse.objects.get_or_create(nom='CE2', ordre=7, type_ecole='P')
-            cm1, _ = TypeClasse.objects.get_or_create(nom='CM1', ordre=8, type_ecole='P')
-            cm2, _ = TypeClasse.objects.get_or_create(nom='CM2', ordre=9, type_ecole='P')
-            me6, _ = TypeClasse.objects.get_or_create(nom='6me', ordre=10, type_ecole='S')
-            me5, _ = TypeClasse.objects.get_or_create(nom='5me', ordre=11, type_ecole='S')
-            me4, _ = TypeClasse.objects.get_or_create(nom='4me', ordre=12, type_ecole='S')
-            me3, _ = TypeClasse.objects.get_or_create(nom='3me', ordre=13, type_ecole='S')
-            me2, _ = TypeClasse.objects.get_or_create(nom='2me', ordre=14, type_ecole='L')
-            me1, _ = TypeClasse.objects.get_or_create(nom='1me', ordre=15, type_ecole='L')
-            term, _ = TypeClasse.objects.get_or_create(nom='Term', ordre=16, type_ecole='L')
-
-            logger.info("Classes created successfully.")
-
-            # Insert internal school
-            ecole_interne, _ = Ecole.objects.get_or_create(
-                nom='Bisongo du coeur',
-                ville='',
-                nom_du_referent='',
-                prenom_du_referent='',
-                email_du_referent='',
-                telephone_du_referent='',
-                note='',
-                externe=False
-            )
-            logger.info("Internal school created successfully.")
-
-            # Insert classes for internal school
-            Classe.objects.get_or_create(ecole=ecole_interne, type=ps, nom='PS', legacy_id='_PK-PS-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=ms, nom='MS', legacy_id='_PK-MS-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=gs, nom='GS', legacy_id='_PK-GS-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=cp1, nom='CP1', legacy_id='_PK-CP1-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=cp2, nom='CP2', legacy_id='_PK-CP2-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=ce1, nom='CE1', legacy_id='_PK-CE1-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=ce2, nom='CE2', legacy_id='_PK-CE2-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=cm1, nom='CM1', legacy_id='_PK-CM1-Nas')
-            Classe.objects.get_or_create(ecole=ecole_interne, type=cm2, nom='CM2', legacy_id='_PK-CM2-Nas')
-
-            logger.info("Classes for internal school created successfully.")
-            '''
+          
 
             # Insert school years
             AnneeScolaire.objects.get_or_create(nom='Année scolaire 2024-25', date_initiale='2024-09-01', date_finale='2025-06-01', actuel=True)

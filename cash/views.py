@@ -864,10 +864,10 @@ def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
     # Fetch all incomes (Mouvement with positive amounts)
-    incomes = Mouvement.objects.filter(montant__gt=0).order_by('-date_paye')
+    incomes = Mouvement.objects.filter(montant__gt=0).order_by('-date_paye')  # Oldest to newest
 
-    # Fetch all outcomes (Expense)
-    expenses = Expense.objects.filter().order_by('-date')
+    # Fetch all expenses
+    expenses = Expense.objects.all().order_by('date')  # Oldest to newest
 
     # Prepare entries for the report
     entries = []
@@ -886,7 +886,7 @@ def entree_sortie(request):
             'sortie': 0,
         })
 
-    # Add expense entries as outcomes
+    # Add expense entries
     for expense in expenses:
         description = f"COMPT {expense.description or ''}"
         entries.append({
@@ -896,23 +896,23 @@ def entree_sortie(request):
             'sortie': expense.amount,
         })
 
-    # Sort entries by date
+    # Sort combined entries by date (oldest to newest)
     entries.sort(key=lambda x: x['date'])
 
     # Calculate progressive balance and total balance
     progressive_balance = 0
-    total_balance = 0  # Initialize total balance
     for entry in entries:
         progressive_balance += entry['entree'] - entry['sortie']
-        entry['progressive'] = progressive_balance
-        total_balance = progressive_balance  # Update total balance with the latest progressive balance
+        entry['progressive'] = progressive_balance  # Store computed balance
+
+    total_balance = progressive_balance  # Final balance
 
     # Pass data to the template
     return render(request, 'cash/inoutflows/entree_sortie.html', {
         'entries': entries,
         'cashier': cashier,
-        'balance': cashier.balance(),  # Use the balance method from Cashier model
-        'total_balance': total_balance,  # Pass the calculated total balance
+        'balance': cashier.balance(),  # Ensure this matches total_balance
+        'total_balance': total_balance,  # Pass computed balance
         'page_identifier': 'S35'
     })
 

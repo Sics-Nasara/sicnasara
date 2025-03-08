@@ -83,7 +83,9 @@
             {% for entry in entries %}
             <tr>
                 <!-- Sorting uses YYYY-MM-DD format but displays French format -->
-                <td class='dt-left' data-order="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:'Y-m-d' }}</td>
+                <td class='dt-left' data-order="{{ entry.date|date:'Y-m-d H:i:s' }}">
+                    {{ entry.date|date:'d/m/Y H:i' }}
+                </td>
                 <td class='dt-left'>{{ entry.description }}</td>
                 <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}-{% endif %}</td>
                 <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}-{% endif %}</td>

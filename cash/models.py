@@ -91,7 +91,7 @@ class Mouvement(TimeStampedModel):
   
     causal = models.CharField(max_length=5, choices=CAUSAL, db_index=True, null=True, blank=True)
     montant = models.PositiveBigIntegerField()
-    date_paye = models.DateField(db_index=True, default=timezone.now)
+    date_paye = models.DateTimeField(db_index=True, default=timezone.now)
     note = models.CharField(max_length=200, null=True, blank=True)
     inscription = models.ForeignKey(Inscription, on_delete=models.CASCADE, blank=True, null=True)
     tarif = models.ForeignKey(Tarif, on_delete=models.SET_NULL, null=True, blank=True)
@@ -131,7 +131,7 @@ class Expense(TimeStampedModel):
     legacy_id = models.CharField(max_length=36, unique=True ,default='')  # Store UUIDs here
     description = models.CharField(max_length=200, null=False)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
     cashier = models.ForeignKey(Cashier, on_delete=models.CASCADE, null=True, blank=True)
     note = models.TextField(blank=True, null=True)
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE, null=True, blank=True)  # Add this field
