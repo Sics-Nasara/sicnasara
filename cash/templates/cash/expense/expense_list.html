@@ -92,7 +92,7 @@
             {% for item in expenses %}
             <tr>
                 <!-- Ensures proper date sorting while displaying YYYY-MM-DD format -->
-                <td   class='dt-left' data-order="{{ item.expense.date|date:'Y-m-d' }}">{{ item.expense.date|date:'Y-m-d' }}</td>
+                <td   class='dt-left' data-order="{{ item.expense.date|date:'Y-m-d H:i:s' }}">{{ item.expense.date|date:'Y-m-d H:i:s' }}</td>
                 <td  class='dt-left'>COMPT-{{ item.expense.description }}</td>
                 <td class='dt-right'>{{ item.expense.amount|format_amount }}</td>
                 <td class="highlight-negative dt-right">{{ item.progressive_total|format_amount }}</td>
