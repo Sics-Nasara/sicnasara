@@ -17,7 +17,17 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from datetime import timedelta, datetime
 import csv
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Expense, Cashier, Mouvement
+from .forms import ExpenseForm
+from django.db.models import Sum
+import csv
+from django.http import HttpResponse
+from datetime import date
+from django.db import connection
+from django.db import IntegrityError
+from django.utils.crypto import get_random_string 
 from django.shortcuts import render, get_object_or_404
 import io
 from django.utils import timezone
@@ -28,12 +38,10 @@ import seaborn as sns
 from django.db import models
 from django.shortcuts import render, redirect
 from .models import Transfer, Cashier 
-
 from django.contrib import messages
 from datetime import datetime
 from django.db.models import  Case, When, Value
 from django.db.models.functions import TruncDay
-# Models and Forms
 from django.utils.timezone import now
 from scuelo.forms import (
      EleveUpdateForm,
@@ -45,7 +53,6 @@ from scuelo.models import (
     Eleve, Classe, Inscription, StudentLog,
     AnneeScolaire, Ecole  ,UniformReservation
 )
-
 from .models import Mouvement , Tarif  , Expense
 from .forms import (
     PaiementPerStudentForm , MouvementForm
@@ -403,141 +410,7 @@ def delete_mouvement(request, pk):
         return redirect('mouvement_list')
     return render(request, 'cash/mouvement/delete_mouvement.html', {'mouvement': mouvement ,   'page_identifier': 'S14' })
 
-'''@login_required
-def late_payment_report(request):
-    data = {}
-    grand_total_remaining = 0
-    grand_total_diff_sco = 0
-    grand_total_diff_can = 0
 
-    try:
-        current_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
-    except AnneeScolaire.DoesNotExist:
-        return render(request, 'cash/late_payment.html', {
-            'data': data,
-            'error': 'No current school year is set.',
-            'page_identifier': 'S58'
-        })
-
-    schools = Ecole.objects.prefetch_related(
-        Prefetch(
-            'classe_set',
-            queryset=Classe.objects.prefetch_related(
-                Prefetch(
-                    'inscription_set',
-                    queryset=Inscription.objects.select_related('eleve')
-                )
-            )
-        )
-    )
-
-    for school in schools:
-        class_data = {}
-        for classe in school.classe_set.all():
-            students = Eleve.objects.filter(
-                inscriptions__classe=classe,
-                inscriptions__annee_scolaire=current_annee_scolaire,
-                inscriptions__classe__ecole=school,
-                cs_py='P',
-                condition_eleve__in=["CONF", "PROP"]
-            ).distinct()
-
-            student_data = []
-            total_class_remaining = 0
-            total_diff_sco = 0
-            total_diff_can = 0
-
-            for student in students:
-                # Fetch SCO payments only
-                sco_payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    causal__in=['SCO'],
-                    inscription__annee_scolaire=current_annee_scolaire
-                )
-                sco_payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    inscription__annee_scolaire=current_annee_scolaire
-                ).exclude(causal__in=['CAN', 'TEN', 'INS'])
-
-                sco_paid = sco_payments.aggregate(Sum('montant'))['montant__sum'] or 0
-
-                can_payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    causal='CAN',
-                    inscription__annee_scolaire=current_annee_scolaire
-                )
-                can_paid = can_payments.aggregate(Sum('montant'))['montant__sum'] or 0
-
-                tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
-                sco_exigible = tarifs.filter(causal__in=['SCO' ]).aggregate(Sum('montant'))[
-                                    'montant__sum'] or 0
-                can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
-
-                diff_sco = sco_exigible - sco_paid
-                diff_can = can_exigible - can_paid
-                retards = diff_sco + diff_can
-
-                if retards > 0:
-                    total_exigible = sco_exigible + can_exigible
-                    percentage_paid = (
-                        (sco_paid + can_paid) / total_exigible * 100
-                    ) if total_exigible > 0 else 0
-
-                    remaining_percentage = (
-                        retards / total_exigible * 100
-                    ) if total_exigible > 0 else 0
-
-                    student_data.append({
-                        'id': student.id,
-                        'nom': student.nom,
-                        'prenom': student.prenom,
-                        'sex': student.sex,
-                        'cs_py': student.cs_py,
-                        'sco_paid': sco_paid,
-                        'sco_exigible': sco_exigible,
-                        'diff_sco': diff_sco,
-                        'can_paid': can_paid,
-                        'can_exigible': can_exigible,
-                        'diff_can': diff_can,
-                        'retards': retards,
-                        'percentage_paid': percentage_paid,
-                        'remaining_percentage': remaining_percentage,
-                        'note': student.note_eleve,
-                        'condition_eleve': student.condition_eleve,  # Include condition_eleve
-                        'page_identifier': 'S30'
-                    })
-
-                    total_diff_sco += diff_sco
-                    total_diff_can += diff_can
-
-                total_class_remaining += retards
-
-            if student_data:
-                class_data[classe.nom] = {
-                    'students': student_data,
-                    'total_class_remaining': total_class_remaining,
-                    'total_diff_sco': total_diff_sco,
-                    'total_diff_can': total_diff_can,
-                }
-
-                grand_total_diff_sco += total_diff_sco
-                grand_total_diff_can += total_diff_can
-                # grand_total_remaining += total_class_remaining # Don't double count
-
-        if class_data:
-            data[school.nom] = class_data
-
-    grand_total_remaining = grand_total_diff_sco + grand_total_diff_can # this is correct now
-
-    return render(request, 'cash/late_payment.html', {
-        'data': data,
-        'grand_total_remaining': grand_total_remaining,
-        'grand_total_diff_sco': grand_total_diff_sco,
-        'page_identifier': 'S58',
-        'grand_total_diff_can': grand_total_diff_can,
-        'current_annee_scolaire': current_annee_scolaire,
-    })
-'''
 
 @login_required
 def late_payment_report(request):
@@ -735,15 +608,6 @@ def get_sorted_expenses(request):
             progressive_total -= exp.amount  # Subtract backwards
 
     return JsonResponse({"expenses": expense_list})
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from .models import Expense, Cashier, Mouvement
-from .forms import ExpenseForm
-from django.db.models import Sum
-
-from django.db import connection
-from django.db import IntegrityError
-from django.utils.crypto import get_random_string 
 
 def expense_create(request):
     # Fetch the cashier "C_SCO"
@@ -855,9 +719,7 @@ def income_list_view(request):
     }
 
     return render(request, 'cash/inoutflows/income_list.html', context)
-#cash/inoutflows/income_list.html
-from django.shortcuts import render, get_object_or_404
-from .models import Cashier, Mouvement, Expense
+
 
 def entree_sortie(request):
     # Fetch the C_SCO cashier
@@ -918,7 +780,6 @@ def entree_sortie(request):
 
 
 
-from datetime import date, timedelta
 def rapport_comptable(request):
     # Fetch the C_SCO cashier
     cashier = get_object_or_404(Cashier, name="C_SCO")
@@ -969,8 +830,6 @@ def generate_accounting_report(incomes):
 
     return grouped_incomes
 
-import csv
-from django.http import HttpResponse
 
 def export_entree_sortie(request):
     # Fetch the C_SCO cashier
@@ -1147,11 +1006,7 @@ def delete_cashier(request, pk):
 
 
 
-# List all transfers
-'''def transfer_list(request):
-    transfers = Transfer.objects.all().order_by('-date')  # Order by date descending
-    return render(request, 'cash/transfert/transfer_list.html', {'transfers': transfers})
-'''
+
 
 def transfer_list(request):
     transfers = Transfer.objects.all().order_by('-date').select_related('from_cashier', 'to_cashier' )  # Order by date descending, select related cashiers for efficient query
