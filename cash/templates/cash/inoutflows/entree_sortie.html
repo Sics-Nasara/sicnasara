@@ -65,6 +65,41 @@
     .dt-right {
         text-align: right !important;
     }
+
+    /* Fixed Header Styles */
+    .dataTables_wrapper {
+        overflow: hidden; /* Hide scrollbars */
+    }
+
+    .dataTables_scrollHead {
+        overflow: hidden !important;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .dataTables_scrollBody {
+        overflow-y: auto !important; /* Enable vertical scrolling */
+        max-height: 85vh !important; /* Set a maximum height for the scrollable body */
+    }
+
+    /* Custom Scrollbar Styles */
+    .dataTables_scrollBody::-webkit-scrollbar {
+        width: 12px; /* Width of the scrollbar */
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color of the tracking area */
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-thumb {
+        background: #888; /* Color of the scroll thumb */
+        border-radius: 6px; /* Roundness of the scroll thumb */
+    }
+
+    .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Color of the scroll thumb on hover */
+    }
 </style>
 
 <div class="table-container">
@@ -74,7 +109,7 @@
                 <th class='dt-left'>Date</th>
                 <th class='dt-left'>Description</th>
                 <th class='dt-right'>Entrée</th>
-                <th class='dt-right'>Sortie </th>
+                <th class='dt-right'>Sortie</th>
                 <th class='dt-right'>Solde Progressif</th>
                 <th class='w-50'></th>
             </tr>
@@ -90,8 +125,6 @@
                 <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}-{% endif %}</td>
                 <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}-{% endif %}</td>
                 <td class='dt-right progressive-balance'></td>
-
-
                 <td class='w-50'></td>
             </tr>
             {% empty %}
@@ -103,57 +136,51 @@
     </table>
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdn.datatables.net/plug-ins/1.11.5/sorting/datetime-moment.js"></script>
 
 <script>
     $(document).ready(function () {
         var table = $('#entreeSortieTable').DataTable({
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]], // Sort by Date column in ascending order
+            "bLengthChange": false, // Disable entries selection dropdown
+            "paging": false, // Disable pagination
             "columnDefs": [
-                { "orderable": false, "targets": 5 },
-                {
-                    "targets": [2, 3],
-                    "render": function (data, type, row) {
-                        if (type === 'sort' || type === 'type') {
-                            return parseFloat(data.replace(/[^0-9.-]+/g, "")) || 0;
-                        }
-                        return formatAmount(data); // Apply formatAmount here
-                    }
-                }
+                { "orderable": false, "targets": [5] } // Disable sorting on the last column
             ],
-            "pageLength": 40,
-            "lengthMenu": [[40, 100, -1], [40, 100, "All"]],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
             },
+            "scrollY": "500px", // Enable vertical scrolling
+            "scrollCollapse": true, // Collapse the table when the content fits into the viewport,
             "drawCallback": function(settings) {
                 calculateProgressiveBalance(this.api());
+                scrollToBottom();
             }
         });
-    
+
         function calculateProgressiveBalance(api) {
             let progressive = 0;
-            let rows = api.rows({ search: 'applied', order: 'applied' }).nodes().toArray().reverse();
-    
-            $(rows).each(function () {
-                let data = api.row(this).data();
-                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g,"")) || 0;
-                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g,"")) || 0;
+
+            api.rows({ search: 'applied', order: 'applied' }).every(function (rowIdx) {
+                let data = this.data();
+                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g, "")) || 0; // Extract numeric value from Entrée column
+                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g, "")) || 0; // Extract numeric value from Sortie column
                 progressive += entree - sortie;
-    
+
                 let formattedProgressive = formatAmount(progressive);
-                api.cell(this, 4).data(formattedProgressive);
+                $(this.node()).find('.progressive-balance').text(formattedProgressive);
             });
         }
-    
+
         function formatAmount(amount) {
-            return amount.toLocaleString('fr-FR', { minimumFractionDigits: 0 , maximumFractionDigits: 0 }).replace(/,/g, ' ');
+            return amount.toLocaleString('fr-FR', { minimumFractionDigits: 0 });
+        }
+
+        function scrollToBottom() {
+            const scrollBody = $('.dataTables_scrollBody');
+            scrollBody.scrollTop(scrollBody[0].scrollHeight);
         }
     });
-    
 </script>
 {% endblock %}
