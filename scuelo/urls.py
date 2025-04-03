@@ -6,8 +6,6 @@ from .views import (
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView ,ClasseInformation
      , print_receipt  
       , login_view , SchoolYearManagementView ,AddSchoolYearView , DeleteSchoolYearView , EditSchoolYearView ,
-  
-    
 )
 
 urlpatterns = [
@@ -15,7 +13,6 @@ urlpatterns = [
     path('class/<int:pk>/', views.class_detail, name='class_detail'),
     path('login/', login_view, name='login'),
     path('select-school-year/', views.select_school_year, name='select_school_year'),
-    
     path('student_update/<int:pk>/', views.student_update, name='student_update'),  # Add this line
     path('logout/', views.logout_view, name='logout'),
     path('annee_scolaire/manage/', views.SchoolYearManagementView.as_view(), name='annee_scolaire_manage'),
@@ -41,11 +38,7 @@ urlpatterns = [
     path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
     path('load_classes/', views.load_classes, name='load_classes'),
      path('classe/<int:pk>/information/', ClasseInformation.as_view(), name='classe-information'),
-    
     # path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
-    
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
-
-   
 ]

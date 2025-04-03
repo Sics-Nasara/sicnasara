@@ -15,21 +15,26 @@
     <h1 class='navbar-brand mb-0 h1 text-white'>Total: {{ total_balance|format_amount }}</h1>
 
     <div class="d-flex align-items-stretch">
-        <button class="class-card mr-3 hidden-print" id="print-button" title="Print" onclick="myFunction()">
-            <i class="fas fa-print"></i>
-        </button>
+   
         <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
         <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
+        
+        <!-- 🟢 Export to Excel Button -->
+        <button id="exportExcel" class="class-card mr-3 btn btn-success" title="Exporter en Excel">
+            <i class="fas fa-file-excel"></i>
+        </button>
+
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
 {% endblock header %}
 
+
 {% block content %}
 <style>
     .table-container {
         max-width: 100%;
-        overflow-x: auto;
+      
         border-radius: 10px;
     }
 
@@ -152,35 +157,79 @@
                 "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
             },
             "scrollY": "500px", // Enable vertical scrolling
-            "scrollCollapse": true, // Collapse the table when the content fits into the viewport,
+            "scrollCollapse": true, // Collapse the table when the content fits into the viewport
+            "buttons": [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Exporter Excel',
+                    title: 'Entrées et Sorties',
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4], // Ensure "Solde Progressif" is included
+                        modifier: {
+                            page: 'all' // Export all rows
+                        },
+                        format: {
+                            body: function (data, row, column, node) {
+                                if (column === 4) { 
+                                    // Compute Progressive Balance for Export
+                                    return calculateProgressiveForExport(row);
+                                }
+                                return data;
+                            }
+                        }
+                    }
+                }
+            ],
+           // "dom": 'Bfrtip', // Enable buttons
             "drawCallback": function(settings) {
                 calculateProgressiveBalance(this.api());
                 scrollToBottom();
             }
         });
-
+    
+        // Connect Navbar Button to DataTables Export Function
+        $('#exportExcel').click(function () {
+            table.button('.buttons-excel').trigger();
+        });
+    
         function calculateProgressiveBalance(api) {
             let progressive = 0;
-
+    
             api.rows({ search: 'applied', order: 'applied' }).every(function (rowIdx) {
                 let data = this.data();
-                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g, "")) || 0; // Extract numeric value from Entrée column
-                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g, "")) || 0; // Extract numeric value from Sortie column
+                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g, "")) || 0;
+                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g, "")) || 0;
                 progressive += entree - sortie;
-
+    
                 let formattedProgressive = formatAmount(progressive);
                 $(this.node()).find('.progressive-balance').text(formattedProgressive);
             });
         }
-
+    
+        function calculateProgressiveForExport(rowIndex) {
+            let progressive = 0;
+            let rows = table.rows({ search: 'applied', order: 'applied' }).data();
+            
+            for (let i = 0; i <= rowIndex; i++) {
+                let entree = parseFloat(rows[i][2].replace(/[^0-9.-]+/g, "")) || 0;
+                let sortie = parseFloat(rows[i][3].replace(/[^0-9.-]+/g, "")) || 0;
+                progressive += entree - sortie;
+            }
+            
+            return formatAmount(progressive);
+        }
+    
         function formatAmount(amount) {
             return amount.toLocaleString('fr-FR', { minimumFractionDigits: 0 });
         }
-
+    
         function scrollToBottom() {
             const scrollBody = $('.dataTables_scrollBody');
             scrollBody.scrollTop(scrollBody[0].scrollHeight);
         }
     });
+    
+    
 </script>
 {% endblock %}

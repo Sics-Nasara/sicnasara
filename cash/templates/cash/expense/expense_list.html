@@ -38,6 +38,40 @@
 {% endblock header %}
 {% block content %}
 <style>
+    .dataTables_wrapper {
+        width: 100%;
+         /* Ensure table takes 85% of viewport height */
+        overflow: hidden; /* Prevent multiple scrollbars */
+    }
+
+    .dataTables_scrollBody {
+        max-height: 85vh !important; /* Ensure table body scrolls */
+        overflow-y: auto !important; /* Only vertical scrollbar */
+        overflow-x: auto !important; /* Allow horizontal scrolling if needed */
+    }
+
+    /* Fix the table header */
+    .dataTables_scrollHead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
+
+    .table th {
+        background-color: #333 !important;
+        color: #fff !important;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    /* Adjust Date column */
+    .table td.dt-left, .table th.dt-left {
+        white-space: nowrap; /* Prevents text from wrapping */
+        min-width: 130px; /* Adjust based on content */
+        max-width: 150px; /* Prevents excessive stretching */
+        text-align: left;
+    }
     .table-container {
         max-width: 100%;
         overflow-x: auto;
@@ -76,13 +110,43 @@
     .dt-right {
         text-align: right !important;
     }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        table-layout: auto; /* Allows columns to resize dynamically */
+    }
+    
+    .table th,
+    .table td {
+        padding: 5px 10px !important;
+        text-align: center;
+        font-size: 12px;
+        white-space: nowrap; /* Prevents text from wrapping */
+    }
+    
+    .table th.dt-left,
+    .table td.dt-left {
+        text-align: left !important;
+        white-space: nowrap; /* Ensures the text fits without breaking */
+    }
+    
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        max-width: 100%; /* Let the column expand based on content */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Show "..." if text is too long */
+        white-space: nowrap;
+    }
+    
 </style>
-<div class="table-responsive">
+
+<div class="table-container">
     <table id="expensesTable" class="table table-striped display table-bordered compact">
         <thead>
             <tr>
-                <th  class='dt-left'>Date</th>
-                <th>Description</th>
+                <th class='dt-left'>Date</th>
+                <th class='w-60'>Description</th>
                 <th>Montant</th>
                 <th>Total Progressif</th>
                 <th class='w-50'></th>
@@ -91,9 +155,8 @@
         <tbody>
             {% for item in expenses %}
             <tr>
-                <!-- Ensures proper date sorting while displaying YYYY-MM-DD format -->
-                <td   class='dt-left' data-order="{{ item.expense.date|date:'Y-m-d H:i:s' }}">{{ item.expense.date|date:'Y-m-d H:i:s' }}</td>
-                <td  class='dt-left'>COMPT-{{ item.expense.description }}</td>
+                <td class='dt-left' data-order="{{ item.expense.date|date:'Y/m/d H:i' }}">{{ item.expense.date|date:'Y/m/d H:i'}}</td>
+                <td class='dt-left'>COMPT-{{ item.expense.description }}</td>
                 <td class='dt-right'>{{ item.expense.amount|format_amount }}</td>
                 <td class="highlight-negative dt-right">{{ item.progressive_total|format_amount }}</td>
                 <td></td>
@@ -105,15 +168,45 @@
 
 <script>
     $(document).ready(function () {
-        $('#expensesTable').DataTable({
-            "order": [[0, "desc"]],  // Sort by date (column index 0) in descending order by default
+        var table = $('#expensesTable').DataTable({
+            "order": [[0, "asc"]], // Ensure oldest entries come first
             "columnDefs": [
-                { "type": "date", "targets": 0 }  // Ensure proper date sorting
+                { "type": "date", "targets": 0 }
             ],
-            "pageLength": 40,  // Default to 40 entries per page
-            "lengthMenu": [[40, 100, -1], [40, 100, "All"]]  // Pagination options
+            "paging": false, // Disable pagination
+            "lengthChange": false, // Remove "Show entries" dropdown
+            "scrollY": "85vh", // Use 85% of viewport height
+            "scrollCollapse": true,
+            "fixedHeader": true, // Ensure header remains fixed
+            "autoWidth": false, // Prevent unwanted column resizing
+            "drawCallback": function (settings) {
+                updateProgressiveTotal();
+            }
         });
+
+        // Function to compute and format the progressive total dynamically
+        function updateProgressiveTotal() {
+            let total = 0;
+            let formatter = new Intl.NumberFormat('fr-FR'); // French locale (uses space as thousand separator)
+
+            $('#expensesTable tbody tr').each(function () {
+                let amountText = $(this).find("td:eq(2)").text().replace(/[^0-9.-]+/g, ""); // Extract numeric value
+                let amount = parseFloat(amountText) || 0; // Convert to float, default to 0 if invalid
+                total += amount;
+                $(this).find("td:eq(3)").text(formatter.format(total)); // Apply French number formatting
+            });
+        }
+
+        // Scroll to the last row after DataTable initializes
+        setTimeout(function () {
+            var tableContainer = document.querySelector('.dataTables_scrollBody'); // DataTables' scrollable container
+            if (tableContainer) {
+                tableContainer.scrollTop = tableContainer.scrollHeight; // Scroll to the bottom (latest entry)
+            }
+        }, 500);
     });
 </script>
+
+
 
 {% endblock %}

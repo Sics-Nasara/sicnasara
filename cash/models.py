@@ -124,8 +124,6 @@ class Mouvement(TimeStampedModel):
 
     def __str__(self):
         return f"{self.causal} {self.montant:,}"
-
-
     
 class Expense(TimeStampedModel):
     legacy_id = models.CharField(max_length=36, unique=True ,default='')  # Store UUIDs here

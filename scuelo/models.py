@@ -132,8 +132,6 @@ class Eleve(TimeStampedModel):
     tel_parent = models.CharField(max_length=100, blank=True, null=True)
     note_eleve = models.TextField(blank=True, null=True, default='-')
     legacy_id = models.CharField(max_length=100, blank=True, null=True, db_index=True, unique=True)
-
-    
     
     def __str__(self):
         return f"{self.nom} {self.prenom} ({self.legacy_id})"
@@ -186,7 +184,6 @@ class AnneeScolaire(TimeStampedModel):
     date_initiale = models.DateField(blank=True, null=True)
     date_finale = models.DateField(blank=True, null=True)
     actuel = models.BooleanField(default=False)
-
     
     def __str__(self):
         return self.nom
@@ -205,8 +202,6 @@ class Inscription(TimeStampedModel):
     annee_scolaire = models.ForeignKey(AnneeScolaire, on_delete=models.CASCADE)
     date_inscription = models.DateTimeField(default=timezone.now)
     nombre_uniformes = models.IntegerField(default=0)
-
-    
     
     def __str__(self):
         return '%s - %s - %s' % (self.annee_scolaire.nom_bref, self.classe, self.eleve)
@@ -253,7 +248,6 @@ class UniformReservation(TimeStampedModel):
     def __str__(self):
         return f"Reservation for {self.student} - {self.quantity} uniforms"
 
-
 class StudentLog(TimeStampedModel):
     student = models.ForeignKey(Eleve, on_delete=models.CASCADE, related_name='logs')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -261,8 +255,6 @@ class StudentLog(TimeStampedModel):
     timestamp = models.DateTimeField(default=timezone.now)
     old_value = models.TextField(null=True, blank=True)
     new_value = models.TextField(null=True, blank=True)
-
-
     
     def __str__(self):
         return f"Log for {self.student.nom} by {self.user.username if self.user else 'System'}"
