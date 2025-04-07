@@ -1,15 +1,37 @@
 
 # to the in sics stage database 
-psql -U nasara -d sicsnasara_stage
-
+psql -U nasara -d sicsnasara_prod
+ssh nasara@209.227.237.151
 sudo nano  /etc/apache2/sites-available/sicsnasaraprod.conf
 sudo cat  /etc/apache2/sites-available/sicsnasaraprod.conf
 find . -type f -name "nginx"
 
-sudo  tail -f /var/log/sicsnasara/prod/uwsgi.log
+sudo  tail -f /var/log/sicsnasara/stage/uwsgi.log
 
  ps aux | grep uwsgi
 sudo tail -f /var/log/apache2/error.log
 
 
-_PK_Studente_ID	__FK_Classe_ID	D_enquete	Nom	Prenom	Condition_eleve	Sex	Date-Naissance	CS_PY	Hand	A_inscr	Parent	Tel_parent Note_Studente		
+DROP database
+psql -U nasara -d sicsnasara_stage
+
+DO $$  
+DECLARE  
+    r RECORD;  
+BEGIN  
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public')  
+    LOOP  
+        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';  
+    END LOOP;  
+END $$;
+
+check if correct 
+
+SELECT tablename FROM pg_tables WHERE schemaname = 'public';
+	
+
+
+
+
+sudo -u postgres psql -c "DROP DATABASE sicsnasara_stage;"
+sudo -u postgres psql -c "CREATE DATABASE sicsnasara_stage OWNER nasara;"

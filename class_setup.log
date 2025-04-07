@@ -134,3 +134,8 @@
 2025-02-27 20:45:53,390 - INFO - Superuser created successfully.
 2025-02-27 20:45:53,576 - INFO - Operator created successfully.
 2025-02-27 20:45:53,768 - INFO - Permissions assigned successfully.
+2025-03-17 15:30:25,955 - ERROR - Error during fixture setup: no such table: scuelo_anneescolaire
+2025-03-17 15:30:54,925 - INFO - School years created successfully.
+2025-03-17 15:30:55,168 - INFO - Superuser created successfully.
+2025-03-17 15:30:55,412 - INFO - Operator created successfully.
+2025-03-17 15:30:55,613 - INFO - Permissions assigned successfully.

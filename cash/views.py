@@ -62,7 +62,7 @@ from .forms import (
 # =======================
 # 4. Payment Management
 # =======================
-@login_required
+'''@login_required
 def add_payment(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     inscription = Inscription.objects.filter(eleve=student).last()
@@ -106,14 +106,69 @@ def add_payment(request, pk):
         'school_name': school_name,
         'class_type': class_type,
         'page_identifier': 'S07'
-    })
+    })'''
+@login_required
+def add_payment(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    inscription = Inscription.objects.filter(eleve=student).last()
 
+    if inscription:
+        school_name = inscription.classe.ecole.nom if inscription.classe else "Unknown School"
+        class_type = inscription.classe.type.nom if inscription.classe else "Unknown Class"
+        class_pk = inscription.classe.pk if inscription.classe else None
+    else:
+        school_name = "Unknown School"
+        class_type = "Unknown Class"
+        class_pk = None
+
+    if request.method == 'POST':
+        form = PaiementPerStudentForm(request.POST)
+        if form.is_valid():
+            mouvement = form.save(commit=False)
+            mouvement.inscription = inscription  # Ensure inscription is set
+            mouvement.causal = form.cleaned_data['causal']
+
+            if inscription:
+                mouvement.save()
+                print(f"Payment saved for {student.nom} {student.prenom}")  # Debug: Confirm payment saved
+                StudentLog.objects.create(
+                    student=student,
+                    user=request.user,
+                    action="Added Payment",
+                    old_value="",
+                    new_value=f"Payment - {mouvement.montant} - {mouvement.note} - {mouvement.date_paye}"
+                )
+                
+                # Redirect to the class detail view
+                if class_pk:
+                    return redirect('class_detail', pk=class_pk)
+                else:
+                    # Handle the case where no class is found
+                    return redirect('student_detail', pk=student.pk)
+            else:
+                form.add_error(None, "No active inscription found for this student.")
+        else:
+            print(form.errors)  # Debug: Print form errors
+
+    else:
+        form = PaiementPerStudentForm()
+
+    return render(request, 'cash/paiements/add_payment.html', {
+        'form': form,
+        'student': student,
+        'school_name': school_name,
+        'class_type': class_type,
+        'page_identifier': 'S07'
+    })
 @login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)
     student = paiement.inscription.eleve
     school_name = paiement.inscription.classe.ecole.nom if paiement.inscription.classe else "Unknown School"
     class_type = paiement.inscription.classe.type.nom if paiement.inscription.classe else "Unknown Class"
+    
+    # Get class PK for redirect
+    classe_pk = paiement.inscription.classe.pk if paiement.inscription.classe else None
 
     if request.method == 'POST':
         form = PaiementPerStudentForm(request.POST, instance=paiement)
@@ -128,9 +183,13 @@ def update_paiement(request, pk):
                 old_value=old_value,
                 new_value=f"{updated_payment.causal} - {updated_payment.montant} - {updated_payment.note} - {updated_payment.date_paye.strftime('%d/%m/%Y')}"
             )
-            return redirect('student_detail', pk=student.pk)
+            
+            # Redirect to class detail if class exists, else to student detail
+            if classe_pk:
+                return redirect('class_detail', pk=classe_pk)
+            else:
+                return redirect('student_detail', pk=student.pk)
     else:
-        # Correctly initialize the form
         form = PaiementPerStudentForm(instance=paiement)
 
     return render(request, 'cash/paiements/updatepaiment.html', {
@@ -140,6 +199,7 @@ def update_paiement(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
+
 
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
@@ -635,7 +695,7 @@ def expense_create(request):
             try:
                 expense.save()
                 messages.success(request, "Expense created successfully!")
-                return redirect('home')
+                return redirect('expense_list')
             except IntegrityError:
                 messages.error(request, "An error occurred: Duplicate legacy_id. Please try again.")
                 # Optionally, regenerate the legacy_id and try saving again
@@ -643,7 +703,7 @@ def expense_create(request):
                 try:
                     expense.save()
                     messages.success(request, "Expense created successfully after regenerating legacy_id!")
-                    return redirect('home')
+                    return redirect('expense_list')
                 except IntegrityError:
                     messages.error(request, "Failed to generate a unique legacy_id. Please contact support.")
                     # Log the error here if necessary

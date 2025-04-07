@@ -15,3 +15,20 @@
 2025-03-17 15:07:33,133 - INFO - TypeClasse already exists: 2me
 2025-03-17 15:07:33,134 - INFO - TypeClasse already exists: 1ere
 2025-03-17 15:07:33,134 - INFO - TypeClasse already exists: Term
+2025-03-17 15:31:07,010 - INFO - Creating TypeClasses...
+2025-03-17 15:31:07,024 - INFO - Created TypeClasse: PS
+2025-03-17 15:31:07,043 - INFO - Created TypeClasse: MS
+2025-03-17 15:31:07,057 - INFO - Created TypeClasse: GS
+2025-03-17 15:31:07,068 - INFO - Created TypeClasse: CP1
+2025-03-17 15:31:07,079 - INFO - Created TypeClasse: CP2
+2025-03-17 15:31:07,089 - INFO - Created TypeClasse: CE1
+2025-03-17 15:31:07,099 - INFO - Created TypeClasse: CE2
+2025-03-17 15:31:07,110 - INFO - Created TypeClasse: CM1
+2025-03-17 15:31:07,120 - INFO - Created TypeClasse: CM2
+2025-03-17 15:31:07,131 - INFO - Created TypeClasse: 6me
+2025-03-17 15:31:07,140 - INFO - Created TypeClasse: 5me
+2025-03-17 15:31:07,151 - INFO - Created TypeClasse: 4me
+2025-03-17 15:31:07,162 - INFO - Created TypeClasse: 3me
+2025-03-17 15:31:07,173 - INFO - Created TypeClasse: 2me
+2025-03-17 15:31:07,184 - INFO - Created TypeClasse: 1ere
+2025-03-17 15:31:07,196 - INFO - Created TypeClasse: Term

@@ -1,0 +1,86 @@
+If you're connected to your VPS via SSH and want to delete the entire content of your PostgreSQL database **`sicsnasara_stage`**, here's the safest and most efficient way to do it:
+
+---
+
+### **Step 1: Backup Your Database (Optional but Strongly Recommended)**
+```bash
+pg_dump -U nasara -h localhost sicsnasara_stage > sicsnasara_stage_backup.sql
+```
+- Replace `nasara` with your database username if different.
+- Store this backup securely in case you need to restore data later.
+
+---
+
+### **Step 2: Delete All Data While Keeping Tables**
+#### **Method 1: Use Django's `flush` Command**
+This deletes all data but retains tables, users, and permissions:
+```bash
+python manage.py flush --noinput
+```
+- The `--noinput` flag skips confirmation prompts.
+- **Note**: This requires your Django project to be configured with the correct database settings (`settings.py`).
+
+#### **Method 2: Use PostgreSQL `TRUNCATE`**
+For a deeper cleanup (via PostgreSQL command line):
+1. Connect to PostgreSQL:
+   ```bash
+   sudo -u postgres psql -d sicsnasara_stage
+   ```
+2. Execute these SQL commands:
+   ```sql
+   -- Disable triggers to avoid foreign key constraints
+   SET session_replication_role = 'replica';
+
+   -- Truncate all tables in the public schema
+   TRUNCATE TABLE public.* CASCADE;
+
+   -- Reset sequences (auto-increment counters)
+   SELECT 'SELECT SETVAL(' || quote_literal(seqrelid::regclass) || ', 1, false);'
+   FROM pg_sequence
+   \gexec
+
+   -- Re-enable triggers
+   SET session_replication_role = 'origin';
+   ```
+3. Exit with `\q`.
+
+---
+
+### **Step 3: Recreate Tables (If Needed)**
+If you want to **completely reset** the database (delete tables and data):
+1. Drop and recreate the database:
+   ```bash
+   sudo -u postgres psql -c "DROP DATABASE sicsnasara_stage;"
+   sudo -u postgres psql -c "CREATE DATABASE sicsnasara_stage OWNER nasara;"
+   ```
+2. Reapply migrations:
+   ```bash
+   python manage.py migrate
+   ```
+
+---
+
+### **Step 4: Verify**
+1. Check tables:
+   ```bash
+   sudo -u postgres psql -d sicsnasara_stage -c "\dt"
+   ```
+2. Check data:
+   ```bash
+   sudo -u postgres psql -d sicsnasara_stage -c "SELECT * FROM your_table_name LIMIT 1;"
+   ```
+
+---
+
+### **Key Notes**
+- **Permissions**: Ensure your Linux user has `sudo` access or is part of the `postgres` group.
+- **Security**: Never run these commands in production without a backup.
+- **Django Superuser**: After flushing, recreate a superuser with:
+  ```bash
+  python manage.py createsuperuser
+  ```
+
+This approach ensures your database structure remains intact while deleting all data. Let me know if you need further clarification!
+
+---
+Answer from Perplexity: pplx.ai/share
