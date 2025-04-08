@@ -729,8 +729,7 @@ class StudentCreateView(CreateView):
         return data
 
     def form_valid(self, form):
-        eleve = form.save(commit=False)
-        eleve.save()
+        eleve = form.save()
         classe = form.cleaned_data['classe']
         annee_scolaire = form.cleaned_data['annee_scolaire']
         Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
