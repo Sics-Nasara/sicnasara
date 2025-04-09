@@ -6,204 +6,227 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter Étudiant</title>
-   
+
 </head>
 
-    {% block header %}
+{% block header %}
 <span class="navbar-brand mb-0 h1 text-white">ajouter etudiant</span>
-          
-    
-            <!-- Undo and Redo Icons -->
-            <div class="ml-2 d-flex align-items-stretch">
-                <a href="{% url 'home' %}" class="class-card mr-3">Annuler</a>
-                <button class="class-card mr-3" id="undo-button" title="Undo">
-                    <i class="fas fa-undo"></i>
-                </button>
-                <button class="class-card mr-3" id="redo-button" title="Redo">
-                    <i class="fas fa-redo"></i>
-                </button>
-                <h2 class='mr-3 text-white' ><strong>{{ page_identifier }}</strong></h2>
-            </div>
+
+
+<!-- Undo and Redo Icons -->
+<div class="ml-2 d-flex align-items-stretch">
+    <a href="{% url 'home' %}" class="class-card mr-3">Annuler</a>
+    <button class="class-card mr-3" id="undo-button" title="Undo">
+        <i class="fas fa-undo"></i>
+    </button>
+    <button class="class-card mr-3" id="redo-button" title="Redo">
+        <i class="fas fa-undo"></i>
+    </button>
+    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+</div>
 {% endblock header %}
 
-    {% block content %}
-    <style>
-     
-        .container-fluid {
-            padding: 20px;
-        }
-      
-        .card-body h5 {
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-        .card{  
-            border-color: black ;
-            border-width: .15rem;
-        }
-        .card-header {  
-            background: #000;
-            color:white
-        }
-        /* Style for labels to align them */
-        .info-label {
-            display: inline-block;
-            width: 150px;
-            font-weight: bold;
-            text-align: right;
-            margin-bottom: 16px;
-            margin-right: 16px;
-        }
-        /* Form-specific styles to mimic the card */
-        form .form-group {
-            margin-bottom: 16px;
-        }
-        form label {
-            display: inline-block;
-            width: 150px;
-            font-weight: bold;
-            text-align: right;
-            margin-right: 16px;
-        }
-        form .form-control {
-            display: inline-block;
-            width: auto;
-        }
-      
-        .scrollable-section {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .selected-row {
-            background-color: #e0f7fa;
-        }
-    </style>
-    <div class="">
-        <div class="d-flex justify-content-between mb-4">
-            <!-- Optional: Add additional buttons or links here -->
-        </div>
-        <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
-            <div class="row">
-    
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Ajouter un etudiant
-                        </div>
-                        <div class="card-body">
-                            <form method="post" action="{% url 'new_student' %}">
-                                {% csrf_token %}
-                                {% if form.errors %}
-                                <div class="alert alert-danger">
-                                    Please correct the errors below:
-                                    {{ form.errors }}
-                                </div>
-                                {% endif %}
-                                <div class="form-group">
-                                    <label for="id_nom">Nom:</label>
-                                    {% render_field form.nom class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_prenom">Prénom:</label>
-                                    {% render_field form.prenom class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_condition_eleve">État:</label>
-                                    {% render_field form.condition_eleve class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_sex">Sexe:</label>
-                                    {% render_field form.sex class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_date_naissance">Date Naissance:</label>
-                                    {% render_field form.date_naissance class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_cs_py">CS PY:</label>
-                                    {% render_field form.cs_py class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_date_enquete">date enquete:</label>
-                                    {% render_field form.date_enquete class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_hand">Handicap:</label>
-                                    {% render_field form.hand class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_hand">parent:</label>
-                                    {% render_field form.parent class="form-control" %}
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="id_note">note:</label>
-                                    {% render_field form.note_eleve class="form-control" %}
-                                </div>
-                               
-        
-                            
-                        </div>
+{% block content %}
+<style>
+    .container-fluid {
+        padding: 20px;
+    }
+
+    .card-body h5 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .card {
+        border-color: black;
+        border-width: .15rem;
+    }
+
+    .card-header {
+        background: #000;
+        color: white
+    }
+
+    /* Style for labels to align them */
+    .info-label {
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
+        text-align: right;
+        margin-bottom: 16px;
+        margin-right: 16px;
+    }
+
+    /* Form-specific styles to mimic the card */
+    form .form-group {
+        margin-bottom: 16px;
+    }
+
+    form label {
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 16px;
+    }
+
+    form .form-control {
+        display: inline-block;
+        width: auto;
+    }
+
+    .scrollable-section {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .selected-row {
+        background-color: #e0f7fa;
+    }
+</style>
+<div class="">
+    <div class="d-flex justify-content-between mb-4">
+        <!-- Optional: Add additional buttons or links here -->
+    </div>
+    <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Ajouter un etudiant
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'new_student' %}" id="EleveForm"
+                            data-classes-url="{% url 'get_classes_by_school' %}">
+                            {% csrf_token %}
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Please correct the errors below:
+                                {{ form.errors }}
+                            </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="id_nom">Nom:</label>
+                                {% render_field form.nom class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_prenom">Prénom:</label>
+                                {% render_field form.prenom class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_condition_eleve">État:</label>
+                                {% render_field form.condition_eleve class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_sex">Sexe:</label>
+                                {% render_field form.sex class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_date_naissance">Date Naissance:</label>
+                                {% render_field form.date_naissance class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_cs_py">CS PY:</label>
+                                {% render_field form.cs_py class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_date_enquete">date enquete:</label>
+                                {% render_field form.date_enquete class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_hand">Handicap:</label>
+                                {% render_field form.hand class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_hand">parent:</label>
+                                {% render_field form.parent class="form-control" %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_note">note:</label>
+                                {% render_field form.note_eleve class="form-control" %}
+                            </div>
+
+
                     </div>
                 </div>
-                 <!-- Class Selection Section -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Sélectionner la Classe
+            </div>
+            <!-- Class Selection Section -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Sélectionner la Classe
+                    </div>
+                    <div class="card-body">
+                         <div class="form-group">
+                            <label for="{{ form.ecole.id_for_label }}">École:</label>
+                             <select id="id_ecole" class="form-control" name="ecole">
+                                <option value="">---------</option>
+                                {% for ecole in ecoles %}
+                                    <option value="{{ ecole.id }}">{{ ecole.nom }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div class="card-body">
-                                <div class="form-group">
-                                    <label for="id_classe">Classe:</label>
-                                    {% render_field form.classe class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_annee_scolaire">Année Scolaire:</label>
-                                    {% render_field form.annee_scolaire class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_tel_parent">tel parent:</label>
-                                    {% render_field form.tel_parent class="form-control" %}
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_annee_inscr">annee_inscr:</label>
-                                    {% render_field form.annee_inscr class="form-control" %}
-                                </div>
-                                <div class="form-buttons mt-3">
-                                    <button type="submit" class="class-card">Créer Étudiant</button>
-                                </div>
-                            </form>
+
+                        <div class="form-group">
+                            <label for="{{ form.classe.id_for_label }}">Classe:</label>
+                            {% render_field form.classe class="form-control" %}
+                        </div>
+                       
+                        <div class="form-group">
+                            <label for="id_tel_parent">tel parent:</label>
+                            {% render_field form.tel_parent class="form-control" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_annee_inscr">annee_inscr:</label>
+                            {% render_field form.annee_inscr class="form-control" %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_annee_scolaire">annee scolaire:</label>
+                            {% render_field form.annee_scolaire class="form-control" %}
+                        </div>
+
+                        <div class="form-buttons mt-3">
+                            <button type="submit" class="class-card">Créer Étudiant</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    
-    
-        <script>
-            function highlightRow(row) {
-                const rows = document.querySelectorAll('#class-table tbody tr');
-                rows.forEach(r => r.classList.remove('selected-row'));
-                row.classList.add('selected-row');
-            }
-    
-            function updateSelectedClass(radio) {
-                const selectedRow = radio.closest('tr');
-                const schoolName = selectedRow.cells[2].innerText;
-                const className = selectedRow.cells[3].innerText;
-    
-                document.getElementById('selected-class-info').innerHTML =
-                    `<h1>${schoolName} - ${className}</h1>`;
-            }
-        </script>
-    
-        {% endblock content %}
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+         $(function () {
+
+             $("#id_ecole").change(function () {
+                const url = $("#EleveForm").attr("data-classes-url");  // get the url of 'get_classes_by_school'
+                const ecoleId = $(this).val();  // get the value of selected school
+
+                $.ajax({                       // initialize an AJAX request
+                    url: url,                    // set the url of the request (= current URL)
+                    data: {
+                        'ecole': ecoleId       // add the school id to the GET parameters
+                    },
+                    success: function (data) {   // `data` is the return of the `get_classes_by_school` view function
+                        $("#id_classe").html(data);  // replace the contents of the classe input with the returned data
+                    }
+                });
+
+            });
+        });
+    </script>
+
+    {% endblock content %}

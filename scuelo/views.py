@@ -714,7 +714,7 @@ def offsite_students(request):
 
     return render(request, 'scuelo/offsite_students.html', context)
 
-@method_decorator(login_required, name='dispatch')
+'''@method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
     model = Eleve
     form_class = EleveCreateForm
@@ -733,8 +733,42 @@ class StudentCreateView(CreateView):
         classe = form.cleaned_data['classe']
         annee_scolaire = form.cleaned_data['annee_scolaire']
         Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
-        return super().form_valid(form)
+        return super().form_valid(form)'''
+        
+@method_decorator(login_required, name='dispatch')
+class StudentCreateView(CreateView):
+    model = Eleve
+    form_class = EleveCreateForm
+    template_name = 'scuelo/students/new_student.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
+        data['page_identifier'] = 'S15'
+        data['ecoles'] = Ecole.objects.all()
+        return data
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.request.method == 'POST':
+            kwargs['data'] = self.request.POST  # Pass request.POST as data
+        return kwargs
     
+    def form_valid(self, form):
+        classe = form.cleaned_data['classe']
+        ecole = form.cleaned_data['ecole']
+        annee_scolaire = form.cleaned_data['annee_scolaire']
+        eleve = form.save()
+        Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
+        return super().form_valid(form)
+  
+def get_classes_by_school(request):
+    ecole_id = request.GET.get('ecole')
+    classes = Classe.objects.filter(ecole_id=ecole_id).order_by('nom')
+    return render(request, 'scuelo/classe_dropdown_list_options.html', {'classes': classes})
+
+        
 @login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)

@@ -136,7 +136,7 @@ class InscriptionPerStudentForm(forms.ModelForm):
         }
 '''
 from datetime import datetime
-class EleveCreateForm(forms.ModelForm):
+'''class EleveCreateForm(forms.ModelForm):
     classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True, label="Classe")
     annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True, label="Année Scolaire")
 
@@ -153,7 +153,57 @@ class EleveCreateForm(forms.ModelForm):
             'annee_inscr': forms.NumberInput(attrs={'min': 1900, 'max': 2100}),
             'note_eleve': forms.Textarea(attrs={'rows': 4}),
         }
-            
+           ''' 
+           
+
+from django import forms
+from .models import Eleve, Ecole, Classe, AnneeScolaire
+
+class EleveCreateForm(forms.ModelForm):
+    ecole = forms.ModelChoiceField(
+        queryset=Ecole.objects.all(),
+        required=True,
+        label="École",
+        widget=forms.Select(attrs={'id': 'id_ecole'})  # Add id for js
+    )
+    classe = forms.ModelChoiceField(
+        queryset=Classe.objects.none(),
+        required=True,
+        label="Classe",
+        widget=forms.Select(attrs={'id': 'id_classe'})  # Add id for js
+    )
+    annee_scolaire = forms.ModelChoiceField(
+        queryset=AnneeScolaire.objects.all(),
+        required=True,
+        label="Année Scolaire"
+    )
+
+    class Meta:
+        model = Eleve
+        fields = [
+            'nom', 'prenom', 'date_enquete', 'condition_eleve', 'sex',
+            'date_naissance', 'cs_py', 'hand', 'annee_inscr',
+            'parent', 'tel_parent', 'note_eleve', 'ecole', 'classe', 'annee_scolaire'
+        ]
+        widgets = {
+            'date_enquete': forms.DateInput(attrs={'type': 'date'}),
+            'date_naissance': forms.DateInput(attrs={'type': 'date'}),
+            'annee_inscr': forms.NumberInput(attrs={'min': 1900, 'max': 2100}),
+            'note_eleve': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['classe'].queryset = Classe.objects.none()
+        if 'ecole' in self.data:
+            try:
+                ecole_id = int(self.data.get('ecole'))
+                self.fields['classe'].queryset = Classe.objects.filter(ecole_id=ecole_id)
+            except (ValueError, TypeError):
+                pass  # Invalid input; leave queryset empty
+
+
+
 class EleveUpdateForm(forms.ModelForm):
     classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
     annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True)

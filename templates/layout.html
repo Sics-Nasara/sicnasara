@@ -43,7 +43,7 @@
   
     body {
        width: 100%;
-        background: #F0F4FF;
+        background: #FFFFFFFF;
       
     } 
   
@@ -63,15 +63,11 @@
   
 
     
-    /* Content area styling */
+
     .content {
-        
-     
-       
+        padding-top: 70px; /* Adjust based on navbar height */
         transition: margin-left 0.4s ease, width 0.4s ease;
     }
-
-
 
     .content h1 {
         font-size: 1rem;
@@ -84,9 +80,14 @@
         font-size: 0.7rem;
         line-height: 1.6;
     }
-  .navbar{
-    background-color: black;
-  }
+    .navbar {
+        position: fixed; /* Add this to keep the navbar fixed */
+        top: 0; /* Position at the top of the page */
+        width: 100%; /* Span the full width of the page */
+        background-color: black; /* Your existing background color */
+        z-index: 1000; /* Ensure it stays on top of other elements */
+    }
+    
   .class-card {
     display: flex;
     flex-direction: column;
@@ -211,45 +212,7 @@
       $('.loader-box').fadeOut(300)
     })
   </script>
-{% comment %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loadingSpinner = document.getElementById("loading-spinner");
-    
-            // Show loader on link clicks
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function (event) {
-                    if (this.target !== "_blank") {  // Exclude links opening in new tabs
-                        loadingSpinner.style.display = "flex";
-                    }
-                });
-            });
-    
-            // Hide loader when the page fully loads
-            window.addEventListener("load", function () {
-                loadingSpinner.style.display = "none";
-            });
-    
-            // Detect when the user navigates using back/forward buttons
-            window.addEventListener("popstate", function () {
-                loadingSpinner.style.display = "none"; // Hide spinner when undo/redo is triggered
-            });
-    
-            // Undo (Back) Button
-            document.getElementById('undo-button').addEventListener('click', function() {
-                loadingSpinner.style.display = "flex"; // Show spinner
-                window.history.back();
-            });
-    
-            // Redo (Forward) Button
-            document.getElementById('redo-button').addEventListener('click', function() {
-                loadingSpinner.style.display = "flex"; // Show spinner
-                window.history.forward();
-            });
-        });
-    </script>
-    
-{% endcomment %}
+
 
 <script>
 

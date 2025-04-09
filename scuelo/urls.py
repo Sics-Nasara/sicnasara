@@ -20,6 +20,7 @@ urlpatterns = [
     path('annee_scolaire/edit/<int:pk>/', views.EditSchoolYearView.as_view(), name='edit_school_year'),
     path('annee_scolaire/delete/<int:pk>/', DeleteSchoolYearView.as_view(), name='delete_school_year'),
    # path('get_classes/<int:ecole_id>/', views.get_classes_by_ecole, name='get_classes_by_ecole'),
+   path('ajax/get_classes/', views.get_classes_by_school, name='get_classes_by_school'),
 
     path('offsite_students/', views.offsite_students, name='offsite_students'),
     path('directly_managed_students/', StudentListView.as_view(), name='directly_managed_students'),
