@@ -18,3 +18,13 @@ def format_date(value, date_format="DD/MM/YYYY"):
     if isinstance(value, datetime):
         return value.strftime(date_format)
     return value
+
+
+@register.filter(name='unlocalize_amount')
+def unlocalize_amount(value):
+    """
+    Removes localization formatting from a number.
+    """
+    if value is None:
+        return '0'
+    return str(value).replace(",", "")
