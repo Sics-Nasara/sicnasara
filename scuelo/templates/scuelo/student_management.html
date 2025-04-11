@@ -15,7 +15,7 @@
     <span class="navbar-brand mb-0 h1 text-white">Liste générale des étudiants</span>
     <div class="ml-2 d-flex align-items-stretch">
         <a href="{% url 'new_student' %}" class="class-card mr-3">
-            <i class="fas fa-tshirt"></i>
+            <i class="fas fa-user-plus"></i>
             <span>Nouvel élève</span>
         </a>
         <button class="class-card mr-3" id="undo-button" title="Undo">
@@ -143,8 +143,9 @@
                                         </a>
                                     </td>
                                     <td>{{ inscription.eleve.id }}</td>
-                                    <td>{{ inscription.eleve.prenom }}</td>
                                     <td>{{ inscription.eleve.nom }}</td>
+                                    <td>{{ inscription.eleve.prenom }}</td>
+                                  
                                   
                                
                                     <td>{{ inscription.eleve.get_sex_display }}</td>
@@ -183,7 +184,8 @@
                     {extend: 'excel', text: 'Export Excel', className: 'btn btn-success'},
                     {extend: 'print', text: 'Print', className: 'btn btn-success'}
                 ],
-                paging: true,
+                paging: false, // Disable pagination
+                lengthChange: false, // Remove "Show entries" dropdown
                 pageLength: 40,
                 lengthMenu: [10, 25, 50, 100],
                 order: [],  // Enable sorting

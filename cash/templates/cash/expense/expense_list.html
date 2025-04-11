@@ -45,7 +45,7 @@
     }
 
     .dataTables_scrollBody {
-        max-height: 85vh !important; /* Ensure table body scrolls */
+        max-height: 80vh !important; /* Ensure table body scrolls */
         overflow-y: auto !important; /* Only vertical scrollbar */
         overflow-x: auto !important; /* Allow horizontal scrolling if needed */
     }
@@ -158,7 +158,7 @@
                 <td class='dt-left' data-order="{{ item.expense.date|date:'Y/m/d H:i' }}">{{ item.expense.date|date:'Y/m/d H:i'}}</td>
                 <td class='dt-left'>COMPT-{{ item.expense.description }}</td>
                 <td class='dt-right'>{{ item.expense.amount|format_amount }}</td>
-                <td class="highlight-negative dt-right">{{ item.progressive_total|format_amount }}</td>
+                <td class="highlight-negative dt-right"> {{ item.progressive_total|format_amount }}</td>
                 <td></td>
             </tr>
             {% endfor %}
@@ -171,7 +171,8 @@
         var table = $('#expensesTable').DataTable({
             "order": [[0, "asc"]], // Ensure oldest entries come first
             "columnDefs": [
-                { "type": "date", "targets": 0 }
+                { "type": "date", "targets": 0 },
+                { "orderable": false, "targets": "_all" }  // Disable sorting on all columns
             ],
             "paging": false, // Disable pagination
             "lengthChange": false, // Remove "Show entries" dropdown
@@ -181,30 +182,41 @@
             "autoWidth": false, // Prevent unwanted column resizing
             "drawCallback": function (settings) {
                 updateProgressiveTotal();
+                scrollToBottom(); // Scroll to the bottom after drawing
             }
         });
-
+    
         // Function to compute and format the progressive total dynamically
         function updateProgressiveTotal() {
             let total = 0;
             let formatter = new Intl.NumberFormat('fr-FR'); // French locale (uses space as thousand separator)
-
+    
             $('#expensesTable tbody tr').each(function () {
                 let amountText = $(this).find("td:eq(2)").text().replace(/[^0-9.-]+/g, ""); // Extract numeric value
                 let amount = parseFloat(amountText) || 0; // Convert to float, default to 0 if invalid
                 total += amount;
-                $(this).find("td:eq(3)").text(formatter.format(total)); // Apply French number formatting
+                let formattedTotal = formatAmount(total); // Format the total amount
+                $(this).find("td:eq(3)").text(formattedTotal); // Apply French number formatting
             });
         }
-
+    
+        // Format amount with minus sign for negative values
+        function formatAmount(amount) {
+            let formatter = new Intl.NumberFormat('fr-FR');
+            let formattedAmount = formatter.format(amount);
+            return amount < 0 ? '-' + formattedAmount.replace('-', '-') : formattedAmount;
+        }
+    
         // Scroll to the last row after DataTable initializes
-        setTimeout(function () {
-            var tableContainer = document.querySelector('.dataTables_scrollBody'); // DataTables' scrollable container
-            if (tableContainer) {
-                tableContainer.scrollTop = tableContainer.scrollHeight; // Scroll to the bottom (latest entry)
+        function scrollToBottom() {
+            var tableContainer = $('.dataTables_scrollBody'); // DataTables' scrollable container
+            if (tableContainer.length) {
+                tableContainer.scrollTop(tableContainer[0].scrollHeight); // Scroll to the bottom (latest entry)
             }
-        }, 500);
+        }
     });
+    
+    
 </script>
 
 

@@ -140,9 +140,9 @@
                 <th class='paid'>Exigible</th>
                 <th class='paid'>Diff. CAN</th>
                 <th class='paid'>Retards</th>
-                <th class='paid'>Note</th>
-                <th class='paid'>% Paid</th>
+             
                 <th class='paid'>Retard (%)</th>
+                <th class='paid'>Note</th>
                 <!-- New column for remaining percentage -->
             </tr>
         </thead>
@@ -154,13 +154,9 @@
 
                 <tr class="class-header-row">
 
-                    <td colspan="15">Class: {{ class_name }}</td>
+                    <td colspan="14">Class: {{ class_name }}</td>
 
-                </tr>
-
-
-
-                <!-- Student Rows -->
+                </tr> <!-- Student Rows -->
                 {% for student in class_info.students %}
                 <tr>
                     <td class='id'>{{ student.id }}</td>
@@ -204,11 +200,7 @@
                         {% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}
                     </td>
 
-                    <!-- Note -->
-                    <td>{{ student.note }}</td>
-
-                    <!-- Percentage Paid -->
-                    <td class='amount-col'>{{ student.percentage_paid|floatformat:1 }}%</td>
+            
 
                     <!-- Remaining Percentage (Retard) -->
                     <td class="{% if student.remaining_percentage > 0 %}red-retard{% endif %} amount-col">
@@ -217,7 +209,10 @@
                         {% else %}
                         -
                         {% endif %}
-                    </td> <!-- Displaying as a percentage with a minus sign -->
+                    </td>
+                    
+                            <!-- Note -->
+                            <td>{{ student.note }}</td><!-- Displaying as a percentage with a minus sign -->
                 </tr>
                 {% endfor %}
 
@@ -232,7 +227,6 @@
                     <td class="{% if class_info.total_diff_can > 0 %}highlight-negative{% endif %} amount-col">
                         {{ class_info.total_diff_can|format_amount }}
                     </td>
-                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -251,9 +245,11 @@
             dom: 'Bfrtip',
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
-            ]
+            ],
+             order: [[11, 'desc']]
         });
     });
+
 
     function myFunction() {
         window.print();

@@ -152,18 +152,18 @@
                   <div class="col-md-12 ">
                     <div class="class-grid">
                         <a href="{% url 'expense_create' %}" class="class-card">
-                            <i class="fas fa-tshirt"></i>
-                            <span>+sorties</span>
-                        </a> 
+                            <i class="fas fa-plus-circle"></i>
+                            <span>+Sorties argent</span>
+                        </a>
                         <a href="{% url 'expense_list' %}" class="class-card">
-                                <i class="fas fa-tshirt"></i>
-                            <span>Sorties</span> 
+                            <i class="fas fa-list"></i>
+                            <span>Sorties</span>
+                        </a>
+                        <a href="{% url 'entree_sortie' %}" class="class-card">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Entrees/Sorties</span>
                         </a>
                         
-                        <a href="{% url 'entree_sortie' %}" class="class-card">
-                            <i class="fas fa-tshirt"></i>
-                            <span>entree/sortie</span>
-                        </a>
                       {% comment %}
                           <a href="{% url 'transfer_list' %}" class="class-card">
                               <i class="fas fa-users"></i>
