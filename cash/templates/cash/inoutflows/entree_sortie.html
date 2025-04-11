@@ -71,7 +71,6 @@
         text-align: right !important;
     }
 
-    /* Fixed Header Styles */
     .dataTables_wrapper {
         overflow: hidden; /* Hide scrollbars */
     }
@@ -81,30 +80,22 @@
         position: sticky;
         top: 0;
         z-index: 1;
+        background-color: #333; /* Ensure the background color is set */
+    }
+
+    .dataTables_scrollHeadInner {
+        width: 100%; /* Make sure this is set */
+    }
+
+    .dataTables_scrollHead table {
+        width: 100% !important; /* Ensure the table occupies the full width */
     }
 
     .dataTables_scrollBody {
         overflow-y: auto !important; /* Enable vertical scrolling */
-        max-height: 85vh !important; /* Set a maximum height for the scrollable body */
+        max-height: 80vh !important; /* Set a maximum height for the scrollable body */
     }
 
-    /* Custom Scrollbar Styles */
-    .dataTables_scrollBody::-webkit-scrollbar {
-        width: 12px; /* Width of the scrollbar */
-    }
-
-    .dataTables_scrollBody::-webkit-scrollbar-track {
-        background: #f1f1f1; /* Color of the tracking area */
-    }
-
-    .dataTables_scrollBody::-webkit-scrollbar-thumb {
-        background: #888; /* Color of the scroll thumb */
-        border-radius: 6px; /* Roundness of the scroll thumb */
-    }
-
-    .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
-        background: #555; /* Color of the scroll thumb on hover */
-    }
 </style>
 
 <div class="table-container">
@@ -147,17 +138,17 @@
 <script>
     $(document).ready(function () {
         var table = $('#entreeSortieTable').DataTable({
-            "order": [[0, "asc"]], // Sort by Date column in ascending order
             "bLengthChange": false, // Disable entries selection dropdown
             "paging": false, // Disable pagination
             "columnDefs": [
-                { "orderable": false, "targets": [5] } // Disable sorting on the last column
+                { "orderable": false, "targets": "_all" } // Disable sorting on all columns
             ],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
             },
             "scrollY": "500px", // Enable vertical scrolling
             "scrollCollapse": true, // Collapse the table when the content fits into the viewport
+            //"dom": 'Bfrtip',      // Enable buttons
             "buttons": [
                 {
                     extend: 'excelHtml5',
@@ -181,7 +172,6 @@
                     }
                 }
             ],
-           // "dom": 'Bfrtip', // Enable buttons
             "drawCallback": function(settings) {
                 calculateProgressiveBalance(this.api());
                 scrollToBottom();
