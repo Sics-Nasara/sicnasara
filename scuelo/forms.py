@@ -67,12 +67,28 @@ class UniformReservationForm(forms.ModelForm):
                 pass     '''     
                 
 class ClassUpgradeForm(forms.Form):
-    new_class = forms.ModelChoiceField(
-        queryset=Classe.objects.all(),
-        label="Select Class",
+    ecole = forms.ModelChoiceField(
+        queryset=Ecole.objects.all(),
+        label="École",
         required=True,
-        widget=forms.HiddenInput()  # Hidden because selection happens in the table
-    )               
+        widget=forms.Select(attrs={'id': 'id_ecole'})
+    )
+    new_class = forms.ModelChoiceField(
+        queryset=Classe.objects.none(),  # Initially empty
+        label="New Class",
+        required=True,
+        widget=forms.Select(attrs={'id': 'id_new_class'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'ecole' in self.data:
+            try:
+                ecole_id = int(self.data['ecole'])
+                self.fields['new_class'].queryset = Classe.objects.filter(ecole_id=ecole_id)
+            except (ValueError, TypeError):
+                pass  # Invalid input; don't filter queryset
+                 
 class SchoolChangeForm(forms.Form):
     new_school = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True, label="Nouvelle École")
 
@@ -205,16 +221,15 @@ class EleveCreateForm(forms.ModelForm):
 
 
 class EleveUpdateForm(forms.ModelForm):
-    classe = forms.ModelChoiceField(queryset=Classe.objects.all(), required=True)
-    annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True)
+    annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True, label="Année Scolaire")
 
     class Meta:
         model = Eleve
         fields = [
-            'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance', 
-            'cs_py', 'date_enquete', 'hand', 'annee_inscr', 'parent', 'tel_parent', 
-            'note_eleve', 'classe', 'annee_scolaire' , 
-        ]
+            'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance',
+            'cs_py', 'date_enquete', 'hand', 'annee_inscr', 'parent', 'tel_parent',
+            'note_eleve', 'annee_scolaire'
+        ]  # Removed 'classe', 'ecole'
         widgets = {
             'date_enquete': forms.DateInput(attrs={'type': 'date'}),
             'date_naissance': forms.DateInput(attrs={'type': 'date'}),

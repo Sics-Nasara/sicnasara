@@ -1,169 +1,195 @@
 {% extends "../../layout.html" %}
 {% load static %}
 {% load bootstrap5 %}
+{% load widget_tweaks %}
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Student</title>
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <style>
-        .form-group {
-            margin-bottom: 0.5rem;
-        }
-        .container-fluid {
-            padding: 20px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
-        .card-header {
-            background-color: #A44400;
-            color: white;
-            padding: 10px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .card-body {
-            padding: 20px;
-        }
-        .btn-success {
-            background-color: #A44400;
-            border-color: #A44400;
-        }
-        .form-buttons {
-            text-align: right;
-            margin-top: 1rem;
-        }
-    </style>
 </head>
-<body>
-    {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">mise a jours eleve</span>
-          
-    
-            <!-- Undo and Redo Icons -->
-            <div class="ml-2 d-flex align-items-stretch">
-                <a href="{% url 'home' %}" class="class-card mr-3">Cancel</a>
-                <button class="class-card mr-3" id="undo-button" title="Undo">
-                    <i class="fas fa-undo"></i>
-                </button>
-                <button class="class-card mr-3" id="redo-button" title="Redo">
-                    <i class="fas fa-redo"></i>
-                </button>
-                <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
-            </div>
+
+{% block header %}
+<span class="navbar-brand mb-0 h1 text-white">Mettre à jour l'étudiant</span>
+
+<!-- Undo and Redo Icons -->
+<div class="ml-2 d-flex align-items-stretch">
+    <a href="{% url 'home' %}" class="class-card mr-3">Annuler</a>
+    <button class="class-card mr-3" id="undo-button" title="Undo">
+        <i class="fas fa-undo"></i>
+    </button>
+    <button class="class-card mr-3" id="redo-button" title="Redo">
+        <i class="fas fa-redo"></i>
+    </button>
+    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+</div>
 {% endblock header %}
-    {% block content %}
-    <div class="container-fluid">
-        <div class="card">
-        
-            <div class="card-body">
-                <form method="post" action="{% url 'student_update' student.pk %}">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_nom">Nom</label>
-                                <input type="text" class="form-control" id="id_nom" name="nom" value="{{ form.instance.nom }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_prenom">Prénom</label>
-                                <input type="text" class="form-control" id="id_prenom" name="prenom" value="{{ form.instance.prenom }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_condition_eleve">État</label>
-                                <select class="form-control" id="id_condition_eleve" name="condition_eleve" required>
-                                    {% for key, value in form.condition_eleve.field.choices %}
-                                        <option value="{{ key }}" {% if form.instance.condition_eleve == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_sex">Sexe</label>
-                                <select class="form-control" id="id_sex" name="sex" required>
-                                    {% for key, value in form.sex.field.choices %}
-                                        <option value="{{ key }}" {% if form.instance.sex == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_date_naissance">Date de naissance</label>
-                                <input type="date" class="form-control" id="id_date_naissance" name="date_naissance" value="{{ form.instance.date_naissance }}">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="id_cs_py">CS/PY</label>
-                                <select class="form-control" id="id_cs_py" name="cs_py" required>
-                                    {% for key, value in form.cs_py.field.choices %}
-                                        <option value="{{ key }}" {% if form.instance.cs_py == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_date_naissance">Date enquete</label>
-                                <input type="date" class="form-control" id="id_date_enquete" name="date_enquete" value="{{ form.instance.date_enquete }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="id_hand">Hand</label>
-                                <select class="form-control" id="id_hand" name="hand">
-                                    {% for key, value in form.hand.field.choices %}
-                                        <option value="{{ key }}" {% if form.instance.hand == key %}selected{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_annee_inscr">Année d'inscription</label>
-                                <input type="number" class="form-control" id="id_annee_inscr" name="annee_inscr" value="{{ form.instance.annee_inscr }}" min="1900" max="2100">
-                            </div>
-                            <div class="form-group">
-                                <label for="id_parent">Parent</label>
-                                <input type="text" class="form-control" id="id_parent" name="parent" value="{{ form.instance.parent }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="id_tel_parent">Tel Parent</label>
-                                <input type="text" class="form-control" id="id_tel_parent" name="tel_parent" value="{{ form.instance.tel_parent }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="id_note_eleve">Note élève</label>
-                                <textarea class="form-control" id="id_note_eleve" name="note_eleve" rows="4">{{ form.instance.note_eleve }}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_classe">Classe</label>
-                                <select class="form-control" id="id_classe" name="classe" required>
-                                    {% for classe in form.fields.classe.queryset %}
-                                        <option value="{{ classe.pk }}" {% if form.instance.classe == classe %}selected{% endif %}>{{ classe.nom }} - {{ classe.type.nom }} - {{ classe.ecole.nom }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_annee_scolaire">Année Scolaire</label>
-                                <select class="form-control" id="id_annee_scolaire" name="annee_scolaire" required>
-                                    {% for annee in form.fields.annee_scolaire.queryset %}
-                                        <option value="{{ annee.pk }}" {% if form.instance.annee_scolaire == annee %}selected{% endif %}>{{ annee.nom }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-buttons">
-                        <button type="submit" class="btn btn-success">Update Student</button>
-                     
-                   
-                    </div>
-                </form>
-            </div>
-        </div>
+
+{% block content %}
+<style>
+    .container-fluid {
+        padding: 20px;
+    }
+
+    .card-body h5 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .card {
+        border-color: black;
+        border-width: .15rem;
+        margin-bottom: 20px; /* Add margin between cards */
+    }
+
+    .card-header {
+        background: #000;
+        color: white
+    }
+
+    /* Style for labels to align them */
+    .info-label {
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
+        text-align: right;
+        margin-bottom: 16px;
+        margin-right: 16px;
+    }
+
+    /* Style for inputs to align them */
+    .info-input {
+        display: inline-block;
+        width: 250px;
+        margin-bottom: 16px;
+    }
+
+    /* Form-specific styles to mimic the card */
+    form .form-group {
+        margin-bottom: 16px;
+    }
+
+    form label {
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 16px;
+    }
+
+    form .form-control {
+        display: inline-block;
+        width: auto;
+    }
+
+    .scrollable-section {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .selected-row {
+        background-color: #e0f7fa;
+    }
+</style>
+
+<div class="">
+    <div class="d-flex justify-content-between mb-4">
+        <!-- Optional: Add additional buttons or links here -->
     </div>
-    {% endblock content %}
-</body>
-</html>
+    <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
+        <form method="post" action="{% url 'student_update' student.pk %}" id="EleveForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Informations Personnelles
+                        </div>
+                        <div class="card-body">
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Veuillez corriger les erreurs ci-dessous :
+                                {{ form.errors }}
+                            </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="{{ form.nom.id_for_label }}" class="info-label">Nom:</label>
+                                {% render_field form.nom class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.prenom.id_for_label }}" class="info-label">Prénom:</label>
+                                {% render_field form.prenom class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.condition_eleve.id_for_label }}"
+                                    class="info-label">État:</label>
+                                {% render_field form.condition_eleve class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.sex.id_for_label }}" class="info-label">Sexe:</label>
+                                {% render_field form.sex class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.date_naissance.id_for_label }}" class="info-label">Date
+                                    Naissance:</label>
+                                {% render_field form.date_naissance class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.cs_py.id_for_label }}" class="info-label">CS PY:</label>
+                                {% render_field form.cs_py class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.date_enquete.id_for_label }}" class="info-label">Date
+                                    Enquête:</label>
+                                {% render_field form.date_enquete class="form-control info-input" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Autres Informations
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="{{ form.hand.id_for_label }}" class="info-label">Handicap:</label>
+                                {% render_field form.hand class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.parent.id_for_label }}" class="info-label">Parent:</label>
+                                {% render_field form.parent class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.tel_parent.id_for_label }}" class="info-label">Tel Parent:</label>
+                                {% render_field form.tel_parent class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.note_eleve.id_for_label }}" class="info-label">Note:</label>
+                                {% render_field form.note_eleve class="form-control info-input" %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.annee_scolaire.id_for_label }}" class="info-label">Année
+                                    Scolaire:</label>
+                                {% render_field form.annee_scolaire class="form-control info-input" %}
+                            </div>
+                            <div class="form-buttons mt-3">
+                                <button type="submit" class="class-card">Mettre à Jour Étudiant</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
