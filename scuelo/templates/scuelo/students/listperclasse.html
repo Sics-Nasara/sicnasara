@@ -229,15 +229,7 @@
         var table = $('#studentTable').DataTable({
             dom: 'Bfrtip',
             buttons: [
-                {
-                    extend: 'csv',
-                    text: 'Export CSV',
-                    filename: 'liste per classe - ' + classe + ' ' + currentDate,
-                    className: 'btn btn-success',
-                    exportOptions: {
-                        columns: ':not(:last-child)'
-                    }
-                },
+               
                 {
                     extend: 'excel',
                     text: 'Export Excel',

@@ -27,6 +27,7 @@ import base64
 import matplotlib.pyplot as plt
 from io import BytesIO
 import seaborn as sns
+   
 from django.db import models
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -58,12 +59,12 @@ from django.db.models.functions import TruncDay
 from django.utils.timezone import now
 from .forms import (
      EleveUpdateForm, 
-    EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
+    EleveCreateForm, EcoleCreateForm, ClasseCreateForm,StudentRangForm,
     ClassUpgradeForm, SchoolChangeForm ,UniformReservationForm
 )
 from scuelo.models import (
     Eleve, Classe, Inscription, StudentLog,
-    AnneeScolaire, Ecole ,UniformReservation
+    AnneeScolaire, Ecole ,UniformReservation, Rang
 )
 
 from cash.forms import PaiementPerStudentForm
@@ -441,7 +442,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
 
 
         
-@login_required
+'''@login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
@@ -504,8 +505,139 @@ def student_detail(request, pk):
         'current_class_name': current_class_name,    # Pass the current class name
         'page_identifier': 'S03'  # Unique page identifier
     })
+'''
+from .forms import  StudentRangForm  
+@login_required
+def student_detail(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
+    
+    # Filter payments using the correct field relationship
+    payments = Mouvement.objects.filter(inscription__eleve=student)
+    
+    total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
+    current_class = student.current_class
+    
+    # Get the current school name if the student has a current class
+    current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
+    current_class_name = current_class.nom if current_class else "No Class Assigned"
+    
+    # Check if current_class is None
+    if current_class:
+        breadcrumbs = [
+            ('/', 'Home'),
+            (reverse('home'), 'Classes'),
+            (reverse('class_detail', kwargs={'pk': current_class.pk}), current_class.nom),
+            ('#', f"{student.nom} {student.prenom}")
+        ]
+    else:
+        breadcrumbs = [
+            ('/', 'Home'),
+            (reverse('home'), 'Classes'),
+            ('#', f"{student.nom} {student.prenom}")
+        ]
+    
+    form = PaiementPerStudentForm()
+    logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
+    
+    # Handle receipt printing
+    if request.method == 'POST' and 'print_receipt' in request.POST:
+        payment_id = request.POST.get('payment_id')
+        payment = get_object_or_404(Mouvement, pk=payment_id)
 
+        # Render receipt template to HTML
+        html_string = render_to_string('cash/paiements/receipt.html', {'student': student, 'payment': payment})
 
+        # Generate PDF
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        # Create a HttpResponse object with the appropriate PDF headers.
+        response = HttpResponse(result, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename=receipt_{student.nom}_{student.prenom}_{payment.id}.pdf'
+        
+        return response
+    
+    # Get the current school year and class
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+    current_inscription = Inscription.objects.filter(eleve=student, annee_scolaire=current_year).first()
+    current_class = current_inscription.classe if current_inscription else None
+
+    # Handle Rang form submission
+    if request.method == 'POST' and 'rang_form' in request.POST:
+        rang_form = StudentRangForm(request.POST)
+        if rang_form.is_valid():
+            rang = rang_form.save(commit=False)
+            rang.eleve = student
+            rang.classe = current_class
+            rang.annee_scolaire = current_year
+            rang.save()
+            return redirect('student_detail', pk=student.pk)  # Redirect to refresh the page
+    else:
+        rang_form = StudentRangForm()
+
+    # Get existing rang data
+    existing_rang = None
+    if current_class and current_year:
+        existing_rang = Rang.objects.filter(
+            eleve=student,
+            classe=current_class,
+            annee_scolaire=current_year
+        ).first()
+        if existing_rang:
+            rang_form = StudentRangForm(instance=existing_rang)  # Populate form with existing data
+
+    return render(request, 'scuelo/students/studentdetail.html', {
+        'student': student,
+        'inscriptions': inscriptions,
+        'payments': payments,
+        'total_payment': total_payment,
+        'breadcrumbs': breadcrumbs,
+        'form': form,
+        'logs': logs,
+        'current_school_name': current_school_name,
+        'current_class_name': current_class_name,
+        'page_identifier': 'S03',
+        'rang_form': rang_form,  # Pass the Rang form
+        'existing_rang': existing_rang,  # Pass the existing rang data
+    })
+
+@login_required
+def add_student_rang(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+    current_inscription = Inscription.objects.filter(eleve=student, annee_scolaire=current_year).first()
+    current_class = current_inscription.classe if current_inscription else None
+    existing_rang = None
+    if current_class and current_year:
+        existing_rang = Rang.objects.filter(
+            eleve=student,
+            classe=current_class,
+            annee_scolaire=current_year
+        ).first()
+
+    if request.method == 'POST':
+        rang_form = StudentRangForm(request.POST, instance=existing_rang)
+        if rang_form.is_valid():
+            rang = rang_form.save(commit=False)
+            rang.eleve = student
+            rang.classe = current_class
+            rang.annee_scolaire = current_year
+            rang.save()
+            return JsonResponse({'success': True})  # Return success for AJAX
+        else:
+            return JsonResponse({'success': False, 'errors': rang_form.errors})  # Return errors for AJAX
+    else:
+        if existing_rang:
+            rang_form = StudentRangForm(instance=existing_rang)
+        else:
+            rang_form = StudentRangForm()
+
+    return render(request, 'scuelo/students/add_student_rang_modal.html', {
+        'rang_form': rang_form,
+        'student': student,
+        'existing_rang': existing_rang,
+    })
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
     model = Eleve

@@ -248,6 +248,24 @@ class UniformReservation(TimeStampedModel):
     def __str__(self):
         return f"Reservation for {self.student} - {self.quantity} uniforms"
 
+
+class Rang(models.Model):
+    eleve = models.ForeignKey('Eleve', on_delete=models.CASCADE, related_name='rangs')
+    classe = models.ForeignKey('Classe', on_delete=models.CASCADE, related_name='rangs')
+    annee_scolaire = models.ForeignKey('AnneeScolaire', on_delete=models.CASCADE, related_name='rangs')
+    
+    rang1 = models.PositiveIntegerField(null=True, blank=True, help_text="Rank 1")
+    rang2 = models.PositiveIntegerField(null=True, blank=True, help_text="Rank 2")
+    rang3 = models.PositiveIntegerField(null=True, blank=True, help_text="Rank 3")
+    rang_annuelle = models.PositiveIntegerField(null=True, blank=True, help_text="Annual Rank")
+
+    class Meta:
+        unique_together = ('eleve', 'classe', 'annee_scolaire')
+        verbose_name = 'Rang'
+        verbose_name_plural = 'Rangs'
+
+    def __str__(self):
+        return f"Rangs for {self.eleve} in {self.classe} ({self.annee_scolaire})"
 class StudentLog(TimeStampedModel):
     student = models.ForeignKey(Eleve, on_delete=models.CASCADE, related_name='logs')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

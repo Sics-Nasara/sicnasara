@@ -5,13 +5,13 @@
     <!-- Left-aligned elements -->
     <div class="d-flex align-items-center">
         <span class="navbar-brand mb-0 h1 text-white">nouveau paiement</span>
-    
     </div>
 
     <!-- Center-aligned elements (Tot and Total Paid) -->
     <div class="d-flex align-items-center">
-
-  
+        <!-- Add any center-aligned content here if needed -->
+    </div>
+    
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
         <a href="{% url 'student_detail' student.id %}" class="class-card mr-3">Cancel</a> 
@@ -25,24 +25,48 @@
     </div>
 </div>
 {% endblock header %}
+
 {% block content %}
 <div class="container mt-4">
-
-    
     <!-- Display Student Information -->
     <div class="alert alert-info">
- 
-        <strong>ID:</strong> {{ student.id }}<br> <!-- Display Student ID -->
+        <strong>ID:</strong> {{ student.id }}<br>
         <strong>Name:</strong> {{ student.nom }} {{ student.prenom }}<br>
-        <strong>Class:</strong> {{ class_type }}<br> <!-- Display Class Type -->
-        <strong>School:</strong> {{ school_name }}<br> <!-- Display School Name -->
+        <strong>Class:</strong> {{ class_type }}<br>
+        <strong>School:</strong> {{ school_name }}<br>
     </div>
 
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <div class="form-group row">
+            <label for="{{ form.date_paye.id_for_label }}" class="col-sm-2 col-form-label">Date Paye:</label>
+            <div class="col-sm-10">
+                {{ form.date_paye }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="{{ form.causal.id_for_label }}" class="col-sm-2 col-form-label">Causal:</label>
+            <div class="col-sm-10">
+                {{ form.causal }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="{{ form.montant.id_for_label }}" class="col-sm-2 col-form-label">Montant:</label>
+            <div class="col-sm-10">
+                {{ form.montant }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="{{ form.note.id_for_label }}" class="col-sm-2 col-form-label">Note:</label>
+            <div class="col-sm-10">
+                {{ form.note }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12 text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
     </form>
-    
 </div>
 {% endblock %}

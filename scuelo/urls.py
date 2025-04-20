@@ -19,8 +19,8 @@ urlpatterns = [
     path('annee_scolaire/add/', views.AddSchoolYearView.as_view(), name='add_school_year'),
     path('annee_scolaire/edit/<int:pk>/', views.EditSchoolYearView.as_view(), name='edit_school_year'),
     path('annee_scolaire/delete/<int:pk>/', DeleteSchoolYearView.as_view(), name='delete_school_year'),
-   # path('get_classes/<int:ecole_id>/', views.get_classes_by_ecole, name='get_classes_by_ecole'),
-   path('ajax/get_classes/', views.get_classes_by_school, name='get_classes_by_school'),
+    # path('get_classes/<int:ecole_id>/', views.get_classes_by_ecole, name='get_classes_by_ecole'),
+    path('ajax/get_classes/', views.get_classes_by_school, name='get_classes_by_school'),
 
     path('offsite_students/', views.offsite_students, name='offsite_students'),
     path('directly_managed_students/', StudentListView.as_view(), name='directly_managed_students'),
@@ -39,8 +39,9 @@ urlpatterns = [
     path('classes/update/<int:pk>/', ClasseUpdateView.as_view(), name='classe_update'),
     path('classes/delete/<int:pk>/', ClasseDeleteView.as_view(), name='classe_delete'),
     path('load_classes/', views.load_classes, name='load_classes'),
-     path('classe/<int:pk>/information/', ClasseInformation.as_view(), name='classe-information'),
+    path('classe/<int:pk>/information/', ClasseInformation.as_view(), name='classe-information'),
     # path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
     path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
+    path('student/<int:pk>/add_rang/', views.add_student_rang, name='add_student_rang'),
 ]

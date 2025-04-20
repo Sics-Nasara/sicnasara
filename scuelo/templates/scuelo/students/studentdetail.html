@@ -1,7 +1,6 @@
 {% extends "../../layout.html" %}
 {% load crispy_forms_tags %}
 {% load custom_filters %}
-{% include 'scuelo/paiements/add_paiement_modal.html' %}
 
 {% block header %}
 <h2 class="navbar-brand mb-0 h1 text-white">Gestion Eleve</h2>
@@ -9,6 +8,7 @@
     <a href="{% url 'student_update' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-pencil-alt"></i> Modif eleve</a>
     <a href="{% url 'class_upgrade' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-level-up-alt"></i> Chang Class & Ecole</a>
     <a href="{% url 'add_paiement' student.pk %}" class="class-card ml-2"><i class="fas fa-plus"></i> +Paiement</a>
+    <button type="button" class="class-card ml-2" data-toggle="modal" data-target="#addRangModal"><i class="fas fa-star"></i> Ajouter un Classement</button>
     <button class="class-card mr-3 ml-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
     <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
     <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
@@ -19,7 +19,7 @@
 <style>
     .card-body h5 {
         font-size: 16px;
-        margin-bottom: 5px; /* Reduced for tighter spacing */
+        margin-bottom: 5px;
     }
     .card{  
         border-color: black ;
@@ -29,19 +29,26 @@
         background: #000;
         color:white
     }
-    /* Style for labels to align them */
     .info-label {
-        display: inline-block; /* Allows setting width */
-        width: 150px;       /* Adjust this value to control the label width */
-        font-weight: bold;   /* Optional: Make labels bold */
+        display: inline-block;
+        width: 150px;
+        font-weight: bold;
         text-align: right; 
         margin-bottom: 16px; 
-        margin-right: 16px;  /* Ensure labels are left-aligned within their width */
+        margin-right: 16px;
+    }
+    .d-flex-cards {
+        display: flex;
+        gap: 20px; /* Adjust the gap as needed */
+    }
+    .d-flex-cards > div {
+        flex: 1; /* Each card takes up equal space */
     }
 </style>
+
 <div class="d-flex justify-content-between mb-4">
-    <!-- Optional: Add additional buttons or links here -->
 </div>
+
 <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
     <div class="row">
         <div class="col-md-6">
@@ -73,7 +80,7 @@
                     <h5><span class="info-label">Parent :</span></h5>
                     {% endif %}
                     {% if student.tel_parent %}
-                    <h5><span class="info-label">Tel Parent :</span>      {{ student.tel_parent }}</h5>
+                    <h5><span class="info-label">Tel Parent :</span> {{ student.tel_parent }}</h5>
                     {% else %}
                     <h5><span class="info-label">Tel Parent :</span></h5>
                     {% endif %}
@@ -82,21 +89,40 @@
                     {% else %}
                     <h5><span class="info-label">Notes :</span></h5>
                     {% endif %}
-
-               
                 </div>
             </div>
         </div>
+
         <div class="col-md-6">
-            <div class="card school-class-card mb-3">
-                <div class="card-header ">
-                    Informations École et Classe
+            <div class="d-flex-cards">
+                <div class="card school-class-card mb-3">
+                    <div class="card-header">
+                        Informations École et Classe
+                    </div>
+                    <div class="card-body">
+                        <h5><strong>École:</strong> {{ current_school_name }}</h5>
+                        <h5><strong>Classe:</strong> {{ current_class_name }}</h5>
+                    </div>
+                </div> 
+                 <div class="card mb-3">
+                    <div class="card-header">
+                        Classement de l'étudiant
+                    </div>
+                    <div class="card-body">
+                        {% if existing_rang %}
+                        <div class="mb-3">
+                            <h5><span class="info-label">Rang 1:</span> {{ existing_rang.rang1|default:"-" }}</h5>
+                            <h5><span class="info-label">Rang 2:</span> {{ existing_rang.rang2|default:"-" }}</h5>
+                            <h5><span class="info-label">Rang 3:</span> {{ existing_rang.rang3|default:"-" }}</h5>
+                            <h5><span class="info-label">Rang Annuel:</span> {{ existing_rang.rang_annuelle|default:"-" }}</h5>
+                        </div>
+                        {% else %}
+                        <p>Aucun classement disponible pour cet étudiant.</p>
+                        {% endif %}
+                        
+                    </div>
                 </div>
-                <div class="card-body">
-                    <h5><strong>École:</strong> {{ current_school_name }}</h5>
-                    <h5><strong>Classe:</strong> {{ current_class_name }}</h5>
-                </div>
-            </div> 
+            </div>
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="col-md-12 mb-5">
@@ -128,6 +154,14 @@
         </div>
     </div>
 </div>
+
+{% include 'scuelo/students/add_student_rang_modal.html' %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+
 <script>
     $(document).ready(function() {
         // Initialize DataTable
@@ -137,7 +171,7 @@
             "ordering": true,
             "info": true,
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json" // French translation
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
             }
         });
 
@@ -151,13 +185,41 @@
                 success: function(response) {
                     if (response.success) {
                         alert('Payment added successfully');
-                        // Optionally, refresh the table or update the page
                     } else {
                         alert('Failed to add payment: ' + response.errors);
                     }
                 }
             });
         });
+
+            $('#addRangModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            });
+
+        //Submit form using AJAX
+           $("#rangForm").on('submit', function(event) {
+        event.preventDefault(); // prevent default form submission
+        var studentId = $(this).data('student-id'); // Retrieve student ID
+        var url = '/homepage/student/' + studentId + '/add_rang/'; // Construct the URL
+        $.ajax({
+          type: "POST",
+          url: url, // Use the constructed URL
+          data: $(this).serialize(), // serialize the form data
+          dataType: "json", // expect JSON response
+          success: function(data) {
+            if (data.success) {
+             
+              $("#addRangModal").modal('hide'); // Close the modal
+              location.reload(); // Refresh the page
+            } else {
+             
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert('AJAX error: ' + textStatus + ' - ' + errorThrown);
+          }
+        });
+      });
     });
 </script>
 {% endblock content %}

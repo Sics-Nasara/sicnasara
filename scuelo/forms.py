@@ -271,3 +271,16 @@ class ClasseCreateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['type'].queryset = TypeClasse.objects.all()
 
+
+from .models import Rang
+
+class StudentRangForm(forms.ModelForm):
+    class Meta:
+        model = Rang
+        fields = ['rang1', 'rang2', 'rang3', 'rang_annuelle']
+        widgets = {
+            'rang1': forms.NumberInput(attrs={'class': 'form-control'}),
+            'rang2': forms.NumberInput(attrs={'class': 'form-control'}),
+            'rang3': forms.NumberInput(attrs={'class': 'form-control'}),
+            'rang_annuelle': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
