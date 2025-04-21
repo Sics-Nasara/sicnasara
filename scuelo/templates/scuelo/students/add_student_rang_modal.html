@@ -1,43 +1,42 @@
 <div class="modal fade" id="addRangModal" tabindex="-1" role="dialog" aria-labelledby="addRangModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addRangModalLabel">
-            {% if existing_rang %}
-              Update Student Rank
-            {% else %}
-              Add Student Rank
-            {% endif %}
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" id="rangForm" data-student-id="{{ student.pk }}">
-            {% csrf_token %}
-            {% for field in rang_form %}
-              <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                  <div class="alert alert-danger">
-                    {{ field.errors|striptags }}
-                  </div>
-                {% endif %}
-              </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">
-              {% if existing_rang %}
-                Update Rank
-              {% else %}
-                Add Rank
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addRangModalLabel">
+          {% if existing_rang %}
+            Mise a jours rangs 
+          {% else %}
+            Ajouter Rang
+          {% endif %}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="rangForm" data-student-id="{{ student.pk }}">
+          {% csrf_token %}
+          {% for field in rang_form %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="alert alert-danger">
+                  {{ field.errors|striptags }}
+                </div>
               {% endif %}
-            </button>
-          </form>
-        </div>
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">
+            {% if existing_rang %}
+              Update Rank
+            {% else %}
+              Add Rank
+            {% endif %}
+          </button>
+        </form>
       </div>
     </div>
   </div>
-  
-  
+</div>
+
