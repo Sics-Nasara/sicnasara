@@ -77,6 +77,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sig.wsgi.application'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'sicsnasaradb',
+        'HOST': 'localhost',
+        'USER': 'nasara',
+        'PASSWORD': STAGE_DATABASE_PASSWORD,
+        'PORT': '5432',
+    }
+}
 # Database
 '''DATABASES = {
     'default': {
