@@ -9,7 +9,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = STAGE_SECRET_KEY
+SECRET_KEY = '2e0624142428104710cbbb01581145e62e7b8bca43e86dc6d441360e980c7e7037d7de72bfdeb451eecdd66620f641792164dfb4a09c38d50a35ebeea9b5ec7780e98ff59ee868042405bd5763e1b78c546ada892885c7227197226d9bb9afbdccf351e5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'sicsnasaradb',
         'HOST': 'localhost',
         'USER': 'nasara',
-        'PASSWORD': STAGE_DATABASE_PASSWORD,
+        'PASSWORD': 'v5SqM2HkAr',
         'PORT': '5432',
     }
 }
@@ -99,12 +99,12 @@ DATABASES = {
     }
 }'''
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
-}
+}'''
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
