@@ -14,7 +14,7 @@ SECRET_KEY = STAGE_SECRET_KEY
 DEBUG = True
 
 # Allowed hosts
-ALLOWED_HOSTS = ['sics-stage-cl.nasaraperilburkina.org', '127.0.0.1' ,'0.0.0.0']
+ALLOWED_HOSTS = ['sics-stage-cl.nasaraperilburkina.org', '127.0.0.1' ,'0.0.0.0' , '192.168.0.108']
 
 # Application definition
 INSTALLED_APPS = [
@@ -78,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'sig.wsgi.application'
 
 # Database
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sicsnasara_stage',
@@ -87,14 +87,14 @@ DATABASES = {
         'PASSWORD': STAGE_DATABASE_PASSWORD,
         'PORT': '5432',
     }
-}
+}'''
 
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
-}'''
+}
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
