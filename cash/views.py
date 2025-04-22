@@ -100,7 +100,7 @@ def add_payment(request, pk):
     else:
         form = PaiementPerStudentForm()
 
-    return render(request, 'cash/paiements/add_payment.html', {
+    return render(request, 'cash/paiements/add_payment.pin', {
         'form': form,
         'student': student,
         'school_name': school_name,

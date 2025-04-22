@@ -11,7 +11,7 @@ from django.db.models import Q, Sum, Prefetch, Count  , F
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseRedirect
-from weasyprint import HTML
+#from weasyprint import HTML
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -1170,7 +1170,7 @@ def load_classes(request):
 # =======================
 # 6. Financial Management
 # =======================
-def print_receipt(request, mouvement_id):
+'''def print_receipt(request, mouvement_id):
     mouvement = get_object_or_404(Mouvement, id=mouvement_id)
     context = {
         'mouvement': mouvement,
@@ -1182,4 +1182,4 @@ def print_receipt(request, mouvement_id):
 
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'filename="receipt_{mouvement.id}.pdf"'
-    return response
+    return response'''

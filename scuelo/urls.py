@@ -4,7 +4,7 @@ from .views import (
     StudentListView, StudentCreateView, SchoolManagementView, SchoolCreateView,
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView,ClassCreateView ,
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView ,ClasseInformation
-     , print_receipt  
+     # print_receipt  
       , login_view , SchoolYearManagementView ,AddSchoolYearView , DeleteSchoolYearView , EditSchoolYearView ,
 )
 
@@ -42,6 +42,6 @@ urlpatterns = [
     path('classe/<int:pk>/information/', ClasseInformation.as_view(), name='classe-information'),
     # path('cash/accounting_export/', views.cash_accounting_export, name='cash_accounting_export'),
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
-    path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
+    #path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
     path('student/<int:pk>/add_rang/', views.add_student_rang, name='add_student_rang'),
 ]
