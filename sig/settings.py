@@ -2,6 +2,7 @@ from pathlib import Path
 #from .keep_safe import DEV_DATABASE_PASSWORD, DEV_SECRET_KEY
 from .keep_safe import STAGE_SECRET_KEY, STAGE_DATABASE_PASSWORD
 from .keep_safe import PROD_SECRET_KEY, PROD_DATABASE_PASSWORD
+from .keep_safe import DEV_SECRET_KEY, DEV_DATABASE_PASSWORD
 
 import os
 
@@ -9,7 +10,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2e0624142428104710cbbb01581145e62e7b8bca43e86dc6d441360e980c7e7037d7de72bfdeb451eecdd66620f641792164dfb4a09c38d50a35ebeea9b5ec7780e98ff59ee868042405bd5763e1b78c546ada892885c7227197226d9bb9afbdccf351e5'
+SECRET_KEY = DEV_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -83,7 +84,7 @@ DATABASES = {
         'NAME': 'sicsnasaradb',
         'HOST': 'localhost',
         'USER': 'nasara',
-        'PASSWORD': 'v5SqM2HkAr',
+        'PASSWORD': DEV_DATABASE_PASSWORD,
         'PORT': '5432',
     }
 }
