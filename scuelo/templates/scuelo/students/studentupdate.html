@@ -15,18 +15,28 @@
 </head>
 
 {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">Mettre à jour l'étudiant</span>
+<div class="d-flex justify-content-between align-items-center w-100">
+    <!-- Left-aligned elements -->
+    <div class="d-flex align-items-center">
+        <span class="navbar-brand mb-0 h1 text-white">Mettre à jour l'étudiant</span>
+    </div>
 
-<!-- Undo and Redo Icons -->
-<div class="ml-2 d-flex align-items-stretch">
-    <a href="{% url 'home' %}" class="class-card mr-3">Annuler</a>
-    <button class="class-card mr-3" id="undo-button" title="Undo">
-        <i class="fas fa-undo"></i>
-    </button>
-    <button class="class-card mr-3" id="redo-button" title="Redo">
-        <i class="fas fa-redo"></i>
-    </button>
-    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+    <!-- Center-aligned elements (Tot and Total Paid) -->
+    <div class="d-flex align-items-center">
+        <!-- Add any center-aligned content here if needed -->
+    </div>
+
+    <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
+    <div class="d-flex align-items-stretch">
+        <a href="{% url 'home' %}" class="class-card mr-3">Annuler</a>
+        <button class="class-card mr-3" id="undo-button" title="Undo">
+            <i class="fas fa-undo"></i>
+        </button>
+        <button class="class-card mr-3" id="redo-button" title="Redo">
+            <i class="fas fa-redo"></i>
+        </button>
+        <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+    </div>
 </div>
 {% endblock header %}
 
@@ -44,7 +54,8 @@
     .card {
         border-color: black;
         border-width: .15rem;
-        margin-bottom: 20px; /* Add margin between cards */
+        margin-bottom: 20px;
+        /* Add margin between cards */
     }
 
     .card-header {
@@ -69,7 +80,7 @@
         margin-bottom: 16px;
     }
 
-    /* Form-specific styles to mimic the card */
+    /* Form-specific styles */
     form .form-group {
         margin-bottom: 16px;
     }
@@ -100,12 +111,12 @@
     }
 </style>
 
-<div class="">
+<div class="container-fluid">
     <div class="d-flex justify-content-between mb-4">
         <!-- Optional: Add additional buttons or links here -->
     </div>
     <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
-        <form method="post" action="{% url 'student_update' student.pk %}" id="EleveForm">
+        <form method="post"  id="EleveForm">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-6">
@@ -123,35 +134,33 @@
                             {% endif %}
                             <div class="form-group">
                                 <label for="{{ form.nom.id_for_label }}" class="info-label">Nom:</label>
-                                {% render_field form.nom class="form-control info-input" %}
+                                {{ form.nom|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.prenom.id_for_label }}" class="info-label">Prénom:</label>
-                                {% render_field form.prenom class="form-control info-input" %}
+                                {{ form.prenom|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.condition_eleve.id_for_label }}"
                                     class="info-label">État:</label>
-                                {% render_field form.condition_eleve class="form-control info-input" %}
+                                {{ form.condition_eleve|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.sex.id_for_label }}" class="info-label">Sexe:</label>
-                                {% render_field form.sex class="form-control info-input" %}
+                                {{ form.sex|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
-                                <label for="{{ form.date_naissance.id_for_label }}" class="info-label">Date
-                                    Naissance:</label>
-                                {% render_field form.date_naissance class="form-control info-input" %}
-                            </div>
+                                <label for="{{ form.date_naissance.id_for_label }}" class="info-label">Date Naissance:</label>
+                                {{ form.date_naissance|attr:"class:form-control info-input" }}
+                              </div>
                             <div class="form-group">
                                 <label for="{{ form.cs_py.id_for_label }}" class="info-label">CS PY:</label>
-                                {% render_field form.cs_py class="form-control info-input" %}
+                                {{ form.cs_py|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
-                                <label for="{{ form.date_enquete.id_for_label }}" class="info-label">Date
-                                    Enquête:</label>
-                                {% render_field form.date_enquete class="form-control info-input" %}
-                            </div>
+                                <label for="{{ form.date_enquete.id_for_label }}" class="info-label">Date Enquête:</label>
+                                {{ form.date_enquete|attr:"class:form-control info-input" }}
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -163,24 +172,23 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="{{ form.hand.id_for_label }}" class="info-label">Handicap:</label>
-                                {% render_field form.hand class="form-control info-input" %}
+                                {{ form.hand|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.parent.id_for_label }}" class="info-label">Parent:</label>
-                                {% render_field form.parent class="form-control info-input" %}
+                                {{ form.parent|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.tel_parent.id_for_label }}" class="info-label">Tel Parent:</label>
-                                {% render_field form.tel_parent class="form-control info-input" %}
+                                {{ form.tel_parent|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
                                 <label for="{{ form.note_eleve.id_for_label }}" class="info-label">Note:</label>
-                                {% render_field form.note_eleve class="form-control info-input" %}
+                                {{ form.note_eleve|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-group">
-                                <label for="{{ form.annee_scolaire.id_for_label }}" class="info-label">Année
-                                    Scolaire:</label>
-                                {% render_field form.annee_scolaire class="form-control info-input" %}
+                                <label for="{{ form.annee_inscr.id_for_label }}" class="info-label">Année Inscription:</label>
+                                {{ form.annee_inscr|attr:"class:form-control info-input" }}
                             </div>
                             <div class="form-buttons mt-3">
                                 <button type="submit" class="class-card">Mettre à Jour Étudiant</button>
@@ -189,6 +197,7 @@
                     </div>
                 </div>
             </div>
+             
         </form>
     </div>
 </div>

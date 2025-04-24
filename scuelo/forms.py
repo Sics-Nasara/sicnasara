@@ -220,7 +220,7 @@ class EleveCreateForm(forms.ModelForm):
 
 
 
-class EleveUpdateForm(forms.ModelForm):
+'''class EleveUpdateForm(forms.ModelForm):
     annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), required=True, label="Année Scolaire")
 
     class Meta:
@@ -235,7 +235,50 @@ class EleveUpdateForm(forms.ModelForm):
             'date_naissance': forms.DateInput(attrs={'type': 'date'}),
             'annee_inscr': forms.NumberInput(attrs={'min': 1900, 'max': 2100}),
             'note_eleve': forms.Textarea(attrs={'rows': 4}),
+        }'''
+        
+        
+class EleveUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Eleve
+        fields = [
+            'nom', 'prenom', 'condition_eleve', 'sex',
+            'date_naissance', 'cs_py', 'date_enquete', 'hand',
+            'parent', 'tel_parent', 'note_eleve', 'annee_inscr'
+        ]
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'prenom': forms.TextInput(attrs={'class': 'form-control'}),
+            'condition_eleve': forms.Select(attrs={'class': 'form-control'}),
+            'sex': forms.Select(attrs={'class': 'form-control'}),
+            'date_naissance': forms.DateInput(
+                attrs={'type': 'date', 'class': 'form-control'},
+                format='%Y-%m-%d'  # Add this line
+            ),
+            'cs_py': forms.Select(attrs={'class': 'form-control'}),
+           'date_enquete': forms.DateInput(
+                attrs={'type': 'date', 'class': 'form-control'},
+                format='%Y-%m-%d'  # Add this line
+            ),
+            'hand': forms.Select(attrs={'class': 'form-control'}),
+            'parent': forms.TextInput(attrs={'class': 'form-control'}),
+            'tel_parent': forms.TextInput(attrs={'class': 'form-control'}),
+            'note_eleve': forms.Textarea(attrs={'class': 'form-control'}),
+            'annee_inscr': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+'''class EleveUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Eleve
+        fields = [
+            'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance',
+            'cs_py', 'date_enquete', 'hand', 'parent', 'tel_parent',
+            'note_eleve', 'annee_inscr'  # Make sure annee_inscr is included
+        ]
+        widgets = {
+            'date_naissance': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'date_enquete': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'annee_inscr': forms.NumberInput(attrs={'class': 'form-control'})
+        }'''        
                     
 class InscriptionForm(forms.ModelForm):
     class Meta:

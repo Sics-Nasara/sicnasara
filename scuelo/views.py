@@ -901,7 +901,7 @@ def get_classes_by_school(request):
     return render(request, 'scuelo/classe_dropdown_list_options.html', {'classes': classes})
 
         
-@login_required
+'''@login_required
 def student_update(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     old_values = student.__dict__.copy()
@@ -934,7 +934,46 @@ def student_update(request, pk):
         'form': form,
         'student': student,
         'page_identifier': 'S13'
-    })    
+    })'''
+    
+    
+'''@login_required
+def student_update(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    
+    if request.method == 'POST':
+        form = EleveUpdateForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect('student_detail', pk=student.pk)
+        else:
+            print(form.errors)  # Handle form errors
+    else:
+        form = EleveUpdateForm(instance=student)
+
+    context = {
+        'form': form,
+        'student': student,
+        'page_identifier': 'S13'
+    }
+    return render(request, 'scuelo/students/studentupdate.html', context)'''
+    
+class StudentUpdateView(UpdateView):
+    model = Eleve
+    form_class = EleveUpdateForm
+    template_name = 'scuelo/students/studentupdate.html'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # Manually set initial values for dates
+        if self.object.date_naissance:
+            form.initial['date_naissance'] = self.object.date_naissance.strftime('%Y-%m-%d')
+        if self.object.date_enquete:
+            form.initial['date_enquete'] = self.object.date_enquete.strftime('%Y-%m-%d')
+        return form
+    
+    def get_success_url(self):
+        return reverse_lazy('student_detail', kwargs={'pk': self.object.pk})
 # =======================
 # 3. Class Management
 # =======================

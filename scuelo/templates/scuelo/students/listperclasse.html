@@ -61,7 +61,9 @@
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
         <a href="{% url 'classe_information' classe.pk %}" class="class-card mr-3">info</a>
-        <a href="{% url 'late_payments_per_class' classe.id %}" class="class-card  mr-3">retards Paiement</a>
+       {% comment %}
+         <a href="{% url 'late_payments_per_class' classe.id %}" class="class-card  mr-3">retards Paiement</a>
+       {% endcomment %}
         <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
             <!-- Buttons will be moved here -->
         </div>
