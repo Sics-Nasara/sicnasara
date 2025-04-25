@@ -159,34 +159,47 @@
             </div>
         </div>
 
-        <!-- Frais Total aujourd'hui -->
-        <div class="col-md-4">
-            <div class="border rounded p-3 h-100" style="background: #fafafa;">
-                <h5 class="fw-bold mb-3">Frais Total aujourd'hui</h5>
-                <div class="mb-3">
-                    <span class="fw-bold">Frais Scolarité</span>
-                    <div class="d-flex justify-content-between">
-                        <span>Attendus</span>
-                        <span>{{ expected_total_school_fees|format_amount }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Effectif</span>
-                        <span>{{ actual_total_school_fees_received|format_amount }}</span>
-                    </div>
+ <!-- Frais Total aujourd'hui -->
+<div class="col-md-4">
+    <div class="border rounded p-3 h-100" style="background: #fafafa; min-height: 320px;">
+        <h5 class="fw-bold mb-4 text-center">Frais Total aujourd'hui</h5>
+        <div class="mb-4">
+            <div class="fw-bold mb-2">Frais Scolarité</div>
+            <div class="row mb-2 align-items-center">
+                <div class="col-5 text-end text-muted">Attendus</div>
+                <div class="col-7">
+                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
+                           value="{{ expected_total_school_fees|default:''|format_amount }}" readonly>
                 </div>
-                <div>
-                    <span class="fw-bold">Frais Tenues</span>
-                    <div class="d-flex justify-content-between">
-                        <span>Attendus</span>
-                        <span>{{ total_py_uniforms_expected|default:"0"|format_amount }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Effectif</span>
-                        <span>{{ total_py_uniforms_received|default:"0"|format_amount }}</span>
-                    </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-5 text-end text-muted">Effectif</div>
+                <div class="col-7">
+                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
+                           value="{{ actual_total_school_fees_received|default:''|format_amount }}" readonly>
                 </div>
             </div>
         </div>
+        <div>
+            <div class="fw-bold mb-2">Frais Tenues</div>
+            <div class="row mb-2 align-items-center">
+                <div class="col-5 text-end text-muted">Attendus</div>
+                <div class="col-7">
+                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
+                           value="{{ total_py_uniforms_expected|default:'0'|format_amount }}" readonly>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-5 text-end text-muted">Effectif</div>
+                <div class="col-7">
+                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
+                           value="{{ total_py_uniforms_received|default:'0'|format_amount }}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 </div>
 
