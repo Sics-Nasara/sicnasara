@@ -109,64 +109,69 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="badge bg-dark">Élèves PY & CONF: {{ py_conf_count }}</span>
                         </div>
-                        <div class="list-group">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>1ère tranche</span>
-                                <span class="badge bg-primary rounded-pill">{{ progressive_fee_1|intcomma }}</span>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>2ème tranche</span>
-                                <span class="badge bg-primary rounded-pill">{{ progressive_fee_2|intcomma }}</span>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>3ème tranche</span>
-                                <span class="badge bg-primary rounded-pill">{{ progressive_fee_3|intcomma }}</span>
-                            </div>
+                        <!-- Scolarité par tranche table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tranche</th>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1er</td>
+                                        <td>23/09/2023</td>
+                                        <td>15,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2me</td>
+                                        <td>30/11/2023</td>
+                                        <td>7,500</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3me</td>
+                                        <td>31/12/2023</td>
+                                        <td>7,500</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Frais Total -->
+            <!-- Frais Total Aujourd'hui -->
             <div class="col-lg-4">
                 <div class="card h-100">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="card-title mb-0">Frais Totaux</h5>
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">Frais Total Aujourd'hui</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-4">
-                            <h6 class="text-uppercase text-muted small">Scolarité</h6>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Attendus:</span>
-                                <strong>{{ expected_total_class|intcomma }}</strong>
+                        <div class="mb-3">
+                            <h6 class="card-subtitle text-muted">Frais Scolarité</h6>
+                            <div class="d-flex justify-content-between">
+                                <span>Attendus</span>
+                                <span>Effectif</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Perçus:</span>
-                                <strong class="text-success">{{ actual_total_received|intcomma }}</strong>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h6 class="text-uppercase text-muted small">Tenues</h6>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Attendus:</span>
-                                <strong>{{ expected_total_tenues_py|intcomma }}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Perçus:</span>
-                                <strong class="text-success">{{ actual_total_received_tenues_py|intcomma }}</strong>
+                            <div class="d-flex justify-content-between">
+                                <span>900,000</span>
+                                <span>1,030,500</span>
                             </div>
                         </div>
 
-                        <div class="progress mt-3" style="height: 8px;">
-                            <div class="progress-bar bg-success" role="progressbar" 
-                                 style="width: {{ total_payment_percentage }}%" 
-                                 aria-valuenow="{{ total_payment_percentage }}" 
-                                 aria-valuemin="0" 
-                                 aria-valuemax="100">
+                        <div>
+                            <h6 class="card-subtitle text-muted">Frais Tenues</h6>
+                            <div class="d-flex justify-content-between">
+                                <span>Attendus</span>
+                                <span>Effectif</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>0</span>
+                                <span>0</span>
                             </div>
                         </div>
-                        <small class="text-muted">Progression totale: {{ total_payment_percentage }}%</small>
                     </div>
                 </div>
             </div>

@@ -1,36 +1,35 @@
 {% extends "../../layout.html" %}
+
 {% block header %}
 <div class="d-flex justify-content-between align-items-center w-100">
     <!-- Left-aligned elements -->
     <div class="d-flex align-items-center">
-        <span class="navbar-brand mb-0 h1 text-white">mise a jours paiement</span>
-    
+        <span class="navbar-brand mb-0 h1 text-white">Update Payment</span>
     </div>
 
     <!-- Center-aligned elements (Tot and Total Paid) -->
     <div class="d-flex align-items-center">
+        <!-- Add any center-aligned content here if needed -->
+    </div>
 
-  
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
-        <a href="{% url 'student_detail' student.id %}" class="class-card mr-3">annul</a> 
-        <button class="class-card mr-3" id="undo-button" title="Undo">
+        <a href="{% url 'student_detail' student.id %}" class=" mr-3 class-card">Cancel</a>
+        <button class=" mr-3 class-card" id="undo-button" title="Undo">
             <i class="fas fa-undo"></i>
         </button>
-        <button class="class-card mr-3" id="redo-button" title="Redo">
+        <button class=" mr-3 class-card" id="redo-button" title="Redo">
             <i class="fas fa-redo"></i>
         </button>
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
 {% endblock header %}
+
 {% block content %}
 <div class="container mt-4">
-
-    
     <!-- Display Student Information -->
     <div class="alert alert-info">
-        
         <strong>ID:</strong> {{ student.id }}<br>
         <strong>Name:</strong> {{ student.nom }} {{ student.prenom }}<br>
         <strong>Class:</strong> {{ class_type }}<br>
@@ -42,8 +41,8 @@
         
         <!-- Causal Field -->
         <div class="form-group">
-            <label for="id_causal">Causal:</label>
-            {{ form.causal }} <!-- Render causal field as a dropdown -->
+            <label for="{{ form.causal.id_for_label }}">Causal:</label>
+            {{ form.causal }}
             {% if form.causal.errors %}
                 <div class="invalid-feedback">
                     {{ form.causal.errors.0 }}
@@ -53,8 +52,8 @@
 
         <!-- Montant Field -->
         <div class="form-group">
-            <label for="id_montant">Amount:</label>
-            {{ form.montant }} <!-- Render montant field -->
+            <label for="{{ form.montant.id_for_label }}">Amount:</label>
+            {{ form.montant }}
             {% if form.montant.errors %}
                 <div class="invalid-feedback">
                     {{ form.montant.errors.0 }}
@@ -64,8 +63,8 @@
      
         <!-- Date Paye Field -->
         <div class="form-group">
-            <label for="id_date_paye">Date of Payment:</label>
-            {{ form.date_paye }} <!-- This should render as an input field -->
+            <label for="{{ form.date_paye.id_for_label }}">Date of Payment:</label>
+            {{ form.date_paye }}
             {% if form.date_paye.errors %}
                 <div class="invalid-feedback">
                     {{ form.date_paye.errors.0 }}
@@ -73,12 +72,10 @@
             {% endif %}
         </div>
         
-        
-
         <!-- Note Field as Textarea -->
         <div class="form-group">
-            <label for="id_note">Note:</label>
-            {{ form.note }} <!-- Render note field as textarea -->
+            <label for="{{ form.note.id_for_label }}">Note:</label>
+            {{ form.note }}
             {% if form.note.errors %}
                 <div class="invalid-feedback">
                     {{ form.note.errors.0 }}

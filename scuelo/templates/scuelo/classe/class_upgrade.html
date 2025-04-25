@@ -2,9 +2,9 @@
 {% load crispy_forms_tags %}
 
 {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">Class Upgrade</span>
+<span class="navbar-brand mb-0 h1 text-white">Changer classe/ecole</span>
 <div class="ml-2 d-flex align-items-stretch">
-    <a href="{% url 'student_detail' pk=student.pk %}" class="class-card mr-3">Cancel</a>
+    <a href="{% url 'student_detail' pk=student.pk %}" class="class-card mr-3">annuler</a>
     <button class="class-card mr-3" id="undo-button" title="Undo">
         <i class="fas fa-undo"></i>
     </button>
@@ -17,19 +17,41 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Upgrade Class for {{ student.nom }} {{ student.prenom }}</h1>
+
     
     {% if error %}
         <div class="alert alert-danger">{{ error }}</div>
     {% else %}
-        <div class="mb-4">
-            <h4>Current Class and School</h4>
-            <p><strong>ID:</strong> {{ student.pk }}</p>
-            <p><strong>Current Class:</strong> {{ current_class.nom }}</p>
-            <p><strong>Current School:</strong> {{ current_school.nom }}</p>
+    <div class="mb-5 p-4 " style=" margin: auto;">
+        <div class="row align-items-center">
+            <!-- Left: Student Name -->
+            <div class="col-md-6 mb-3 mb-md-0 border-end border-white pe-md-4">
+      
+                <h5 class="fs-10 mb-1"><strong>ID:</strong> {{ student.pk }}</h4>
+                <h5 class="fs-5 mb-1"><strong>Nom Prénom:</strong> {{ student.nom }} {{ student.prenom }}</h4>
+               
+                
+            </div>
+    
+            <!-- Right: Class and School -->
+            <div class="col-md-6 ps-md-4">
+                
+                <h5 class="h-1 mb-1"><strong>type classe:</strong> {{ current_class.nom }}</h4>
+                <h5 class="fs-5 mb-1"><strong>nom ecole School:</strong> {{ current_school.nom }}</h4>
+            </div>
         </div>
+    </div>
+    
+    
+        <h4>Selectionner ecole</h4>
+        <select id="school-select" class="form-control mb-3">
+            <option value="">-- Selectionner une ecole --</option>
+            {% for school in schools %}
+                <option value="{{ school.id }}">{{ school.nom }}</option>
+            {% endfor %}
+        </select>
 
-        <h4>Select New Class and School</h4>
+        <h4>Select New Class</h4>
         <form method="post" action="{% url 'class_upgrade' pk=student.pk %}">
             {% csrf_token %}
             <table id="class-table" class="table table-bordered">
@@ -41,9 +63,9 @@
                         <th>Type de Classe</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="class-table-body">
                     {% for classe in classes %}
-                    <tr {% if classe.id == current_class.id %}class="current-class"{% endif %}>
+                    <tr data-school-id="{{ classe.ecole.id }}" {% if classe.id == current_class.id %}class="current-class"{% endif %}>
                         <td>
                             <input type="radio" name="new_class" value="{{ classe.id }}" required>
                         </td>
@@ -55,19 +77,11 @@
                 </tbody>
             </table>
             <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Upgrade Class</button>
-               
+                <button type="submit" class="btn btn-primary">Changer classe/ecole</button>
             </div>
         </form>
     {% endif %}
 </div>
-
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css">
-
-<!-- jQuery and DataTables JS -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
 
 <style>
     .current-class {
@@ -76,36 +90,40 @@
     }
     .current-class td {
         color: #00796b;
-background: #000;
-                  /* Dark green text */
+        background: #000;
     }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize DataTables
-        $('#class-table').DataTable({
-            paging: true,       // Enable pagination
-            searching: true,    // Enable search
-            ordering: true,     // Enable sorting
-            info: true,         // Show table information
-            responsive: true,   // Make the table responsive
-            createdRow: function (row, data, dataIndex) {
-                // Check if the row corresponds to the current class
-                if (data[3] === "{{ current_class.nom }}") { // Adjust the column index if needed
-                    $(row).addClass('current-class');
-                }
+    $(document).ready(function() {
+        // Initially hide all rows
+        $('#class-table-body tr').hide();
+
+        // When school is selected
+        $('#school-select').on('change', function() {
+            var selectedSchoolId = $(this).val();
+
+            // Show all if no school selected
+            if (!selectedSchoolId) {
+                $('#class-table-body tr').hide();
+                return;
             }
-        });
 
-        // Filter classes by school (if needed)
-        const schoolSelect = document.getElementById('id_new_school');
-        const classTable = $('#class-table').DataTable();
-
-        schoolSelect.addEventListener('change', function () {
-            const schoolId = this.value;
-            classTable.column(1).search(schoolId).draw(); // Filter by school ID in the second column
+            // Show only classes matching selected school
+            $('#class-table-body tr').each(function() {
+                var rowSchoolId = $(this).data('school-id').toString();
+                if (rowSchoolId === selectedSchoolId) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                    // Uncheck radio if hidden
+                    $(this).find('input[type=radio]').prop('checked', false);
+                }
+            });
         });
     });
 </script>
+
 {% endblock %}

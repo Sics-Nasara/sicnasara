@@ -698,7 +698,7 @@ class StudentListView(ListView):
         context['page_identifier'] = 'S14'
         return context
 
-@login_required
+'''@login_required
 def class_upgrade(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
     
@@ -749,7 +749,59 @@ def class_upgrade(request, pk):
         'classes': classes,
         'page_identifier': 'S04'
     })         
+'''
 
+@login_required
+def class_upgrade(request, pk):
+    student = get_object_or_404(Eleve, pk=pk)
+    
+    # Get the latest inscription or None
+    latest_inscription = student.inscriptions.order_by('-date_inscription').first()
+    if not latest_inscription:
+        # No inscription exists, show error and empty form
+        form = ClassUpgradeForm()
+        return render(request, 'scuelo/classe/class_upgrade.html', {
+            'form': form,
+            'student': student,
+            'page_identifier': 'S04',
+            'error': 'Student has no inscriptions.'
+        })
+    
+    current_class = latest_inscription.classe
+    current_school = current_class.ecole
+
+    if request.method == 'POST':
+        form = ClassUpgradeForm(request.POST)
+        if form.is_valid():
+            new_class = form.cleaned_data['new_class']
+
+            # Create a new inscription for the upgraded class
+            # Use the same school year as latest inscription or current year if you want
+            new_inscription = Inscription.objects.create(
+                eleve=student,
+                classe=new_class,
+                annee_scolaire=latest_inscription.annee_scolaire,
+                date_inscription=timezone.now()
+            )
+
+            # Redirect to student detail page after upgrade
+            return redirect('student_detail', pk=student.pk)
+    else:
+        form = ClassUpgradeForm()
+
+    # Fetch all schools and classes for display (optional)
+    schools = Ecole.objects.all()
+    classes = Classe.objects.select_related('ecole').all()
+
+    return render(request, 'scuelo/classe/class_upgrade.html', {
+        'form': form,
+        'student': student,
+        'current_class': current_class,
+        'current_school': current_school,
+        'schools': schools,
+        'classes': classes,
+        'page_identifier': 'S04'
+    })
 @login_required
 def change_school(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -846,26 +898,7 @@ def offsite_students(request):
 
     return render(request, 'scuelo/offsite_students.html', context)
 
-'''@method_decorator(login_required, name='dispatch')
-class StudentCreateView(CreateView):
-    model = Eleve
-    form_class = EleveCreateForm
-    template_name = 'scuelo/students/new_student.html'
-    success_url = reverse_lazy('home')
 
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        data['breadcrumbs'] = [('/', 'Home'), ('/students/create/', 'Ajouter élève')]
-        data['page_identifier'] = 'S15'  # Unique identifier for this page
-        data['classes'] = Classe.objects.all()  # Fetch available classes
-        return data
-
-    def form_valid(self, form):
-        eleve = form.save()
-        classe = form.cleaned_data['classe']
-        annee_scolaire = form.cleaned_data['annee_scolaire']
-        Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
-        return super().form_valid(form)'''
         
 @method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
@@ -899,65 +932,6 @@ def get_classes_by_school(request):
     ecole_id = request.GET.get('ecole')
     classes = Classe.objects.filter(ecole_id=ecole_id).order_by('nom')
     return render(request, 'scuelo/classe_dropdown_list_options.html', {'classes': classes})
-
-        
-'''@login_required
-def student_update(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    old_values = student.__dict__.copy()
-    
-    if request.method == 'POST':
-        form = EleveUpdateForm(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
-            # Log changes
-            new_values = student.__dict__.copy()
-            for field, old_value in old_values.items():
-                new_value = new_values.get(field)
-                if old_value != new_value:
-                    StudentLog.objects.create(
-                        student=student,
-                        user=request.user,
-                        action=f"Updated {field}",
-                        old_value=str(old_value),
-                        new_value=str(new_value)
-                    )
-            return redirect('student_detail', pk=student.pk)
-    else:
-        form = EleveUpdateForm(instance=student)
-    
-    # Set the current year for annee_inscr automatically
-    current_year = datetime.now().year
-    form.fields['annee_inscr'].initial = current_year
-
-    return render(request, 'scuelo/students/studentupdate.html', {
-        'form': form,
-        'student': student,
-        'page_identifier': 'S13'
-    })'''
-    
-    
-'''@login_required
-def student_update(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    
-    if request.method == 'POST':
-        form = EleveUpdateForm(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
-            return redirect('student_detail', pk=student.pk)
-        else:
-            print(form.errors)  # Handle form errors
-    else:
-        form = EleveUpdateForm(instance=student)
-
-    context = {
-        'form': form,
-        'student': student,
-        'page_identifier': 'S13'
-    }
-    return render(request, 'scuelo/students/studentupdate.html', context)'''
-    
 class StudentUpdateView(UpdateView):
     model = Eleve
     form_class = EleveUpdateForm

@@ -19,7 +19,7 @@ from django.utils import timezone
             'causal': forms.Select(attrs={'class': 'form-control'})  # Dropdown for causal choices
         }'''
         
-class PaiementPerStudentForm(forms.ModelForm):
+'''class PaiementPerStudentForm(forms.ModelForm):
     class Meta:
         model = Mouvement
         fields = ['causal', 'montant', 'date_paye', 'note']
@@ -39,7 +39,31 @@ class PaiementPerStudentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Set initial value for date_paye to current date and time
         if not self.initial.get('date_paye'):
-            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO
+            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO'''
+            
+            
+class PaiementPerStudentForm(forms.ModelForm):
+    class Meta:
+        model = Mouvement
+        fields = ['causal', 'montant', 'date_paye', 'note']
+        widgets = {
+            'causal': forms.Select(attrs={'class': 'form-control'}),
+            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
+            'date_paye': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control'
+                },
+                format='%Y-%m-%dT%H:%M'
+            ),
+            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set initial value for date_paye to current date and time
+        if not self.initial.get('date_paye'):
+            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO format            
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement

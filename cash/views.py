@@ -160,7 +160,7 @@ def add_payment(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
-@login_required
+'''@login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)
     student = paiement.inscription.eleve
@@ -200,7 +200,37 @@ def update_paiement(request, pk):
         'page_identifier': 'S07'
     })
 
+'''
+@login_required
+def update_paiement(request, pk):
+    paiement = get_object_or_404(Mouvement, pk=pk)
+    student = paiement.inscription.eleve
+    school_name = paiement.inscription.classe.ecole.nom if paiement.inscription.classe else "Unknown School"
+    class_type = paiement.inscription.classe.type.nom if paiement.inscription.classe else "Unknown Class"
+    
+    # Get class PK for redirect
+    classe_pk = paiement.inscription.classe.pk if paiement.inscription.classe else None
 
+    if request.method == 'POST':
+        form = PaiementPerStudentForm(request.POST, instance=paiement)
+        if form.is_valid():
+            form.save()  # Save the form, updates paiement directly
+            
+            # Redirect to class detail if class exists, else to student detail
+            if classe_pk:
+                return redirect('class_detail', pk=classe_pk)
+            else:
+                return redirect('student_detail', pk=student.pk)
+    else:
+        form = PaiementPerStudentForm(instance=paiement)  # Instance form
+
+    return render(request, 'cash/paiements/updatepaiment.html', {
+        'form': form,
+        'student': student,
+        'school_name': school_name,
+        'class_type': class_type,
+        'page_identifier': 'S07'
+    })
 @method_decorator(login_required, name='dispatch')
 class UniformPaymentListView(ListView):
     model = Mouvement
