@@ -27,6 +27,15 @@
         cursor: pointer;
         
     }
+     #offsiteStudentsTable {
+        table-layout: fixed;
+        width: 100%; /* Make sure to set a width for the table */
+    }
+
+    #offsiteStudentsTable td:nth-child(3),
+    #offsiteStudentsTable th:nth-child(3) {
+        width: 15%; /* Adjust this percentage as needed */
+    }
 </style>
 
 <span class="navbar-brand mb-0 h1 text-white">élèves externes</span>
@@ -75,6 +84,7 @@
     .table th {
         background-color: #333;
         color: #fff;
+      
         text-transform: uppercase;
         font-weight: bold;
     }
@@ -128,7 +138,7 @@
     }
 
     .cs_py {
-        width: 1% !important;
+        width: 2% !important;
     }
     .dat {
         width: 5% !important;
@@ -161,11 +171,11 @@
             <tr>
                 <th class="action dt-left"></th>
                 <th class='scuelo'>classe</th>
-                <th class='scuelo'>École</th>
+                <th class=''>École</th>
                 <th class='id dt-left'>ID</th>
                 <th class='nom dt-left' >Nom</th>
                 <th class='prenom dt-left'>Prénom</th>
-                <th class='cs_py'>CS_PY</th>
+                <th class='cs_py dt-left'>CS_PY</th>
                 <th class='cs_py dt-left'>Cond</th>
                 <th class='col-sex dt-left'>Sexe</th>
                 <th class='dat dt-left'>Date Naiss</th>
@@ -187,7 +197,7 @@
                 <td class='dt-left'>{{ student.id }}</td>
                 <td class='dt-left'>{{ student.prenom }}</td>
                 <td class='dt-left'>{{ student.nom }}</td>
-                <td>{{ student.cs_py }}</td>
+                <td class='dt-left'>{{ student.cs_py }}</td>
                 <td class='dt-lef'>{{ student.condition_eleve }}</td>
                 <td class='dt-let'>{{ student.sex }}</td>
                 <td class='dt-left'>{{ student.date_naissance|date:'Y-m-d' }}</td>
@@ -214,13 +224,11 @@
     $(document).ready(function() {
         var currentDate = new Date().toLocaleDateString();
         var table = $('#offsiteStudentsTable').DataTable({
-            //dom: 'Bfrtip', // Enable buttons
-            pageLength: 40, // Show 40 rows per page
-            lengthMenu: [
-                [10, 25, 40, 50, 100, -1],
-                [10, 25, 40, 50, 100, "All"]
-            ],
-            order: [],
+            lengthChange: false, // No entries dropdown
+            ordering: false, // Disable sorting
+            paging: false, // Disable pagination
+            info: false, // Remove the "Showing X to Y"
+            searching: true, // ENABLE the search bar
             buttons: [{
                     extend: 'csv',
                     text: 'Export CSV',
@@ -250,20 +258,27 @@
                 }
             ],
             order: [],
-            columnDefs: [
-                {
-                  targets: 10, // Target the last column (Actions column)
-                  width: '5%', //  adjust the percentage as needed
-                  orderable: true, // Make it orderable
-                  className: 'dt-left' // Add left alignment class
-                },
-          
-                  ]
+            columnDefs: [{
+                targets: 2, // École column (index 2)
+                width: '15%', // Adjust this percentage as needed
+                orderable: false,
+                className: 'dt-left'
+            },
+            {
+                targets: 10, // The Action column
+                width: '5%',
+                orderable: false,
+                className: 'dt-left'
+            }],
+            fixedHeader: true // Enable fixed header
         });
-
+    
         // Move buttons to header
         table.buttons().container()
             .appendTo($('#datatable-buttons'));
     });
+    
+    
 </script>
 {% endblock %}
+

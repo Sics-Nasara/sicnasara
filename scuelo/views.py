@@ -661,7 +661,7 @@ class StudentListView(ListView):
             return HttpResponse("No current academic year found.", status=400)
 
         # Define the desired school order
-        preferred_schools = ['Sc_Nas_Mat', 'Sc_Nas_Pri']
+        preferred_schools = ['École Maternelle Centre social de Nasara', 'École primaire Centre social de Nasara']
 
         # Annotate schools and classes and order them as requested
         schools = Ecole.objects.annotate(
