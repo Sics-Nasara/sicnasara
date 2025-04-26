@@ -136,3 +136,210 @@
 2025-03-17 15:31:08,199 - INFO - Created Classe: CE2-LSB
 2025-03-17 15:31:08,212 - INFO - Created Classe: CM1-LSB
 2025-03-17 15:31:08,225 - INFO - Created Classe: CM2-LSB
+2025-04-26 10:23:59,915 - INFO - Creating Classes...
+2025-04-26 10:23:59,918 - ERROR - Error creating Classe 6me-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,919 - ERROR - Error creating Classe 5me-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,921 - ERROR - Error creating Classe 4me-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,922 - ERROR - Error creating Classe 3me-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,924 - ERROR - Error creating Classe 2me-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,925 - ERROR - Error creating Classe 1ere-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,927 - ERROR - Error creating Classe Term-TBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,927 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:23:59,928 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:23:59,928 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:23:59,929 - ERROR - Error creating Classe CP1-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,931 - ERROR - Error creating Classe CP2-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,932 - ERROR - Error creating Classe CE1-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,933 - ERROR - Error creating Classe CE2-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,935 - ERROR - Error creating Classe CM1-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,936 - ERROR - Error creating Classe CM2-Nas_Pri: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,938 - ERROR - Error creating Classe 6me-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,939 - ERROR - Error creating Classe 5me-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,940 - ERROR - Error creating Classe 4me-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,942 - ERROR - Error creating Classe 3me-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,943 - ERROR - Error creating Classe 2me-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,944 - ERROR - Error creating Classe 1ere-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,946 - ERROR - Error creating Classe Term-LMS: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,947 - ERROR - Error creating Classe 6me-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,949 - ERROR - Error creating Classe 5me-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,950 - ERROR - Error creating Classe 4me-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,952 - ERROR - Error creating Classe 3me-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,953 - ERROR - Error creating Classe 2me-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,954 - ERROR - Error creating Classe 1ere-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,956 - ERROR - Error creating Classe Term-WLM: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,957 - ERROR - Error creating Classe 6me-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,959 - ERROR - Error creating Classe 5me-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,960 - ERROR - Error creating Classe 4me-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,961 - ERROR - Error creating Classe 3me-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,963 - ERROR - Error creating Classe 2me-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,965 - ERROR - Error creating Classe 1ere-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,966 - ERROR - Error creating Classe Term-LPMSBD: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,968 - ERROR - Error creating Classe 6me-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,969 - ERROR - Error creating Classe 5me-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,971 - ERROR - Error creating Classe 4me-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,972 - ERROR - Error creating Classe 3me-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,974 - ERROR - Error creating Classe 2me-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,975 - ERROR - Error creating Classe 1ere-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,977 - ERROR - Error creating Classe Term-WP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,978 - ERROR - Error creating Classe CP1-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,980 - ERROR - Error creating Classe CP2-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,981 - ERROR - Error creating Classe CE1-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,983 - ERROR - Error creating Classe CE2-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,984 - ERROR - Error creating Classe CM1-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,986 - ERROR - Error creating Classe CM2-EPCELP: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,987 - ERROR - Error creating Classe CP1-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,988 - ERROR - Error creating Classe CP2-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,990 - ERROR - Error creating Classe CE1-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,991 - ERROR - Error creating Classe CE2-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,993 - ERROR - Error creating Classe CM1-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,994 - ERROR - Error creating Classe CM2-EPPLE: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,995 - ERROR - Error creating Classe CP1-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,997 - ERROR - Error creating Classe CP2-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:23:59,998 - ERROR - Error creating Classe CE1-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,000 - ERROR - Error creating Classe CE2-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,001 - ERROR - Error creating Classe CM1-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,003 - ERROR - Error creating Classe CM2-YAMT: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,005 - ERROR - Error creating Classe CP1-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,006 - ERROR - Error creating Classe CP2-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,038 - ERROR - Error creating Classe CE1-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,040 - ERROR - Error creating Classe CE2-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,041 - ERROR - Error creating Classe CM1-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:24:00,043 - ERROR - Error creating Classe CM2-LSB: UNIQUE constraint failed: scuelo_classe.legacy_id
+2025-04-26 10:32:26,641 - INFO - Creating Classes...
+2025-04-26 10:32:26,651 - INFO - Created Classe: 6me-TBD
+2025-04-26 10:32:26,661 - INFO - Created Classe: 5me-TBD
+2025-04-26 10:32:26,672 - INFO - Created Classe: 4me-TBD
+2025-04-26 10:32:26,682 - INFO - Created Classe: 3me-TBD
+2025-04-26 10:32:26,692 - INFO - Created Classe: 2me-TBD
+2025-04-26 10:32:26,701 - INFO - Created Classe: 1ere-TBD
+2025-04-26 10:32:26,711 - INFO - Created Classe: Term-TBD
+2025-04-26 10:32:26,712 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:32:26,712 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:32:26,713 - ERROR - Ecole with nom Sc_NaÉcole Maternelle Centre social de Nasaras_Mat not found.
+2025-04-26 10:32:26,722 - INFO - Created Classe: CP1-Nas_Pri
+2025-04-26 10:32:26,732 - INFO - Created Classe: CP2-Nas_Pri
+2025-04-26 10:32:26,742 - INFO - Created Classe: CE1-Nas_Pri
+2025-04-26 10:32:26,753 - INFO - Created Classe: CE2-Nas_Pri
+2025-04-26 10:32:26,762 - INFO - Created Classe: CM1-Nas_Pri
+2025-04-26 10:32:26,772 - INFO - Created Classe: CM2-Nas_Pri
+2025-04-26 10:32:26,781 - INFO - Created Classe: 6me-LMS
+2025-04-26 10:32:26,790 - INFO - Created Classe: 5me-LMS
+2025-04-26 10:32:26,800 - INFO - Created Classe: 4me-LMS
+2025-04-26 10:32:26,810 - INFO - Created Classe: 3me-LMS
+2025-04-26 10:32:26,820 - INFO - Created Classe: 2me-LMS
+2025-04-26 10:32:26,835 - INFO - Created Classe: 1ere-LMS
+2025-04-26 10:32:26,847 - INFO - Created Classe: Term-LMS
+2025-04-26 10:32:26,857 - INFO - Created Classe: 6me-WLM
+2025-04-26 10:32:26,868 - INFO - Created Classe: 5me-WLM
+2025-04-26 10:32:26,878 - INFO - Created Classe: 4me-WLM
+2025-04-26 10:32:26,888 - INFO - Created Classe: 3me-WLM
+2025-04-26 10:32:26,898 - INFO - Created Classe: 2me-WLM
+2025-04-26 10:32:26,908 - INFO - Created Classe: 1ere-WLM
+2025-04-26 10:32:26,917 - INFO - Created Classe: Term-WLM
+2025-04-26 10:32:26,929 - INFO - Created Classe: 6me-LPMSBD
+2025-04-26 10:32:26,941 - INFO - Created Classe: 5me-LPMSBD
+2025-04-26 10:32:26,951 - INFO - Created Classe: 4me-LPMSBD
+2025-04-26 10:32:26,961 - INFO - Created Classe: 3me-LPMSBD
+2025-04-26 10:32:26,974 - INFO - Created Classe: 2me-LPMSBD
+2025-04-26 10:32:26,986 - INFO - Created Classe: 1ere-LPMSBD
+2025-04-26 10:32:26,996 - INFO - Created Classe: Term-LPMSBD
+2025-04-26 10:32:27,009 - INFO - Created Classe: 6me-WP
+2025-04-26 10:32:27,021 - INFO - Created Classe: 5me-WP
+2025-04-26 10:32:27,035 - INFO - Created Classe: 4me-WP
+2025-04-26 10:32:27,048 - INFO - Created Classe: 3me-WP
+2025-04-26 10:32:27,059 - INFO - Created Classe: 2me-WP
+2025-04-26 10:32:27,073 - INFO - Created Classe: 1ere-WP
+2025-04-26 10:32:27,086 - INFO - Created Classe: Term-WP
+2025-04-26 10:32:27,099 - INFO - Created Classe: CP1-EPCELP
+2025-04-26 10:32:27,115 - INFO - Created Classe: CP2-EPCELP
+2025-04-26 10:32:27,125 - INFO - Created Classe: CE1-EPCELP
+2025-04-26 10:32:27,135 - INFO - Created Classe: CE2-EPCELP
+2025-04-26 10:32:27,148 - INFO - Created Classe: CM1-EPCELP
+2025-04-26 10:32:27,161 - INFO - Created Classe: CM2-EPCELP
+2025-04-26 10:32:27,173 - INFO - Created Classe: CP1-EPPLE
+2025-04-26 10:32:27,184 - INFO - Created Classe: CP2-EPPLE
+2025-04-26 10:32:27,194 - INFO - Created Classe: CE1-EPPLE
+2025-04-26 10:32:27,204 - INFO - Created Classe: CE2-EPPLE
+2025-04-26 10:32:27,214 - INFO - Created Classe: CM1-EPPLE
+2025-04-26 10:32:27,223 - INFO - Created Classe: CM2-EPPLE
+2025-04-26 10:32:27,234 - INFO - Created Classe: CP1-YAMT
+2025-04-26 10:32:27,248 - INFO - Created Classe: CP2-YAMT
+2025-04-26 10:32:27,259 - INFO - Created Classe: CE1-YAMT
+2025-04-26 10:32:27,269 - INFO - Created Classe: CE2-YAMT
+2025-04-26 10:32:27,280 - INFO - Created Classe: CM1-YAMT
+2025-04-26 10:32:27,290 - INFO - Created Classe: CM2-YAMT
+2025-04-26 10:32:27,300 - INFO - Created Classe: CP1-LSB
+2025-04-26 10:32:27,310 - INFO - Created Classe: CP2-LSB
+2025-04-26 10:32:27,320 - INFO - Created Classe: CE1-LSB
+2025-04-26 10:32:27,334 - INFO - Created Classe: CE2-LSB
+2025-04-26 10:32:27,344 - INFO - Created Classe: CM1-LSB
+2025-04-26 10:32:27,353 - INFO - Created Classe: CM2-LSB
+2025-04-26 10:35:28,297 - INFO - Creating Classes...
+2025-04-26 10:35:28,308 - INFO - Created Classe: 6me-TBD
+2025-04-26 10:35:28,317 - INFO - Created Classe: 5me-TBD
+2025-04-26 10:35:28,326 - INFO - Created Classe: 4me-TBD
+2025-04-26 10:35:28,335 - INFO - Created Classe: 3me-TBD
+2025-04-26 10:35:28,343 - INFO - Created Classe: 2me-TBD
+2025-04-26 10:35:28,352 - INFO - Created Classe: 1ere-TBD
+2025-04-26 10:35:28,360 - INFO - Created Classe: Term-TBD
+2025-04-26 10:35:28,368 - INFO - Created Classe: PS-Nas_Mat
+2025-04-26 10:35:28,379 - INFO - Created Classe: MS-Nas_Mat
+2025-04-26 10:35:28,387 - INFO - Created Classe: GS-Nas_Mat
+2025-04-26 10:35:28,395 - INFO - Created Classe: CP1-Nas_Pri
+2025-04-26 10:35:28,404 - INFO - Created Classe: CP2-Nas_Pri
+2025-04-26 10:35:28,414 - INFO - Created Classe: CE1-Nas_Pri
+2025-04-26 10:35:28,425 - INFO - Created Classe: CE2-Nas_Pri
+2025-04-26 10:35:28,435 - INFO - Created Classe: CM1-Nas_Pri
+2025-04-26 10:35:28,445 - INFO - Created Classe: CM2-Nas_Pri
+2025-04-26 10:35:28,455 - INFO - Created Classe: 6me-LMS
+2025-04-26 10:35:28,465 - INFO - Created Classe: 5me-LMS
+2025-04-26 10:35:28,478 - INFO - Created Classe: 4me-LMS
+2025-04-26 10:35:28,488 - INFO - Created Classe: 3me-LMS
+2025-04-26 10:35:28,498 - INFO - Created Classe: 2me-LMS
+2025-04-26 10:35:28,508 - INFO - Created Classe: 1ere-LMS
+2025-04-26 10:35:28,518 - INFO - Created Classe: Term-LMS
+2025-04-26 10:35:28,536 - INFO - Created Classe: 6me-WLM
+2025-04-26 10:35:28,547 - INFO - Created Classe: 5me-WLM
+2025-04-26 10:35:28,557 - INFO - Created Classe: 4me-WLM
+2025-04-26 10:35:28,567 - INFO - Created Classe: 3me-WLM
+2025-04-26 10:35:28,580 - INFO - Created Classe: 2me-WLM
+2025-04-26 10:35:28,588 - INFO - Created Classe: 1ere-WLM
+2025-04-26 10:35:28,596 - INFO - Created Classe: Term-WLM
+2025-04-26 10:35:28,605 - INFO - Created Classe: 6me-LPMSBD
+2025-04-26 10:35:28,613 - INFO - Created Classe: 5me-LPMSBD
+2025-04-26 10:35:28,622 - INFO - Created Classe: 4me-LPMSBD
+2025-04-26 10:35:28,633 - INFO - Created Classe: 3me-LPMSBD
+2025-04-26 10:35:28,643 - INFO - Created Classe: 2me-LPMSBD
+2025-04-26 10:35:28,654 - INFO - Created Classe: 1ere-LPMSBD
+2025-04-26 10:35:28,664 - INFO - Created Classe: Term-LPMSBD
+2025-04-26 10:35:28,675 - INFO - Created Classe: 6me-WP
+2025-04-26 10:35:28,688 - INFO - Created Classe: 5me-WP
+2025-04-26 10:35:28,699 - INFO - Created Classe: 4me-WP
+2025-04-26 10:35:28,709 - INFO - Created Classe: 3me-WP
+2025-04-26 10:35:28,718 - INFO - Created Classe: 2me-WP
+2025-04-26 10:35:28,727 - INFO - Created Classe: 1ere-WP
+2025-04-26 10:35:28,735 - INFO - Created Classe: Term-WP
+2025-04-26 10:35:28,745 - INFO - Created Classe: CP1-EPCELP
+2025-04-26 10:35:28,753 - INFO - Created Classe: CP2-EPCELP
+2025-04-26 10:35:28,761 - INFO - Created Classe: CE1-EPCELP
+2025-04-26 10:35:28,771 - INFO - Created Classe: CE2-EPCELP
+2025-04-26 10:35:28,782 - INFO - Created Classe: CM1-EPCELP
+2025-04-26 10:35:28,790 - INFO - Created Classe: CM2-EPCELP
+2025-04-26 10:35:28,799 - INFO - Created Classe: CP1-EPPLE
+2025-04-26 10:35:28,807 - INFO - Created Classe: CP2-EPPLE
+2025-04-26 10:35:28,815 - INFO - Created Classe: CE1-EPPLE
+2025-04-26 10:35:28,824 - INFO - Created Classe: CE2-EPPLE
+2025-04-26 10:35:28,832 - INFO - Created Classe: CM1-EPPLE
+2025-04-26 10:35:28,841 - INFO - Created Classe: CM2-EPPLE
+2025-04-26 10:35:28,850 - INFO - Created Classe: CP1-YAMT
+2025-04-26 10:35:28,859 - INFO - Created Classe: CP2-YAMT
+2025-04-26 10:35:28,868 - INFO - Created Classe: CE1-YAMT
+2025-04-26 10:35:28,879 - INFO - Created Classe: CE2-YAMT
+2025-04-26 10:35:28,888 - INFO - Created Classe: CM1-YAMT
+2025-04-26 10:35:28,898 - INFO - Created Classe: CM2-YAMT
+2025-04-26 10:35:28,908 - INFO - Created Classe: CP1-LSB
+2025-04-26 10:35:28,917 - INFO - Created Classe: CP2-LSB
+2025-04-26 10:35:28,927 - INFO - Created Classe: CE1-LSB
+2025-04-26 10:35:28,936 - INFO - Created Classe: CE2-LSB
+2025-04-26 10:35:28,947 - INFO - Created Classe: CM1-LSB
+2025-04-26 10:35:28,956 - INFO - Created Classe: CM2-LSB
