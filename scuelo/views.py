@@ -520,7 +520,7 @@ def student_detail(request, pk):
     
     # Get the current school name if the student has a current class
     current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
-    current_class_name = current_class.nom if current_class else "No Class Assigned"
+    current_class_name = current_class.type if current_class else "No Class Assigned"
     
     # Check if current_class is None
     if current_class:
