@@ -11,7 +11,12 @@
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
 {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">Retards Paiement {{ current_annee_scolaire.nom }}</span>
+
+    <span class="navbar-brand mb-0 h1 text-white">Retards Paiement</span>
+
+{% comment %}
+    <span class="navbar-brand mb-0 h1 text-white">Retards Paiement {{ current_annee_scolaire.nom }}</span>
+{% endcomment %}
 <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
 <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
 <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
@@ -105,7 +110,7 @@
             {% for school, classes in data.items %}
                 {% for class_name, class_info in classes.items %}
                 <tr class="class-section">
-                    <td colspan="14" class="class-header-row">Class: {{ class_name }}</td>
+                    <td colspan="14" class="class-header-row">Class: {{  class_name }}</td>
                 </tr>
                 {% for student in class_info.students %}
                 <tr>
