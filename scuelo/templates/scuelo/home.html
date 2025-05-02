@@ -17,6 +17,9 @@
 {% endcomment %}
 
 <div class="ml-2 d-flex align-items-stretch">
+    <button class="class-card mr-3" id="undo-button" title="Undo">
+    <a href="{% url 'logout'  %}" > sortir</a></i>
+    </button>
     <button class="class-card mr-3 " id="undo-button" title="Undo">
         <i class="fas fa-undo"></i>
     </button>
@@ -65,7 +68,7 @@
                                             {% for item in categories.Maternelle %}
                                                 <a href="{% url 'class_detail' item.classe.id %}" class="class-card ">
                                                     <i class="fas fa-{{ item.icon }} class-icon "></i>
-                                                    <span class=''>{{ item.classe.nom }}</span>
+                                                    <span class=''>{{ item.classe.type }}</span>
                                                 </a>
                                             {% endfor %}
                                         </div>
@@ -79,7 +82,7 @@
                                             {% for item in categories.Primaire %}
                                                 <a href="{% url 'class_detail' item.classe.id %} " class="class-card">
                                                     <i class="fas fa-{{ item.icon }} class-icon"></i>
-                                                    <span>{{ item.classe.nom }} </span>
+                                                    <span>{{ item.classe.type }} </span>
                                                 </a>
                                             {% endfor %}
                                         </div>
@@ -93,7 +96,7 @@
                                             {% for item in categories.Secondaire %}
                                                 <a href="{% url 'class_detail' item.classe.id %}" class="class-card ">
                                                     <i class="fas fa-{{ item.icon }} class-icon "></i>
-                                                    <span>{{ item.classe.nom }}</span>
+                                                    <span>{{ item.classe.type }}</span>
                                                 </a>
                                             {% endfor %}
                                         </div>
