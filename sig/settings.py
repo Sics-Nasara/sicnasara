@@ -10,7 +10,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = DEV_SECRET_KEY
+#SECRET_KEY = DEV_SECRET_KEY
+SECRET_KEY = PROD_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -89,7 +90,7 @@ WSGI_APPLICATION = 'sig.wsgi.application'
     }
 }'''
 # Database
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sicsnasara_stage',
@@ -98,14 +99,15 @@ WSGI_APPLICATION = 'sig.wsgi.application'
         'PASSWORD': STAGE_DATABASE_PASSWORD,
         'PORT': '5432',
     }
-}'''
-
+}
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
-}
+}'''
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
