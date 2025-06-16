@@ -191,7 +191,7 @@ class Command(BaseCommand):
     {"ecole_nom": "École primaire Centre social de Nasara", "type_classe_nom": "CE2", "nom": "CE2-Nas_Pri", "legacy_id": "_PK-CE2-Nas"},
     {"ecole_nom": "École primaire Centre social de Nasara", "type_classe_nom": "CM1", "nom": "CM1-Nas_Pri", "legacy_id": "_PK-CM1-Nas"},
     {"ecole_nom": "École primaire Centre social de Nasara", "type_classe_nom": "CM2", "nom": "CM2-Nas_Pri", "legacy_id": "_PK-CM2-Nas"},
-    {"ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "6me", "nom": "6me-LMS", "legacy_id": "_PK-6me-LMS"},
+    {"ecole_nom": "Lycee Municipal de Lycee Municipal de saabasaaba", "type_classe_nom": "6me", "nom": "6me-LMS", "legacy_id": "_PK-6me-LMS"},
     {"ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "5me", "nom": "5me-LMS", "legacy_id": "_PK-5me-LMS"},
     {"ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "4me", "nom": "4me-LMS", "legacy_id": "_PK-4me-LMS"},
     {"ecole_nom": "Lycee Municipal de saaba", "type_classe_nom": "3me", "nom": "3me-LMS", "legacy_id": "_PK-3me-LMS"},
@@ -242,7 +242,7 @@ class Command(BaseCommand):
     {"ecole_nom": "Ecole La Salle Badenya", "type_classe_nom": "CE1", "nom": "CE1-LSB", "legacy_id": "_PK-CE1-LSB"},
     {"ecole_nom": "Ecole La Salle Badenya", "type_classe_nom": "CE2", "nom": "CE2-LSB", "legacy_id": "_PK-CE2-LSB"},
     {"ecole_nom": "Ecole La Salle Badenya", "type_classe_nom": "CM1", "nom": "CM1-LSB", "legacy_id": "_PK-CM1-LSB"},
-    {"ecole_nom": "Ecole La Salle Badenya", "type_classe_nom": "CM2", "nom": "CM2-LSB", "legacy_id": "_PK-CM2-LSB"},
+    {"ecole_nom": "Ecole La Salle BEcole La Salle Badenyaadenya", "type_classe_nom": "CM2", "nom": "CM2-LSB", "legacy_id": "_PK-CM2-LSB"},
 ]
 
         for data in classe_data:
