@@ -4,7 +4,11 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
 {% block header %}
 <div class="d-flex justify-content-between align-items-center w-100">
     <div class="d-flex align-items-center">
@@ -16,10 +20,8 @@
 
     <div class="d-flex align-items-stretch">
         <a href="{% url 'expense_create' %}" class="class-card mr-3">Ajout Sortie</a>
-        <button class="class-card mr-3 hidden-print" id="print-button" title="Print" onclick="myFunction()">
-            <i class="fas fa-print"></i>
-        </button>
-      {% comment %}
+     <div id="export-buttons" class="mr-3"></div>
+       {% comment %}
           <button class="class-card mr-3 hidden-print" id="export-button" title="Export to Excel" onclick="exportToExcel()">
               <i class="fas fa-file-excel"></i>
           </button>
@@ -138,6 +140,22 @@
         text-overflow: ellipsis; /* Show "..." if text is too long */
         white-space: nowrap;
     }
+
+    /* Style the DataTables buttons container */
+    #export-buttons {
+        margin-left: 10px; /* Adjust spacing as needed */
+    }
+    
+    /* Style the DataTables buttons to match navbar buttons */
+    .dt-buttons .dt-button {
+        background-color: grey; /* Adjust transparency as needed */
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+        
+    }
     
 </style>
 
@@ -161,14 +179,36 @@
                 <td class="highlight-negative dt-right"> {{ item.progressive_total|format_amount }}</td>
                 <td></td>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
 </div>
 
 <script>
     $(document).ready(function () {
+        var currentDate = new Date().toLocaleDateString();
         var table = $('#expensesTable').DataTable({
+            dom: 'Bfrtip', // Enable buttons
+            buttons: [
+             {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    filename: 'entre sorties ' + ' ' + currentDate,
+                    className: 'class-card',
+                    exportOptions: {
+                        columns: ':not(:last-child)'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    className: 'class-card',
+                    title: 'entre sorties ' + ' ' + currentDate,
+                    exportOptions: {
+                        columns: ':not(:last-child)'
+                    }
+                }
+            ],
             "order": [[0, "asc"]], // Ensure oldest entries come first
             "columnDefs": [
                 { "type": "date", "targets": 0 },
@@ -186,6 +226,9 @@
             }
         });
     
+         table.buttons().container()
+            .appendTo($('#export-buttons'));
+            
         // Function to compute and format the progressive total dynamically
         function updateProgressiveTotal() {
             let total = 0;
@@ -222,3 +265,4 @@
 
 
 {% endblock %}
+the print and the export button should be there.

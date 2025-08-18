@@ -110,10 +110,7 @@ class Classe(TimeStampedModel):
             cs_py="P"
         ).count()
 
-    @property
-    def sco_exigible(self):
-        total_tarifs = Tarif.objects.filter(classe=self).aggregate(total=Sum('montant'))['total'] or 0
-        return "{:,}".format(total_tarifs)
+
 
 class Eleve(TimeStampedModel):
     nom = models.CharField(max_length=34, null=False)

@@ -8,39 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from scuelo.models import AnneeScolaire
 from datetime import datetime, timezone
 from django.utils import timezone
-'''class PaiementPerStudentForm(forms.ModelForm):
-    class Meta:
-        model = Mouvement
-        fields = ['montant', 'date_paye', 'note', 'causal']  # Include date_paye and other necessary fields
-        widgets = {
-            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
-            'date_paye': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
-            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
-            'causal': forms.Select(attrs={'class': 'form-control'})  # Dropdown for causal choices
-        }'''
-        
-'''class PaiementPerStudentForm(forms.ModelForm):
-    class Meta:
-        model = Mouvement
-        fields = ['causal', 'montant', 'date_paye', 'note']
-        widgets = {
-            'causal': forms.Select(attrs={'class': 'form-control'}),
-            'montant': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
-            'date_paye': forms.DateTimeInput(
-                attrs={
-                    'type': 'datetime-local',
-                    'class': 'form-control'
-                }
-            ),
-            'note': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Additional notes'}),
-        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Set initial value for date_paye to current date and time
-        if not self.initial.get('date_paye'):
-            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO'''
-            
             
 class PaiementPerStudentForm(forms.ModelForm):
     class Meta:
@@ -97,33 +65,7 @@ class TarifForm(forms.ModelForm):
         }
 
 from .models import Cashier         
-'''class ExpenseForm(forms.ModelForm):
-    c_sco_balance = forms.DecimalField(
-        label="C_SCO Balance",
-        max_digits=10,
-        decimal_places=2,
-        disabled=True,  # Make it read-only
-        required=False,
-    )
 
-    class Meta:
-        model = Expense
-        fields = ['description', 'amount', 'date', 'note']  # Exclude cashier since it's auto-assigned
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        # Add custom attributes for Bootstrap styling
-        self.fields['description'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter expense description'})
-        self.fields['amount'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter amount'})
-        self.fields['date'].widget.attrs.update({'class': 'form-control'})
-        self.fields['note'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Additional notes (optional)'})
-        self.fields['c_sco_balance'].widget.attrs.update({'class': 'form-control', 'readonly': True})
-
-        # Fetch the default cashier (C_SCO) and calculate its balance
-        c_sco_cashier = Cashier.get_default_cashier()
-        if c_sco_cashier:
-            self.fields['c_sco_balance'].initial = c_sco_cashier.balance()'''
             
 class ExpenseForm(forms.ModelForm):
     class Meta:

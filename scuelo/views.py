@@ -1,87 +1,54 @@
 # Authentication
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.urls import reverse, reverse_lazy
-from django.views.generic.edit import UpdateView, DeleteView
-from django.views.generic import DetailView, ListView, CreateView, TemplateView
-from django.db.models import Q, Sum, Prefetch, Count  , F
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.http import JsonResponse, HttpResponseRedirect
-#from weasyprint import HTML
-from django.forms import modelformset_factory
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from datetime import timedelta, datetime
-import csv
-from django.db.models import Prefetch, Sum, Count, Case, When, Value, IntegerField
-import io
-from django.db.models import Q
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-import base64
-import matplotlib.pyplot as plt
-from io import BytesIO
-import seaborn as sns
-   
-from django.db import models
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-# from .models import Classe, AnneeScolaire, Inscription, Eleve  # Ensure these are imported
-# from cash.models import Mouvement, Tarif  # Ensure these are imported
-
-# Assuming these models are in the same app or properly imported
-# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
-# from cash.models import Mouvement, Tarif
-
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
+from django.contrib import messages
+
+# Shortcuts & utilities
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
 from django.utils import timezone
-
-# Assuming these models are in the same app or properly imported
-# from .models import Classe, AnneeScolaire, Inscription, Eleve # ensure models are imported
-# from cash.models import Mouvement, Tarif
-
-from datetime import datetime
-from django.db.models import  Case, When, Value
-from django.db.models.functions import TruncDay
-# Models and Forms
 from django.utils.timezone import now
-from .forms import (
-     EleveUpdateForm, 
-    EleveCreateForm, EcoleCreateForm, ClasseCreateForm,StudentRangForm,
-    ClassUpgradeForm, SchoolChangeForm ,UniformReservationForm
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+# Generic views
+from django.views.generic import (
+    DetailView, ListView, CreateView, TemplateView
 )
+from django.views.generic.edit import UpdateView, DeleteView
+
+# Django ORM tools
+from django.db import models
+from django.db.models import (
+    Q, Sum, Prefetch, Count, F, Case, When, Value, IntegerField
+)
+from django.db.models.functions import TruncDay
+
+# Forms
+from .forms import (
+    EleveUpdateForm, EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
+    StudentRangForm, ClassUpgradeForm, SchoolChangeForm, UniformReservationForm
+)
+from cash.forms import PaiementPerStudentForm
+
+# Models
 from scuelo.models import (
     Eleve, Classe, Inscription, StudentLog,
-    AnneeScolaire, Ecole ,UniformReservation, Rang
+    AnneeScolaire, Ecole, UniformReservation, Rang ,TypeClasse
 )
+from cash.models import Mouvement, Tarif
 
-from cash.forms import PaiementPerStudentForm
-from cash.models import Mouvement , Tarif
-
-from django.shortcuts import render
-from django.db.models import Sum
-from django.utils import timezone
-from django.views.generic import DetailView
-from django.shortcuts import get_object_or_404
-from django.db.models import Sum
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView
-
-from django.shortcuts import get_object_or_404
-from django.db.models import Sum
-from django.views.generic import DetailView
+# Python & third-party libs
+from datetime import timedelta, datetime
+import csv
+import io
+import base64
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 # =======================
@@ -279,7 +246,7 @@ def class_detail(request, pk):
         'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
         'selected_annee_scolaire': selected_annee_scolaire,  # Pass the selected academic year
         'total_class_payment': total_class_payment,  # Total amount of payments for the class in the selected year
-        'page_identifier': 'S02'  # Unique page identifier
+        'page_identifier': 'S02' 
     })
 
 
@@ -441,71 +408,6 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
         return 0
 
 
-        
-'''@login_required
-def student_detail(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
-    
-    # Filter payments using the correct field relationship
-    payments = Mouvement.objects.filter(inscription__eleve=student)
-    
-    total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
-    current_class = student.current_class
-    
-    # Get the current school name if the student has a current class
-    current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
-    current_class_name = current_class.nom if current_class else "No Class Assigned"
-    
-    # Check if current_class is None
-    if current_class:
-        breadcrumbs = [
-            ('/', 'Home'),
-            (reverse('home'), 'Classes'),
-            (reverse('class_detail', kwargs={'pk': current_class.pk}), current_class.nom),
-            ('#', f"{student.nom} {student.prenom}")
-        ]
-    else:
-        breadcrumbs = [
-            ('/', 'Home'),
-            (reverse('home'), 'Classes'),
-            ('#', f"{student.nom} {student.prenom}")
-        ]
-    
-    form = PaiementPerStudentForm()
-    logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
-    
-    # Handle receipt printing
-    if request.method == 'POST' and 'print_receipt' in request.POST:
-        payment_id = request.POST.get('payment_id')
-        payment = get_object_or_404(Mouvement, pk=payment_id)
-
-        # Render receipt template to HTML
-        html_string = render_to_string('cash/paiements/receipt.html', {'student': student, 'payment': payment})
-
-        # Generate PDF
-        html = HTML(string=html_string)
-        result = html.write_pdf()
-
-        # Create a HttpResponse object with the appropriate PDF headers.
-        response = HttpResponse(result, content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename=receipt_{student.nom}_{student.prenom}_{payment.id}.pdf'
-        
-        return response
-
-    return render(request, 'scuelo/students/studentdetail.html', {
-        'student': student,
-        'inscriptions': inscriptions,
-        'payments': payments,
-        'total_payment': total_payment,
-        'breadcrumbs': breadcrumbs,
-        'form': form,
-        'logs': logs,
-        'current_school_name': current_school_name,  # Pass the current school name
-        'current_class_name': current_class_name,    # Pass the current class name
-        'page_identifier': 'S03'  # Unique page identifier
-    })
-'''
 from .forms import  StudentRangForm  
 @login_required
 def student_detail(request, pk):
@@ -520,7 +422,7 @@ def student_detail(request, pk):
     
     # Get the current school name if the student has a current class
     current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
-    current_class_name = current_class.nom if current_class else "No Class Assigned"
+    current_class_name = current_class.type if current_class else "No Class Assigned"
     
     # Check if current_class is None
     if current_class:
@@ -661,7 +563,7 @@ class StudentListView(ListView):
             return HttpResponse("No current academic year found.", status=400)
 
         # Define the desired school order
-        preferred_schools = ['Sc_Nas_Mat', 'Sc_Nas_Pri']
+        preferred_schools = ['École Maternelle Centre social de Nasara', 'École primaire Centre social de Nasara']
 
         # Annotate schools and classes and order them as requested
         schools = Ecole.objects.annotate(
@@ -698,58 +600,7 @@ class StudentListView(ListView):
         context['page_identifier'] = 'S14'
         return context
 
-'''@login_required
-def class_upgrade(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    
-    try:
-        latest_inscription = student.inscriptions.latest('date_inscription')
-    except Inscription.DoesNotExist:
-        return render(request, 'scuelo/classe/class_upgrade.html', {
-            'form': ClassUpgradeForm(),
-            'student': student,
-            'page_identifier': 'S04',
-            'error': 'Student has no inscriptions.'
-        })
-    
-    current_class = latest_inscription.classe
-    current_school = current_class.ecole
 
-    if request.method == 'POST':
-        form = ClassUpgradeForm(request.POST)
-        if form.is_valid():
-            new_class = form.cleaned_data['new_class']
-            
-            # Update the latest inscription to the new class
-            latest_inscription.classe = new_class
-            latest_inscription.save()
-
-            # Log the class upgrade
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Upgraded Class",
-                old_value=current_class.nom,
-                new_value=new_class.nom
-            )
-            return redirect('student_detail', pk=student.pk)
-    else:
-        form = ClassUpgradeForm()
-
-    # Fetch all schools and classes for the table
-    schools = Ecole.objects.all()
-    classes = Classe.objects.select_related('ecole').all()
-
-    return render(request, 'scuelo/classe/class_upgrade.html', {
-        'form': form,
-        'student': student,
-        'current_class': current_class,
-        'current_school': current_school,
-        'schools': schools,
-        'classes': classes,
-        'page_identifier': 'S04'
-    })         
-'''
 
 @login_required
 def class_upgrade(request, pk):
@@ -932,6 +783,7 @@ def get_classes_by_school(request):
     ecole_id = request.GET.get('ecole')
     classes = Classe.objects.filter(ecole_id=ecole_id).order_by('nom')
     return render(request, 'scuelo/classe_dropdown_list_options.html', {'classes': classes})
+
 class StudentUpdateView(UpdateView):
     model = Eleve
     form_class = EleveUpdateForm
@@ -1180,19 +1032,102 @@ def load_classes(request):
     return JsonResponse(list(classes.values('id', 'nom')), safe=False)
 
 
-# =======================
-# 6. Financial Management
-# =======================
-'''def print_receipt(request, mouvement_id):
-    mouvement = get_object_or_404(Mouvement, id=mouvement_id)
-    context = {
-        'mouvement': mouvement,
-        'receipt_number': f'REC-{mouvement.id:05d}'  # Example receipt number format
-    }
-    html_string = render(request, 'scuelo/receipt/receipt_template.html', context).content.decode('utf-8')
-    html = HTML(string=html_string)
-    pdf = html.write_pdf()
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
+from django.utils import timezone
+from scuelo.models import AnneeScolaire, Classe, Inscription, Eleve
 
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'filename="receipt_{mouvement.id}.pdf"'
-    return response'''
+@require_http_methods(["GET", "POST"])
+def manage_promotions(request):
+    # Get all classes ordered for selection lists
+    classes = Classe.objects.all().order_by('type__type_ecole', 'type__ordre', 'nom')
+    # Get all school years (could be limited if you prefer)
+    annee_scolaires = AnneeScolaire.objects.all().order_by('-date_initiale')
+    
+    promoted_students = []
+    target_class = None
+    
+    # To remember selections and repopulate form after POST
+    selected_from_class_id = None
+    selected_to_class_id = None
+    selected_year_id = None
+
+    if request.method == "POST":
+        selected_from_class_id = request.POST.get("from_class")
+        selected_to_class_id = request.POST.get("to_class")
+        selected_year_id = request.POST.get("annee_scolaire")
+
+        if not selected_from_class_id or not selected_to_class_id or not selected_year_id:
+            messages.error(request, "Veuillez sélectionner la classe source, la classe cible et l'année scolaire.")
+        else:
+            try:
+                with transaction.atomic():
+                    from_class = Classe.objects.get(id=selected_from_class_id)
+                    to_class = Classe.objects.get(id=selected_to_class_id)
+                    target_year = AnneeScolaire.objects.get(id=selected_year_id)
+                    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+
+                    if not current_year:
+                        messages.error(request, "L'année scolaire actuelle n'est pas définie.")
+                        raise Exception("Current school year is not defined")
+
+                    # Fetch inscriptions of students in 'from_class' during the current active year
+                    inscriptions = Inscription.objects.filter(
+                        classe=from_class, annee_scolaire=current_year
+                    ).select_related('eleve')
+
+                    if not inscriptions.exists():
+                        messages.warning(request, f"Aucun élève trouvé dans la classe {from_class.nom} pour l'année courante.")
+                    else:
+                        promoted_count = 0
+                        for inscription in inscriptions:
+                            eleve = inscription.eleve
+
+                            # Update student condition_eleve depending on cs_py
+                            if eleve.cs_py == 'C':
+                                eleve.condition_eleve = 'CONF'
+                            elif eleve.cs_py == 'P':
+                                eleve.condition_eleve = 'PROP'
+                            # else keep existing value
+                            eleve.save()
+
+                            # Remove existing inscription if any to avoid duplicates
+                            Inscription.objects.filter(eleve=eleve, annee_scolaire=target_year).delete()
+
+                            # Create the new inscription for the target year and class (promotion)
+                            Inscription.objects.create(
+                                eleve=eleve,
+                                classe=to_class,
+                                annee_scolaire=target_year,
+                                date_inscription=timezone.now(),
+                            )
+                            promoted_count += 1
+
+                        messages.success(request, f"{promoted_count} élève(s) promu(s) avec succès.")
+
+                    # After promotion, fetch promoted students for display
+                    target_class = to_class
+                    promoted_students = Inscription.objects.filter(
+                        annee_scolaire=target_year,
+                        classe=to_class
+                    ).select_related('eleve').order_by('eleve__nom', 'eleve__prenom')
+
+            except Classe.DoesNotExist:
+                messages.error(request, "Classe invalide sélectionnée.")
+            except AnneeScolaire.DoesNotExist:
+                messages.error(request, "Année scolaire invalide sélectionnée.")
+            except Exception as e:
+                messages.error(request, f"Erreur lors de la promotion : {str(e)}")
+
+    context = {
+        "classes": classes,
+        "annee_scolaires": annee_scolaires,
+        "promoted_students": promoted_students,
+        "target_class": target_class,
+        "selected_from_class_id": selected_from_class_id,
+        "selected_to_class_id": selected_to_class_id,
+        "selected_year_id": selected_year_id,
+    }
+    return render(request, "scuelo/promotion/manage_promotions.html", context)

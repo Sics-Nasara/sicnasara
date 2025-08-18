@@ -41,7 +41,9 @@
     <div class="d-flex align-items-center">
         <span class="navbar-brand mb-0 h1 text-white">Gerer classe</span>
         <span class="navbar-brand mb-0 h1 text-white">
-            {{ classe.nom }}-{{ classe.ecole.nom }}
+            {{ classe.type }}{% comment %}
+                -{{ classe.ecole.nom }}
+            {% endcomment %}
         </span>
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>

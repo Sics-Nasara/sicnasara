@@ -109,13 +109,13 @@
 
 </style>
 
-<div class="">
+<div class=" mt-4">
     {% for school in schools %}
-        <div class="school-section">
+        <div class="school-section ">
             <h5 class="school-title">{{ school.nom }}</h5>
             {% for classe in school.classe_set.all %}
                 <div class="">
-                    <h4 class="class-title">{{ classe.nom }}</h4>
+                    <h4 class="class-title">{{ classe.type }}</h4>
                     <table id="classTable-{{ classe.id }}" class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -123,7 +123,6 @@
                                 <th class='id'>ID</th>
                                 <th class="nom">Nom</th>
                                 <th class="prenom">Prenom</th>
-                             
                                 <th class="col-sex">Sexe</th>
                                 <th class="dat ">Date nais</th>
                                 <th class="cs_py">CS_PY</th>
@@ -145,9 +144,6 @@
                                     <td>{{ inscription.eleve.id }}</td>
                                     <td>{{ inscription.eleve.nom }}</td>
                                     <td>{{ inscription.eleve.prenom }}</td>
-                                  
-                                  
-                               
                                     <td>{{ inscription.eleve.get_sex_display }}</td>
                                     <td>{{ inscription.eleve.date_naissance|date:'Y-m-d'}}</td>
                                     <td>{{ inscription.eleve.get_cs_py_display }}</td>

@@ -1,112 +1,77 @@
-# Authentication
+# =============================
+# Authentication & Permissions
+# =============================
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+
+# =============================
+# Django Shortcuts & Utilities
+# =============================
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic.edit import UpdateView, DeleteView
-from django.views.generic import DetailView, ListView, CreateView, TemplateView
-from django.db.models import Q, Sum, Prefetch, Count  , F
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.http import JsonResponse, HttpResponseRedirect
-#from weasyprint import HTML
-from django.forms import modelformset_factory
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from datetime import timedelta, datetime
-import csv
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from .models import Expense, Cashier, Mouvement
-from .forms import ExpenseForm
-from django.db.models import Sum
-import csv
-from django.http import HttpResponse
-from datetime import date
-from django.db import connection
-from django.db import IntegrityError
-from django.utils.crypto import get_random_string 
-from django.shortcuts import render, get_object_or_404
-import io
 from django.utils import timezone
+from django.utils.timezone import now
+from django.utils.crypto import get_random_string
+from django.db import models, connection, IntegrityError
+
+# =============================
+# Generic & Class-Based Views
+# =============================
+from django.views.generic import DetailView, ListView, CreateView, TemplateView
+from django.views.generic.edit import UpdateView, DeleteView
+
+# =============================
+# ORM & Query Helpers
+# =============================
+from django.db.models import (
+    Q, Sum, Prefetch, Count, F, Case, When, Value
+)
+from django.db.models.functions import TruncDay
+
+# =============================
+# Forms
+# =============================
+from .forms import (
+    PaiementPerStudentForm, MouvementForm, TarifForm,
+    ExpenseForm, TransferForm, CashierForm
+)
+from scuelo.forms import (
+    EleveUpdateForm, EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
+    ClassUpgradeForm, SchoolChangeForm, UniformReservationForm
+)
+
+# =============================
+# Models
+# =============================
+from .models import (
+    Expense, Cashier, Mouvement, Tarif, Transfer
+)
+from scuelo.models import (
+    Eleve, Classe, Inscription, StudentLog,
+    AnneeScolaire, Ecole, UniformReservation
+)
+
+# =============================
+# Other Python & Third-Party Libs
+# =============================
+from datetime import timedelta, datetime, date
+import csv
+import io
 import base64
 import matplotlib.pyplot as plt
 from io import BytesIO
 import seaborn as sns
-from django.db import models
-from django.shortcuts import render, redirect
-from .models import Transfer, Cashier 
-from django.contrib import messages
-from datetime import datetime
-from django.db.models import  Case, When, Value
-from django.db.models.functions import TruncDay
-from django.utils.timezone import now
-from scuelo.forms import (
-     EleveUpdateForm,
-    EleveCreateForm, EcoleCreateForm, ClasseCreateForm,
-     ClassUpgradeForm, SchoolChangeForm ,UniformReservationForm
-     
-)
-from scuelo.models import (
-    Eleve, Classe, Inscription, StudentLog,
-    AnneeScolaire, Ecole  ,UniformReservation
-)
-from .models import Mouvement , Tarif  , Expense
-from .forms import (
-    PaiementPerStudentForm , MouvementForm
-    
-    ,TarifForm ,ExpenseForm , TransferForm , CashierForm
-    )
+
 # =======================
 # 4. Payment Management
 # =======================
-'''@login_required
-def add_payment(request, pk):
-    student = get_object_or_404(Eleve, pk=pk)
-    inscription = Inscription.objects.filter(eleve=student).last()
 
-    if inscription:
-        school_name = inscription.classe.ecole.nom if inscription.classe else "Unknown School"
-        class_type = inscription.classe.type.nom if inscription.classe else "Unknown Class"
-    else:
-        school_name = "Unknown School"
-        class_type = "Unknown Class"
-
-    if request.method == 'POST':
-        form = PaiementPerStudentForm(request.POST)
-        if form.is_valid():
-            mouvement = form.save(commit=False)
-            mouvement.inscription = inscription  # Ensure inscription is set
-            mouvement.causal = form.cleaned_data['causal']
-
-            if inscription:
-                mouvement.save()
-                print(f"Payment saved for {student.nom} {student.prenom}")  # Debug: Confirm payment saved
-                StudentLog.objects.create(
-                    student=student,
-                    user=request.user,
-                    action="Added Payment",
-                    old_value="",
-                    new_value=f"Payment - {mouvement.montant} - {mouvement.note} - {mouvement.date_paye}"
-                )
-                return redirect('student_detail', pk=student.pk)
-            else:
-                form.add_error(None, "No active inscription found for this student.")
-        else:
-            print(form.errors)  # Debug: Print form errors
-
-    else:
-        form = PaiementPerStudentForm()
-
-    return render(request, 'cash/paiements/add_payment.pin', {
-        'form': form,
-        'student': student,
-        'school_name': school_name,
-        'class_type': class_type,
-        'page_identifier': 'S07'
-    })'''
 @login_required
 def add_payment(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -160,47 +125,7 @@ def add_payment(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
-'''@login_required
-def update_paiement(request, pk):
-    paiement = get_object_or_404(Mouvement, pk=pk)
-    student = paiement.inscription.eleve
-    school_name = paiement.inscription.classe.ecole.nom if paiement.inscription.classe else "Unknown School"
-    class_type = paiement.inscription.classe.type.nom if paiement.inscription.classe else "Unknown Class"
-    
-    # Get class PK for redirect
-    classe_pk = paiement.inscription.classe.pk if paiement.inscription.classe else None
 
-    if request.method == 'POST':
-        form = PaiementPerStudentForm(request.POST, instance=paiement)
-        if form.is_valid():
-            old_value = f"{paiement.causal} - {paiement.montant} - {paiement.note} - {paiement.date_paye.strftime('%d/%m/%Y')}"
-            updated_payment = form.save()
-
-            StudentLog.objects.create(
-                student=student,
-                user=request.user,
-                action="Updated Payment",
-                old_value=old_value,
-                new_value=f"{updated_payment.causal} - {updated_payment.montant} - {updated_payment.note} - {updated_payment.date_paye.strftime('%d/%m/%Y')}"
-            )
-            
-            # Redirect to class detail if class exists, else to student detail
-            if classe_pk:
-                return redirect('class_detail', pk=classe_pk)
-            else:
-                return redirect('student_detail', pk=student.pk)
-    else:
-        form = PaiementPerStudentForm(instance=paiement)
-
-    return render(request, 'cash/paiements/updatepaiment.html', {
-        'form': form,
-        'student': student,
-        'school_name': school_name,
-        'class_type': class_type,
-        'page_identifier': 'S07'
-    })
-
-'''
 @login_required
 def update_paiement(request, pk):
     paiement = get_object_or_404(Mouvement, pk=pk)

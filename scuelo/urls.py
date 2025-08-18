@@ -45,4 +45,5 @@ urlpatterns = [
     path('student/<int:pk>/', views.student_detail, name='student_detail'),
     #path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
     path('student/<int:pk>/add_rang/', views.add_student_rang, name='add_student_rang'),
+    path('manage-promotions/', views.manage_promotions, name='manage_promotions'),
 ]

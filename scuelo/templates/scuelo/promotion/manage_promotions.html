@@ -1,0 +1,124 @@
+{% extends "../../layout.html" %}
+{% load static %}
+{% block header %}
+<span class="navbar-brand mb-0 h1 text-white">Gestion des Promotions</span>
+
+<div class="ml-2 d-flex align-items-stretch">
+    <button class="class-card mr-3" id="undo-button" title="Undo">
+        <i class="fas fa-undo"></i>
+    </button>
+    <button class="class-card mr-3" id="redo-button" title="Redo">
+        <i class="fas fa-redo"></i>
+    </button>
+    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+    <h1 class="mb-4">Gestion des Promotions des élèves</h1>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Promotion Form -->
+    <form method="post" class="mb-5">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="from_class"><strong>Classe d'origine (From Class):</strong></label>
+            <select name="from_class" id="from_class" class="form-control" required>
+                <option value="">-- Sélectionnez la classe d'origine --</option>
+                {% for classe in classes %}
+                    <option value="{{ classe.id }}" {% if classe.id|stringformat:"s" == selected_from_class_id %}selected{% endif %}>
+                        {{ classe.nom }} - {{ classe.type.get_type_ecole_display }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="to_class"><strong>Classe cible (To Class):</strong></label>
+            <select name="to_class" id="to_class" class="form-control" required>
+                <option value="">-- Sélectionnez la classe cible --</option>
+                {% for classe in classes %}
+                    <option value="{{ classe.id }}" {% if classe.id|stringformat:"s" == selected_to_class_id %}selected{% endif %}>
+                        {{ classe.nom }} - {{ classe.type.get_type_ecole_display }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="annee_scolaire"><strong>Année scolaire (School Year):</strong></label>
+            <select name="annee_scolaire" id="annee_scolaire" class="form-control" required>
+                <option value="">-- Sélectionnez l'année scolaire --</option>
+                {% for year in annee_scolaires %}
+                    <option value="{{ year.id }}" {% if year.id|stringformat:"s" == selected_year_id %}selected{% endif %}>
+                        {{ year.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block py-2">Promouvoir les élèves</button>
+    </form>
+
+    <!-- Promoted Students List -->
+    {% if promoted_students %}
+        <h3>Élèves promus vers la classe {{ target_class.nom }} pour l'année {{ promoted_students.0.annee_scolaire.nom }}</h3>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Statut (Condition)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscription in promoted_students %}
+                    <tr>
+                        <td>{{ inscription.eleve.nom }}</td>
+                        <td>{{ inscription.eleve.prenom }}</td>
+                        <td>{{ inscription.condition_eleve }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif selected_to_class_id and selected_year_id %}
+        <p class="text-muted">Aucun élève promu dans cette classe pour l'année sélectionnée.</p>
+    {% endif %}
+</div>
+
+<!-- Minimal styling - you can move this to your CSS -->
+<style>
+    .form-control {
+        font-size: 1rem;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        width: 100%;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .btn-block {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+    h3 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    table th, table td {
+        vertical-align: middle !important;
+    }
+</style>
+
+{% endblock %}

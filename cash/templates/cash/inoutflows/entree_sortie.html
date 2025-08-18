@@ -118,8 +118,8 @@
                     {{ entry.date|date:'d/m/Y H:i' }}
                 </td>
                 <td class='dt-left'>{{ entry.description }}</td>
-                <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}-{% endif %}</td>
-                <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}-{% endif %}</td>
+                <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}{% endif %}</td>
+                <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}{% endif %}</td>
                 <td class='dt-right progressive-balance'></td>
                 <td class='w-50'></td>
             </tr>
