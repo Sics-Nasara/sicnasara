@@ -587,46 +587,49 @@ class StudentListView(ListView):
 @login_required
 def class_upgrade(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
-    ecole_id = None
+
+    # Récupération des écoles et classes (avec écoles rattachées)
+    schools = Ecole.objects.all()
+    classes = Classe.objects.select_related('ecole').all()
+
+    # Récupération classe et école actuelles
+    current_inscription = Inscription.objects.filter(eleve=student, annee_scolaire__actuel=True).first()
+    current_class = current_inscription.classe if current_inscription else None
+    current_school = current_class.ecole if current_class else None
 
     if request.method == 'POST':
-        form = ClassUpgradeForm(request.POST)
-        if form.is_valid():
-            ecole = form.cleaned_data['ecole']
-            classe = form.cleaned_data['classe']
-            annee = form.cleaned_data['annee_scolaire']
-
-            # Supprimer inscriptions active pour l'élève et cette année si existante
-            Inscription.objects.filter(eleve=student, annee_scolaire=annee).delete()
-
-            # Créer la nouvelle inscription
-            Inscription.objects.create(
-                eleve=student,
-                classe=classe,
-                annee_scolaire=annee
-            )
-
-            messages.success(request, f"L'élève {student.nom} a été inscrit en {classe.nom} ({ecole.nom}) pour l'année {annee.nom}.")
-            return redirect('student_detail', pk=student.pk)
+        new_class_id = request.POST.get('new_class')
+        if not new_class_id:
+            messages.error(request, "Veuillez sélectionner une nouvelle classe.")
         else:
-            ecole_id = request.POST.get('ecole')
-    else:
-        form = ClassUpgradeForm()
+            new_class = Classe.objects.get(pk=new_class_id)
+
+            current_year = current_inscription.annee_scolaire if current_inscription else None
+            if current_year:
+                # Supprimer mm l'inscription existante
+                Inscription.objects.filter(eleve=student, annee_scolaire=current_year).delete()
+
+                # Créer nouvelle inscription
+                Inscription.objects.create(
+                    eleve=student,
+                    classe=new_class,
+                    annee_scolaire=current_year
+                )
+
+                messages.success(request, f"Classe et école mises à jour avec succès pour {student.nom} {student.prenom}.")
+                return redirect('student_detail', pk=student.pk)
+            else:
+                messages.error(request, "Année scolaire actuelle non définie. Veuillez contacter l'administrateur.")
     
-    # Passer ecole_id pour filtrer les classes si applicable (ex: en cas d'erreur)
-    if not ecole_id:
-        # Pré-remplir avec l’école actuelle si possible
-        inscription = student.inscriptions.filter(annee_scolaire__actuel=True).first()
-        if inscription:
-            ecole_id = inscription.classe.ecole_id
-
-    form = ClassUpgradeForm(request.POST or None, ecole_id=ecole_id)
-
-    return render(request, 'scuelo/classe/class_upgrade.html', {
+    context = {
         'student': student,
-        'form': form,
+        'schools': schools,
+        'classes': classes,
+        'current_class': current_class,
+        'current_school': current_school,
         'page_identifier': 'S04',
-    })
+    }
+    return render(request, 'scuelo/classe/class_upgrade.html', context)
 @login_required
 def change_school(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
