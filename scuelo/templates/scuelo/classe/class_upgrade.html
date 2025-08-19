@@ -18,7 +18,6 @@
 {% block content %}
 <div class="container mt-4">
 
-    
     {% if error %}
         <div class="alert alert-danger">{{ error }}</div>
     {% else %}
@@ -26,60 +25,56 @@
         <div class="row align-items-center">
             <!-- Left: Student Name -->
             <div class="col-md-6 mb-3 mb-md-0 border-end border-white pe-md-4">
-      
-                <h5 class="fs-10 mb-1"><strong>ID:</strong> {{ student.pk }}</h4>
-                <h5 class="fs-5 mb-1"><strong>Nom Prénom:</strong> {{ student.nom }} {{ student.prenom }}</h4>
-               
-                
+                <h5 class="fs-10 mb-1"><strong>ID:</strong> {{ student.pk }}</h5>
+                <h5 class="fs-5 mb-1"><strong>Nom Prénom:</strong> {{ student.nom }} {{ student.prenom }}</h5>
             </div>
-    
+
             <!-- Right: Class and School -->
             <div class="col-md-6 ps-md-4">
-                
-                <h5 class="h-1 mb-1"><strong>type classe:</strong> {{ current_class.nom }}</h4>
-                <h5 class="fs-5 mb-1"><strong>nom ecole School:</strong> {{ current_school.nom }}</h4>
+                <h5 class="h-1 mb-1"><strong>Type classe:</strong> {{ current_class.nom }}</h5>
+                <h5 class="fs-5 mb-1"><strong>Nom école:</strong> {{ current_school.nom }}</h5>
             </div>
         </div>
     </div>
-    
-    
-        <h4>Selectionner ecole</h4>
-        <select id="school-select" class="form-control mb-3">
-            <option value="">-- Selectionner une ecole --</option>
-            {% for school in schools %}
-                <option value="{{ school.id }}">{{ school.nom }}</option>
-            {% endfor %}
-        </select>
 
-        <h4>Select New Class</h4>
-        <form method="post" action="{% url 'class_upgrade' pk=student.pk %}">
-            {% csrf_token %}
-            <table id="class-table" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>ID École</th>
-                        <th>Nom École</th>
-                        <th>Type de Classe</th>
-                    </tr>
-                </thead>
-                <tbody id="class-table-body">
-                    {% for classe in classes %}
-                    <tr data-school-id="{{ classe.ecole.id }}" {% if classe.id == current_class.id %}class="current-class"{% endif %}>
-                        <td>
-                            <input type="radio" name="new_class" value="{{ classe.id }}" required>
-                        </td>
-                        <td>{{ classe.ecole.id }}</td>
-                        <td>{{ classe.ecole.nom }}</td>
-                        <td>{{ classe.nom }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Changer classe/ecole</button>
-            </div>
-        </form>
+    <h4>Sélectionner école</h4>
+    <select id="school-select" class="form-control mb-3">
+        <option value="">-- Sélectionner une école --</option>
+        {% for school in schools %}
+            <option value="{{ school.id }}">{{ school.nom }}</option>
+        {% endfor %}
+    </select>
+
+    <h4>Sélectionner nouvelle classe</h4>
+    <form method="post" action="{% url 'class_upgrade' pk=student.pk %}">
+        {% csrf_token %}
+        <table id="class-table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sélection</th>
+                    <th>ID École</th>
+                    <th>Nom École</th>
+                    <th>Type de Classe</th>
+                </tr>
+            </thead>
+            <tbody id="class-table-body">
+                {% for classe in classes %}
+                <tr data-school-id="{{ classe.ecole.id }}" {% if classe.id == current_class.id %}class="current-class"{% endif %}>
+                    <td>
+                        <input type="radio" name="new_class" value="{{ classe.id }}" required>
+                    </td>
+                    <td>{{ classe.ecole.id }}</td>
+                    <td>{{ classe.ecole.nom }}</td>
+                    <td>{{ classe.nom }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Changer classe/école</button>
+        </div>
+    </form>
     {% endif %}
 </div>
 
@@ -98,27 +93,27 @@
 
 <script>
     $(document).ready(function() {
-        // Initially hide all rows
+        // Masquer toutes les lignes initialement
         $('#class-table-body tr').hide();
 
-        // When school is selected
+        // Lors de la sélection d'une école
         $('#school-select').on('change', function() {
             var selectedSchoolId = $(this).val();
 
-            // Show all if no school selected
+            // Montrer tout si aucune école sélectionnée
             if (!selectedSchoolId) {
                 $('#class-table-body tr').hide();
                 return;
             }
 
-            // Show only classes matching selected school
+            // Montrer seulement les classes de l'école sélectionnée
             $('#class-table-body tr').each(function() {
                 var rowSchoolId = $(this).data('school-id').toString();
                 if (rowSchoolId === selectedSchoolId) {
                     $(this).show();
                 } else {
                     $(this).hide();
-                    // Uncheck radio if hidden
+                    // Décoche la radio si cachée
                     $(this).find('input[type=radio]').prop('checked', false);
                 }
             });

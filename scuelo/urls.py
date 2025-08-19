@@ -46,6 +46,6 @@ urlpatterns = [
     #path('receipt/print/<int:mouvement_id>/', print_receipt, name='print_receipt'),
     path('student/<int:pk>/add_rang/', views.add_student_rang, name='add_student_rang'),
     path('manage-promotions/', views.manage_promotions, name='manage_promotions'),
-      path('manage-individual-failures/', views.manage_individual_failures, name='manage_individual_failures'),
+     
       path('eleve/<int:pk>/redoublement/', views.manage_single_failure, name='manage_single_failure'),
 ]

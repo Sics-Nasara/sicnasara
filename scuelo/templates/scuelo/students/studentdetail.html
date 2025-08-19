@@ -8,158 +8,137 @@
     <a href="{% url 'student_update' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-pencil-alt"></i> Modif eleve</a>
     <a href="{% url 'class_upgrade' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-level-up-alt"></i> Chang Class & Ecole</a>
     <a href="{% url 'add_paiement' student.pk %}" class="class-card ml-2"><i class="fas fa-plus"></i> +Paiement</a>
-    
     <button type="button" class="class-card ml-2" data-toggle="modal" data-target="#addRangModal"><i class="fas fa-star"></i>Rang</button>
-    
-    <!-- Nouveau bouton Redoublement -->
-    <a href="{% url 'manage_single_failure' pk=student.pk %}" class="class-card ml-2">
-        <i class="fas fa-redo"></i> Faire redoubler
-    </a>
-
+    <a href="{% url 'manage_single_failure' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-redo"></i> Faire redoubler</a>
     <button class="class-card mr-3 ml-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
-    <button class="class-card mr-3" id="redo-button" title="Redo"></i></button>
+    <button class="class-card mr-3" id="redo-button" title="Redo"></button>
     <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
 </div>
 {% endblock header %}
 
 {% block content %}
 <style>
-    .card-body h5 {
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-    .card{  
-        border-color: black ;
-        border-width: .15rem;
-    }
-    .card-header {  
-        background: #000;
-        color:white
-    }
-    .info-label {
-        display: inline-block;
-        width: 150px;
-        font-weight: bold;
-        text-align: right; 
-        margin-bottom: 16px; 
-        margin-right: 16px;
-    }
-    .d-flex-cards {
-        display: flex;
-        gap: 20px; /* Adjust the gap as needed */
-    }
-    .d-flex-cards > div {
-        flex: 1; /* Each card takes up equal space */
-    }
+    .card-body h5 { font-size: 16px; margin-bottom: 5px; }
+    .card{ border-color: black; border-width: .15rem; }
+    .card-header { background: #000; color:white }
+    .info-label { display: inline-block; width: 150px; font-weight: bold; text-align: right; margin-bottom: 16px; margin-right: 16px; }
+    .d-flex-cards { display: flex; gap: 20px; }
+    .d-flex-cards > div { flex: 1; }
 </style>
 
-<div class="d-flex justify-content-between mb-4">
-</div>
-
 <div class="mt-4" style="max-width: 95%; margin: 0 auto;">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    Information de base
-                </div>
-                <div class="card-body">
-                    <h5><span class="info-label">ID :</span> {{ student.id }}</h5>
-                    <h5><span class="info-label">Nom :</span> {{ student.nom }}</h5>
-                    <h5><span class="info-label">Prénom :</span> {{ student.prenom }}</h5>
-                    <h5><span class="info-label">Condition : </span> {{ student.get_condition_eleve_display }}</h5>
-                    <h5><span class="info-label">Sexe :</span> {{ student.get_sex_display }}</h5>
-                    <h5><span class="info-label">Date Naissance :</span> {{ student.date_naissance|date:'Y-m-d' }}</h5>
-                    <h5><span class="info-label">CS PY :</span> {{ student.get_cs_py_display }}</h5>
-                    {% if student.hand %}
-                    <h5><span class="info-label">Hand :</span> {{ student.get_hand_display }}</h5>
-                    {% else %}
-                    <h5><span class="info-label">Hand :</span></h5>
-                    {% endif %}
-                    {% if student.date_enquete %}
-                    <h5><span class="info-label">Date enquete :</span> {{ student.date_enquete|date:'Y-m-d' }}</h5>
-                    {% else %}
-                    <h5><span class="info-label">Date enquete :</span></h5>
-                    {% endif %}
-                    {% if student.parent %}
-                    <h5><span class="info-label">Parent :</span> {{ student.parent }}</h5>
-                    {% else %}
-                    <h5><span class="info-label">Parent :</span></h5>
-                    {% endif %}
-                    {% if student.tel_parent %}
-                    <h5><span class="info-label">Tel Parent :</span> {{ student.tel_parent }}</h5>
-                    {% else %}
-                    <h5><span class="info-label">Tel Parent :</span></h5>
-                    {% endif %}
-                    {% if student.note_eleve %}
-                    <h5><span class="info-label">Notes :</span> {{ student.note_eleve }}</h5>
-                    {% else %}
-                    <h5><span class="info-label">Notes :</span></h5>
-                    {% endif %}
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">Information de base</div>
+        <div class="card-body">
+          <h5><span class="info-label">ID :</span> {{ student.id }}</h5>
+          <h5><span class="info-label">Nom :</span> {{ student.nom }}</h5>
+          <h5><span class="info-label">Prénom :</span> {{ student.prenom }}</h5>
+          <h5><span class="info-label">Condition :</span> {{ student.get_condition_eleve_display }}</h5>
+          <h5><span class="info-label">Sexe :</span> {{ student.get_sex_display }}</h5>
+          <h5><span class="info-label">Date Naissance :</span> {{ student.date_naissance|date:'Y-m-d' }}</h5>
+          <h5><span class="info-label">CS PY :</span> {{ student.get_cs_py_display }}</h5>
+          {% if student.hand %}
+            <h5><span class="info-label">Hand :</span> {{ student.get_hand_display }}</h5>
+          {% else %}
+            <h5><span class="info-label">Hand :</span></h5>
+          {% endif %}
+          {% if student.date_enquete %}
+            <h5><span class="info-label">Date enquête :</span> {{ student.date_enquete|date:'Y-m-d' }}</h5>
+          {% else %}
+            <h5><span class="info-label">Date enquête :</span></h5>
+          {% endif %}
+          {% if student.parent %}
+            <h5><span class="info-label">Parent :</span> {{ student.parent }}</h5>
+          {% else %}
+            <h5><span class="info-label">Parent :</span></h5>
+          {% endif %}
+          {% if student.tel_parent %}
+            <h5><span class="info-label">Tel Parent :</span> {{ student.tel_parent }}</h5>
+          {% else %}
+            <h5><span class="info-label">Tel Parent :</span></h5>
+          {% endif %}
+          {% if student.note_eleve %}
+            <h5><span class="info-label">Notes :</span> {{ student.note_eleve }}</h5>
+          {% else %}
+            <h5><span class="info-label">Notes :</span></h5>
+          {% endif %}
         </div>
-
-        <div class="col-md-6">
-            <div class="d-flex-cards">
-                <div class="card school-class-card mb-3">
-                    <div class="card-header">
-                        Informations École et Classe
-                    </div>
-                    <div class="card-body">
-                        <h5><strong>École:</strong> {{ current_school_name }}</h5>
-                        <h5><strong>Classe:</strong> {{ current_class_name }}</h5>
-                    </div>
-                </div> 
-                 <div class="card mb-3">
-                    <div class="card-header">
-                        Rang étudiant
-                    </div>
-                    <div class="card-body">
-                        {% if existing_rang %}
-                        <div class="mb-3">
-                            <h5><span class="info-label">Rang 1:</span> {{ existing_rang.rang1|default:"-" }}</h5>
-                            <h5><span class="info-label">Rang 2:</span> {{ existing_rang.rang2|default:"-" }}</h5>
-                            <h5><span class="info-label">Rang 3:</span> {{ existing_rang.rang3|default:"-" }}</h5>
-                            <h5><span class="info-label">Rang Annuel:</span> {{ existing_rang.rang_annuelle|default:"-" }}</h5>
-                        </div>
-                        {% else %}
-                        <p>Aucun classement disponible pour cet étudiant.</p>
-                        {% endif %}
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="col-md-12 mb-5">
-                        <table id="payments-table" class="table table-striped table-bordered" style="width:100%">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th></th>
-                                    <th>Date</th>
-                                    <th>Causal</th>
-                                    <th>Montant</th>
-                                    <th>Note</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for payment in payments %}
-                                <tr>
-                                    <td class='action'><a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-sync-alt"></i></a></td>
-                                    <td>{{ payment.date_paye|date:'Y-m-d' }}</td>
-                                    <td>{{ payment.causal }}</td>
-                                    <td class='dt-right'>{{ payment.montant|format_amount }}</td>
-                                    <td>{% if payment.note %}{{ payment.note }}{% else %}<span style="color: black;"></span>{% endif %}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="col-md-6">
+      <div class="d-flex-cards">
+        <div class="card school-class-card mb-3">
+          <div class="card-header">Informations École et Classe</div>
+          <div class="card-body">
+            <h5><strong>École:</strong> {{ current_school_name }}</h5>
+            <h5><strong>Classe:</strong> {{ current_class_name }}</h5>
+          </div>
+        </div> 
+        <div class="card mb-3">
+          <div class="card-header">Rang étudiant</div>
+          <div class="card-body">
+            {% if existing_rang %}
+              <h5><span class="info-label">Rang 1:</span> {{ existing_rang.rang1|default:"-" }}</h5>
+              <h5><span class="info-label">Rang 2:</span> {{ existing_rang.rang2|default:"-" }}</h5>
+              <h5><span class="info-label">Rang 3:</span> {{ existing_rang.rang3|default:"-" }}</h5>
+              <h5><span class="info-label">Rang Annuel:</span> {{ existing_rang.rang_annuelle|default:"-" }}</h5>
+            {% else %}
+              <p>Aucun classement disponible pour cet étudiant.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <!-- Filtre par année scolaire -->
+          <form method="get" id="filter-year-form" class="form-inline mb-3">
+            <label for="annee_scolaire" class="mr-2">Année scolaire :</label>
+            <select id="annee_scolaire" name="annee_scolaire" class="form-control" onchange="document.getElementById('filter-year-form').submit()">
+              {% for annee in annee_scolaires %}
+                <option value="{{ annee.id }}" {% if annee.id == selected_annee_id %}selected{% endif %}>{{ annee.nom }}</option>
+              {% endfor %}
+            </select>
+            <noscript><button type="submit" class="btn btn-primary ml-2">Filtrer</button></noscript>
+          </form>
+
+          <table id="payments-table" class="table table-striped table-bordered" style="width:100%">
+            <thead class="thead-light">
+              <tr>
+                <th></th>
+                <th>Date</th>
+                <th>Causal</th>
+                <th>Montant</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for payment in payments %}
+              <tr>
+                <td class='action'>
+                  <a href="{% url 'update_paiement' pk=payment.pk %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-sync-alt"></i>
+                  </a>
+                </td>
+                <td>{{ payment.date_paye|date:'Y-m-d' }}</td>
+                <td>{{ payment.causal }}</td>
+                <td class='dt-right'>{{ payment.montant|format_amount }}</td>
+                <td>{% if payment.note %}{{ payment.note }}{% else %}&nbsp;{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5">Aucun paiement trouvé pour cette année scolaire.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% include 'scuelo/students/add_student_rang_modal.html' %}
@@ -170,63 +149,16 @@
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function() {
-        // Initialize DataTable
-        $('#payments-table').DataTable({
-            "paging": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
-            }
-        });
-
-        // AJAX form submission for payment
-        $('#payment-form').on('submit', function(event) {
-            event.preventDefault();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        alert('Payment added successfully');
-                    } else {
-                        alert('Failed to add payment: ' + response.errors);
-                    }
-                }
-            });
-        });
-
-            $('#addRangModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            });
-
-        //Submit form using AJAX
-           $("#rangForm").on('submit', function(event) {
-        event.preventDefault(); // prevent default form submission
-        var studentId = $(this).data('student-id'); // Retrieve student ID
-        var url = '/homepage/student/' + studentId + '/add_rang/'; // Construct the URL
-        $.ajax({
-          type: "POST",
-          url: url, // Use the constructed URL
-          data: $(this).serialize(), // serialize the form data
-          dataType: "json", // expect JSON response
-          success: function(data) {
-            if (data.success) {
-             
-              $("#addRangModal").modal('hide'); // Close the modal
-              location.reload(); // Refresh the page
-            } else {
-             
-            }
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            alert('AJAX error: ' + textStatus + ' - ' + errorThrown);
-          }
-        });
-      });
+  $(document).ready(function() {
+    $('#payments-table').DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+      }
     });
+  });
 </script>
 {% endblock content %}

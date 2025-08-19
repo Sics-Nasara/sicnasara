@@ -1,12 +1,26 @@
 {% extends "../../layout.html" %}
+
 {% block header %}
-<h2>Redoublement : {{ eleve.nom }} {{ eleve.prenom }}</h2>
+<div class="d-flex justify-content-between align-items-center w-100"></div>
+<h4 class="text-white">Redoublement : {{ eleve.nom }} {{ eleve.prenom }}</h4>
 
+<!-- Right-aligned elements -->
+<div class="d-flex align-items-stretch">   
+    <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
+        <!-- Buttons will be moved here -->
+    </div>
 
+    <button class="class-card mr-3" id="redo-button" title="Redo">
+        <a href="{% url 'home'  %}" >sortir</a>
+    </button>
+    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+</div>
 {% endblock header %}
+
 
 {% block content %}
 <div class="container" style="max-width: 600px;">
+
   {% if messages %}
     {% for message in messages %}
       <div class="alert 
@@ -20,6 +34,22 @@
     {% endfor %}
   {% endif %}
 
+  <!-- Détails de l'élève affichés avant le formulaire -->
+  <div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+      Informations de l'élève
+    </div>
+    <div class="card-body">
+      <p><strong>Nom :</strong> {{ eleve.nom }}</p>
+      <p><strong>Prénom :</strong> {{ eleve.prenom }}</p>
+      <p><strong>Date de naissance :</strong> {{ eleve.date_naissance|date:"Y-m-d" }}</p>
+      <p><strong>Sexe :</strong> {{ eleve.get_sex_display }}</p>
+      <p><strong>Condition :</strong> {{ eleve.get_condition_eleve_display }}</p>
+      <!-- Ajoutez d’autres infos souhaitées -->
+    </div>
+  </div>
+
+  <!-- Formulaire de redoublement -->
   <form method="post" novalidate>
     {% csrf_token %}
 
@@ -55,12 +85,11 @@
       </select>
     </div>
 
-    <button type="submit" class="btn btn-warning btn-block">Valider le redoublement</button>
+    <div class="form-group mt-3 d-flex">
+      <button type="submit" class="btn btn-warning mr-3">Valider le redoublement</button>
+      <a href="{% url 'student_detail' pk=eleve.pk %}" class="btn btn-secondary mr-2">Annuler</a>
+    </div>
   </form>
 </div>
-
-<script>
-  // Vous pouvez ajouter ici un script javascript pour filtrer les classes en fonction de l'école sélectionnée si vous le souhaitez.
-</script>
 
 {% endblock %}

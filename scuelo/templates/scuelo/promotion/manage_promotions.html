@@ -1,124 +1,163 @@
 {% extends "../../layout.html" %}
-{% load static %}
+
+
 {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">Gestion des Promotions</span>
-
-<div class="ml-2 d-flex align-items-stretch">
-    <button class="class-card mr-3" id="undo-button" title="Undo">
-        <i class="fas fa-undo"></i>
-    </button>
-    <button class="class-card mr-3" id="redo-button" title="Redo">
-        <i class="fas fa-redo"></i>
-    </button>
-    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
-</div>
-{% endblock header %}
-
-{% block content %}
-<div class="container mt-4" style="max-width: 700px;">
-    <h1 class="mb-4">Gestion des Promotions des élèves</h1>
-
-    <!-- Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} mb-3" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <!-- Promotion Form -->
-    <form method="post" class="mb-5">
-        {% csrf_token %}
-        
-        <div class="form-group mb-3">
-            <label for="from_class"><strong>Classe d'origine (From Class):</strong></label>
-            <select name="from_class" id="from_class" class="form-control" required>
-                <option value="">-- Sélectionnez la classe d'origine --</option>
-                {% for classe in classes %}
-                    <option value="{{ classe.id }}" {% if classe.id|stringformat:"s" == selected_from_class_id %}selected{% endif %}>
-                        {{ classe.nom }} - {{ classe.type.get_type_ecole_display }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="to_class"><strong>Classe cible (To Class):</strong></label>
-            <select name="to_class" id="to_class" class="form-control" required>
-                <option value="">-- Sélectionnez la classe cible --</option>
-                {% for classe in classes %}
-                    <option value="{{ classe.id }}" {% if classe.id|stringformat:"s" == selected_to_class_id %}selected{% endif %}>
-                        {{ classe.nom }} - {{ classe.type.get_type_ecole_display }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group mb-4">
-            <label for="annee_scolaire"><strong>Année scolaire (School Year):</strong></label>
-            <select name="annee_scolaire" id="annee_scolaire" class="form-control" required>
-                <option value="">-- Sélectionnez l'année scolaire --</option>
-                {% for year in annee_scolaires %}
-                    <option value="{{ year.id }}" {% if year.id|stringformat:"s" == selected_year_id %}selected{% endif %}>
-                        {{ year.nom }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block py-2">Promouvoir les élèves</button>
-    </form>
-
-    <!-- Promoted Students List -->
-    {% if promoted_students %}
-        <h3>Élèves promus vers la classe {{ target_class.nom }} pour l'année {{ promoted_students.0.annee_scolaire.nom }}</h3>
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Statut (Condition)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for inscription in promoted_students %}
-                    <tr>
-                        <td>{{ inscription.eleve.nom }}</td>
-                        <td>{{ inscription.eleve.prenom }}</td>
-                        <td>{{ inscription.condition_eleve }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif selected_to_class_id and selected_year_id %}
-        <p class="text-muted">Aucun élève promu dans cette classe pour l'année sélectionnée.</p>
-    {% endif %}
-</div>
-
-<!-- Minimal styling - you can move this to your CSS -->
 <style>
-    .form-control {
-        font-size: 1rem;
-        padding: 8px 12px;
-        border-radius: 5px;
-        border: 1px solid #ced4da;
-        width: 100%;
+    /* Style the DataTables buttons container */
+    #datatable-buttons {
+        display: flex;
+        align-items: center;
     }
-    .form-group {
-        margin-bottom: 1rem;
-    }
-    .btn-block {
-        width: 100%;
-        font-size: 1.1rem;
-    }
-    h3 {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-    table th, table td {
-        vertical-align: middle !important;
+
+    /* Style the DataTables buttons to match navbar buttons */
+    .dt-buttons .dt-button {
+        background-color: grey;
+        color: white;
+        border: none;
+        padding: 1rem 1rem;
+        margin-right: 0.5rem;
     }
 </style>
+<div class="d-flex justify-content-between align-items-center w-100">
+    <!-- Left-aligned elements -->
+    <div class="d-flex align-items-center">
+       <h4 class="text-white">Gestion des promotions</h2>
+    </div>
 
+  
+
+    <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
+    <div class="d-flex align-items-stretch">
+     
+        <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
+            <!-- Buttons will be moved here -->
+        </div>
+        <button class="class-card mr-3" id="undo-button" title="Undo">
+              <a class='' href="{% url 'home'  %}" >sortir</a>
+        </button>
+   
+        <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+    </div>
+</div>
+{% endblock header %}
+{% block content %}
+<div class="container" style="max-width: 1500px;">
+  <div>
+    <h4 class="btn-danger">
+        NB: ici il s'ajit de faire passe tout les eleves d'une classe a une ecole 
+        et aune annee scolaire a d'autres
+    </h4>
+  </div>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' or message.tags == 'danger' %}alert-danger
+        {% else %}alert-info{% endif %}
+      " role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <div class="form-row">
+
+    <div class="form-group col-md-5">
+      <label for="from_ecole">École source :</label>
+      <select name="from_ecole" id="from_ecole" class="form-control" onchange="this.form.submit()" required>
+        <option value="">-- Choisissez une école --</option>
+        {% for ecole in ecoles %}
+          <option value="{{ ecole.id }}" {% if ecole.id == selected_from_ecole_id %}selected{% endif %}>{{ ecole.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-3">
+      <label for="from_class">Classe source :</label>
+      <select name="from_class" id="from_class" class="form-control" required>
+        <option value="">-- Choisissez une classe --</option>
+        {% for classe in from_classes %}
+          <option value="{{ classe.id }}" {% if classe.id == selected_from_class_id %}selected{% endif %}>{{ classe.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-4">
+      <label for="from_year">Année source :</label>
+      <select name="from_year" id="from_year" class="form-control" required>
+        <option value="">-- Choisissez une année --</option>
+        {% for year in annee_scolaires %}
+          <option value="{{ year.id }}" {% if year.id == selected_from_year_id %}selected{% endif %}>{{ year.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row mt-3">
+    <div class="form-group col-md-5">
+      <label for="to_ecole">École cible :</label>
+      <select name="to_ecole" id="to_ecole" class="form-control" onchange="this.form.submit()" required>
+        <option value="">-- Choisissez une école --</option>
+        {% for ecole in ecoles %}
+          <option value="{{ ecole.id }}" {% if ecole.id == selected_to_ecole_id %}selected{% endif %}>{{ ecole.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-3">
+      <label for="to_class">Classe cible :</label>
+      <select name="to_class" id="to_class" class="form-control" required>
+        <option value="">-- Choisissez une classe --</option>
+        {% for classe in to_classes %}
+          <option value="{{ classe.id }}" {% if classe.id == selected_to_class_id %}selected{% endif %}>{{ classe.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-4">
+      <label for="to_year">Année cible :</label>
+      <select name="to_year" id="to_year" class="form-control" required>
+        <option value="">-- Choisissez une année --</option>
+        {% for year in annee_scolaires %}
+          <option value="{{ year.id }}" {% if year.id == selected_to_year_id %}selected{% endif %}>{{ year.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group mt-3 d-flex">
+    <a href="{% url 'home' %}" class="btn btn-danger class-card mr-2">Annuler</a>
+    <button type="submit" class="btn btn-primary class-card">Promouvoir les élèves</button>
+  </div>
+  
+
+</form>
+
+  {% if promoted_students %}
+    <h3>Élèves promus dans la classe {{ target_class.nom }} pour l'année sélectionnée</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Condition</th>
+          <th>CS/PY</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inscription in promoted_students %}
+          <tr>
+            <td>{{ inscription.eleve.nom }}</td>
+            <td>{{ inscription.eleve.prenom }}</td>
+            <td>{{ inscription.eleve.get_condition_eleve_display }}</td>
+            <td>{{ inscription.eleve.get_cs_py_display }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+</div>
 {% endblock %}

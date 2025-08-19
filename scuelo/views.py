@@ -408,23 +408,35 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
         return 0
 
 
-from .forms import  StudentRangForm  
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
-    inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
-    
-    # Filter payments using the correct field relationship
-    payments = Mouvement.objects.filter(inscription__eleve=student)
-    
+
+    # Récupération de l'année scolaire active
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+    # Récupération de l'annee scolaire choisie (GET), sinon année active par défaut
+    selected_annee_id = request.GET.get('annee_scolaire') or (current_year.id if current_year else None)
+
+    # Paiements filtrés par année scolaire choisie
+    if selected_annee_id:
+        payments = Mouvement.objects.filter(
+            inscription__eleve=student,
+            inscription__annee_scolaire_id=selected_annee_id
+        )
+    else:
+        payments = Mouvement.objects.filter(inscription__eleve=student)
+
     total_payment = payments.aggregate(Sum('montant'))['montant__sum'] or 0
+
+    inscriptions = Inscription.objects.filter(eleve=student).order_by('date_inscription')
+
     current_class = student.current_class
-    
-    # Get the current school name if the student has a current class
     current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
     current_class_name = current_class.type if current_class else "No Class Assigned"
-    
-    # Check if current_class is None
+
+    # Breadcrumbs pour navigation
     if current_class:
         breadcrumbs = [
             ('/', 'Home'),
@@ -438,47 +450,12 @@ def student_detail(request, pk):
             (reverse('home'), 'Classes'),
             ('#', f"{student.nom} {student.prenom}")
         ]
-    
+
     form = PaiementPerStudentForm()
+    rang_form = StudentRangForm()
     logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
-    
-    # Handle receipt printing
-    if request.method == 'POST' and 'print_receipt' in request.POST:
-        payment_id = request.POST.get('payment_id')
-        payment = get_object_or_404(Mouvement, pk=payment_id)
 
-        # Render receipt template to HTML
-        html_string = render_to_string('cash/paiements/receipt.html', {'student': student, 'payment': payment})
-
-        # Generate PDF
-        html = HTML(string=html_string)
-        result = html.write_pdf()
-
-        # Create a HttpResponse object with the appropriate PDF headers.
-        response = HttpResponse(result, content_type='application/pdf')
-        response['Content-Disposition'] = f'inline; filename=receipt_{student.nom}_{student.prenom}_{payment.id}.pdf'
-        
-        return response
-    
-    # Get the current school year and class
-    current_year = AnneeScolaire.objects.filter(actuel=True).first()
-    current_inscription = Inscription.objects.filter(eleve=student, annee_scolaire=current_year).first()
-    current_class = current_inscription.classe if current_inscription else None
-
-    # Handle Rang form submission
-    if request.method == 'POST' and 'rang_form' in request.POST:
-        rang_form = StudentRangForm(request.POST)
-        if rang_form.is_valid():
-            rang = rang_form.save(commit=False)
-            rang.eleve = student
-            rang.classe = current_class
-            rang.annee_scolaire = current_year
-            rang.save()
-            return redirect('student_detail', pk=student.pk)  # Redirect to refresh the page
-    else:
-        rang_form = StudentRangForm()
-
-    # Get existing rang data
+    # Gestion formulaire rang avec instance existante si détectée
     existing_rang = None
     if current_class and current_year:
         existing_rang = Rang.objects.filter(
@@ -486,8 +463,11 @@ def student_detail(request, pk):
             classe=current_class,
             annee_scolaire=current_year
         ).first()
+
         if existing_rang:
-            rang_form = StudentRangForm(instance=existing_rang)  # Populate form with existing data
+            rang_form = StudentRangForm(instance=existing_rang)
+
+    annee_scolaires = AnneeScolaire.objects.all().order_by('-date_initiale')
 
     return render(request, 'scuelo/students/studentdetail.html', {
         'student': student,
@@ -496,12 +476,14 @@ def student_detail(request, pk):
         'total_payment': total_payment,
         'breadcrumbs': breadcrumbs,
         'form': form,
+        'rang_form': rang_form,
+        'existing_rang': existing_rang,
         'logs': logs,
         'current_school_name': current_school_name,
         'current_class_name': current_class_name,
         'page_identifier': 'S03',
-        'rang_form': rang_form,  # Pass the Rang form
-        'existing_rang': existing_rang,  # Pass the existing rang data
+        'annee_scolaires': annee_scolaires,
+        'selected_annee_id': int(selected_annee_id) if selected_annee_id else None,
     })
 
 @login_required
@@ -605,53 +587,45 @@ class StudentListView(ListView):
 @login_required
 def class_upgrade(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
-    
-    # Get the latest inscription or None
-    latest_inscription = student.inscriptions.order_by('-date_inscription').first()
-    if not latest_inscription:
-        # No inscription exists, show error and empty form
-        form = ClassUpgradeForm()
-        return render(request, 'scuelo/classe/class_upgrade.html', {
-            'form': form,
-            'student': student,
-            'page_identifier': 'S04',
-            'error': 'Student has no inscriptions.'
-        })
-    
-    current_class = latest_inscription.classe
-    current_school = current_class.ecole
+    ecole_id = None
 
     if request.method == 'POST':
         form = ClassUpgradeForm(request.POST)
         if form.is_valid():
-            new_class = form.cleaned_data['new_class']
+            ecole = form.cleaned_data['ecole']
+            classe = form.cleaned_data['classe']
+            annee = form.cleaned_data['annee_scolaire']
 
-            # Create a new inscription for the upgraded class
-            # Use the same school year as latest inscription or current year if you want
-            new_inscription = Inscription.objects.create(
+            # Supprimer inscriptions active pour l'élève et cette année si existante
+            Inscription.objects.filter(eleve=student, annee_scolaire=annee).delete()
+
+            # Créer la nouvelle inscription
+            Inscription.objects.create(
                 eleve=student,
-                classe=new_class,
-                annee_scolaire=latest_inscription.annee_scolaire,
-                date_inscription=timezone.now()
+                classe=classe,
+                annee_scolaire=annee
             )
 
-            # Redirect to student detail page after upgrade
+            messages.success(request, f"L'élève {student.nom} a été inscrit en {classe.nom} ({ecole.nom}) pour l'année {annee.nom}.")
             return redirect('student_detail', pk=student.pk)
+        else:
+            ecole_id = request.POST.get('ecole')
     else:
         form = ClassUpgradeForm()
+    
+    # Passer ecole_id pour filtrer les classes si applicable (ex: en cas d'erreur)
+    if not ecole_id:
+        # Pré-remplir avec l’école actuelle si possible
+        inscription = student.inscriptions.filter(annee_scolaire__actuel=True).first()
+        if inscription:
+            ecole_id = inscription.classe.ecole_id
 
-    # Fetch all schools and classes for display (optional)
-    schools = Ecole.objects.all()
-    classes = Classe.objects.select_related('ecole').all()
+    form = ClassUpgradeForm(request.POST or None, ecole_id=ecole_id)
 
     return render(request, 'scuelo/classe/class_upgrade.html', {
-        'form': form,
         'student': student,
-        'current_class': current_class,
-        'current_school': current_school,
-        'schools': schools,
-        'classes': classes,
-        'page_identifier': 'S04'
+        'form': form,
+        'page_identifier': 'S04',
     })
 @login_required
 def change_school(request, pk):
@@ -1032,168 +1006,109 @@ def load_classes(request):
     return JsonResponse(list(classes.values('id', 'nom')), safe=False)
 
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.utils import timezone
-from scuelo.models import AnneeScolaire, Classe, Inscription, Eleve
+from scuelo.models import AnneeScolaire, Classe, Ecole, Inscription
+
 
 @require_http_methods(["GET", "POST"])
 def manage_promotions(request):
-    # Get all classes ordered for selection lists
-    classes = Classe.objects.all().order_by('type__type_ecole', 'type__ordre', 'nom')
-    # Get all school years (could be limited if you prefer)
+    ecoles = Ecole.objects.all().order_by('nom')
     annee_scolaires = AnneeScolaire.objects.all().order_by('-date_initiale')
-    
+
+    selected_from_ecole_id = request.POST.get("from_ecole") or request.GET.get("from_ecole")
+    selected_to_ecole_id = request.POST.get("to_ecole") or request.GET.get("to_ecole")
+
+    # Classes filtrées par école sélectionnée ou vide
+    from_classes = Classe.objects.filter(ecole_id=selected_from_ecole_id).order_by('nom') if selected_from_ecole_id else Classe.objects.none()
+    to_classes = Classe.objects.filter(ecole_id=selected_to_ecole_id).order_by('nom') if selected_to_ecole_id else Classe.objects.none()
+
     promoted_students = []
     target_class = None
-    
-    # To remember selections and repopulate form after POST
-    selected_from_class_id = None
-    selected_to_class_id = None
-    selected_year_id = None
+
+    selected_from_class_id = request.POST.get("from_class")
+    selected_from_year_id = request.POST.get("from_year")
+    selected_to_class_id = request.POST.get("to_class")
+    selected_to_year_id = request.POST.get("to_year")
 
     if request.method == "POST":
-        selected_from_class_id = request.POST.get("from_class")
-        selected_to_class_id = request.POST.get("to_class")
-        selected_year_id = request.POST.get("annee_scolaire")
-
-        if not selected_from_class_id or not selected_to_class_id or not selected_year_id:
-            messages.error(request, "Veuillez sélectionner la classe source, la classe cible et l'année scolaire.")
+        if not (selected_from_ecole_id and selected_from_class_id and selected_from_year_id and selected_to_ecole_id and selected_to_class_id and selected_to_year_id):
+            messages.error(request, "Merci de sélectionner toutes les écoles, classes et années scolaires.")
         else:
             try:
                 with transaction.atomic():
                     from_class = Classe.objects.get(id=selected_from_class_id)
                     to_class = Classe.objects.get(id=selected_to_class_id)
-                    target_year = AnneeScolaire.objects.get(id=selected_year_id)
-                    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+                    from_year = AnneeScolaire.objects.get(id=selected_from_year_id)
+                    to_year = AnneeScolaire.objects.get(id=selected_to_year_id)
 
-                    if not current_year:
-                        messages.error(request, "L'année scolaire actuelle n'est pas définie.")
-                        raise Exception("Current school year is not defined")
-
-                    # Fetch inscriptions of students in 'from_class' during the current active year
                     inscriptions = Inscription.objects.filter(
-                        classe=from_class, annee_scolaire=current_year
+                        classe=from_class,
+                        annee_scolaire=from_year
                     ).select_related('eleve')
 
                     if not inscriptions.exists():
-                        messages.warning(request, f"Aucun élève trouvé dans la classe {from_class.nom} pour l'année courante.")
+                        messages.warning(request, f"Aucun élève trouvé dans la classe {from_class.nom} pour l'année {from_year.nom}.")
                     else:
                         promoted_count = 0
                         for inscription in inscriptions:
                             eleve = inscription.eleve
-
-                            # Update student condition_eleve depending on cs_py
                             if eleve.cs_py == 'C':
                                 eleve.condition_eleve = 'CONF'
                             elif eleve.cs_py == 'P':
                                 eleve.condition_eleve = 'PROP'
-                            # else keep existing value
                             eleve.save()
 
-                            # Remove existing inscription if any to avoid duplicates
-                            Inscription.objects.filter(eleve=eleve, annee_scolaire=target_year).delete()
+                            Inscription.objects.filter(
+                                eleve=eleve,
+                                annee_scolaire=to_year
+                            ).delete()
 
-                            # Create the new inscription for the target year and class (promotion)
                             Inscription.objects.create(
                                 eleve=eleve,
                                 classe=to_class,
-                                annee_scolaire=target_year,
+                                annee_scolaire=to_year,
                                 date_inscription=timezone.now(),
                             )
                             promoted_count += 1
 
-
                         messages.success(request, f"{promoted_count} élève(s) promu(s) avec succès.")
 
-                    # After promotion, fetch promoted students for display
                     target_class = to_class
                     promoted_students = Inscription.objects.filter(
-                        annee_scolaire=target_year,
+                        annee_scolaire=to_year,
                         classe=to_class
                     ).select_related('eleve').order_by('eleve__nom', 'eleve__prenom')
 
             except Classe.DoesNotExist:
-                messages.error(request, "Classe invalide sélectionnée.")
+                messages.error(request, "Une des classes sélectionnées est invalide.")
             except AnneeScolaire.DoesNotExist:
-                messages.error(request, "Année scolaire invalide sélectionnée.")
+                messages.error(request, "Une des années scolaires sélectionnées est invalide.")
             except Exception as e:
                 messages.error(request, f"Erreur lors de la promotion : {str(e)}")
 
     context = {
-        "classes": classes,
+        "ecoles": ecoles,
+
         "annee_scolaires": annee_scolaires,
+        "from_classes": from_classes,
+        "to_classes": to_classes,
         "promoted_students": promoted_students,
         "target_class": target_class,
-        "selected_from_class_id": selected_from_class_id,
-        "selected_to_class_id": selected_to_class_id,
-        "selected_year_id": selected_year_id,
+        "selected_from_ecole_id": int(selected_from_ecole_id) if selected_from_ecole_id else None,
+        "selected_from_class_id": int(selected_from_class_id) if selected_from_class_id else None,
+        "selected_from_year_id": int(selected_from_year_id) if selected_from_year_id else None,
+        "selected_to_ecole_id": int(selected_to_ecole_id) if selected_to_ecole_id else None,
+        "selected_to_class_id": int(selected_to_class_id) if selected_to_class_id else None,
+        "selected_to_year_id": int(selected_to_year_id) if selected_to_year_id else None,
     }
+
     return render(request, "scuelo/promotion/manage_promotions.html", context)
 
-@require_http_methods(["GET", "POST"])
-def manage_individual_failures(request):
-    # Année en cours de promotion (à adapter)
-    next_year = AnneeScolaire.objects.filter(actuel=False).first()
-    if not next_year:
-        messages.error(request, "L'année scolaire prochaine n'est pas définie.")
-        return redirect('manage_promotions')
 
-    # Récupérer toutes les inscriptions pour l'année prochaine (élèves promus)
-    promoted_inscriptions = Inscription.objects.filter(annee_scolaire=next_year).select_related('eleve', 'classe')
-
-    if request.method == "POST":
-        # ids des inscriptions qu'on veut faire redoubler
-        fail_ids = request.POST.getlist('fail_inscriptions')
-        
-        try:
-            with transaction.atomic():
-                for insc_id in fail_ids:
-                    insc = Inscription.objects.get(id=insc_id)
-                    eleve = insc.eleve
-
-                    # Suppression de l’inscription de promotion
-                    insc.delete()
-
-                    # Création d'une nouvelle inscription dans la même année avec la classe d'origine (redouble)
-                    # Récupérer la classe précédente (par exemple classe dans l'année courante)
-                    current_year = AnneeScolaire.objects.filter(actuel=True).first()
-                    previous_inscription = Inscription.objects.filter(
-                        eleve=eleve,
-                        annee_scolaire=current_year
-                    ).first()
-
-                    if not previous_inscription:
-                        messages.warning(request, f"Aucune inscription précédente trouvée pour {eleve} – impossible de redoubler.")
-                        continue
-
-                    Inscription.objects.create(
-                        eleve=eleve,
-                        classe=previous_inscription.classe,
-                        annee_scolaire=next_year,
-                        date_inscription=timezone.now(),
-                    )
-                messages.success(request, f"Redoublements appliqués aux élèves sélectionnés.")
-
-        except Exception as e:
-            messages.error(request, f"Erreur lors du traitement des redoublements: {e}")
-
-        return redirect('manage_individual_failures')
-
-    context = {
-        'promoted_inscriptions': promoted_inscriptions,
-        'next_year': next_year,
-    }
-    return render(request, 'scuelo/promotion/manage_individual_failures.html', context)
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.db import transaction
-from django.utils import timezone
-from scuelo.models import Eleve, Classe, Ecole, AnneeScolaire, Inscription
 
 def manage_single_failure(request, pk):
     eleve = get_object_or_404(Eleve, pk=pk)

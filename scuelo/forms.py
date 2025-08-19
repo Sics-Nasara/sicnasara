@@ -28,28 +28,19 @@ class UniformReservationForm(forms.ModelForm):
         fields = ['student', 'quantity', 'cost_per_uniform', 'status', 'school_year']
     
                 
+
 class ClassUpgradeForm(forms.Form):
-    ecole = forms.ModelChoiceField(
-        queryset=Ecole.objects.all(),
-        label="École",
-        required=True,
-        widget=forms.Select(attrs={'id': 'id_ecole'})
-    )
-    new_class = forms.ModelChoiceField(
-        queryset=Classe.objects.none(),  # Initially empty
-        label="New Class",
-        required=True,
-        widget=forms.Select(attrs={'id': 'id_new_class'})
-    )
+    ecole = forms.ModelChoiceField(queryset=Ecole.objects.all(), label="École", required=True)
+    classe = forms.ModelChoiceField(queryset=Classe.objects.none(), label="Classe", required=True)
+    annee_scolaire = forms.ModelChoiceField(queryset=AnneeScolaire.objects.all(), label="Année scolaire", required=True)
 
     def __init__(self, *args, **kwargs):
+        ecole_id = kwargs.pop('ecole_id', None)
         super().__init__(*args, **kwargs)
-        if 'ecole' in self.data:
-            try:
-                ecole_id = int(self.data['ecole'])
-                self.fields['new_class'].queryset = Classe.objects.filter(ecole_id=ecole_id)
-            except (ValueError, TypeError):
-                pass  # Invalid input; don't filter queryset
+        if ecole_id:
+            self.fields['classe'].queryset = Classe.objects.filter(ecole_id=ecole_id).order_by('nom')
+        else:
+            self.fields['classe'].queryset = Classe.objects.none()
                  
 class SchoolChangeForm(forms.Form):
     new_school = forms.ModelChoiceField(queryset=Ecole.objects.all(), required=True, label="Nouvelle École")
