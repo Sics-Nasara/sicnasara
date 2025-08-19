@@ -96,7 +96,7 @@ class Classe(TimeStampedModel):
 
     def get_expected_payment(self):
         confirmed_students = Eleve.objects.filter(
-            inscription__classe=self,
+            inscriptions__classe=self,
             condition_eleve="CONF",
             cs_py="P"
         )
@@ -105,7 +105,7 @@ class Classe(TimeStampedModel):
 
     def confirmed_py_count(self):
         return Eleve.objects.filter(
-            inscription__classe=self,
+            inscriptions__classe=self,
             condition_eleve="CONF",
             cs_py="P"
         ).count()

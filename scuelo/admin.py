@@ -14,83 +14,83 @@ class SicAdminArea(admin.AdminSite):
 sics_site = SicAdminArea(name='SICS NASSARA')
 
 
-# class PaimentInline(admin.TabularInline):
-#     model = Paiement
-#     extra = 0
-#     classes = ['collapse']
+from django.contrib import admin
+from .models import (
+    TypeClasse, Ecole, Classe, Eleve, AnneeScolaire,
+    Inscription, UniformReservation, Rang, StudentLog
+)
+
+
+
+@admin.register(TypeClasse, site=sics_site)
+class TypeClasseAdmin(admin.ModelAdmin):
+    list_display = ("nom", "ordre", "type_ecole")
+    list_filter = ("type_ecole",)
+    search_fields = ("nom",)
+
+
+@admin.register(Ecole, site=sics_site)
+class EcoleAdmin(admin.ModelAdmin):
+    list_display = ("nom", "ville", "nom_du_referent", "telephone_du_referent", "externe")
+    search_fields = ("nom", "ville", "nom_du_referent", "prenom_du_referent")
+    list_filter = ("ville", "externe")
 
 
 class InscriptionInline(admin.TabularInline):
     model = Inscription
-    #list_display = [''
-    autocomplete_fields = ['eleve']
-    extra = 0
-
-    def get_formset(self, request, obj=None, **kwargs):
-        # obj è il MediciZone
-        formset = super(InscriptionInline, self).get_formset(request, obj, **kwargs)
-        # formset.form.base_fields['a'].queryset
-        self.eleve = obj
-        return formset
-
-    def get_queryset(self, request):
-        qs = super(InscriptionInline, self).get_queryset(request)
-        return qs
-        # return qs.filter(annee_scolaire__actuel=True)
+    extra = 1
+    autocomplete_fields = ("classe", "annee_scolaire")
 
 
-class EleveAdmin(admin.ModelAdmin):
-    fieldsets = (
-        ('INFORMATIONS DE  BASE', {
-            'fields': ('nom', 'prenom', 'sex',
-                       'date_naissance'
-                       ),
-        }
-         ),
-        ('INFORMATION SOCIALE', {
-            'fields': ('condition_eleve', 'cs_py', 'hand'
-                       , 'date_enquete'),
-        }
-         ),
-        ('INFORMATION PARENT', {
-            'fields': ('parent', 'tel_parent',
-                       ),
-        }
-         )
-    )
-    list_display = ['id', 'nom', 'prenom', 'condition_eleve', 'sex', 'date_naissance', 'tot_pag' , 'tenues' , 'cs_py' , 'hand' , 'annee_inscr' ] #
-    search_fields = ['nom', 'prenom' , 'cs_py' ]
-    list_filter = ['annee_inscr']
+@admin.register(Classe, site=sics_site)
+class ClasseAdmin(admin.ModelAdmin):
+    list_display = ("nom", "type", "ecole", "legacy_id", "confirmed_py_count")
+    list_filter = ("type__type_ecole", "ecole")
+    search_fields = ("nom", "legacy_id")
     inlines = [InscriptionInline]
 
-    def tot_pag(self, instance):
-        return 'tot pag'
-  
-    tot_pag.short_description = "Tot pag"
 
-    def tenues(self, instance):
-        return 'What is it?'
-
-    tenues.short_description = "Tenues"
-
+@admin.register(Eleve, site=sics_site)
+class EleveAdmin(admin.ModelAdmin):
+    list_display = ("nom", "prenom", "condition_eleve", "cs_py", "sex", "annee_inscr", "legacy_id")
+    list_filter = ("condition_eleve", "sex", "cs_py")
+    search_fields = ("nom", "prenom", "legacy_id")
+    inlines = [InscriptionInline]
+    readonly_fields = ("formatted_date_enquete", "formatted_date_naissance")
 
 
+@admin.register(AnneeScolaire, site=sics_site)
+class AnneeScolaireAdmin(admin.ModelAdmin):
+    list_display = ("nom", "nom_bref", "date_initiale", "date_finale", "actuel")
+    list_filter = ("actuel",)
+    search_fields = ("nom", "nom_bref")
+    ordering = ("-date_initiale",)
 
+
+@admin.register(Inscription, site=sics_site)
 class InscriptionAdmin(admin.ModelAdmin):
-    autocomplete_fields = ['eleve']
-    
-    
-@admin.register(UniformReservation)
-class UniformReservationAdmin(admin.ModelAdmin):
-    list_display = ('student', 'quantity', 'status', 'school_year')
-    list_filter = ('status', 'school_year')    
+    list_display = ("eleve", "classe", "annee_scolaire", "nombre_uniformes", "formatted_date_inscription")
+    list_filter = ("annee_scolaire", "classe__type__type_ecole")
+    search_fields = ("eleve__nom", "eleve__prenom", "classe__nom")
 
-# sics_site.register(Paiement, PaiementAdmin)
-sics_site.register(Eleve, EleveAdmin)
-sics_site.register(Classe)
-sics_site.register(AnneeScolaire)
-sics_site.register(Inscription, InscriptionAdmin)
-sics_site.register(User)
-sics_site.register(Group)
-sics_site.register(Ecole)
-sics_site.register(StudentLog)
+
+@admin.register(UniformReservation, site=sics_site)
+class UniformReservationAdmin(admin.ModelAdmin):
+    list_display = ("student", "student_type", "quantity", "cost_per_uniform", "status", "school_year", "date_reserved")
+    list_filter = ("status", "school_year")
+    search_fields = ("student__nom", "student__prenom")
+
+
+@admin.register(Rang, site=sics_site)
+class RangAdmin(admin.ModelAdmin):
+    list_display = ("eleve", "classe", "annee_scolaire", "rang1", "rang2", "rang3", "rang_annuelle")
+    list_filter = ("annee_scolaire", "classe")
+    search_fields = ("eleve__nom", "eleve__prenom")
+
+
+@admin.register(StudentLog, site=sics_site)
+class StudentLogAdmin(admin.ModelAdmin):
+    list_display = ("student", "user", "action", "formatted_timestamp")
+    list_filter = ("timestamp", "user")
+    search_fields = ("student__nom", "student__prenom", "action")
+    readonly_fields = ("formatted_timestamp",)

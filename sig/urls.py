@@ -10,6 +10,7 @@ from  scuelo.views  import  login_view
 urlpatterns = [
     path('', login_view, name='login'),
     path('admin/', admin.site.urls),
+   
     path('sics/', sics_site.urls),
     path('accounts/', include('accounts.urls')),
     path('cash/' ,include('cash.urls')),

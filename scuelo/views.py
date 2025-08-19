@@ -1105,6 +1105,7 @@ def manage_promotions(request):
                             )
                             promoted_count += 1
 
+
                         messages.success(request, f"{promoted_count} élève(s) promu(s) avec succès.")
 
                     # After promotion, fetch promoted students for display
@@ -1131,3 +1132,147 @@ def manage_promotions(request):
         "selected_year_id": selected_year_id,
     }
     return render(request, "scuelo/promotion/manage_promotions.html", context)
+
+@require_http_methods(["GET", "POST"])
+def manage_individual_failures(request):
+    # Année en cours de promotion (à adapter)
+    next_year = AnneeScolaire.objects.filter(actuel=False).first()
+    if not next_year:
+        messages.error(request, "L'année scolaire prochaine n'est pas définie.")
+        return redirect('manage_promotions')
+
+    # Récupérer toutes les inscriptions pour l'année prochaine (élèves promus)
+    promoted_inscriptions = Inscription.objects.filter(annee_scolaire=next_year).select_related('eleve', 'classe')
+
+    if request.method == "POST":
+        # ids des inscriptions qu'on veut faire redoubler
+        fail_ids = request.POST.getlist('fail_inscriptions')
+        
+        try:
+            with transaction.atomic():
+                for insc_id in fail_ids:
+                    insc = Inscription.objects.get(id=insc_id)
+                    eleve = insc.eleve
+
+                    # Suppression de l’inscription de promotion
+                    insc.delete()
+
+                    # Création d'une nouvelle inscription dans la même année avec la classe d'origine (redouble)
+                    # Récupérer la classe précédente (par exemple classe dans l'année courante)
+                    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+                    previous_inscription = Inscription.objects.filter(
+                        eleve=eleve,
+                        annee_scolaire=current_year
+                    ).first()
+
+                    if not previous_inscription:
+                        messages.warning(request, f"Aucune inscription précédente trouvée pour {eleve} – impossible de redoubler.")
+                        continue
+
+                    Inscription.objects.create(
+                        eleve=eleve,
+                        classe=previous_inscription.classe,
+                        annee_scolaire=next_year,
+                        date_inscription=timezone.now(),
+                    )
+                messages.success(request, f"Redoublements appliqués aux élèves sélectionnés.")
+
+        except Exception as e:
+            messages.error(request, f"Erreur lors du traitement des redoublements: {e}")
+
+        return redirect('manage_individual_failures')
+
+    context = {
+        'promoted_inscriptions': promoted_inscriptions,
+        'next_year': next_year,
+    }
+    return render(request, 'scuelo/promotion/manage_individual_failures.html', context)
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.db import transaction
+from django.utils import timezone
+from scuelo.models import Eleve, Classe, Ecole, AnneeScolaire, Inscription
+
+def manage_single_failure(request, pk):
+    eleve = get_object_or_404(Eleve, pk=pk)
+    
+    ecoles = Ecole.objects.all().order_by('nom')
+    annees = AnneeScolaire.objects.all().order_by('-date_initiale')
+
+    selected_ecole_id = None
+    selected_class_id = None
+    selected_year_id = None
+    
+    classes = Classe.objects.none()
+
+    if request.method == 'POST':
+        selected_ecole_id = request.POST.get('ecole')
+        selected_class_id = request.POST.get('classe')
+        selected_year_id = request.POST.get('annee_scolaire')
+
+        # Charger les classes selon école sélectionnée pour affichage si validé
+        if selected_ecole_id:
+            classes = Classe.objects.filter(ecole_id=selected_ecole_id).order_by('nom')
+        else:
+            classes = Classe.objects.none()
+
+        # Validation simple
+        if not (selected_ecole_id and selected_class_id and selected_year_id):
+            messages.error(request, "Merci de sélectionner l'école, la classe et l'année scolaire.")
+        else:
+            try:
+                with transaction.atomic():
+                    # Supprime l'inscription existante de l'élève pour l'année ciblée (promotion)
+                    Inscription.objects.filter(eleve=eleve, annee_scolaire_id=selected_year_id).delete()
+
+                    # Crée une nouvelle inscription pour le redoublement
+                    classe = Classe.objects.get(id=selected_class_id)
+                    annee = AnneeScolaire.objects.get(id=selected_year_id)
+
+                    Inscription.objects.create(
+                        eleve=eleve,
+                        classe=classe,
+                        annee_scolaire=annee,
+                        date_inscription=timezone.now()
+                    )
+
+                    messages.success(request, f"L'élève {eleve.nom} {eleve.prenom} est désormais redoublant en classe {classe.nom} pour l'année {annee.nom}.")
+
+                    # Met à jour les sélections pour affichage
+                    selected_ecole_id = classe.ecole.id
+                    selected_class_id = classe.id
+                    selected_year_id = annee.id
+
+            except Classe.DoesNotExist:
+                messages.error(request, "La classe sélectionnée est invalide.")
+            except AnneeScolaire.DoesNotExist:
+                messages.error(request, "L'année scolaire sélectionnée est invalide.")
+            except Exception as e:
+                messages.error(request, f"Erreur lors de la sauvegarde : {str(e)}")
+    else:
+        # GET : Pré-remplir avec l'inscription actuelle (année en cours) et année suivante possible
+        current_year = AnneeScolaire.objects.filter(actuel=True).first()
+        next_year = AnneeScolaire.objects.filter(actuel=False).first()
+
+        current_inscription = Inscription.objects.filter(eleve=eleve, annee_scolaire=current_year).first() if current_year else None
+
+        if current_inscription:
+            selected_ecole_id = current_inscription.classe.ecole.id
+            selected_class_id = current_inscription.classe.id
+            selected_year_id = next_year.id if next_year else None
+
+            if selected_ecole_id:
+                classes = Classe.objects.filter(ecole_id=selected_ecole_id).order_by('nom')
+
+    context = {
+        'eleve': eleve,
+        'ecoles': ecoles,
+        'classes': classes,
+        'annees': annees,
+        'selected_ecole_id': int(selected_ecole_id) if selected_ecole_id else None,
+        'selected_class_id': int(selected_class_id) if selected_class_id else None,
+        'selected_year_id': int(selected_year_id) if selected_year_id else None,
+    }
+    return render(request, 'scuelo/promotion/manage_single_failure.html', context)

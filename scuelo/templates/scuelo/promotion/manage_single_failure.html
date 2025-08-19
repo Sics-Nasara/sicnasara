@@ -1,0 +1,66 @@
+{% extends "../../layout.html" %}
+{% block header %}
+<h2>Redoublement : {{ eleve.nom }} {{ eleve.prenom }}</h2>
+
+
+{% endblock header %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert 
+        {% if message.tags == 'success' %}alert-success
+        {% elif message.tags == 'warning' %}alert-warning
+        {% elif message.tags == 'error' or message.tags == 'danger' %}alert-danger
+        {% else %}alert-info{% endif %}
+      " role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="ecole">École :</label>
+      <select name="ecole" id="ecole" class="form-control" required>
+        <option value="">-- Choisissez une école --</option>
+        {% for ecole in ecoles %}
+          <option value="{{ ecole.id }}" {% if ecole.id == selected_ecole_id %}selected{% endif %}>{{ ecole.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="classe">Classe :</label>
+      <select name="classe" id="classe" class="form-control" required>
+        <option value="">-- Choisissez une classe --</option>
+        {% for classe in classes %}
+          <option value="{{ classe.id }}" {% if classe.id == selected_class_id %}selected{% endif %}>
+            {{ classe.nom }} ({{ classe.ecole.nom }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="annee_scolaire">Année scolaire :</label>
+      <select name="annee_scolaire" id="annee_scolaire" class="form-control" required>
+        <option value="">-- Choisissez une année scolaire --</option>
+        {% for annee in annees %}
+          <option value="{{ annee.id }}" {% if annee.id == selected_year_id %}selected{% endif %}>{{ annee.nom }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-warning btn-block">Valider le redoublement</button>
+  </form>
+</div>
+
+<script>
+  // Vous pouvez ajouter ici un script javascript pour filtrer les classes en fonction de l'école sélectionnée si vous le souhaitez.
+</script>
+
+{% endblock %}
