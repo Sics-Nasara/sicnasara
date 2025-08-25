@@ -123,31 +123,41 @@ def select_school_year(request):
         'all_years': all_years,
         'current_year_id': current_year_id,
     })
+from django.db import transaction
 
 @login_required
 def home(request):
-    # Fetch only internal (non-external) schools
     schools = Ecole.objects.filter(externe=False)
     data = {}
 
-    # Icon mapping for each class category
     icon_mapping = {
         "Maternelle": "child",
         "Primaire": "school",
         "Secondaire": "user-graduate",
         "Lycée": "chalkboard-teacher"
     }
- 
-    # Get the current school year based on request or use the active year by default
-    school_year_id = request.GET.get("school_year")
-    if school_year_id:
-        current_year = AnneeScolaire.objects.get(id=school_year_id)
-    else:
-        current_year = AnneeScolaire.objects.filter(actuel=True).first()
-    
+
     all_years = AnneeScolaire.objects.all()
 
-    # Group classes by categories within each school
+    school_year_id = request.GET.get("school_year")
+
+    # If a year is selected and different than the current actif year, update actif year
+    if school_year_id:
+        with transaction.atomic():
+            try:
+                selected_year = AnneeScolaire.objects.get(pk=school_year_id)
+            except AnneeScolaire.DoesNotExist:
+                selected_year = None
+
+            if selected_year and not selected_year.actuel:
+                # Set all to False, then selected to True atomically ensuring only one actif year
+                AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
+                selected_year.actuel = True
+                selected_year.save()
+
+    # reload current_year from DB so it reflects the update
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+
     for school in schools:
         categories = {
             "Maternelle": [],
@@ -155,8 +165,6 @@ def home(request):
             "Secondaire": [],
             "Lycée": []
         }
-
-        # Filter classes based on the selected school year and categorize
         classes = Classe.objects.filter(ecole=school)
         for classe in classes:
             category_key = None
@@ -168,15 +176,13 @@ def home(request):
                 category_key = "Secondaire"
             elif classe.type.type_ecole == 'L':
                 category_key = "Lycée"
-            
+
             if category_key:
-                # Add class along with the corresponding icon
                 categories[category_key].append({
                     'classe': classe,
                     'icon': icon_mapping.get(category_key, 'school')
                 })
 
-        # Only add school to data if it has classes in at least one category
         if any(categories.values()):
             data[school] = categories
 
@@ -187,66 +193,73 @@ def home(request):
         'breadcrumbs': breadcrumbs,
         'all_years': all_years,
         'current_year': current_year,
-        'page_identifier': 'S01'  # Unique page identifier
+        'page_identifier': 'S01',
     })
 
 
 
 
 
+
+
+from django.db import transaction
+
 @login_required
 def class_detail(request, pk):
-    # Get the class based on the provided primary key (pk)
     classe = get_object_or_404(Classe, pk=pk)
-
-    # Get all academic years to display in the selection dropdown
     all_annee_scolaires = AnneeScolaire.objects.all()
-
-    # Get the selected academic year, default to the current year if none is selected
     selected_annee_scolaire_id = request.GET.get('annee_scolaire')
-    selected_annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_annee_scolaire_id) if selected_annee_scolaire_id else AnneeScolaire.objects.get(actuel=True)
 
-    # Get students registered in this class during the selected academic year, EXCLUDING those with 'ABAN' condition
+    if selected_annee_scolaire_id:
+        try:
+            selected_annee_scolaire = AnneeScolaire.objects.get(pk=selected_annee_scolaire_id)
+        except AnneeScolaire.DoesNotExist:
+            selected_annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
+    else:
+        selected_annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
+
+    # Update 'actuel' flag atomically
+    with transaction.atomic():
+        if selected_annee_scolaire and not selected_annee_scolaire.actuel:
+            AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
+            selected_annee_scolaire.actuel = True
+            selected_annee_scolaire.save()
+
     inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
     students = [inscription.eleve for inscription in inscriptions if inscription.eleve.condition_eleve != 'ABAN']
 
-    # Calculate total payments for each student and get details of each payment
     for student in students:
         payments = Mouvement.objects.filter(inscription__eleve=student, inscription__classe=classe, inscription__annee_scolaire=selected_annee_scolaire)
         student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
-        student.payment_details = payments.values('causal', 'montant', 'date_paye')  # Detailed payment info
-        student.tenues = payments.filter(causal='TEN').values('montant')  # Only "tenues" payments
-        student.notes = student.note_eleve  # Fetch student's notes if available
+        student.payment_details = payments.values('causal', 'montant', 'date_paye')
+        student.tenues = payments.filter(causal='TEN').values('montant')
+        student.notes = student.note_eleve
 
-    # Calculate the total payment amount for the class in the selected academic year
     total_class_payment = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=selected_annee_scolaire
     ).aggregate(total=Sum('montant'))['total'] or 0
 
-    # Get tarifs related to this class for the selected academic year
     tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
-        # Calculate counts for each category
-    cs_count = sum(1 for student in students if student.get_cs_py_display() == 'CS' )
+
+    cs_count = sum(1 for student in students if student.get_cs_py_display() == 'CS')
     py_count = sum(1 for student in students if student.get_cs_py_display() == 'PY')
     aut_count = len(students) - cs_count - py_count
 
-    # Breadcrumb navigation (for template rendering)
     breadcrumbs = [('/', 'Home'), (reverse('home'), 'Classes'), ('#', classe.nom)]
     total_students = len(students)
     student_count_display = f"{total_students}({cs_count}-{py_count}-{aut_count})"
 
     return render(request, 'scuelo/students/listperclasse.html', {
         'classe': classe,
-        'students': students,  # List of students registered this year (excluding 'ABAN')
-        'tarifs': tarifs,  # Tarifs related to this class for this year
+        'students': students,
+        'tarifs': tarifs,
         'breadcrumbs': breadcrumbs,
         'total_class_payment': total_class_payment,
-        'student_count_display':student_count_display,
-        'all_annee_scolaires': all_annee_scolaires,  # Pass all academic years for selection
-        'selected_annee_scolaire': selected_annee_scolaire,  # Pass the selected academic year
-        'total_class_payment': total_class_payment,  # Total amount of payments for the class in the selected year
-        'page_identifier': 'S02' 
+        'student_count_display': student_count_display,
+        'all_annee_scolaires': all_annee_scolaires,
+        'selected_annee_scolaire': selected_annee_scolaire,
+        'page_identifier': 'S02'
     })
 
 
@@ -414,12 +427,9 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 def student_detail(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
 
-    # Récupération de l'année scolaire active
     current_year = AnneeScolaire.objects.filter(actuel=True).first()
-    # Récupération de l'annee scolaire choisie (GET), sinon année active par défaut
     selected_annee_id = request.GET.get('annee_scolaire') or (current_year.id if current_year else None)
 
-    # Paiements filtrés par année scolaire choisie
     if selected_annee_id:
         payments = Mouvement.objects.filter(
             inscription__eleve=student,
@@ -436,7 +446,6 @@ def student_detail(request, pk):
     current_school_name = current_class.ecole.nom if current_class else "No School Assigned"
     current_class_name = current_class.type if current_class else "No Class Assigned"
 
-    # Breadcrumbs pour navigation
     if current_class:
         breadcrumbs = [
             ('/', 'Home'),
@@ -455,7 +464,6 @@ def student_detail(request, pk):
     rang_form = StudentRangForm()
     logs = StudentLog.objects.filter(student=student).order_by('-timestamp')
 
-    # Gestion formulaire rang avec instance existante si détectée
     existing_rang = None
     if current_class and current_year:
         existing_rang = Rang.objects.filter(
@@ -463,7 +471,6 @@ def student_detail(request, pk):
             classe=current_class,
             annee_scolaire=current_year
         ).first()
-
         if existing_rang:
             rang_form = StudentRangForm(instance=existing_rang)
 
@@ -484,7 +491,9 @@ def student_detail(request, pk):
         'page_identifier': 'S03',
         'annee_scolaires': annee_scolaires,
         'selected_annee_id': int(selected_annee_id) if selected_annee_id else None,
+        'active_school_year': current_year,  # Pass for top bar display
     })
+
 
 @login_required
 def add_student_rang(request, pk):

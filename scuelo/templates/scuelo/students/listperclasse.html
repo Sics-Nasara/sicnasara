@@ -47,7 +47,16 @@
         </span>
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>
-
+    <!-- Academic Year Dropdown -->
+        <form id="annee-scolaire-form" method="get">
+            <select id="annee_scolaire_select" name="annee_scolaire" onchange="this.form.submit()">
+                {% for annee in all_annee_scolaires %}
+                    <option value="{{ annee.id }}" {% if annee.id == selected_annee_scolaire.id %}selected{% endif %}>
+                        {{ annee.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
     <!-- Center-aligned elements (Tot and Total Paid) -->
     <div class="d-flex align-items-center">
         <div class="text-white text-right mr-4">

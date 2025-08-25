@@ -3,24 +3,21 @@
 {% block header %}
 <span class="navbar-brand mb-0 h1 text-white">Système d’Information Centre Social Djickofe</span>
 
-{% comment %}
-    <!-- Undo and Redo Icons -->
-    <div class="user-account">
-        <div class="user-profile">
-          <div class="user-detail">
-            <h6>{{ user.username }}</h6>
-                <a href="{% url 'logout' %}" class="logout-btn"><span class="material-symbols-outlined"> logout </span>Logout</a>
-  </div>
-          </div>
-        </div>
-    </div>
-{% endcomment %}
+<form method="get" id="schoolYearForm" style="display:inline-block; margin-left:15px;">
+    <select name="school_year" onchange="this.form.submit()" class="form-control form-control-sm">
+      {% for year in all_years %}
+        <option value="{{ year.id }}" {% if current_year and year.id == current_year.id %}selected{% endif %}>
+          {{ year.nom }}
+        </option>
+      {% endfor %}
+    </select>
+</form>
 
 <div class="ml-2 d-flex align-items-stretch">
     <button class="class-card mr-3" id="undo-button" title="Undo">
-    <a href="{% url 'logout'  %}" > sortir</a></i>
+        <a href="{% url 'logout' %}"> Sortir </a>
     </button>
-    <button class="class-card mr-3 " id="undo-button" title="Undo">
+    <button class="class-card mr-3" id="undo-button" title="Undo">
         <i class="fas fa-undo"></i>
     </button>
     <button class="class-card mr-3" id="redo-button" title="Redo">
@@ -28,7 +25,10 @@
     </button>
     <h2 class="mr-3 text-white"><strong>{{ page_identifier }}</strong></h2>
 </div>
-{% endblock header %}
+{% endblock %}
+
+
+
 
 {% block content %}
 <div class="container-fluid mt-4">
@@ -205,11 +205,11 @@
                                 <i class="fas fa-user-friends"></i>
                                 <span>gestion ecole</span>
                             </a>
-                            <div class="class-grid">
+                            <!-- <div class="class-grid">
     <a href="{% url 'manage_promotions' %}" class="class-card">
         promotions
     </a>
-</div>
+</div> -->
                          {% comment %}
                                <a href="#" class="class-card">
                                    <i class="fas fa-users"></i>

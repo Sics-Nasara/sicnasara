@@ -155,3 +155,11 @@
 2025-04-26 10:35:21,019 - INFO - Operator created successfully.
 2025-04-26 10:35:21,201 - INFO - Permissions assigned successfully.
 >>>>>>> 6e13910b7af3031e75cbee3809661d6cf343788d
+2025-08-25 09:44:48,138 - ERROR - Error during fixture setup: column scuelo_anneescolaire.created does not exist
+LINE 1: SELECT "scuelo_anneescolaire"."id", "scuelo_anneescolaire"."...
+                                            ^
+
+2025-08-25 09:45:56,454 - ERROR - Error during fixture setup: column scuelo_anneescolaire.created does not exist
+LINE 1: SELECT "scuelo_anneescolaire"."id", "scuelo_anneescolaire"."...
+                                            ^
+

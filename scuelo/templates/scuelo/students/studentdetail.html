@@ -4,17 +4,27 @@
 
 {% block header %}
 <h2 class="navbar-brand mb-0 h1 text-white">Gestion Eleve</h2>
-<div class="ml-2 d-flex align-items-stretch">
+<div class="ml-2 d-flex align-items-center">
+    <span class="text-white mr-3 font-weight-bold">
+
+  {% if active_school_year %}
+    {{ active_school_year.nom }}
+  {% else %}
+    N/A
+  {% endif %}
+</span>
+
     <a href="{% url 'student_update' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-pencil-alt"></i> Modif eleve</a>
     <a href="{% url 'class_upgrade' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-level-up-alt"></i> Chang Class & Ecole</a>
     <a href="{% url 'add_paiement' student.pk %}" class="class-card ml-2"><i class="fas fa-plus"></i> +Paiement</a>
     <button type="button" class="class-card ml-2" data-toggle="modal" data-target="#addRangModal"><i class="fas fa-star"></i>Rang</button>
     <a href="{% url 'manage_single_failure' pk=student.pk %}" class="class-card ml-2"><i class="fas fa-redo"></i> Faire redoubler</a>
-    <button class="class-card mr-3 ml-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
-    <button class="class-card mr-3" id="redo-button" title="Redo"></button>
+    <button class="class-card mr-3 ml-2" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
+
     <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
 </div>
 {% endblock header %}
+
 
 {% block content %}
 <style>

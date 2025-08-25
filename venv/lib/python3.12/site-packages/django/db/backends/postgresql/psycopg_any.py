@@ -18,7 +18,8 @@ try:
     TSTZRANGE_OID = types["tstzrange"].oid
 
     def mogrify(sql, params, connection):
-        return ClientCursor(connection.connection).mogrify(sql, params)
+        with connection.cursor() as cursor:
+            return ClientCursor(cursor.connection).mogrify(sql, params)
 
     # Adapters.
     class BaseTzLoader(TimestamptzLoader):
@@ -74,9 +75,15 @@ except ImportError:
     from enum import IntEnum
 
     from psycopg2 import errors, extensions, sql  # NOQA
-    from psycopg2.extras import DateRange, DateTimeRange, DateTimeTZRange, Inet  # NOQA
-    from psycopg2.extras import Json as Jsonb  # NOQA
-    from psycopg2.extras import NumericRange, Range  # NOQA
+    from psycopg2.extras import (  # NOQA
+        DateRange,
+        DateTimeRange,
+        DateTimeTZRange,
+        Inet,
+        Json,
+        NumericRange,
+        Range,
+    )
 
     RANGE_TYPES = (DateRange, DateTimeRange, DateTimeTZRange, NumericRange)
 
@@ -100,3 +107,8 @@ except ImportError:
             return cursor.mogrify(sql, params).decode()
 
     is_psycopg3 = False
+
+    class Jsonb(Json):
+        def getquoted(self):
+            quoted = super().getquoted()
+            return quoted + b"::jsonb"
