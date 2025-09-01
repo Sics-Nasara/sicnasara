@@ -20,7 +20,7 @@ ALLOWED_HOSTS = ['sics-stage-cl.nasaraperilburkina.org', '127.0.0.1' ,'0.0.0.0' 
 
 # Application definition
 INSTALLED_APPS = [
-    #"unfold", 
+
     'jazzmin',
     'fontawesomefree',
     'django.contrib.admin',
@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'cash',
     'scuelo',
     'accounts',
- 
+        'csp',
     'crispy_forms',
     'whitenoise.runserver_nostatic',
     'bootstrap5',
@@ -91,17 +91,15 @@ WSGI_APPLICATION = 'sig.wsgi.application'
         'PORT': '5432',
     }
 }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
     }
 }
+
 '''
-
-
-
-# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -112,6 +110,10 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+
+# Database
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -276,10 +278,10 @@ JAZZMIN_SETTINGS = {
     #"language_chooser": True,
 }
 
-JAZZMIN_SETTINGS["show_ui_builder"] = True
+#JAZZMIN_SETTINGS["show_ui_builder"] = True
 
-
-
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": True,
     "footer_small_text": True,
