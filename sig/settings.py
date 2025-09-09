@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'cash',
     'scuelo',
     'accounts',
-        'csp',
+        
     'crispy_forms',
     'whitenoise.runserver_nostatic',
     'bootstrap5',
@@ -91,7 +91,6 @@ WSGI_APPLICATION = 'sig.wsgi.application'
         'PORT': '5432',
     }
 }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -100,6 +99,8 @@ DATABASES = {
 }
 
 '''
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -110,7 +111,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 # Database
 
@@ -213,7 +213,9 @@ LOGGING = {
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'sig.storage.NonStrictCompressedManifestStaticFilesStorage'
+
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -237,12 +239,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the sics Admin",
     "copyright": "sics Admin Ltd",
     #"search_model": ["auth.User", "auth.Group"],
-    "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
-        {"model": "auth.User"},
-        {"app": "books"},
-    ],
+
   #  "usermenu_links": [
        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
        # {"model": "auth.user"},

@@ -71,6 +71,7 @@
 
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
+          <a class="class-card mr-3" href="{% url 'home'  %}" >sortir</a>
         <a href="{% url 'classe_information' classe.pk %}" class="class-card mr-3">info</a>
        {% comment %}
          <a href="{% url 'late_payments_per_class' classe.id %}" class="class-card  mr-3">retards Paiement</a>
@@ -78,12 +79,8 @@
         <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
             <!-- Buttons will be moved here -->
         </div>
-        <button class="class-card mr-3" id="undo-button" title="Undo">
-            <i class="fas fa-undo">  <a href="{% url 'home'  %}" ></a></i>
-        </button>
-        <button class="class-card mr-3" id="redo-button" title="Redo">
-            <i class="fas fa-redo"></i>
-        </button>
+    
+ 
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
