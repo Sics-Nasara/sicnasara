@@ -736,25 +736,49 @@ def income_list_view(request):
     return render(request, 'cash/inoutflows/income_list.html', context)
 
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def entree_sortie(request):
-    # Fetch the C_SCO cashier
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
-    # Fetch all incomes (Mouvement with positive amounts)
-    incomes = Mouvement.objects.filter(montant__gt=0).order_by('-date_paye')  # Oldest to newest
+    # Get selected or current school year
+    selected_year_id = request.GET.get('annee_scolaire')
+    if selected_year_id:
+        annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_year_id)
+    else:
+        annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Fetch all expenses
-    expenses = Expense.objects.all().order_by('date')  # Oldest to newest
+    # Get the previous school year (closing date)
+    previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire.date_initiale).order_by('-date_finale').first()
 
-    # Prepare entries for the report
+    # Calculate initial balance as of previous year closing
+    initial_balance = 0
+    if previous_year:
+        closing_date = previous_year.date_finale
+        total_incomes = Mouvement.objects.filter(date_paye__lte=closing_date).aggregate(total=Sum('montant'))['total'] or 0
+        total_expenses = Expense.objects.filter(date__lte=closing_date).aggregate(total=Sum('amount'))['total'] or 0
+        initial_balance = total_incomes - total_expenses
+
+    # Check for reset trigger via GET
+    reset_requested = request.GET.get('reset') == 'true'
+    if reset_requested:
+        with transaction.atomic():
+            Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
+            Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
+
+    # Fetch incomes and expenses for selected school year
+    incomes = Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).order_by('date_paye')
+    expenses = Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).order_by('date')
+
+    # Prepare merged entries sorted by date
     entries = []
 
-    # Add income entries
     for income in incomes:
-        student_name = (
-            f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}"
-            if income.inscription else "Unknown Student"
-        )
+        student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Unknown Student"
         description = f"{income.causal} - {student_name}"
         entries.append({
             'date': income.date_paye,
@@ -763,7 +787,6 @@ def entree_sortie(request):
             'sortie': 0,
         })
 
-    # Add expense entries
     for expense in expenses:
         description = f"COMPT {expense.description or ''}"
         entries.append({
@@ -773,27 +796,26 @@ def entree_sortie(request):
             'sortie': expense.amount,
         })
 
-    # Sort combined entries by date (oldest to newest)
     entries.sort(key=lambda x: x['date'])
 
-    # Calculate progressive balance and total balance
-    progressive_balance = 0
+    # Calculate running progressive balance starting from initial_balance
+    progressive_balance = initial_balance
     for entry in entries:
         progressive_balance += entry['entree'] - entry['sortie']
-        entry['progressive'] = progressive_balance  # Store computed balance
+        entry['progressive'] = progressive_balance
 
-    total_balance = progressive_balance  # Final balance
+    total_balance = progressive_balance  # Total from all entries plus initial balance
 
-    # Pass data to the template
     return render(request, 'cash/inoutflows/entree_sortie.html', {
         'entries': entries,
         'cashier': cashier,
-        'balance': cashier.balance(),  # Ensure this matches total_balance
-        'total_balance': total_balance,  # Pass computed balance
-        'page_identifier': 'S35'
+        'initial_balance': initial_balance,
+        'balance': cashier.balance(),
+        'total_balance': total_balance,
+        'annee_scolaire': annee_scolaire,
+        'page_identifier': 'S35',
+        'reset_requested': reset_requested,
     })
-
-
 
 def rapport_comptable(request):
     # Fetch the C_SCO cashier
