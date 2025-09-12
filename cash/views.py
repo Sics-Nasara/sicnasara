@@ -735,12 +735,6 @@ def income_list_view(request):
 
     return render(request, 'cash/inoutflows/income_list.html', context)
 
-
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Sum
-from django.db import transaction
-from django.contrib.auth.decorators import login_required
-
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Sum
 from django.db import transaction
@@ -753,33 +747,32 @@ def entree_sortie(request):
     # Toutes les années scolaires pour le dropdown
     all_annee_scolaires = AnneeScolaire.objects.all().order_by('date_initiale')
 
-    # Récupération de l'année scolaire sélectionnée (ou active par défaut)
+    # Année scolaire sélectionnée ou active
     selected_year_id = request.GET.get('annee_scolaire')
     if selected_year_id:
         annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_year_id)
     else:
         annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Récupération de l'année scolaire précédente pour solde initial
-    previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire.date_initiale).order_by('-date_finale').first()
-
+    # Le solde initial est toujours zéro (pas de report année précédente)
     initial_balance = 0
-    if previous_year:
-        closing_date = previous_year.date_finale
-        total_incomes = Mouvement.objects.filter(date_paye__lte=closing_date).aggregate(total=Sum('montant'))['total'] or 0
-        total_expenses = Expense.objects.filter(date__lte=closing_date).aggregate(total=Sum('amount'))['total'] or 0
-        initial_balance = total_incomes - total_expenses
 
-    # Option reset (clear data for selected year)
+    # Option reset (effacer mouvements de l'année sélectionnée)
     reset_requested = request.GET.get('reset') == 'true'
     if reset_requested:
         with transaction.atomic():
             Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
             Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
 
-    # Récupération des revenus et dépenses de l'année sélectionnée
-    incomes = Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).order_by('date_paye')
-    expenses = Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).order_by('date')
+    # Revenus et dépenses de l'année sélectionnée à partir de sa date initiale
+    incomes = Mouvement.objects.filter(
+        inscription__annee_scolaire=annee_scolaire,
+        date_paye__gte=annee_scolaire.date_initiale
+    ).order_by('date_paye')
+
+    expenses = Expense.objects.filter(
+        date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
+    ).order_by('date')
 
     entries = []
     for income in incomes:
@@ -801,7 +794,7 @@ def entree_sortie(request):
             'sortie': expense.amount,
         })
 
-    entries.sort(key=lambda x: x['date'])
+    entries.sort(key=lambda e: e['date'])
 
     progressive_balance = initial_balance
     for entry in entries:
