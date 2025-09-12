@@ -13,6 +13,15 @@
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>
     <h1 class='navbar-brand mb-0 h1 text-white'>Total: {{ total_balance|format_amount }}</h1>
+<form method="get" id="annee-scolaire-form" class="d-inline-block ml-3">
+  <select name="annee_scolaire" onchange="this.form.submit()" class="form-control form-control-sm">
+    {% for annee in all_annee_scolaires %}
+      <option value="{{ annee.id }}" {% if annee.id == annee_scolaire.id %}selected{% endif %}>
+        {{ annee.nom }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
 
     <div class="d-flex align-items-stretch">
    

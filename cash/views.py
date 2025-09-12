@@ -741,44 +741,48 @@ from django.db.models import Sum
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
-    # Get selected or current school year
+    # Toutes les années scolaires pour le dropdown
+    all_annee_scolaires = AnneeScolaire.objects.all().order_by('date_initiale')
+
+    # Année scolaire sélectionnée ou active
     selected_year_id = request.GET.get('annee_scolaire')
     if selected_year_id:
         annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_year_id)
     else:
         annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Get the previous school year (closing date)
-    previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire.date_initiale).order_by('-date_finale').first()
-
-    # Calculate initial balance as of previous year closing
+    # Le solde initial est toujours zéro (pas de report année précédente)
     initial_balance = 0
-    if previous_year:
-        closing_date = previous_year.date_finale
-        total_incomes = Mouvement.objects.filter(date_paye__lte=closing_date).aggregate(total=Sum('montant'))['total'] or 0
-        total_expenses = Expense.objects.filter(date__lte=closing_date).aggregate(total=Sum('amount'))['total'] or 0
-        initial_balance = total_incomes - total_expenses
 
-    # Check for reset trigger via GET
+    # Option reset (effacer mouvements de l'année sélectionnée)
     reset_requested = request.GET.get('reset') == 'true'
     if reset_requested:
         with transaction.atomic():
             Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
             Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
 
-    # Fetch incomes and expenses for selected school year
-    incomes = Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).order_by('date_paye')
-    expenses = Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).order_by('date')
+    # Revenus et dépenses de l'année sélectionnée à partir de sa date initiale
+    incomes = Mouvement.objects.filter(
+        inscription__annee_scolaire=annee_scolaire,
+        date_paye__gte=annee_scolaire.date_initiale
+    ).order_by('date_paye')
 
-    # Prepare merged entries sorted by date
+    expenses = Expense.objects.filter(
+        date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
+    ).order_by('date')
+
     entries = []
-
     for income in incomes:
-        student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Unknown Student"
+        student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Inconnu"
         description = f"{income.causal} - {student_name}"
         entries.append({
             'date': income.date_paye,
@@ -796,15 +800,14 @@ def entree_sortie(request):
             'sortie': expense.amount,
         })
 
-    entries.sort(key=lambda x: x['date'])
+    entries.sort(key=lambda e: e['date'])
 
-    # Calculate running progressive balance starting from initial_balance
     progressive_balance = initial_balance
     for entry in entries:
         progressive_balance += entry['entree'] - entry['sortie']
         entry['progressive'] = progressive_balance
 
-    total_balance = progressive_balance  # Total from all entries plus initial balance
+    total_balance = progressive_balance
 
     return render(request, 'cash/inoutflows/entree_sortie.html', {
         'entries': entries,
@@ -813,9 +816,11 @@ def entree_sortie(request):
         'balance': cashier.balance(),
         'total_balance': total_balance,
         'annee_scolaire': annee_scolaire,
+        'all_annee_scolaires': all_annee_scolaires,
         'page_identifier': 'S35',
         'reset_requested': reset_requested,
     })
+
 
 def rapport_comptable(request):
     # Fetch the C_SCO cashier
