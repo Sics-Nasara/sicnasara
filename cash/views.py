@@ -751,7 +751,7 @@ def entree_sortie(request):
     else:
         annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
-    initial_balance = 0  # Pas de report d'ancien solde
+    initial_balance = 0  # No carryover
 
     reset_requested = request.GET.get('reset') == 'true'
     if reset_requested:
@@ -759,13 +759,17 @@ def entree_sortie(request):
             Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
             Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
 
-    # Obtenir tous les mouvements liés à l'année scolaire (sans filtre date_paye)
-    incomes = Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).order_by('date_paye')
+    incomes = Mouvement.objects.filter(
+        inscription__annee_scolaire=annee_scolaire
+    ).order_by('date_paye')
 
-    # Dépenses filtrées sur la plage de dates officielle (car pas lié à inscription)
-    expenses = Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).order_by('date')
+    expenses = Expense.objects.filter(
+        date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
+    ).order_by('date')
 
     entries = []
+    total_entree = 0
+    total_sortie = 0
     for income in incomes:
         student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Inconnu"
         description = f"{income.causal} - {student_name}"
@@ -775,6 +779,7 @@ def entree_sortie(request):
             'entree': income.montant,
             'sortie': 0,
         })
+        total_entree += income.montant
 
     for expense in expenses:
         description = f"COMPT {expense.description or ''}"
@@ -784,11 +789,10 @@ def entree_sortie(request):
             'entree': 0,
             'sortie': expense.amount,
         })
+        total_sortie += expense.amount
 
-    # Trier chronologiquement
     entries.sort(key=lambda x: x['date'])
 
-    # Calculer solde progressif selon les paiements liés
     progressive_balance = initial_balance
     for entry in entries:
         progressive_balance += entry['entree'] - entry['sortie']
@@ -802,6 +806,8 @@ def entree_sortie(request):
         'initial_balance': initial_balance,
         'balance': cashier.balance(),
         'total_balance': total_balance,
+        'total_entree': total_entree,
+        'total_sortie': total_sortie,
         'annee_scolaire': annee_scolaire,
         'all_annee_scolaires': all_annee_scolaires,
         'page_identifier': 'S35',
