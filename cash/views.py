@@ -5,7 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
 # =============================
 # Django Shortcuts & Utilities
 # =============================
@@ -565,27 +568,38 @@ def late_payment_report(request):
 
 
 
+from django.shortcuts import render, get_object_or_404
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def expense_list(request):
-    expenses = Expense.objects.all().order_by('-date')  # Retrieve all expenses ordered by date
+    # Get the current active school year
+    current_year = get_object_or_404(AnneeScolaire, actuel=True)
 
-    progressive_total = 0  # Initialize a variable to hold the progressive total
-    total_expense = 0      # Initialize a variable to hold the total expense
-    expense_data = []      # Create a list to hold the expense data along with progressive totals
+    # Filter expenses that belong to the current active year by date range
+    expenses = Expense.objects.filter(
+        date__range=(current_year.date_initiale, current_year.date_finale)
+    ).order_by('-date')
+
+    progressive_total = 0
+    total_expense = 0
+    expense_data = []
 
     for expense in expenses:
-        total_expense += expense.amount  # Calculate total expense
-        progressive_total += expense.amount  # Add the current expense amount to the progressive total
+        total_expense += expense.amount
+        progressive_total += expense.amount
         expense_data.append({
             'expense': expense,
-            'progressive_total': -abs(progressive_total),  # Store the cumulative total as negative
+            'progressive_total': -abs(progressive_total),
         })
 
     return render(request, 'cash/expense/expense_list.html', {
         'expenses': expense_data,
-        'total_expense': total_expense, 
-        'page_identifier': 'S31'# Pass the total expense to the template
+        'total_expense': total_expense,
+        'page_identifier': 'S31',
     })
+
     
 def get_sorted_expenses(request):
     sort_by = request.GET.get("sort_by", "date")  # Default sorting by date
@@ -735,10 +749,7 @@ def income_list_view(request):
 
     return render(request, 'cash/inoutflows/income_list.html', context)
 
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Sum
-from django.db import transaction
-from django.contrib.auth.decorators import login_required
+
 @login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")

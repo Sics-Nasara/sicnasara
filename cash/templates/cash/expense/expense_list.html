@@ -13,33 +13,44 @@
 <div class="d-flex justify-content-between align-items-center w-100">
     <div class="d-flex align-items-center">
         <span class="navbar-brand mb-0 h1 text-white">Sortie</span>
-         <!-- Display Total Expense -->
-         <div class='text-white ml-3'><strong>Total: {{ total_expense|format_amount }}</strong></div> <!-- Format as needed -->
-    </div>
 
+        <!-- Dropdown to switch annee scolaire -->
+        <form method="get" id="annee-scolaire-form" class="ml-3">
+            <select name="annee_scolaire" class="form-control form-control-sm" onchange="this.form.submit()">
+                {% for annee in all_annee_scolaires %}
+                    <option value="{{ annee.id }}" {% if annee.id == annee_scolaire.id %}selected{% endif %}>
+                        {{ annee.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <!-- Display Total Expense -->
+        <div class='text-white ml-3'><strong>Total: {{ total_expense|floatformat:2 }}</strong></div>
+    </div>
 
     <div class="d-flex align-items-stretch">
         <a href="{% url 'expense_create' %}" class="class-card mr-3">Ajout Sortie</a>
-     <div id="export-buttons" class="mr-3"></div>
-       {% comment %}
-          <button class="class-card mr-3 hidden-print" id="export-button" title="Export to Excel" onclick="exportToExcel()">
-              <i class="fas fa-file-excel"></i>
-          </button>
-      {% endcomment %}
-        <button class="class-card mr-3" >
-            <i class="fas fa-undo"> <a class="text-white" href="{% url 'home' %}" >sortir</a></i>
+        <div id="export-buttons" class="mr-3"></div>
+        <!-- Commented export button -->
+        {# 
+        <button class="class-card mr-3 hidden-print" id="export-button" title="Export to Excel" onclick="exportToExcel()">
+            <i class="fas fa-file-excel"></i>
         </button>
-             {% comment %}
+         #}
+        <button class="class-card mr-3" >
+            <i class="fas fa-undo"><a class="text-white" href="{% url 'home' %}">sortir</a></i>
+        </button>
+        {# 
         <button class="class-card mr-3" id="redo-button" title="Redo">
             <i class="fas fa-redo"></i>
         </button>
-           {% endcomment %}
+        #}
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
-        
-       
     </div>
 </div>
 {% endblock header %}
+
 {% block content %}
 <style>
     .dataTables_wrapper {
