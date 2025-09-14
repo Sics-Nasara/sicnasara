@@ -568,16 +568,24 @@ def late_payment_report(request):
 
 
 
+
 from django.shortcuts import render, get_object_or_404
-from django.db import transaction
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def expense_list(request):
-    # Get the current active school year
-    current_year = get_object_or_404(AnneeScolaire, actuel=True)
+    # Récupérer l'année scolaire courante via la méthode de classe
+    current_year = AnneeScolaire.get_current_year()
+    if not current_year:
+        # On peut gérer le cas sans année courante définie
+        return render(request, 'cash/expense/expense_list.html', {
+            'expenses': [],
+            'total_expense': 0,
+            'page_identifier': 'S31',
+            'error_message': "Aucune année scolaire courante définie.",
+        })
 
-    # Filter expenses that belong to the current active year by date range
+    # Filtrer les dépenses dans la plage de l'année scolaire courante
     expenses = Expense.objects.filter(
         date__range=(current_year.date_initiale, current_year.date_finale)
     ).order_by('-date')
@@ -598,7 +606,9 @@ def expense_list(request):
         'expenses': expense_data,
         'total_expense': total_expense,
         'page_identifier': 'S31',
+        'annee_scolaire': current_year,
     })
+
 
     
 def get_sorted_expenses(request):
