@@ -719,16 +719,30 @@ def expense_delete(request, pk):
         return redirect('expense_list')
     return render(request, 'cash/expense/expense_confirm_delete.html', {'expense': expense , 'page_identifier': 'S34'})
 
+from django.shortcuts import render
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def income_list_view(request):
-    # Fetch all incomes, ordered by date in descending order
-    incomes = Mouvement.objects.all().order_by('-date_paye')
+    # Récupère l'année scolaire courante
+    current_year = AnneeScolaire.get_current_year()
 
-    # Calculate the total montant
-    total_montant = Mouvement.objects.aggregate(total=Sum('montant'))['total'] or 0
+    if not current_year:
+        return render(request, 'cash/inoutflows/income_list.html', {
+            'income_list': [],
+            'total_montant': 0,
+            'page_identifier': 'S35',
+            'error_message': "Aucune année scolaire courante définie.",
+        })
 
+    # Récupère les paiements liés à cette année scolaire uniquement
+    incomes = Mouvement.objects.filter(
+        inscription__annee_scolaire=current_year
+    ).order_by('-date_paye')
 
-    # Prepare data for the template
+    total_montant = incomes.aggregate(total=Sum('montant'))['total'] or 0
+
     income_list = []
     progressive_total = 0
     for income in incomes:
@@ -754,10 +768,13 @@ def income_list_view(request):
 
     context = {
         'income_list': income_list,
-        'total_montant': total_montant,  # Add total_montant to the context
+        'total_montant': total_montant,
+        'page_identifier': 'S35',
+        'annee_scolaire': current_year,
     }
 
     return render(request, 'cash/inoutflows/income_list.html', context)
+
 
 
 @login_required
