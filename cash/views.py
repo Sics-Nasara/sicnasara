@@ -786,45 +786,52 @@ from django.contrib.auth.decorators import login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
+    # Toutes les années scolaires, triées par date initiale croissante
     all_annee_scolaires = AnneeScolaire.objects.all().order_by('date_initiale')
 
+    # Récupérer l'année scolaire sélectionnée via GET ou prendre celle en cours
     selected_year_id = request.GET.get('annee_scolaire')
     if selected_year_id:
         annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_year_id)
     else:
         annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Get the latest (most recent) annee_scolaire before the selected one (by date_initiale)
-    previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire.date_initiale).order_by('-date_finale').first()
+    # Trouver l'année scolaire la plus récente avant l'année sélectionnée
+    previous_year = AnneeScolaire.objects.filter(
+        date_finale__lt=annee_scolaire.date_initiale
+    ).order_by('-date_finale').first()
 
-    # Calculate initial_balance based on previous year's incomes and expenses
+    # Calculer le solde initial basé sur les mouvements (entrées - sorties) de l'année précédente
     initial_balance = 0
     if previous_year:
         total_income_prev = Mouvement.objects.filter(
             inscription__annee_scolaire=previous_year
         ).aggregate(total=Sum('montant'))['total'] or 0
+
         total_expense_prev = Expense.objects.filter(
             date__range=(previous_year.date_initiale, previous_year.date_finale)
         ).aggregate(total=Sum('amount'))['total'] or 0
+
         initial_balance = total_income_prev - total_expense_prev
 
+    # Réinitialisation si demandée dans URL
     reset_requested = request.GET.get('reset') == 'true'
     if reset_requested:
         with transaction.atomic():
             Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
-            Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
+            Expense.objects.filter(
+                date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
+            ).delete()
 
-    incomes = Mouvement.objects.filter(
-        inscription__annee_scolaire=annee_scolaire
-    ).order_by('date_paye')
-
-    expenses = Expense.objects.filter(
-        date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
-    ).order_by('date')
+    # Récupérer les mouvements de l'année courante
+    incomes = Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).order_by('date_paye')
+    expenses = Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).order_by('date')
 
     entries = []
     total_entree = 0
     total_sortie = 0
+
+    # Regrouper les entrées
     for income in incomes:
         student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Inconnu"
         description = f"{income.causal} - {student_name}"
@@ -836,6 +843,7 @@ def entree_sortie(request):
         })
         total_entree += income.montant
 
+    # Regrouper les sorties
     for expense in expenses:
         description = f"COMPT {expense.description or ''}"
         entries.append({
@@ -846,8 +854,10 @@ def entree_sortie(request):
         })
         total_sortie += expense.amount
 
+    # Trier les entrées/sorties par date
     entries.sort(key=lambda x: x['date'])
 
+    # Calculer le solde progressif en cumulant (entrée - sortie)
     progressive_balance = initial_balance
     for entry in entries:
         progressive_balance += entry['entree'] - entry['sortie']
@@ -868,6 +878,7 @@ def entree_sortie(request):
         'page_identifier': 'S35',
         'reset_requested': reset_requested,
     })
+
 
 '''@login_required
 def entree_sortie(request):
