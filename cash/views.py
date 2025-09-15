@@ -648,28 +648,56 @@ def get_sorted_expenses(request):
 
     return JsonResponse({"expenses": expense_list})
 
+@login_required
 def expense_create(request):
-    # Fetch the cashier "C_SCO"
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
-    # Calculate total income (sum of montant in Mouvement table)
-    total_income = Mouvement.objects.aggregate(total=Sum('montant'))['total'] or 0
+    # Récupération de l'année scolaire courante
+    annee_scolaire_actuelle = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Calculate total expenses (sum of amount in Expense table)
-    total_expenses = Expense.objects.filter(cashier=cashier).aggregate(total=Sum('amount'))['total'] or 0
+    # Trouver l'année scolaire précédente
+    if annee_scolaire_actuelle:
+        previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire_actuelle.date_initiale).order_by('-date_finale').first()
+    else:
+        previous_year = None
 
-    # Calculate balance
-    balance = total_income - total_expenses
+    # Calculer le total des entrées de l'année scolaire courante
+    total_income_current = 0
+    if annee_scolaire_actuelle:
+        total_income_current = Mouvement.objects.filter(
+            inscription__annee_scolaire=annee_scolaire_actuelle
+        ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Calculer le total des dépenses du cashier (pour cette année)
+    total_expenses_current = 0
+    if annee_scolaire_actuelle:
+        total_expenses_current = Expense.objects.filter(
+            cashier=cashier,
+            date__range=(annee_scolaire_actuelle.date_initiale, annee_scolaire_actuelle.date_finale)
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+    # Calculer le solde progressif final de l'année scolaire précédente
+    previous_balance = 0
+    if previous_year:
+        prev_incomes = Mouvement.objects.filter(inscription__annee_scolaire=previous_year).aggregate(total=Sum('montant'))['total'] or 0
+        prev_expenses = Expense.objects.filter(
+            cashier=cashier,
+            date__range=(previous_year.date_initiale, previous_year.date_finale)
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        previous_balance = prev_incomes - prev_expenses
+
+    # Calculer le solde total du cashier = solde précédent + (entrées - sorties) de l'année courante
+    balance = previous_balance + (total_income_current - total_expenses_current)
 
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
         if form.is_valid():
             expense = form.save(commit=False)
-            expense.cashier = cashier  # Associate expense with the C_SCO cashier
+            expense.cashier = cashier
 
-            # Generate a unique legacy_id if it's not already set
             if not expense.legacy_id:
-                expense.legacy_id = get_random_string(32)  # Generate a random string
+                expense.legacy_id = get_random_string(32)
 
             try:
                 expense.save()
@@ -677,7 +705,6 @@ def expense_create(request):
                 return redirect('expense_list')
             except IntegrityError:
                 messages.error(request, "An error occurred: Duplicate legacy_id. Please try again.")
-                # Optionally, regenerate the legacy_id and try saving again
                 expense.legacy_id = get_random_string(32)
                 try:
                     expense.save()
@@ -685,21 +712,19 @@ def expense_create(request):
                     return redirect('expense_list')
                 except IntegrityError:
                     messages.error(request, "Failed to generate a unique legacy_id. Please contact support.")
-                    # Log the error here if necessary
-                    pass  # Handle the case where a unique ID cannot be generated
+
     else:
         form = ExpenseForm()
 
-    # Pass balance and total income to template
     context = {
         'form': form,
         'cashier_balance': balance,
-        'total_income': total_income,
-        'total_expenses': total_expenses,
-        'page_identifier': 'S60',  # Example page identifier
+        'total_income': total_income_current,
+        'total_expenses': total_expenses_current,
+        'page_identifier': 'S60',
     }
-    
     return render(request, 'cash/expense/expense_form.html', context)
+
 
 def expense_update(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
