@@ -198,10 +198,6 @@ def home(request):
 
 '''
 
-from django.db import transaction
-from django.contrib.auth.decorators import login_required
-from .models import Ecole, Classe, AnneeScolaire
-
 @login_required
 def home(request):
     schools = Ecole.objects.filter(externe=False)
@@ -238,10 +234,9 @@ def home(request):
             "Secondaire": [],
             "Lycée": []
         }
-        # Récupérer classes triées par type__ordre
+        # Récupérer les classes d'une école et trier selon type__ordre
         classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
 
-        # Catégoriser et ajouter icônes
         for category_key in categories.keys():
             filtered_classes = [
                 c for c in classes if (
