@@ -204,10 +204,10 @@ def home(request):
     data = {}
 
     icon_mapping = {
-        "Maternelle": "child",
-        "Primaire": "school",
-        "Secondaire": "user-graduate",
-        "Lycée": "chalkboard-teacher"
+        "MATERNELLE": "child",
+        "PRIMAIRE": "school",
+        "SECONDAIRE": "user-graduate",
+        "LYCEE": "chalkboard-teacher"
     }
 
     all_years = AnneeScolaire.objects.all()
@@ -229,29 +229,26 @@ def home(request):
 
     for school in schools:
         categories = {
-            "Maternelle": [],
-            "Primaire": [],
-            "Secondaire": [],
-            "Lycée": []
+            "MATERNELLE": [],
+            "PRIMAIRE": [],
+            "SECONDAIRE": [],
+            "LYCEE": []
         }
-        # Récupérer les classes d'une école et trier selon type__ordre
+
+        # Récupérer classes triées selon type__ordre asc
         classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
 
         for category_key in categories.keys():
-            filtered_classes = [
-                c for c in classes if (
-                    (category_key == "Maternelle" and c.type.type_ecole == 'M') or
-                    (category_key == "Primaire" and c.type.type_ecole == 'P') or
-                    (category_key == "Secondaire" and c.type.type_ecole == 'S') or
-                    (category_key == "Lycée" and c.type.type_ecole == 'L')
-                )
+            filtered = [
+                c for c in classes if c.type.type_ecole == category_key[0]  # 'M','P','S','L'
             ]
 
             categories[category_key] = [{
                 'classe': classe,
                 'icon': icon_mapping.get(category_key, 'school')
-            } for classe in filtered_classes]
+            } for classe in filtered]
 
+        # Ajouter seulement si catégories non vides
         if any(categories.values()):
             data[school] = categories
 
