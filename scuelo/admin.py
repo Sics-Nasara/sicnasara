@@ -47,7 +47,7 @@ class ClasseAdmin(admin.ModelAdmin):
     list_display = ("nom", "type", "ecole", "legacy_id", "confirmed_py_count")
     list_filter = ("type__type_ecole", "ecole")
     search_fields = ("nom", "legacy_id")
-    inlines = [InscriptionInline]
+    #inlines = [InscriptionInline]
 
 
 @admin.register(Eleve, site=sics_site)
