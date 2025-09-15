@@ -807,7 +807,7 @@ from django.db import transaction
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-@login_required
+'''@login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
     all_annee_scolaires = AnneeScolaire.objects.all().order_by('date_initiale')
@@ -896,9 +896,9 @@ def entree_sortie(request):
         'page_identifier': 'S35',
         'reset_requested': reset_requested,
     })
+'''
 
-
-'''@login_required
+@login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
@@ -972,7 +972,7 @@ def entree_sortie(request):
         'page_identifier': 'S35',
         'reset_requested': reset_requested,
     })
-'''
+
 def rapport_comptable(request):
     # Fetch the C_SCO cashier
     cashier = get_object_or_404(Cashier, name="C_SCO")
