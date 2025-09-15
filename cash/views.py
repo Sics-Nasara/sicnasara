@@ -777,7 +777,99 @@ def income_list_view(request):
 
 
 
+from django.db.models import Sum
+from django.db import transaction
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
 @login_required
+def entree_sortie(request):
+    cashier = get_object_or_404(Cashier, name="C_SCO")
+
+    all_annee_scolaires = AnneeScolaire.objects.all().order_by('date_initiale')
+
+    selected_year_id = request.GET.get('annee_scolaire')
+    if selected_year_id:
+        annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_year_id)
+    else:
+        annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
+
+    # Get the latest (most recent) annee_scolaire before the selected one (by date_initiale)
+    previous_year = AnneeScolaire.objects.filter(date_finale__lt=annee_scolaire.date_initiale).order_by('-date_finale').first()
+
+    # Calculate initial_balance based on previous year's incomes and expenses
+    initial_balance = 0
+    if previous_year:
+        total_income_prev = Mouvement.objects.filter(
+            inscription__annee_scolaire=previous_year
+        ).aggregate(total=Sum('montant'))['total'] or 0
+        total_expense_prev = Expense.objects.filter(
+            date__range=(previous_year.date_initiale, previous_year.date_finale)
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        initial_balance = total_income_prev - total_expense_prev
+
+    reset_requested = request.GET.get('reset') == 'true'
+    if reset_requested:
+        with transaction.atomic():
+            Mouvement.objects.filter(inscription__annee_scolaire=annee_scolaire).delete()
+            Expense.objects.filter(date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)).delete()
+
+    incomes = Mouvement.objects.filter(
+        inscription__annee_scolaire=annee_scolaire
+    ).order_by('date_paye')
+
+    expenses = Expense.objects.filter(
+        date__range=(annee_scolaire.date_initiale, annee_scolaire.date_finale)
+    ).order_by('date')
+
+    entries = []
+    total_entree = 0
+    total_sortie = 0
+    for income in incomes:
+        student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Inconnu"
+        description = f"{income.causal} - {student_name}"
+        entries.append({
+            'date': income.date_paye,
+            'description': description,
+            'entree': income.montant,
+            'sortie': 0,
+        })
+        total_entree += income.montant
+
+    for expense in expenses:
+        description = f"COMPT {expense.description or ''}"
+        entries.append({
+            'date': expense.date,
+            'description': description,
+            'entree': 0,
+            'sortie': expense.amount,
+        })
+        total_sortie += expense.amount
+
+    entries.sort(key=lambda x: x['date'])
+
+    progressive_balance = initial_balance
+    for entry in entries:
+        progressive_balance += entry['entree'] - entry['sortie']
+        entry['progressive'] = progressive_balance
+
+    total_balance = progressive_balance
+
+    return render(request, 'cash/inoutflows/entree_sortie.html', {
+        'entries': entries,
+        'cashier': cashier,
+        'initial_balance': initial_balance,
+        'balance': cashier.balance(),
+        'total_balance': total_balance,
+        'total_entree': total_entree,
+        'total_sortie': total_sortie,
+        'annee_scolaire': annee_scolaire,
+        'all_annee_scolaires': all_annee_scolaires,
+        'page_identifier': 'S35',
+        'reset_requested': reset_requested,
+    })
+
+'''@login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
 
@@ -851,8 +943,7 @@ def entree_sortie(request):
         'page_identifier': 'S35',
         'reset_requested': reset_requested,
     })
-
-
+'''
 def rapport_comptable(request):
     # Fetch the C_SCO cashier
     cashier = get_object_or_404(Cashier, name="C_SCO")
