@@ -212,13 +212,25 @@ def home(request):
     all_years = AnneeScolaire.objects.all()
     school_year_id = request.GET.get("school_year")
 
-    # Mise à jour de l'année en cours si besoin ...
-    # (votre code inchangé ici)
+    # Gestion de la sélection année en cours
+    if school_year_id:
+        with transaction.atomic():
+            try:
+                selected_year = AnneeScolaire.objects.get(pk=school_year_id)
+            except AnneeScolaire.DoesNotExist:
+                selected_year = None
 
+            if selected_year and not selected_year.actuel:
+                # Désactiver toute l'année actuelle, activer la sélection
+                AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
+                selected_year.actuel = True
+                selected_year.save()
+
+    # Recharger l'année actuelle mise à jour
     current_year = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Ordre personnalisé des classes selon le type/type_ecole ou nom
-    ordre_classes = {
+    # Ordre désiré des classes
+    ordre_des_classes = {
         'GS': 1,
         'PS': 2,
         'MS': 3,
@@ -240,18 +252,21 @@ def home(request):
         }
         classes = Classe.objects.filter(ecole=school)
 
-        # Construire la liste triée des classes par catégorie
         for category_key in categories.keys():
-            filtered_classes = [c for c in classes if (
-                (category_key == "Maternelle" and c.type.type_ecole == 'M') or
-                (category_key == "Primaire" and c.type.type_ecole == 'P') or
-                (category_key == "Secondaire" and c.type.type_ecole == 'S') or
-                (category_key == "Lycée" and c.type.type_ecole == 'L')
-            )]
-            # Trier selon ordre_classes avec gestion du cas où la clé n'existe pas (mettre un grand nombre)
+            # Filtrer les classes selon catégorie
+            filtered_classes = [
+                c for c in classes if (
+                    (category_key == "Maternelle" and c.type.type_ecole == 'M') or
+                    (category_key == "Primaire" and c.type.type_ecole == 'P') or
+                    (category_key == "Secondaire" and c.type.type_ecole == 'S') or
+                    (category_key == "Lycée" and c.type.type_ecole == 'L')
+                )
+            ]
+
+            # Trier les classes selon ordre personnalisé sur le nom en majuscules
             sorted_classes = sorted(
                 filtered_classes,
-                key=lambda c: ordre_classes.get(c.nom.upper(), 999)
+                key=lambda c: ordre_des_classes.get(c.nom.upper(), 999)
             )
 
             categories[category_key] = [{
@@ -271,6 +286,7 @@ def home(request):
         'current_year': current_year,
         'page_identifier': 'S01',
     })
+
 
 
 from django.db import transaction

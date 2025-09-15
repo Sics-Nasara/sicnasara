@@ -898,6 +898,7 @@ def entree_sortie(request):
     })
 '''
 
+
 @login_required
 def entree_sortie(request):
     cashier = get_object_or_404(Cashier, name="C_SCO")
