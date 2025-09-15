@@ -125,7 +125,7 @@ def select_school_year(request):
     })
 from django.db import transaction
 
-@login_required
+'''@login_required
 def home(request):
     schools = Ecole.objects.filter(externe=False)
     data = {}
@@ -196,10 +196,81 @@ def home(request):
         'page_identifier': 'S01',
     })
 
+'''
+@login_required
+def home(request):
+    schools = Ecole.objects.filter(externe=False)
+    data = {}
 
+    icon_mapping = {
+        "Maternelle": "child",
+        "Primaire": "school",
+        "Secondaire": "user-graduate",
+        "Lycée": "chalkboard-teacher"
+    }
 
+    all_years = AnneeScolaire.objects.all()
+    school_year_id = request.GET.get("school_year")
 
+    # Mise à jour de l'année en cours si besoin ...
+    # (votre code inchangé ici)
 
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
+
+    # Ordre personnalisé des classes selon le type/type_ecole ou nom
+    ordre_classes = {
+        'GS': 1,
+        'PS': 2,
+        'MS': 3,
+        'CP1': 4,
+        'CP2': 5,
+        'CE1': 6,
+        'CE2': 7,
+        'CM1': 8,
+        'CM2': 9,
+        '6EME': 10,
+    }
+
+    for school in schools:
+        categories = {
+            "Maternelle": [],
+            "Primaire": [],
+            "Secondaire": [],
+            "Lycée": []
+        }
+        classes = Classe.objects.filter(ecole=school)
+
+        # Construire la liste triée des classes par catégorie
+        for category_key in categories.keys():
+            filtered_classes = [c for c in classes if (
+                (category_key == "Maternelle" and c.type.type_ecole == 'M') or
+                (category_key == "Primaire" and c.type.type_ecole == 'P') or
+                (category_key == "Secondaire" and c.type.type_ecole == 'S') or
+                (category_key == "Lycée" and c.type.type_ecole == 'L')
+            )]
+            # Trier selon ordre_classes avec gestion du cas où la clé n'existe pas (mettre un grand nombre)
+            sorted_classes = sorted(
+                filtered_classes,
+                key=lambda c: ordre_classes.get(c.nom.upper(), 999)
+            )
+
+            categories[category_key] = [{
+                'classe': classe,
+                'icon': icon_mapping.get(category_key, 'school')
+            } for classe in sorted_classes]
+
+        if any(categories.values()):
+            data[school] = categories
+
+    breadcrumbs = [('/', 'Home')]
+
+    return render(request, 'scuelo/home.html', {
+        'data': data,
+        'breadcrumbs': breadcrumbs,
+        'all_years': all_years,
+        'current_year': current_year,
+        'page_identifier': 'S01',
+    })
 
 
 from django.db import transaction
