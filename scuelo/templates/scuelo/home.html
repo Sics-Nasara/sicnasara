@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block header %}
 <span class="navbar-brand mb-0 h1 text-white">Système d’Information Centre Social Djickofe</span>
@@ -42,28 +43,31 @@
             <div class="panel">
                 <h3 class="panel-title">Recherche prédefinies</h3>
                 <div class="row">
-                    {% for school, categories in data.items %}
-                        <div class="col-md-12">
-                            <div class="school-section">
-                                <!-- Categories -->
-                                {% for categorie, items in categories.items %}
-                                    {% if items %}
-                                    <div class="category-section">
-                                        <h4 class="category-title">{{ categorie|title }}</h4>
-                                        <div class="class-grid">
-                                            {% for item in items %}
-                                                <a href="{% url 'class_detail' item.classe.id %}" class="class-card">
-                                                    <i class="fas fa-{{ item.icon }} class-icon"></i>
-                                                    <span>{{ item.classe.nom }}</span>
-                                                </a>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    {% endif %}
+{% for school, categories in data.items %}
+    <div class="col-md-12">
+        <div class="school-section">
+            {% for categorie in ordered_categories %}
+                {% with categories|get_item:categorie as items %}
+                    {% if items %}
+                        <div class="category-section">
+                            <h4 class="category-title">{{ categorie|title }}</h4>
+                            <div class="class-grid">
+                                {% for item in items %}
+                                    <a href="{% url 'class_detail' item.classe.id %}" class="class-card">
+                                        <i class="fas fa-{{ item.icon }} class-icon"></i>
+                                        <span>{{ item.classe.nom }}</span>
+                                    </a>
                                 {% endfor %}
                             </div>
                         </div>
-                    {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+
+
                     <!-- Quick Access Links -->
                     <div class="col-md-12 mt-5">
                         <div class="class-grid">

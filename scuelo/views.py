@@ -237,11 +237,13 @@ def home(request):
 
         # Récupérer classes triées selon type__ordre asc
         classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
-
         for category_key in categories.keys():
+            print(f"Filtering for category {category_key} using key {category_key[0]}...")
             filtered = [
-                c for c in classes if c.type.type_ecole == category_key[0]  # 'M','P','S','L'
+                c for c in classes if c.type.type_ecole == category_key[0]
             ]
+            print(f"Classes filtered for {category_key}: {[c.nom + ' (' + c.type.type_ecole + ')' for c in filtered]}")
+
 
             categories[category_key] = [{
                 'classe': classe,
@@ -253,12 +255,13 @@ def home(request):
             data[school] = categories
 
     breadcrumbs = [('/', 'Home')]
-
+    ordered_categories = ['MATERNELLE', 'PRIMAIRE', 'SECONDAIRE', 'LYCEE']
     return render(request, 'scuelo/home.html', {
         'data': data,
         'breadcrumbs': breadcrumbs,
         'all_years': all_years,
         'current_year': current_year,
+        'ordered_categories': ordered_categories,
         'page_identifier': 'S01',
     })
 
