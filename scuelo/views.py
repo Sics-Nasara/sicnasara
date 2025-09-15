@@ -197,6 +197,11 @@ def home(request):
     })
 
 '''
+
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from .models import Ecole, Classe, AnneeScolaire
+
 @login_required
 def home(request):
     schools = Ecole.objects.filter(externe=False)
@@ -212,7 +217,6 @@ def home(request):
     all_years = AnneeScolaire.objects.all()
     school_year_id = request.GET.get("school_year")
 
-    # Gestion de la sélection année en cours
     if school_year_id:
         with transaction.atomic():
             try:
@@ -221,27 +225,11 @@ def home(request):
                 selected_year = None
 
             if selected_year and not selected_year.actuel:
-                # Désactiver toute l'année actuelle, activer la sélection
                 AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
                 selected_year.actuel = True
                 selected_year.save()
 
-    # Recharger l'année actuelle mise à jour
     current_year = AnneeScolaire.objects.filter(actuel=True).first()
-
-    # Ordre désiré des classes
-    ordre_des_classes = {
-        'GS': 1,
-        'PS': 2,
-        'MS': 3,
-        'CP1': 4,
-        'CP2': 5,
-        'CE1': 6,
-        'CE2': 7,
-        'CM1': 8,
-        'CM2': 9,
-        '6EME': 10,
-    }
 
     for school in schools:
         categories = {
@@ -250,10 +238,11 @@ def home(request):
             "Secondaire": [],
             "Lycée": []
         }
-        classes = Classe.objects.filter(ecole=school)
+        # Récupérer classes triées par type__ordre
+        classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
 
+        # Catégoriser et ajouter icônes
         for category_key in categories.keys():
-            # Filtrer les classes selon catégorie
             filtered_classes = [
                 c for c in classes if (
                     (category_key == "Maternelle" and c.type.type_ecole == 'M') or
@@ -263,16 +252,10 @@ def home(request):
                 )
             ]
 
-            # Trier les classes selon ordre personnalisé sur le nom en majuscules
-            sorted_classes = sorted(
-                filtered_classes,
-                key=lambda c: ordre_des_classes.get(c.nom.upper(), 999)
-            )
-
             categories[category_key] = [{
                 'classe': classe,
                 'icon': icon_mapping.get(category_key, 'school')
-            } for classe in sorted_classes]
+            } for classe in filtered_classes]
 
         if any(categories.values()):
             data[school] = categories
