@@ -1444,59 +1444,83 @@ def payment_delay_per_class(request, pk):
          'page_identifier': 'S54' 
     })
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def classe_information(request, pk):
-    classe = get_object_or_404(Classe, id=pk)  # Fetch the specific class
-    school_name = classe.ecole.nom  # Assuming 'ecole' is a ForeignKey in Classe
-    school_year = AnneeScolaire.objects.filter(actuel=True).first()  # Get current school year
-    tarifs = Tarif.objects.filter(classe=classe)  # Get all tarifs related to this class
+    classe = get_object_or_404(Classe, id=pk)  # Classe ciblée
+    school_year = AnneeScolaire.objects.filter(actuel=True).first()  # Année scolaire actuelle
+    
+    # S'assurer qu'une année scolaire est définie
+    if not school_year:
+        return render(request, 'cash/tarif/classe_information.html', {
+            'error_message': "Aucune année scolaire actuelle définie.",
+            'page_identifier': 'S55',
+        })
 
-    # Count total students in the class
-    total_students = Eleve.objects.filter(inscriptions__classe=classe).count()
+    school_name = classe.ecole.nom  # Nom de l'école liée à la classe
+    tarifs = Tarif.objects.filter(classe=classe)  # Tarifs de la classe
 
-    # Count confirmed students (PY & CONF)
-    #total_students_confirmed = Eleve.objects.filter(inscriptions__classe=classe, condition_eleve='CONF').count()
-    total_students_confirmed = Eleve.objects.filter(
-    inscriptions__classe=classe,
-    condition_eleve='CONF',
-    cs_py='P'
+    # Étudiants inscrits dans cette classe & année scolaire
+    eleves_qs = Eleve.objects.filter(
+        inscriptions__classe=classe,
+        inscriptions__annee_scolaire=school_year
+    ).distinct()
+
+    total_students = eleves_qs.count()
+
+    # Étudiants confirmés PY
+    total_students_confirmed = eleves_qs.filter(
+        condition_eleve='CONF',
+        cs_py='P'
     ).count()
 
-    # Count students by categories
-    total_CS = Eleve.objects.filter(inscriptions__classe=classe, cs_py='C').count()
-    total_PY = Eleve.objects.filter(inscriptions__classe=classe, cs_py='P').count()
-    other =  total_students - (total_PY + total_CS )
+    # Comptage par catégorie dans la classe & année
+    total_CS = eleves_qs.filter(cs_py='C').count()
+    total_PY = eleves_qs.filter(cs_py='P').count()
+    other = total_students - (total_PY + total_CS)
 
-    # Calculate expected payments based on tranches
-    sco1 = tarifs.filter(causal="SCO1").aggregate(total=models.Sum('montant'))['total'] or 0
-    sco2 = tarifs.filter(causal="SCO2").aggregate(total=models.Sum('montant'))['total'] or 0
-    sco3 = tarifs.filter(causal="SCO3").aggregate(total=models.Sum('montant'))['total'] or 0
+    # Calcul des tranches tarifaires
+    sco1 = tarifs.filter(causal="SCO1").aggregate(total=Sum('montant'))['total'] or 0
+    sco2 = tarifs.filter(causal="SCO2").aggregate(total=Sum('montant'))['total'] or 0
+    sco3 = tarifs.filter(causal="SCO3").aggregate(total=Sum('montant'))['total'] or 0
 
     first_tranche = sco1
     second_tranche = sco1 + sco2
     third_tranche = sco1 + sco2 + sco3
 
-    # Calculate progressif per tranche (PY & CONF)
+    # Progressif par tranche (PY confirmés cette année)
     progressif_per_tranche = {
         '1er': first_tranche * total_students_confirmed,
         '2eme': second_tranche * total_students_confirmed,
         '3eme': third_tranche * total_students_confirmed,
     }
-    expected_total_school_fees = third_tranche * total_students_confirmed  
+
+    expected_total_school_fees = third_tranche * total_students_confirmed
+
+    # Uniformes reçus PY cette année et classe
     total_py_uniforms_received = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=school_year,
-        inscription__eleve__cs_py='P',  # Filter for PY students
-        causal='TEN'  # Assuming TEN is the causal for uniforms
+        inscription__eleve__cs_py='P',
+        causal='TEN'
     ).aggregate(total=Sum('montant'))['total'] or 0
+
+    # Frais scolaires reçus cette année pour la classe
     actual_total_school_fees_received = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=school_year,
         causal__in=['SCO']
     ).aggregate(total=Sum('montant'))['total'] or 0
-    cost_per_uniform = UniformReservation.objects.filter(student_type='P').first().cost_per_uniform if UniformReservation.objects.filter(student_type='P').first() else 0 # 
+
+    # Coût un uniforme PY (ou 0 si pas défini)
+    first_uniform_reservation = UniformReservation.objects.filter(student_type='P').first()
+    cost_per_uniform = first_uniform_reservation.cost_per_uniform if first_uniform_reservation else 0
+
     total_py_uniforms_expected = total_students_confirmed * cost_per_uniform
+
     return render(request, 'cash/tarif/classe_information.html', {
         'classe': classe,
         'school_name': school_name,
@@ -1506,18 +1530,17 @@ def classe_information(request, pk):
         'total_students_confirmed': total_students_confirmed,
         'total_CS': total_CS,
         'total_PY': total_PY,
-        'other':other,
+        'other': other,
         'progressif_per_tranche': progressif_per_tranche,
         'first_tranche': first_tranche,
         'second_tranche': second_tranche,
         'third_tranche': third_tranche,
-        'total_py_uniforms_received':total_py_uniforms_received,
-        'actual_total_school_fees_received':actual_total_school_fees_received,
-        'expected_total_school_fees':expected_total_school_fees,
-        'total_py_uniforms_expected':total_py_uniforms_expected,
-         'page_identifier': 'S55' 
+        'total_py_uniforms_received': total_py_uniforms_received,
+        'actual_total_school_fees_received': actual_total_school_fees_received,
+        'expected_total_school_fees': expected_total_school_fees,
+        'total_py_uniforms_expected': total_py_uniforms_expected,
+        'page_identifier': 'S55',
     })
-
 
 
 @login_required
