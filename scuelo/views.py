@@ -802,6 +802,11 @@ def offsite_students(request):
 
 
         
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 @method_decorator(login_required, name='dispatch')
 class StudentCreateView(CreateView):
     model = Eleve
@@ -816,20 +821,19 @@ class StudentCreateView(CreateView):
         data['ecoles'] = Ecole.objects.all()
         return data
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if self.request.method == 'POST':
-            kwargs['data'] = self.request.POST  # Pass request.POST as data
-        return kwargs
-    
     def form_valid(self, form):
+        # Save Eleve instance first
+        eleve = form.save(commit=False)
+        eleve.save()
+
+        # Create Inscription tying eleve to classe and annee_scolaire
         classe = form.cleaned_data['classe']
-        ecole = form.cleaned_data['ecole']
         annee_scolaire = form.cleaned_data['annee_scolaire']
-        eleve = form.save()
         Inscription.objects.create(eleve=eleve, classe=classe, annee_scolaire=annee_scolaire)
+
+        # Call super to proceed with redirect etc
         return super().form_valid(form)
-  
+
 def get_classes_by_school(request):
     ecole_id = request.GET.get('ecole')
     classes = Classe.objects.filter(ecole_id=ecole_id).order_by('nom')
