@@ -75,6 +75,9 @@ import seaborn as sns
 # 4. Payment Management
 # =======================
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
 @login_required
 def add_payment(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -93,12 +96,11 @@ def add_payment(request, pk):
         form = PaiementPerStudentForm(request.POST)
         if form.is_valid():
             mouvement = form.save(commit=False)
-            mouvement.inscription = inscription  # Ensure inscription is set
+            mouvement.inscription = inscription  # Assure que inscription est définie
             mouvement.causal = form.cleaned_data['causal']
 
             if inscription:
                 mouvement.save()
-                print(f"Payment saved for {student.nom} {student.prenom}")  # Debug: Confirm payment saved
                 StudentLog.objects.create(
                     student=student,
                     user=request.user,
@@ -106,18 +108,12 @@ def add_payment(request, pk):
                     old_value="",
                     new_value=f"Payment - {mouvement.montant} - {mouvement.note} - {mouvement.date_paye}"
                 )
-                
-                # Redirect to the class detail view
-                if class_pk:
-                    return redirect('class_detail', pk=class_pk)
-                else:
-                    # Handle the case where no class is found
-                    return redirect('student_detail', pk=student.pk)
+                # Redirection vers la page détail de l'étudiant
+                return redirect('student_detail', pk=student.pk)
             else:
                 form.add_error(None, "No active inscription found for this student.")
         else:
-            print(form.errors)  # Debug: Print form errors
-
+            print(form.errors)  # Debug : afficher erreurs formulaire
     else:
         form = PaiementPerStudentForm()
 
