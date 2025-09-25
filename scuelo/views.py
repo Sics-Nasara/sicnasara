@@ -596,66 +596,48 @@ def add_student_rang(request, pk):
         'student': student,
         'existing_rang': existing_rang,
     })
+
+
+from django.views.generic import ListView
+from django.db.models import Prefetch, Sum
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.http import HttpResponse
+
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
-    model = Eleve
+    model = Ecole  # On liste par écoles et classes
     template_name = 'scuelo/student_management.html'
-    context_object_name = 'students'
+    context_object_name = 'schools'
 
     def get_queryset(self):
-        return Eleve.objects.prefetch_related(
+        current_year = AnneeScolaire.objects.filter(actuel=True).first()
+        if not current_year:
+            return Ecole.objects.none()
+
+        # Charge écoles avec classes qui ont inscriptions dans l'année scolaire courante
+        return Ecole.objects.prefetch_related(
             Prefetch(
-                'inscriptions',
-                queryset=Inscription.objects.select_related('classe__ecole')
+                'classe_set',
+                queryset=Classe.objects.prefetch_related(
+                    Prefetch(
+                        'inscription_set',
+                        queryset=Inscription.objects.filter(annee_scolaire=current_year).select_related('eleve')
+                    )
+                ).filter(inscription__annee_scolaire=current_year).distinct()
             )
-        ).order_by('nom', 'prenom')
+        ).order_by('nom')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Retrieve the current academic year
-        selected_annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
-        if not selected_annee_scolaire:
-            return HttpResponse("No current academic year found.", status=400)
-
-        # Define the desired school order
-        preferred_schools = ['École Maternelle Centre social de Nasara', 'École primaire Centre social de Nasara']
-
-        # Annotate schools and classes and order them as requested
-        schools = Ecole.objects.annotate(
-            school_order=Case(
-                *[When(nom=school, then=Value(i)) for i, school in enumerate(preferred_schools)],
-                default=Value(len(preferred_schools)),
-                output_field=IntegerField()
-            )
-        ).prefetch_related(
-            Prefetch(
-                'classe_set',
-                queryset=Classe.objects.annotate(
-                    student_count=Count('inscription')
-                ).filter(student_count__gt=0).order_by('-student_count')
-            )
-        ).order_by('school_order', 'nom')
-
-        # Attach payment data to each inscription
-        for school in schools:
-            for classe in school.classe_set.all():
-                for inscription in classe.inscription_set.all():
-                    eleve = inscription.eleve
-
-                    # Calculate total payments for the student within this class and academic year
-                    total_payments = Mouvement.objects.filter(
-                        inscription=inscription,
-                        annee_scolaire=selected_annee_scolaire
-                    ).aggregate(Sum('montant'))['montant__sum'] or 0
-
-                    # Assign the total_payments directly to the inscription
-                    inscription.total_payments = total_payments
-
-        context['schools'] = schools
+        current_year = AnneeScolaire.objects.filter(actuel=True).first()
+        if not current_year:
+            return HttpResponse("Aucune année scolaire actuelle trouvée.", status=400)
+        
+        context['annee_scolaire'] = current_year
         context['page_identifier'] = 'S14'
         return context
-
 
 
 @login_required
