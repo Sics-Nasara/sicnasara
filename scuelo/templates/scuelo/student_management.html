@@ -124,6 +124,7 @@
                                 <th class="nom">Nom</th>
                                 <th class="prenom">Prenom</th>
                                 <th class="col-sex">Sexe</th>
+                                    <th>Condition</th> <!-- NOUVEAU -->
                                 <th class="dat ">Date nais</th>
                                 <th class="cs_py">CS_PY</th>
                                 <th class="hand">Handicap</th>
@@ -145,6 +146,8 @@
                                     <td>{{ inscription.eleve.nom }}</td>
                                     <td>{{ inscription.eleve.prenom }}</td>
                                     <td>{{ inscription.eleve.get_sex_display }}</td>
+                                    <td>{{ inscription.eleve.get_condition_eleve_display }}</td>
+
                                     <td>{{ inscription.eleve.date_naissance|date:'Y-m-d'}}</td>
                                     <td>{{ inscription.eleve.get_cs_py_display }}</td>
                                     <td>{% if inscription.eleve.hand %}{{ inscription.eleve.hand }}{% else %}-{% endif %}</td>
