@@ -502,8 +502,8 @@ def late_payment_report(request):
 
                 can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
 
-                diff_sco = sco_exigible - sco_paid
-                diff_can = can_exigible - can_paid
+                diff_sco = max(0, sco_exigible - sco_paid)
+                diff_can = max(0, can_exigible - can_paid)
                 retards = diff_sco + diff_can
 
                 if retards > 0:
