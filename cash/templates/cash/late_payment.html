@@ -122,11 +122,23 @@
                         <td>{{ student.note }}</td>
                     </tr>
                     {% endfor %}
+                    <!-- Ligne total par classe -->
+                    <tr class="class-header-row">
+                        <td colspan="7" style="text-align:right;">Total par classe :</td>
+                        <td class="amount-col {% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %}">{{ class_info.total_diff_sco|format_amount }}</td>
+                        <td></td>
+                        <td></td>
+                        <td class="amount-col {% if class_info.total_diff_can > 0 %}highlight-negative{% endif %}">{{ class_info.total_diff_can|format_amount }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     {% endfor %}
 {% endfor %}
+
 
 <script>
     $(document).ready(function() {
