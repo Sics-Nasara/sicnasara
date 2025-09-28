@@ -2,7 +2,6 @@
 {% load custom_filters %}
 {% load static %}
 
-<!-- DataTables CSS & JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,18 +11,18 @@
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
 {% block header %}
-    <span class="navbar-brand mb-0 h1 text-white">Retards Paiement</span>
-    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
-    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
-    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
+<span class="navbar-brand mb-0 h1 text-white">Retards Paiement</span>
+<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
+<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
+<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
 
-    <div class="ml-2 d-flex align-items-stretch">
-        <button class="class-card mr-3" onclick="window.print()">Print</button>
-        <a href="{% url 'home' %}" class="class-card mr-3">Cancel</a>
-        <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
-        <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
-        <h2 class="mr-3 text-white"><strong>{{ page_identifier }}</strong></h2>
-    </div>
+<div class="ml-2 d-flex align-items-stretch">
+    <button class="class-card mr-3" onclick="window.print()">Print</button>
+    <a href="{% url 'home' %}" class="class-card mr-3">Cancel</a>
+    <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
+    <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
+    <h2 class="mr-3 text-white"><strong>{{ page_identifier }}</strong></h2>
+</div>
 {% endblock header %}
 
 {% block content %}
@@ -67,22 +66,11 @@
     }
 </style>
 
-
-{% if class_info.tranche_dates %}
-  <div class="tranche-dates">
-    <strong>Dates des tranches exigibles :</strong>
-    <ul>
-      {% for causal, date_exp in class_info.tranche_dates %}
-        <li>{{ causal }} : {{ date_exp|date:"d/m/Y" }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endif %}
-
 {% for school, classes in data.items %}
     <h3>{{ school }}</h3>
     {% for class_name, class_info in classes.items %}
         <div class="table-container">
+
             <h4>Classe: {{ class_name }}</h4>
 
             {% if class_info.tranche_dates %}
@@ -134,7 +122,6 @@
                         <td>{{ student.note }}</td>
                     </tr>
                     {% endfor %}
-                    <!-- Ligne total par classe -->
                     <tr class="class-header-row">
                         <td colspan="7" style="text-align:right;">Total par classe :</td>
                         <td class="amount-col {% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %}">{{ class_info.total_diff_sco|format_amount }}</td>
@@ -151,7 +138,6 @@
     {% endfor %}
 {% endfor %}
 
-
 <script>
     $(document).ready(function() {
         $('.classTable').each(function() {
@@ -161,7 +147,7 @@
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 order: [
-                    [12, 'desc'],  // Retard (%) column (0-based index)
+                    [12, 'desc'],  // Retard (%) column (0-based)
                     [1, 'asc'],    // Nom
                     [2, 'asc']     // Prenom
                 ],
@@ -171,5 +157,4 @@
         });
     });
 </script>
-
 {% endblock content %}

@@ -501,7 +501,7 @@ def late_payment_report(request):
                 sco_exigible = tarifs_due.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
 
                 can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
-
+#30/11/2025
                 diff_sco = max(0, sco_exigible - sco_paid)
                 diff_can = max(0, can_exigible - can_paid)
                 retards = diff_sco + diff_can
