@@ -1,9 +1,10 @@
 {% extends "../layout.html" %}
 {% load custom_filters %}
+{% load static %}
 
-<!-- DataTables CSS and JS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
@@ -27,11 +28,11 @@
 
 {% block content %}
 <style>
-    /* Your existing styles */
     .table-container {
         max-width: 100%;
         overflow-x: auto;
         border-radius: 10px;
+        margin-bottom: 40px;
     }
     .table {
         width: 100%;
@@ -51,106 +52,100 @@
     .class-header-row {
         background-color: #f8f9fa !important;
         font-weight: bold;
+        font-size: 14px;
     }
     .highlight-negative {
         color: red;
         font-weight: bold;
     }
     .amount-col { text-align: right !important; }
-    .left-col { text-align: left !important; }
-    .paid { width: 5% !important; text-align: center;}
-    .id { width: 2px !important; }
-    .hand { width: 25px !important; }
-    .prenom { width: 200px !important; }
-    .nom { width: 200px !important; }
-    .cs_py { width: 1% !important; }
-    .col-sex { width: 1% !important; }
-    .scuelo{ width: 5% !important}
-    @media print {
-        .hidden-print { display: none !important; }
-        .class-section { 
-            page-break-before: always; 
-        }
-        .class-section:first-child {
-            page-break-before: auto;
-        }
+    .red-retard { color: red; }
+    .tranche-dates {
+        font-style: italic;
+        font-size: 12px;
+        margin-bottom: 8px;
     }
 </style>
 
-<div class="table-container">
-    <table class="table table-striped table-bordered" id="delaysTable">
-        <thead>
-            <tr>
-                <th class='id'>ID</th>
-                <th class='nom'>Nom</th>
-                <th class='prenom'>Prenom</th>
-                <th class='col-sex'>Sex</th>
-                <th class='cs_py'>Cond</th>
-                <th class='paid'>SCO Paid</th>
-                <th class='paid'>Exigible</th>
-                <th class='paid'>Diff. SCO</th>
-                <th class='paid'>CAN Paid</th>
-                <th class='paid'>Exigible</th>
-                <th class='paid'>Diff. CAN</th>
-                <th class='paid'>Retards</th>
-                <th class='paid'>Retard (%)</th>
-                <th class='paid'>Note</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for school, classes in data.items %}
-                {% for class_name, class_info in classes.items %}
-                <tr class="class-section">
-                    <td colspan="14" class="class-header-row">Class: {{ class_name }}</td>
-                </tr>
-                {% for student in class_info.students %}
-                <tr>
-                    <td class='id'>{{ student.id }}</td>
-                    <td>{{ student.nom }}</td>
-                    <td>{{ student.prenom }}</td>
-                    <td>{{ student.sex }}</td>
-                    <td>{{ student.condition_eleve }}</td>
-                    <td class='amount-col'>{% if student.sco_paid == 0 %}-{% else %}{{ student.sco_paid|format_amount }}{% endif %}</td>
-                    <td class='amount-col'>{% if student.sco_exigible == 0 %}-{% else %}{{ student.sco_exigible|format_amount }}{% endif %}</td>
-                    <td class='amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}'>{% if student.diff_sco == 0 %}-{% else %}{{ student.diff_sco|format_amount }}{% endif %}</td>
-                    <td class='amount-col'>{% if student.can_paid == 0 %}-{% else %}{{ student.can_paid|format_amount }}{% endif %}</td>
-                    <td class='amount-col'>{% if student.can_exigible == 0 %}-{% else %}{{ student.can_exigible|format_amount }}{% endif %}</td>
-                    <td class='amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}'>{% if student.diff_can == 0 %}-{% else %}{{ student.diff_can|format_amount }}{% endif %}</td>
-                    <td class='amount-col'>{% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}</td>
-                    <td class='amount-col {% if student.remaining_percentage > 0 %}red-retard{% endif %}'>{% if student.remaining_percentage > 0 %}-{{ student.remaining_percentage|floatformat:1 }}%{% else %}-{% endif %}</td>
-                    <td>{{ student.note }}</td>
-                </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="7" style="text-align: right;">Class Total:</td>
-                    <td class='amount-col {% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %}'>{{ class_info.total_diff_sco|format_amount }}</td>
-                    <td></td>
-                    <td></td>
-                    <td class='amount-col {% if class_info.total_diff_can > 0 %}highlight-negative{% endif %}'>{{ class_info.total_diff_can|format_amount }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% for school, classes in data.items %}
+    <h3>{{ school }}</h3>
+    {% for class_name, class_info in classes.items %}
+        <div class="table-container">
+            <h4>Classe: {{ class_name }}</h4>
+
+            {% if class_info.tranche_dates %}
+                <div class="tranche-dates">
+                    <strong>Dates des tranches exigibles :</strong>
+                    <ul>
+                        {% for causal, date_exp in class_info.tranche_dates %}
+                            <li>{{ causal }} : {{ date_exp|date:"d/m/Y" }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <table id="classTable-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" class="table table-striped table-bordered classTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Sexe</th>
+                        <th>Cond</th>
+                        <th>SCO Payé</th>
+                        <th>Exigible</th>
+                        <th>Diff. SCO</th>
+                        <th>CAN Payé</th>
+                        <th>Exigible</th>
+                        <th>Diff. CAN</th>
+                        <th>Retards</th>
+                        <th>Retard (%)</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in class_info.students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.nom }}</td>
+                        <td>{{ student.prenom }}</td>
+                        <td>{{ student.sex }}</td>
+                        <td>{{ student.condition_eleve }}</td>
+                        <td class="amount-col">{% if student.sco_paid == 0 %}-{% else %}{{ student.sco_paid|format_amount }}{% endif %}</td>
+                        <td class="amount-col">{% if student.sco_exigible == 0 %}-{% else %}{{ student.sco_exigible|format_amount }}{% endif %}</td>
+                        <td class="amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}">{% if student.diff_sco == 0 %}-{% else %}{{ student.diff_sco|format_amount }}{% endif %}</td>
+                        <td class="amount-col">{% if student.can_paid == 0 %}-{% else %}{{ student.can_paid|format_amount }}{% endif %}</td>
+                        <td class="amount-col">{% if student.can_exigible == 0 %}-{% else %}{{ student.can_exigible|format_amount }}{% endif %}</td>
+                        <td class="amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}">{% if student.diff_can == 0 %}-{% else %}{{ student.diff_can|format_amount }}{% endif %}</td>
+                        <td class="amount-col">{% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}</td>
+                        <td class="amount-col {% if student.remaining_percentage > 0 %}red-retard{% endif %}">{% if student.remaining_percentage > 0 %}-{{ student.remaining_percentage|floatformat:1 }}%{% else %}-{% endif %}</td>
+                        <td>{{ student.note }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+{% endfor %}
 
 <script>
     $(document).ready(function() {
-        $('#delaysTable').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-            ],
-            order: [
-                [12, 'desc'],  // Retard (%) column index is 12 (0-based index)
-                [1, 'asc'],   // Nom ascending
-                [2, 'asc']    // Prenom ascending
-            ],
-            pageLength: 50
+        $('.classTable').each(function() {
+            $(this).DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                order: [
+                    [12, 'desc'],  // Retard (%) column (0-based index)
+                    [1, 'asc'],    // Nom
+                    [2, 'asc']     // Prenom
+                ],
+                pageLength: 25,
+                lengthChange: false
+            });
         });
     });
 </script>
+
 {% endblock content %}
