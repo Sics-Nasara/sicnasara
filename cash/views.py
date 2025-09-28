@@ -429,7 +429,6 @@ def delete_mouvement(request, pk):
 @login_required
 def late_payment_report(request):
     data = {}
-    grand_total_remaining = 0
     grand_total_diff_sco = 0
     grand_total_diff_can = 0
 
@@ -441,6 +440,8 @@ def late_payment_report(request):
             'error': 'No current school year is set.',
             'page_identifier': 'S58'
         })
+
+    today = date.today()
 
     schools = Ecole.objects.prefetch_related(
         Prefetch(
@@ -466,22 +467,16 @@ def late_payment_report(request):
             ).distinct()
 
             student_data = []
-            total_class_remaining = 0
             total_diff_sco = 0
             total_diff_can = 0
+            total_class_remaining = 0
 
             for student in students:
-                # Fetch SCO payments only
-                sco_payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    causal__in=['SCO'],
-                    inscription__annee_scolaire=current_annee_scolaire
-                )
+                # Paiements SCO filtrés par causal hors CAN, TEN, INS
                 sco_payments = Mouvement.objects.filter(
                     inscription__eleve=student,
                     inscription__annee_scolaire=current_annee_scolaire
                 ).exclude(causal__in=['CAN', 'TEN', 'INS'])
-
                 sco_paid = sco_payments.aggregate(Sum('montant'))['montant__sum'] or 0
 
                 can_payments = Mouvement.objects.filter(
@@ -492,8 +487,16 @@ def late_payment_report(request):
                 can_paid = can_payments.aggregate(Sum('montant'))['montant__sum'] or 0
 
                 tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
-                sco_exigible = tarifs.filter(causal__in=['SCO1' , 'SCO2'  ,'SCO3']).aggregate(Sum('montant'))[
-                                    'montant__sum'] or 0
+
+                # Calcul dynamique de la tranche exigible selon la date d’aujourd’hui
+                if today <= date(today.year, 11, 30):
+                    sco_tranches = tarifs.filter(causal='SCO1')
+                elif today <= date(today.year, 12, 31):
+                    sco_tranches = tarifs.filter(causal__in=['SCO1', 'SCO2'])
+                else:
+                    sco_tranches = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3'])
+                sco_exigible = sco_tranches.aggregate(Sum('montant'))['montant__sum'] or 0
+
                 can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
 
                 diff_sco = sco_exigible - sco_paid
@@ -502,13 +505,8 @@ def late_payment_report(request):
 
                 if retards > 0:
                     total_exigible = sco_exigible + can_exigible
-                    percentage_paid = (
-                        (sco_paid + can_paid) / total_exigible * 100
-                    ) if total_exigible > 0 else 0
-
-                    remaining_percentage = (
-                        retards / total_exigible * 100
-                    ) if total_exigible > 0 else 0
+                    percentage_paid = (sco_paid + can_paid) / total_exigible * 100 if total_exigible > 0 else 0
+                    remaining_percentage = retards / total_exigible * 100 if total_exigible > 0 else 0
 
                     student_data.append({
                         'id': student.id,
@@ -526,14 +524,13 @@ def late_payment_report(request):
                         'percentage_paid': percentage_paid,
                         'remaining_percentage': remaining_percentage,
                         'note': student.note_eleve,
-                        'condition_eleve': student.condition_eleve,  # Include condition_eleve
+                        'condition_eleve': student.condition_eleve,
                         'page_identifier': 'S30'
                     })
 
                     total_diff_sco += diff_sco
                     total_diff_can += diff_can
-
-                total_class_remaining += retards
+                    total_class_remaining += retards
 
             if student_data:
                 class_data[classe.nom] = {
@@ -545,12 +542,11 @@ def late_payment_report(request):
 
                 grand_total_diff_sco += total_diff_sco
                 grand_total_diff_can += total_diff_can
-                # grand_total_remaining += total_class_remaining # Don't double count
 
         if class_data:
             data[school.nom] = class_data
 
-    grand_total_remaining = grand_total_diff_sco + grand_total_diff_can # this is correct now
+    grand_total_remaining = grand_total_diff_sco + grand_total_diff_can
 
     return render(request, 'cash/late_payment.html', {
         'data': data,
@@ -560,7 +556,6 @@ def late_payment_report(request):
         'grand_total_diff_can': grand_total_diff_can,
         'current_annee_scolaire': current_annee_scolaire,
     })
-
 
 
 
