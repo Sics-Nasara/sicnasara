@@ -472,11 +472,11 @@ def late_payment_report(request):
             total_class_remaining = 0
 
             for student in students:
-                # Paiements SCO filtrés par causal hors CAN, TEN, INS
                 sco_payments = Mouvement.objects.filter(
                     inscription__eleve=student,
                     inscription__annee_scolaire=current_annee_scolaire
                 ).exclude(causal__in=['CAN', 'TEN', 'INS'])
+
                 sco_paid = sco_payments.aggregate(Sum('montant'))['montant__sum'] or 0
 
                 can_payments = Mouvement.objects.filter(
@@ -488,14 +488,9 @@ def late_payment_report(request):
 
                 tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
 
-                # Calcul dynamique de la tranche exigible selon la date d’aujourd’hui
-                if today <= date(today.year, 11, 30):
-                    sco_tranches = tarifs.filter(causal='SCO1')
-                elif today <= date(today.year, 12, 31):
-                    sco_tranches = tarifs.filter(causal__in=['SCO1', 'SCO2'])
-                else:
-                    sco_tranches = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3'])
-                sco_exigible = sco_tranches.aggregate(Sum('montant'))['montant__sum'] or 0
+                # Filter tarifs by date_expiration less or equal to today (due tranches)
+                tarifs_due = tarifs.filter(date_expiration__lte=today)
+                sco_exigible = tarifs_due.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
 
                 can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
 
