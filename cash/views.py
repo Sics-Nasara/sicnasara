@@ -426,6 +426,7 @@ def delete_mouvement(request, pk):
 
 
 
+
 @login_required
 def late_payment_report(request):
     data = {}
@@ -471,6 +472,13 @@ def late_payment_report(request):
             total_diff_can = 0
             total_class_remaining = 0
 
+            # Récupérer les dates des tranches SCO Scolarité
+            tranche_dates = list(Tarif.objects.filter(
+                classe=classe,
+                annee_scolaire=current_annee_scolaire,
+                causal__in=['SCO1', 'SCO2', 'SCO3']
+            ).values_list('causal', 'date_expiration').order_by('date_expiration'))
+
             for student in students:
                 sco_payments = Mouvement.objects.filter(
                     inscription__eleve=student,
@@ -488,7 +496,7 @@ def late_payment_report(request):
 
                 tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
 
-                # Filter tarifs by date_expiration less or equal to today (due tranches)
+                # Filtre dynamique des tarifs exigibles selon date_expiration (tranches dues aujourd'hui)
                 tarifs_due = tarifs.filter(date_expiration__lte=today)
                 sco_exigible = tarifs_due.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
 
@@ -518,7 +526,7 @@ def late_payment_report(request):
                         'retards': retards,
                         'percentage_paid': percentage_paid,
                         'remaining_percentage': remaining_percentage,
-                        'note': student.note_eleve,
+                        'note': getattr(student, 'note_eleve', ''),
                         'condition_eleve': student.condition_eleve,
                         'page_identifier': 'S30'
                     })
@@ -533,6 +541,7 @@ def late_payment_report(request):
                     'total_class_remaining': total_class_remaining,
                     'total_diff_sco': total_diff_sco,
                     'total_diff_can': total_diff_can,
+                    'tranche_dates': tranche_dates,
                 }
 
                 grand_total_diff_sco += total_diff_sco
@@ -547,8 +556,8 @@ def late_payment_report(request):
         'data': data,
         'grand_total_remaining': grand_total_remaining,
         'grand_total_diff_sco': grand_total_diff_sco,
-        'page_identifier': 'S58',
         'grand_total_diff_can': grand_total_diff_can,
+        'page_identifier': 'S58',
         'current_annee_scolaire': current_annee_scolaire,
     })
 

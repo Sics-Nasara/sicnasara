@@ -67,6 +67,18 @@
     }
 </style>
 
+
+{% if class_info.tranche_dates %}
+  <div class="tranche-dates">
+    <strong>Dates des tranches exigibles :</strong>
+    <ul>
+      {% for causal, date_exp in class_info.tranche_dates %}
+        <li>{{ causal }} : {{ date_exp|date:"d/m/Y" }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
 {% for school, classes in data.items %}
     <h3>{{ school }}</h3>
     {% for class_name, class_info in classes.items %}
