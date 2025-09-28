@@ -1,7 +1,7 @@
 {% extends "../layout.html" %}
 {% load custom_filters %}
 
-<!-- DataTables CSS and JavaScript -->
+<!-- DataTables CSS and JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -11,32 +11,23 @@
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
 {% block header %}
-
     <span class="navbar-brand mb-0 h1 text-white">Retards Paiement</span>
+    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
+    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
+    <h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
 
-{% comment %}
-    <span class="navbar-brand mb-0 h1 text-white">Retards Paiement {{ current_annee_scolaire.nom }}</span>
-{% endcomment %}
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
-
-<div class="ml-2 d-flex align-items-stretch">
-    <button class="class-card mr-3 " onclick="myFunction()"> Print</button>
-    <a href="{% url 'home' %}" class="class-card mr-3">Cancel</a>
-    <button class="class-card mr-3" id="undo-button" title="Undo">
-        <i class="fas fa-undo"></i>
-    </button>
-    <button class="class-card mr-3" id="redo-button" title="Redo">
-        <i class="fas fa-redo"></i>
-    </button>
-    <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
-</div>
+    <div class="ml-2 d-flex align-items-stretch">
+        <button class="class-card mr-3" onclick="window.print()">Print</button>
+        <a href="{% url 'home' %}" class="class-card mr-3">Cancel</a>
+        <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
+        <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
+        <h2 class="mr-3 text-white"><strong>{{ page_identifier }}</strong></h2>
+    </div>
 {% endblock header %}
 
 {% block content %}
-
 <style>
+    /* Your existing styles */
     .table-container {
         max-width: 100%;
         overflow-x: auto;
@@ -94,8 +85,8 @@
                 <th class='nom'>Nom</th>
                 <th class='prenom'>Prenom</th>
                 <th class='col-sex'>Sex</th>
-                <th class='cs_py'>cond</th>
-                <th class='paid'> SCO Paid</th>
+                <th class='cs_py'>Cond</th>
+                <th class='paid'>SCO Paid</th>
                 <th class='paid'>Exigible</th>
                 <th class='paid'>Diff. SCO</th>
                 <th class='paid'>CAN Paid</th>
@@ -110,7 +101,7 @@
             {% for school, classes in data.items %}
                 {% for class_name, class_info in classes.items %}
                 <tr class="class-section">
-                    <td colspan="14" class="class-header-row">Class: {{  class_name }}</td>
+                    <td colspan="14" class="class-header-row">Class: {{ class_name }}</td>
                 </tr>
                 {% for student in class_info.students %}
                 <tr>
@@ -119,47 +110,23 @@
                     <td>{{ student.prenom }}</td>
                     <td>{{ student.sex }}</td>
                     <td>{{ student.condition_eleve }}</td>
-                    <td class='amount-col'>
-                        {% if student.sco_paid == 0 %}-{% else %}{{ student.sco_paid|format_amount }}{% endif %}
-                    </td>
-                    <td class='amount-col'>
-                        {% if student.sco_exigible == 0 %}-{% else %}{{ student.sco_exigible|format_amount }}{% endif %}
-                    </td>
-                    <td class="{% if student.diff_sco > 0 %}highlight-negative{% endif %} amount-col">
-                        {% if student.diff_sco == 0 %}-{% else %}{{ student.diff_sco|format_amount }}{% endif %}
-                    </td>
-                    <td class='amount-col'>
-                        {% if student.can_paid == 0 %}-{% else %}{{ student.can_paid|format_amount }}{% endif %}
-                    </td>
-                    <td class='amount-col'>
-                        {% if student.can_exigible == 0 %}-{% else %}{{ student.can_exigible|format_amount }}{% endif %}
-                    </td>
-                    <td class="{% if student.diff_can > 0 %}highlight-negative{% endif %} amount-col">
-                        {% if student.diff_can == 0 %}-{% else %}{{ student.diff_can|format_amount }}{% endif %}
-                    </td>
-                    <td class='amount-col'>
-                        {% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}
-                    </td>
-                    <td class="{% if student.remaining_percentage > 0 %}red-retard{% endif %} amount-col">
-                        {% if student.remaining_percentage > 0 %}
-                        -{{ student.remaining_percentage|floatformat:1 }}%
-                        {% else %}
-                        -
-                        {% endif %}
-                    </td>
+                    <td class='amount-col'>{% if student.sco_paid == 0 %}-{% else %}{{ student.sco_paid|format_amount }}{% endif %}</td>
+                    <td class='amount-col'>{% if student.sco_exigible == 0 %}-{% else %}{{ student.sco_exigible|format_amount }}{% endif %}</td>
+                    <td class='amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}'>{% if student.diff_sco == 0 %}-{% else %}{{ student.diff_sco|format_amount }}{% endif %}</td>
+                    <td class='amount-col'>{% if student.can_paid == 0 %}-{% else %}{{ student.can_paid|format_amount }}{% endif %}</td>
+                    <td class='amount-col'>{% if student.can_exigible == 0 %}-{% else %}{{ student.can_exigible|format_amount }}{% endif %}</td>
+                    <td class='amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}'>{% if student.diff_can == 0 %}-{% else %}{{ student.diff_can|format_amount }}{% endif %}</td>
+                    <td class='amount-col'>{% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}</td>
+                    <td class='amount-col {% if student.remaining_percentage > 0 %}red-retard{% endif %}'>{% if student.remaining_percentage > 0 %}-{{ student.remaining_percentage|floatformat:1 }}%{% else %}-{% endif %}</td>
                     <td>{{ student.note }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                     <td colspan="7" style="text-align: right;">Class Total:</td>
-                    <td class="{% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %} amount-col">
-                        {{ class_info.total_diff_sco|format_amount }}
-                    </td>
+                    <td class='amount-col {% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %}'>{{ class_info.total_diff_sco|format_amount }}</td>
                     <td></td>
                     <td></td>
-                    <td class="{% if class_info.total_diff_can > 0 %}highlight-negative{% endif %} amount-col">
-                        {{ class_info.total_diff_can|format_amount }}
-                    </td>
+                    <td class='amount-col {% if class_info.total_diff_can > 0 %}highlight-negative{% endif %}'>{{ class_info.total_diff_can|format_amount }}</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -177,13 +144,13 @@
             buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
             ],
-            order: [[11, 'desc']]
+            order: [
+                [12, 'desc'],  // Retard (%) column index is 12 (0-based index)
+                [1, 'asc'],   // Nom ascending
+                [2, 'asc']    // Prenom ascending
+            ],
+            pageLength: 50
         });
     });
-
-    function myFunction() {
-        window.print();
-    }
 </script>
-
 {% endblock content %}
