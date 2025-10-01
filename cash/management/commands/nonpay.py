@@ -38,18 +38,29 @@ class Command(BaseCommand):
 
         filename = f"eleves_sans_paiement_{annee_courante.nom}.csv"
 
+    # ... partie initiale inchangée
+
         with open(filename, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['ID', 'Nom', 'Prénom', 'Condition', 'CS/PY', 'Date Naissance'])
+            # En-tête avec classe et école
+            writer.writerow(['ID', 'Nom', 'Prénom', 'Condition', 'CS/PY', 'Date Naissance', 'Classe', 'Ecole'])
 
             for eleve in eleves_sans_paiement:
+                # Récupérer la première inscription courante pour l'élève
+                inscription = eleve.inscriptions.filter(annee_scolaire=annee_courante).first()
+                classe_nom = inscription.classe.nom if inscription and inscription.classe else ''
+                ecole_nom = inscription.classe.ecole.nom if inscription and inscription.classe and inscription.classe.ecole else ''
+
                 writer.writerow([
                     eleve.id,
                     eleve.nom,
                     eleve.prenom,
                     eleve.condition_eleve,
                     eleve.cs_py,
-                    eleve.date_naissance.strftime('%d/%m/%Y') if eleve.date_naissance else ''
+                    eleve.date_naissance.strftime('%d/%m/%Y') if eleve.date_naissance else '',
+                    classe_nom,
+                    ecole_nom
                 ])
+
 
         self.stdout.write(self.style.SUCCESS(f"{eleves_sans_paiement.count()} élèves sans paiement exportés dans {filename}"))
