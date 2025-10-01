@@ -21,6 +21,7 @@ class Command(BaseCommand):
         # Élèves inscrits à l'année courante (hors CS et hors ABAN)
         eleves = Eleve.objects.filter(
             inscriptions__in=inscriptions_courantes,
+            inscriptions__classe__ecole__externe=False  # Filtre écoles internes
         ).exclude(condition_eleve='ABAN').exclude(cs_py='C').distinct()
 
 
