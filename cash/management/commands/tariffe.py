@@ -4,13 +4,11 @@ from cash.models import Tarif
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-
 ECOLES_MANUELLES_NAMES = {
     'M': "École Maternelle Centre social de Nasara",
     'P': "École primaire Centre social de Nasara",
     'L': "École Secondaire Centre social de Nasara",
 }
-
 
 class Command(BaseCommand):
     help = "Supprime et recrée tous les tarifs de l'année scolaire actuelle avec dates corrigées"
@@ -22,6 +20,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Aucune année scolaire actuelle trouvée."))
             return
 
+        # Supprimer tous les tarifs de l'année scolaire actuelle
         count, _ = Tarif.objects.filter(annee_scolaire=annee_scolaire).delete()
         self.stdout.write(f"Suppression de {count} tarifs de l'année {annee_scolaire.nom}")
 
@@ -57,12 +56,12 @@ class Command(BaseCommand):
     def tarifs_par_classe(self, class_name):
         tarifs_init = {
             '6me': {'SCO1': 32000, 'SCO2': 15000, 'SCO3': 15000},
-            'CP1': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
-            'CP2': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
-            'CE1': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
-            'CE2': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
-            'CM1': {'SCO1': 17500, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
-            'CM2': {'SCO1': 17500, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
+            'CP1': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
+            'CP2': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
+            'CE1': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
+            'CE2': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
+            'CM1': {'SCO1': 17500, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
+            'CM2': {'SCO1': 17500, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500, 'CAN': 8000},
             'PS': {'SCO1': 10000, 'SCO2': 8000, 'SCO3': 7000, 'TEN': 4500, 'CAN': 8000},
             'MS': {'SCO1': 10000, 'SCO2': 8000, 'SCO3': 7000, 'TEN': 4500, 'CAN': 8000},
             'GS': {'SCO1': 10000, 'SCO2': 8000, 'SCO3': 7000, 'TEN': 4500, 'CAN': 8000},
@@ -70,25 +69,27 @@ class Command(BaseCommand):
         return tarifs_init.get(class_name)
 
     def create_class_tariffs(self, classe, tariffs, annee_scolaire, expiration_dates):
-        ins_montant = 500  # Montant d'inscription fixe
-        can_montant = tariffs.get('CAN', 8000)  # Montant cantine
+        # Montant fixe pour INS = 500
+        ins_montant = 500
+        # CAN doit être 8000 fixe, ou pris si autre définition
+        can_montant = tariffs.get('CAN', 8000)
 
-        # Tarif inscription INS avec date expiration comme SCO1
         Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
             causal='INS',
             montant=ins_montant,
-            date_expiration=expiration_dates.get('INS', timezone.now() + timedelta(days=90)).date()
+            date_expiration=expiration_dates.get('INS').date()
         )
-        # Tarif CAN avec date expiration comme SCO1
+
         Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
             causal='CAN',
             montant=can_montant,
-            date_expiration=expiration_dates.get('CAN', timezone.now() + timedelta(days=90)).date()
+            date_expiration=expiration_dates.get('CAN').date()
         )
+
         for causal, montant in tariffs.items():
             if causal not in ['INS', 'CAN']:
                 Tarif.objects.create(
@@ -96,5 +97,5 @@ class Command(BaseCommand):
                     annee_scolaire=annee_scolaire,
                     causal=causal,
                     montant=montant,
-                    date_expiration=expiration_dates.get(causal, timezone.now() + timedelta(days=90)).date()
+                    date_expiration=expiration_dates.get(causal, (timezone.now() + timedelta(days=90)).date())
                 )
