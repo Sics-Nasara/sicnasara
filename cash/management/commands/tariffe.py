@@ -1,12 +1,8 @@
 from django.core.management.base import BaseCommand
 from scuelo.models import Classe, AnneeScolaire, Ecole
-from django.utils import timezone
 from cash.models import Tarif
-from datetime import datetime
-import openpyxl
-from openpyxl.styles import Font, Alignment
-import io
-
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 ECOLES_MANUELLES_NAMES = {
     'M': "École Maternelle Centre social de Nasara",
@@ -14,12 +10,10 @@ ECOLES_MANUELLES_NAMES = {
     'L': "École Secondaire Centre social de Nasara",
 }
 
-
 class Command(BaseCommand):
-    help = "Supprime et recrée tous les tarifs de l'année scolaire actuelle avec les dates corrigées."
+    help = "Supprime et recrée tous les tarifs de l'année scolaire actuelle avec dates corrigées"
 
     def handle(self, *args, **options):
-        # Récupérer l'année scolaire actuelle
         try:
             annee_scolaire = AnneeScolaire.objects.get(actuel=True)
         except AnneeScolaire.DoesNotExist:
@@ -27,15 +21,15 @@ class Command(BaseCommand):
             return
 
         # Supprimer tous les tarifs de l'année scolaire actuelle
-        deleted_count, _ = Tarif.objects.filter(annee_scolaire=annee_scolaire).delete()
-        self.stdout.write(f"Suppression de {deleted_count} tarifs de l'année scolaire {annee_scolaire.nom}.")
+        count, _ = Tarif.objects.filter(annee_scolaire=annee_scolaire).delete()
+        self.stdout.write(f"Suppression de {count} tarifs de l'année {annee_scolaire.nom}")
 
         ec_list = Ecole.objects.filter(nom__in=ECOLES_MANUELLES_NAMES.values())
         if not ec_list.exists():
             self.stdout.write(self.style.ERROR("Aucune école trouvée avec les noms spécifiés."))
             return
 
-        # Dates corrigées pour les échéances
+        # Dates corrigées pour échéances
         expiration_dates = {
             'SCO1': datetime(annee_scolaire.date_initiale.year, 9, 20),
             'SCO2': datetime(annee_scolaire.date_initiale.year, 11, 30),
@@ -51,11 +45,11 @@ class Command(BaseCommand):
             for classe in classes:
                 tarifs = self.tarifs_par_classe(classe.nom)
                 if not tarifs:
-                    self.stdout.write(self.style.WARNING(f'Pas de tarifs définis pour la classe {classe.nom}'))
+                    self.stdout.write(self.style.WARNING(f"Pas de tarifs définis pour la classe {classe.nom}"))
                     continue
 
                 self.create_class_tariffs(classe, tarifs, annee_scolaire, expiration_dates)
-                self.stdout.write(self.style.SUCCESS(f'Tarifs recréés pour la classe {classe.nom} de l\'école {ecole.nom}'))
+                self.stdout.write(self.style.SUCCESS(f"Tarifs recréés pour la classe {classe.nom} de l'école {ecole.nom}"))
 
     def tarifs_par_classe(self, class_name):
         tarifs_init = {
@@ -73,13 +67,13 @@ class Command(BaseCommand):
         return tarifs_init.get(class_name)
 
     def create_class_tariffs(self, classe, tariffs, annee_scolaire, expiration_dates):
-        # Tarif d'inscription
+        # Créer tarif inscription
         Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
             causal='INS',
             montant=500,
-            date_expiration=timezone.now() + timezone.timedelta(days=90)
+            date_expiration=timezone.now() + timedelta(days=90)
         )
         for causal, montant in tariffs.items():
             if causal not in ['TEN', 'CAN']:
@@ -88,7 +82,7 @@ class Command(BaseCommand):
                     annee_scolaire=annee_scolaire,
                     causal=causal,
                     montant=montant,
-                    date_expiration=expiration_dates.get(causal, timezone.now() + timezone.timedelta(days=90)).date()
+                    date_expiration=expiration_dates.get(causal, timezone.now() + timedelta(days=90)).date()
                 )
             else:
                 Tarif.objects.create(
@@ -96,5 +90,5 @@ class Command(BaseCommand):
                     annee_scolaire=annee_scolaire,
                     causal=causal,
                     montant=montant,
-                    date_expiration=(timezone.now() + timezone.timedelta(days=90)).date()
+                    date_expiration=(timezone.now() + timedelta(days=90)).date()
                 )
