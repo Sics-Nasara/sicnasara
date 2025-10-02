@@ -942,7 +942,7 @@ def entree_sortie(request):
                 label = 'SCO_SEC'
             else:
                 label = 'SCO'
-                
+
 
             student_name = f"{eleve.nom} {eleve.prenom}"
             description = f"{label} - {student_name}"
@@ -1461,9 +1461,11 @@ def payment_delay_per_class(request, pk):
          'page_identifier': 'S54' 
     })
 
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render
+from django.db.models import Sum
+
+from cash.models import Tarif
 
 @login_required
 def classe_information(request, pk):
@@ -1478,7 +1480,9 @@ def classe_information(request, pk):
         })
 
     school_name = classe.ecole.nom  # Nom de l'école liée à la classe
-    tarifs = Tarif.objects.filter(classe=classe)  # Tarifs de la classe
+    
+    # Tarifs de la classe pour l'année scolaire actuelle uniquement
+    tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=school_year)
 
     # Étudiants inscrits dans cette classe & année scolaire
     eleves_qs = Eleve.objects.filter(
@@ -1529,7 +1533,7 @@ def classe_information(request, pk):
     actual_total_school_fees_received = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=school_year,
-        causal__in=['SCO']
+        causal__in=['SCO', 'SCO1', 'SCO2', 'SCO3']  # selon ce qui est conservé en base
     ).aggregate(total=Sum('montant'))['total'] or 0
 
     # Coût un uniforme PY (ou 0 si pas défini)
