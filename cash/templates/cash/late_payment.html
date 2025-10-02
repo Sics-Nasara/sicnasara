@@ -22,7 +22,7 @@
         max-width: 100%;
         overflow-x: auto;
         border-radius: 10px;
-        margin-bottom: 50px;
+        margin-bottom: 10px;
     }
     .table th, .table td {
         padding: 5px 8px !important;
@@ -54,7 +54,7 @@
 {% for school, classes in data.items %}
     {% for class_name, class_info in classes.items %}
         <div class="table-container">
-            <h3>Classe: {{ class_name }}</h3>
+            <h3>{{ class_name }}</h3>
 
 
             <table id="table-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" class="table table-striped table-bordered classTable" style="width:100%">
@@ -119,7 +119,7 @@
         $('.classTable').each(function() {
             $(this).DataTable({
                 dom: 'Bfrtip',
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                buttons: [ 'excel',  'print'],
                 order: [
                     [12, 'desc'],  // Retard (%) col index (0-based)
                     [1, 'asc'],    // Nom
