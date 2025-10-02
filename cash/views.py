@@ -926,8 +926,28 @@ def entree_sortie(request):
     total_entree = 0
     total_sortie = 0
     for income in incomes:
-        student_name = f"{income.inscription.eleve.nom} {income.inscription.eleve.prenom}" if income.inscription else "Inconnu"
-        description = f"{income.causal} - {student_name}"
+        # Récupérer l'élève lié au paiement
+        eleve = income.inscription.eleve if income.inscription else None
+        if eleve:
+            # Extraire la classe et son type d'école (ex : M, P, S)
+            classe = income.inscription.classe if income.inscription else None
+            type_ecole = classe.type.type_ecole if classe and classe.type else None
+
+            # Choix de la description selon type_ecole
+            if type_ecole == 'M':
+                label = 'SCO_MAT'
+            elif type_ecole == 'P':
+                label = 'SCO_PRI'
+            elif type_ecole == 'S':
+                label = 'SCO_SEC'
+            else:
+                label = 'SCO'
+
+            student_name = f"{eleve.nom} {eleve.prenom}"
+            description = f"{label} - {student_name}"
+        else:
+            description = f"{income.causal} - Inconnu"
+
         entries.append({
             'date': income.date_paye,
             'description': description,
@@ -935,6 +955,7 @@ def entree_sortie(request):
             'sortie': 0,
         })
         total_entree += income.montant
+
 
     for expense in expenses:
         description = f"COMPT {expense.description or ''}"
