@@ -22,7 +22,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Aucune année scolaire actuelle trouvée."))
             return
 
-        # Supprimer tous les tarifs de l'année scolaire actuelle
         count, _ = Tarif.objects.filter(annee_scolaire=annee_scolaire).delete()
         self.stdout.write(f"Suppression de {count} tarifs de l'année {annee_scolaire.nom}")
 
@@ -31,7 +30,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Aucune école trouvée avec les noms spécifiés."))
             return
 
-        # Dates corrigées pour échéances, INS et CAN ont la même date que SCO1
         expiration_dates = {
             'INS': datetime(annee_scolaire.date_initiale.year, 9, 20),
             'SCO1': datetime(annee_scolaire.date_initiale.year, 9, 20),
@@ -72,10 +70,10 @@ class Command(BaseCommand):
         return tarifs_init.get(class_name)
 
     def create_class_tariffs(self, classe, tariffs, annee_scolaire, expiration_dates):
-        ins_montant = tariffs.get('INS', tariffs.get('SCO1', 0))
-        can_montant = tariffs.get('CAN', ins_montant)
+        ins_montant = 500  # Montant d'inscription fixe
+        can_montant = tariffs.get('CAN', 8000)  # Montant cantine
 
-        # Créer tarif inscription (INS)
+        # Tarif inscription INS avec date expiration comme SCO1
         Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
@@ -83,7 +81,7 @@ class Command(BaseCommand):
             montant=ins_montant,
             date_expiration=expiration_dates.get('INS', timezone.now() + timedelta(days=90)).date()
         )
-        # Créer tarif CAN
+        # Tarif CAN avec date expiration comme SCO1
         Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
