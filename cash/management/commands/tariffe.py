@@ -4,7 +4,7 @@ from django.utils import timezone
 from cash.models import Tarif
 from datetime import datetime
 import openpyxl
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 import io
 
 
@@ -40,10 +40,11 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Aucune école trouvée avec les noms spécifiés."))
             return
 
+        # Date correcte des échéances
         expiration_dates = {
-            'SCO1': datetime(annee_scolaire.date_initiale.year, 11, 30),
-            'SCO2': datetime(annee_scolaire.date_initiale.year + 1, 1, 31),
-            'SCO3': datetime(annee_scolaire.date_initiale.year + 1, 2, 28),
+            'SCO1': datetime(annee_scolaire.date_initiale.year, 9, 20),
+            'SCO2': datetime(annee_scolaire.date_initiale.year, 11, 30),
+            'SCO3': datetime(annee_scolaire.date_initiale.year + 1, 1, 31),
         }
 
         simulations = []
@@ -79,9 +80,7 @@ class Command(BaseCommand):
 
     def tarifs_par_classe(self, class_name):
         tarifs_init = {
-            # Tarif spécial pour la 6ème
             '6me': {'SCO1': 32000, 'SCO2': 15000, 'SCO3': 15000},
-            # Autres classes exemple initial
             'CP1': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
             'CP2-Nas_Pri': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
             'CE1-Nas_Pri': {'SCO1': 15000, 'SCO2': 7500, 'SCO3': 7500, 'TEN': 4500},
@@ -138,6 +137,7 @@ class Command(BaseCommand):
         bold_font = Font(bold=True)
         for cell in ws[1]:
             cell.font = bold_font
+            cell.alignment = Alignment(horizontal='center')
 
         for sim in simulations:
             classe = sim['classe']
@@ -154,6 +154,11 @@ class Command(BaseCommand):
                 tarifs.get('INS', 500),
             ]
             ws.append(row)
+
+        # Alignement à droite pour colonnes montants
+        for row in ws.iter_rows(min_row=2, min_col=3, max_col=8):
+            for cell in row:
+                cell.alignment = Alignment(horizontal='right')
 
         stream = io.BytesIO()
         wb.save(stream)
