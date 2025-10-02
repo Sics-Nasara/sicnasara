@@ -942,6 +942,7 @@ def entree_sortie(request):
                 label = 'SCO_SEC'
             else:
                 label = 'SCO'
+                
 
             student_name = f"{eleve.nom} {eleve.prenom}"
             description = f"{label} - {student_name}"
