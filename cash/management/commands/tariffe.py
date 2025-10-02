@@ -16,18 +16,9 @@ ECOLES_MANUELLES_NAMES = {
 
 
 class Command(BaseCommand):
-    help = "Uploader les tarifs dans les classes de l'année scolaire actuelle et simuler un export Excel."
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            '--simulate',
-            action='store_true',
-            help='Faire une simulation et exporter un fichier Excel sans créer les tarifs en base.',
-        )
+    help = "Supprime et recrée tous les tarifs de l'année scolaire actuelle avec les dates corrigées."
 
     def handle(self, *args, **options):
-        simulate = options['simulate']
-
         # Récupérer l'année scolaire actuelle
         try:
             annee_scolaire = AnneeScolaire.objects.get(actuel=True)
@@ -35,19 +26,21 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Aucune année scolaire actuelle trouvée."))
             return
 
+        # Supprimer tous les tarifs de l'année scolaire actuelle
+        deleted_count, _ = Tarif.objects.filter(annee_scolaire=annee_scolaire).delete()
+        self.stdout.write(f"Suppression de {deleted_count} tarifs de l'année scolaire {annee_scolaire.nom}.")
+
         ec_list = Ecole.objects.filter(nom__in=ECOLES_MANUELLES_NAMES.values())
         if not ec_list.exists():
             self.stdout.write(self.style.ERROR("Aucune école trouvée avec les noms spécifiés."))
             return
 
-        # Date correcte des échéances
+        # Dates corrigées pour les échéances
         expiration_dates = {
             'SCO1': datetime(annee_scolaire.date_initiale.year, 9, 20),
             'SCO2': datetime(annee_scolaire.date_initiale.year, 11, 30),
             'SCO3': datetime(annee_scolaire.date_initiale.year + 1, 1, 31),
         }
-
-        simulations = []
 
         for ecole in ec_list:
             classes = Classe.objects.filter(ecole=ecole)
@@ -61,22 +54,8 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(f'Pas de tarifs définis pour la classe {classe.nom}'))
                     continue
 
-                if simulate:
-                    simulations.append({
-                        'classe': classe,
-                        'annee_scolaire': annee_scolaire,
-                        'tarifs': tarifs,
-                    })
-                else:
-                    self.create_class_tariffs(classe, tarifs, annee_scolaire, expiration_dates)
-                    self.stdout.write(self.style.SUCCESS(f'Tarifs ajoutés à la classe {classe.nom} de l\'école {ecole.nom}'))
-
-        if simulate:
-            stream = self.exporter_simulation_excel(simulations)
-            filename = 'simulation_tarifs.xlsx'
-            with open(filename, 'wb') as f:
-                f.write(stream.read())
-            self.stdout.write(self.style.SUCCESS(f"Simulation exportée dans {filename}"))
+                self.create_class_tariffs(classe, tarifs, annee_scolaire, expiration_dates)
+                self.stdout.write(self.style.SUCCESS(f'Tarifs recréés pour la classe {classe.nom} de l\'école {ecole.nom}'))
 
     def tarifs_par_classe(self, class_name):
         tarifs_init = {
@@ -95,72 +74,27 @@ class Command(BaseCommand):
 
     def create_class_tariffs(self, classe, tariffs, annee_scolaire, expiration_dates):
         # Tarif d'inscription
-        Tarif.objects.get_or_create(
+        Tarif.objects.create(
             classe=classe,
             annee_scolaire=annee_scolaire,
             causal='INS',
-            defaults={
-                'montant': 500,
-                'date_expiration': timezone.now() + timezone.timedelta(days=90)
-            }
+            montant=500,
+            date_expiration=timezone.now() + timezone.timedelta(days=90)
         )
         for causal, montant in tariffs.items():
             if causal not in ['TEN', 'CAN']:
-                Tarif.objects.get_or_create(
+                Tarif.objects.create(
                     classe=classe,
                     annee_scolaire=annee_scolaire,
                     causal=causal,
-                    defaults={
-                        'montant': montant,
-                        'date_expiration': expiration_dates.get(causal, timezone.now() + timezone.timedelta(days=90)).date()
-                    }
+                    montant=montant,
+                    date_expiration=expiration_dates.get(causal, timezone.now() + timezone.timedelta(days=90)).date()
                 )
             else:
-                Tarif.objects.get_or_create(
+                Tarif.objects.create(
                     classe=classe,
                     annee_scolaire=annee_scolaire,
                     causal=causal,
-                    defaults={
-                        'montant': montant,
-                        'date_expiration': (timezone.now() + timezone.timedelta(days=90)).date()
-                    }
+                    montant=montant,
+                    date_expiration=(timezone.now() + timezone.timedelta(days=90)).date()
                 )
-
-    def exporter_simulation_excel(self, simulations):
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Simulation Tarifs"
-
-        headers = ['Classe', 'Année Scolaire', 'SCO1', 'SCO2', 'SCO3', 'TEN', 'CAN', 'INS']
-        ws.append(headers)
-
-        bold_font = Font(bold=True)
-        for cell in ws[1]:
-            cell.font = bold_font
-            cell.alignment = Alignment(horizontal='center')
-
-        for sim in simulations:
-            classe = sim['classe']
-            annee = sim['annee_scolaire']
-            tarifs = sim.get('tarifs', {})
-            row = [
-                classe.nom,
-                annee.nom,
-                tarifs.get('SCO1', ''),
-                tarifs.get('SCO2', ''),
-                tarifs.get('SCO3', ''),
-                tarifs.get('TEN', ''),
-                tarifs.get('CAN', ''),
-                tarifs.get('INS', 500),
-            ]
-            ws.append(row)
-
-        # Alignement à droite pour colonnes montants
-        for row in ws.iter_rows(min_row=2, min_col=3, max_col=8):
-            for cell in row:
-                cell.alignment = Alignment(horizontal='right')
-
-        stream = io.BytesIO()
-        wb.save(stream)
-        stream.seek(0)
-        return stream
