@@ -41,22 +41,20 @@
     <div class="d-flex align-items-center">
         <span class="navbar-brand mb-0 h1 text-white">Gerer classe</span>
         <span class="navbar-brand mb-0 h1 text-white">
-            {{ classe.type }}{% comment %}
-                -{{ classe.ecole.nom }}
-            {% endcomment %}
+            {{ classe.type }}
         </span>
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>
     <!-- Academic Year Dropdown -->
-        <form id="annee-scolaire-form" method="get">
-            <select id="annee_scolaire_select" name="annee_scolaire" onchange="this.form.submit()">
-                {% for annee in all_annee_scolaires %}
-                    <option value="{{ annee.id }}" {% if annee.id == selected_annee_scolaire.id %}selected{% endif %}>
-                        {{ annee.nom }}
-                    </option>
-                {% endfor %}
-            </select>
-        </form>
+    <form id="annee-scolaire-form" method="get">
+        <select id="annee_scolaire_select" name="annee_scolaire" onchange="this.form.submit()">
+            {% for annee in all_annee_scolaires %}
+                <option value="{{ annee.id }}" {% if annee.id == selected_annee_scolaire.id %}selected{% endif %}>
+                    {{ annee.nom }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
     <!-- Center-aligned elements (Tot and Total Paid) -->
     <div class="d-flex align-items-center">
         <div class="text-white text-right mr-4">
@@ -73,118 +71,19 @@
     <div class="d-flex align-items-stretch">
           <a class="class-card mr-3" href="{% url 'home'  %}" >sortir</a>
         <a href="{% url 'classe_information' classe.pk %}" class="class-card mr-3">info</a>
-       {% comment %}
-         <a href="{% url 'late_payments_per_class' classe.id %}" class="class-card  mr-3">retards Paiement</a>
-       {% endcomment %}
+       
         <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
             <!-- Buttons will be moved here -->
         </div>
     
- 
+
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
 {% endblock header %}
 {% block content %}
 <style>
-    .table-container {
-        max-width: 100%;
-        border-radius: 10px;
-        /* Removed overflow-x: auto */
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-
-    .table th,
-    .table td {
-        padding: 2px 8px !important;
-        text-align: center;
-        font-size: 10px;
-    }
-
-    .col-1 {
-        width: 50px !important;
-    }
-
-    .table th {
-        background-color: #333;
-        color: #fff;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    .table tbody tr:hover {
-        background-color: #e9ecef;
-    }
-
-    .col-sex {
-        width: 30px !important;
-    }
-
-    .col-note {
-        width: 300px !important;
-    }
-
-    .navbar-totals {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .navbar-totals div {
-        line-height: 1.2;
-    }
-
-    .action {
-        width: 20px !important;
-    }
-
-    .id {
-        width: 30px !important;
-    }
-
-    .hand {
-        width: 30px !important;
-    }
-
-    .prenom {
-        width: 120px !important;
-    }
-
-    .nom {
-        width: 120px !important;
-    }
-
-    .cs_py {
-        width: 30px !important;
-    }
-
-    .amount-col {
-        text-align: right !important;
-        width: 60px !important;
-    }
-
-    .dataTables_wrapper {
-        overflow: visible; /* Changed from hidden */
-    }
-
-    .dataTables_scrollBody {
-        max-height: 85vh;
-        overflow-y: auto;
-    }
-
-    /* Ensure the header is properly styled */
-    thead.thead-dark th {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        background-color: #333;
-        color: #fff;
-    }
+    /* vos styles ici... */
 </style>
 
 <div class="content-container row mt-2">
@@ -239,7 +138,6 @@
         var table = $('#studentTable').DataTable({
             dom: 'Bfrtip',
             buttons: [
-               
                 {
                     extend: 'excel',
                     text: 'Export Excel',
@@ -259,40 +157,21 @@
                     }
                 }
             ],
-            order: [[2, 'asc']], // Sort by 'Nom' (column index 2)
+            order: [[2, 'asc']], // Tri par défaut sur Nom
             columnDefs: [
-                {
-                    targets: '_all',
-                    sortable: false
-                },
-                {
-                    targets: 10,
-                    width: '300px',
-                    className: 'dt-left'
-                },
-                {
-                    targets: [0, 1, 4, 5, 6, 7, 8, 9],
-                    width: '50px',
-                    className: 'dt-left'
-                },
-                {
-                    targets: [2, 3],
-                    width: '120px',
-                    className: 'dt-left'
-                }
+                { targets: [0], orderable: false },  // Désactiver tri sur la colonne Action
+                { targets: [10], orderable: false }, // Désactiver tri sur la colonne Note
             ],
             paging: false,
             info: false,
             searching: true,
             lengthChange: false,
             responsive: true,
-            fixedHeader: {
-                header: true
-            },
-            scrollY: "81vh"
+            fixedHeader: { header: true },
+            scrollY: "81vh",
         });
 
-        // Move buttons to header
+        // Déplacer les boutons dans le header
         table.buttons().container().appendTo($('#datatable-buttons'));
     });
 </script>

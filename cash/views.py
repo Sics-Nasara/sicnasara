@@ -427,6 +427,8 @@ def delete_mouvement(request, pk):
 
 
 
+from datetime import date
+
 @login_required
 def late_payment_report(request):
     data = {}
@@ -472,7 +474,7 @@ def late_payment_report(request):
             total_diff_can = 0
             total_class_remaining = 0
 
-            # Récupérer les dates des tranches SCO Scolarité
+            # Dates tranche expirations triées
             tranche_dates = list(Tarif.objects.filter(
                 classe=classe,
                 annee_scolaire=current_annee_scolaire,
@@ -496,12 +498,24 @@ def late_payment_report(request):
 
                 tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
 
-                # Filtre dynamique des tarifs exigibles selon date_expiration (tranches dues aujourd'hui)
-                tarifs_due = tarifs.filter(date_expiration__lte=today)
-                sco_exigible = tarifs_due.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
+                # Logique pour la colonne SCO exigible selon date
+                if today <= date(today.year, 11, 30):
+                    # Avant ou égal 30/11, seulement SCO1
+                    sco_exigible = tarifs.filter(causal='SCO1').aggregate(Sum('montant'))['montant__sum'] or 0
+                elif today <= date(today.year, 12, 31):
+                    # entre 1/12 et 31/12, sommmes SCO1 + SCO2
+                    sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2']).aggregate(Sum('montant'))['montant__sum'] or 0
+                else:
+                    # après 31/12, total SCO1 + SCO2 + SCO3
+                    sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
 
-                can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
-#30/11/2025
+                # Cantine uniquement pour maternelle
+                if school.nom == "École Maternelle Centre social de Nasara":
+                    can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
+                else:
+                    can_exigible = 0
+                    can_paid = 0
+
                 diff_sco = max(0, sco_exigible - sco_paid)
                 diff_can = max(0, can_exigible - can_paid)
                 retards = diff_sco + diff_can
@@ -560,7 +574,6 @@ def late_payment_report(request):
         'page_identifier': 'S58',
         'current_annee_scolaire': current_annee_scolaire,
     })
-
 
 
 
