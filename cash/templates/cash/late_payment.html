@@ -134,13 +134,15 @@
                     <td class='amount-col'>
                         {% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}
                     </td>
-                    <td class="{% if student.remaining_percentage > 0 %}red-retard{% endif %} amount-col">
-                        {% if student.remaining_percentage > 0 %}
-                        -{{ student.remaining_percentage|floatformat:1 }}%
-                        {% else %}
-                        -
-                        {% endif %}
-                    </td>
+             <td class="{% if student.remaining_percentage > 0 %}red-retard{% endif %} amount-col"
+    data-order="{{ student.remaining_percentage|default:0 }}">
+    {% if student.remaining_percentage > 0 %}
+        -{{ student.remaining_percentage|floatformat:1 }}%
+    {% else %}
+        -
+    {% endif %}
+</td>
+
                     <td>{{ student.note }}</td>
                 </tr>
                 {% endfor %}
@@ -165,18 +167,17 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#delaysTable').DataTable({
-            dom: 'Bfrtip',
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-            order: [
-                [12, 'desc'],   // Retard (%) column, descending
-                [1, 'asc'],     // Nom, ascending
-                [2, 'asc']      // Prenom, ascending
-            ],
-            pageLength: 25,
-            lengthChange: false
-        });
-    });
+$('#delaysTable').DataTable({
+    dom: 'Bfrtip',
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+    order: [
+        [12, 'desc'],  // colonne retard %, tri numérique correct grace a data-order
+        [1, 'asc'],    // nom
+        [2, 'asc']     // prenom
+    ],
+    pageLength: 25,
+    lengthChange: false
+});
+
 </script>
 {% endblock content %}
