@@ -139,22 +139,22 @@
 {% endfor %}
 
 <script>
-    $(document).ready(function() {
-        $('.classTable').each(function() {
-            $(this).DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ],
-                order: [
-                    [12, 'desc'],  // Retard (%) column (0-based)
-                    [1, 'asc'],    // Nom
-                    [2, 'asc']     // Prenom
-                ],
-                pageLength: 25,
-                lengthChange: false
-            });
-        });
+  $(document).ready(function() {
+    $('.classTable').each(function() {
+      $(this).DataTable({
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        // Tri prioritaire sur Retard % desc, puis Nom asc, puis Prenom asc
+        order: [
+          [12, 'desc'],  // Retard (%) col index 12 (0-based)
+          [1, 'asc'],    // Nom col index 1
+          [2, 'asc']     // Prenom col index 2
+        ],
+        pageLength: 25,
+        lengthChange: false
+      });
     });
+  });
 </script>
+
 {% endblock content %}
