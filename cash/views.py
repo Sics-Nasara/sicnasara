@@ -78,6 +78,8 @@ import seaborn as sns
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+
+
 @login_required
 def add_payment(request, pk):
     student = get_object_or_404(Eleve, pk=pk)
@@ -101,6 +103,11 @@ def add_payment(request, pk):
 
             if inscription:
                 mouvement.save()
+
+                # Mettre à jour la condition de l'élève à "CONF" après paiement
+                student.condition_eleve = "CONF"
+                student.save(update_fields=['condition_eleve'])
+
                 StudentLog.objects.create(
                     student=student,
                     user=request.user,
@@ -124,6 +131,7 @@ def add_payment(request, pk):
         'class_type': class_type,
         'page_identifier': 'S07'
     })
+
 
 @login_required
 def update_paiement(request, pk):
