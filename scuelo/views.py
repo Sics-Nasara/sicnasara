@@ -197,6 +197,7 @@ def home(request):
     })
 
 '''
+
 @login_required
 def home(request):
     schools = Ecole.objects.filter(externe=False)
@@ -226,43 +227,29 @@ def home(request):
 
     current_year = AnneeScolaire.objects.filter(actuel=True).first()
 
-    # Ordre préféré des classes
     class_order = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', '6me']
-    order_map = {name: index for index, name in enumerate(class_order)}
+    order_map = {name: i for i, name in enumerate(class_order)}
 
     for school in schools:
-        categories = {
-            "MATERNELLE": [],
-            "PRIMAIRE": [],
-            "SECONDAIRE": [],
-            "LYCEE": []
-        }
+        # Récupérer les classes de cette école pour l'année scolaire actuelle
+        classes = list(Classe.objects.filter(ecole=school).order_by('nom'))
+        # Trier les classes selon class_order, celles absentes à la fin
+        classes.sort(key=lambda c: order_map.get(c.nom, len(class_order)))
 
-        classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
-        
-        # Filtrer et ordonner classes dans chaque catégorie
-        for category_key in categories.keys():
-            filtered = [c for c in classes if c.type.type_ecole == category_key[0]]
-            
-            # Trier les classes selon l'ordre personnalisé (s'il est défini, sinon fin de liste)
-            filtered.sort(key=lambda c: order_map.get(c.nom, len(class_order)))
-            
-            categories[category_key] = [{
-                'classe': classe,
-                'icon': icon_mapping.get(category_key, 'school')
-            } for classe in filtered]
+        # Préparer la liste de classes avec leurs icônes
+        classes_with_icon = [{
+            'classe': c,
+            'icon': icon_mapping.get(c.type.type_ecole, "school")
+        } for c in classes]
 
-        if any(categories.values()):
-            data[school] = categories
+        data[school] = classes_with_icon
 
     breadcrumbs = [('/', 'Home')]
-    ordered_categories = ['MATERNELLE', 'PRIMAIRE', 'SECONDAIRE', 'LYCEE']
     return render(request, 'scuelo/home.html', {
         'data': data,
         'breadcrumbs': breadcrumbs,
         'all_years': all_years,
         'current_year': current_year,
-        'ordered_categories': ordered_categories,
         'page_identifier': 'S01',
     })
 
