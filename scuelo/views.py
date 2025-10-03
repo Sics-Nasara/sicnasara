@@ -197,10 +197,25 @@ def home(request):
     })
 
 '''
-
 @login_required
 def home(request):
+    # Ordre désiré des écoles
+    school_order = [
+        "École Maternelle Centre social de Nasara",
+        "École primaire Centre social de Nasara",
+        "École Secondaire Centre social de Nasara"
+    ]
+    order_school_map = {name: i for i, name in enumerate(school_order)}
+
+    # Ordre désiré des classes
+    class_order = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', '6me']
+    order_class_map = {name: i for i, name in enumerate(class_order)}
+
     schools = Ecole.objects.filter(externe=False)
+
+    # Tri des écoles selon la liste order_school_map, non listées à la fin
+    schools = sorted(schools, key=lambda e: order_school_map.get(e.nom, len(school_order)))
+
     data = {}
 
     icon_mapping = {
@@ -210,33 +225,12 @@ def home(request):
         "LYCEE": "chalkboard-teacher"
     }
 
-    all_years = AnneeScolaire.objects.all()
-    school_year_id = request.GET.get("school_year")
-
-    if school_year_id:
-        with transaction.atomic():
-            try:
-                selected_year = AnneeScolaire.objects.get(pk=school_year_id)
-            except AnneeScolaire.DoesNotExist:
-                selected_year = None
-
-            if selected_year and not selected_year.actuel:
-                AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
-                selected_year.actuel = True
-                selected_year.save()
-
-    current_year = AnneeScolaire.objects.filter(actuel=True).first()
-
-    class_order = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', '6me']
-    order_map = {name: i for i, name in enumerate(class_order)}
-
     for school in schools:
-        # Récupérer les classes de cette école pour l'année scolaire actuelle
-        classes = list(Classe.objects.filter(ecole=school).order_by('nom'))
-        # Trier les classes selon class_order, celles absentes à la fin
-        classes.sort(key=lambda c: order_map.get(c.nom, len(class_order)))
+        classes = list(Classe.objects.filter(ecole=school))
 
-        # Préparer la liste de classes avec leurs icônes
+        # Trier les classes selon order_class_map, non listées à la fin
+        classes.sort(key=lambda c: order_class_map.get(c.nom, len(class_order)))
+
         classes_with_icon = [{
             'classe': c,
             'icon': icon_mapping.get(c.type.type_ecole, "school")
@@ -244,7 +238,10 @@ def home(request):
 
         data[school] = classes_with_icon
 
+    all_years = AnneeScolaire.objects.all()
+    current_year = AnneeScolaire.objects.filter(actuel=True).first()
     breadcrumbs = [('/', 'Home')]
+
     return render(request, 'scuelo/home.html', {
         'data': data,
         'breadcrumbs': breadcrumbs,
@@ -252,7 +249,6 @@ def home(request):
         'current_year': current_year,
         'page_identifier': 'S01',
     })
-
 
 
 from django.db import transaction

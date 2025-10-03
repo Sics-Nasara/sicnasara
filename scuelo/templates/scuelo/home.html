@@ -45,7 +45,7 @@
                     <h4>{{ school.nom }}</h4>
                     <div class="class-grid">
                         {% for item in classes %}
-                            <a href="{% url 'class_detail' item.classe.id %}" class="class-card">
+                            <a href="{% url 'class_detail' item.classe.id %}" class="class-card" title="{{ item.classe.nom }}">
                                 <i class="fas fa-{{ item.icon }} class-icon"></i>
                                 <span>{{ item.classe.nom }}</span>
                             </a>
@@ -55,38 +55,37 @@
             </div>
         </div>
 
-        <!-- Right column with panels -->
+        <!-- Right column panels -->
         <div class="col-md-4">
-            <!-- Tresorerie panel -->
             <div class="panel">
                 <h3 class="panel-title">Tresorerie</h3>
                 <div class="content-section">
                     <div class="class-grid">
-                        <a href="{% url 'expense_create' %}" class="class-card">
+                        <a href="{% url 'expense_create' %}" class="class-card" title="+Sorties argent">
                             <i class="fas fa-plus-circle"></i>
                             <span>+Sorties argent</span>
                         </a>
-                        <a href="{% url 'expense_list' %}" class="class-card">
+                        <a href="{% url 'expense_list' %}" class="class-card" title="Sorties">
                             <i class="fas fa-list"></i>
                             <span>Sorties</span>
                         </a>
-                        <a href="{% url 'entree_sortie' %}" class="class-card">
+                        <a href="{% url 'entree_sortie' %}" class="class-card" title="Entrees/Sorties">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Entrees/Sorties</span>
                         </a>
                     </div>
                 </div>
             </div>
-            <!-- Autres opérations panel -->
+
             <div class="panel mt-4">
                 <h3 class="panel-title">Autres operations</h3>
                 <div class="content-section">
                     <div class="class-grid">
-                        <a href="{% url 'new_student' %}" class="class-card">
+                        <a href="{% url 'new_student' %}" class="class-card" title="nouvel eleve">
                             <i class="fas fa-tshirt"></i>
                             <span>nouvel eleve</span>
                         </a>
-                        <a href="{% url 'school_management' %}" class="class-card">
+                        <a href="{% url 'school_management' %}" class="class-card" title="gestion ecole">
                             <i class="fas fa-user-friends"></i>
                             <span>gestion ecole</span>
                         </a>
@@ -135,6 +134,7 @@
         padding: 10px 30px;
         text-align: center;
         transition: transform 0.2s;
+        text-decoration: none;
     }
     .class-card:hover {
         background-color: #8a8a8a;
