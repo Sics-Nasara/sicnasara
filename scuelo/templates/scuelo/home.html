@@ -16,9 +16,7 @@
 </form>
 
 <div class="ml-2 d-flex align-items-stretch">
-    <button class="class-card mr-3" id="undo-button" title="Undo">
-        <a href="{% url 'logout' %}"> Sortir </a>
-    </button>
+    <a href="{% url 'logout' %}" class="class-card mr-3" title="Sortir">Sortir</a>
     <button class="class-card mr-3" id="undo-button" title="Undo">
         <i class="fas fa-undo"></i>
     </button>
@@ -32,67 +30,32 @@
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row">
-        <!-- Sidebar/logo column -->
+        <!-- Sidebar/logo -->
         <div class="col-md-2">
             <div class="logo-section">
                 <img src="https://nasaraperilburkina.org/wp-content/uploads/elementor/thumbs/nasara-per-il-burkina-logo-p75phxvrug6ls9y9cc3cox2us41sakjgpgzq74xyzs.jpg" alt="Logo" class="img-fluid">
             </div>
         </div>
-        <!-- Main content column -->
+
+        <!-- Classes list -->
         <div class="col-md-6">
             <div class="panel">
-                <h3 class="panel-title">Recherche prédefinies</h3>
-                <div class="row">
-{% for school, categories in data.items %}
-    <div class="col-md-12">
-        <div class="school-section">
-            {% for categorie in ordered_categories %}
-                {% with categories|get_item:categorie as items %}
-                    {% if items %}
-                        <div class="category-section">
-                            
-                            <div class="class-grid">
-                                {% for item in items %}
-                                    <a href="{% url 'class_detail' item.classe.id %}" class="class-card">
-                                        <i class="fas fa-{{ item.icon }} class-icon"></i>
-                                        <span>{{ item.classe.nom }}</span>
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-            {% endfor %}
-        </div>
-    </div>
-{% endfor %}
-
-
-                    <!-- Quick Access Links -->
-                    <div class="col-md-12 mt-5">
-                        <div class="class-grid">
-                            <a href="{% url 'uniform_payments' %}" class="class-card">
-                                <i class="fas fa-tshirt"></i>
-                                <span>Uniform</span>
+                <h3 class="panel-title">Liste des Classes</h3>
+                {% for school, classes in data.items %}
+                    <h4>{{ school.nom }}</h4>
+                    <div class="class-grid">
+                        {% for item in classes %}
+                            <a href="{% url 'class_detail' item.classe.id %}" class="class-card">
+                                <i class="fas fa-{{ item.icon }} class-icon"></i>
+                                <span>{{ item.classe.nom }}</span>
                             </a>
-                            <a href="{% url 'offsite_students' %}" class="class-card">
-                                <i class="fas fa-user-friends"></i>
-                                <span>External Students</span>
-                            </a>
-                            <a href="{% url 'directly_managed_students' %}" class="class-card">
-                                <i class="fas fa-users"></i>
-                                <span>Student Management</span>
-                            </a>
-                            <a href="{% url 'late_payment_report' %}" class="class-card">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <span>Late Payment</span>
-                            </a>
-                        </div>
+                        {% endfor %}
                     </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
-        <!-- Right column -->
+
+        <!-- Right column with panels -->
         <div class="col-md-4">
             <!-- Tresorerie panel -->
             <div class="panel">
@@ -116,7 +79,7 @@
             </div>
             <!-- Autres opérations panel -->
             <div class="panel mt-4">
-                <h3 class="panel-title">autres operations</h3>
+                <h3 class="panel-title">Autres operations</h3>
                 <div class="content-section">
                     <div class="class-grid">
                         <a href="{% url 'new_student' %}" class="class-card">
@@ -132,9 +95,6 @@
             </div>
         </div>
     </div>
-</div>
-<div>
-    <h1>SICS Django 0.3.4</h1>
 </div>
 
 <style>
@@ -152,14 +112,13 @@
         font-weight: bold;
         text-align: center;
     }
-    .school-section {
-        margin-bottom: 0;
-        border-bottom: 1px solid #ddd;
+    .logo-section {
+        text-align: center;
+        margin-bottom: 20px;
     }
-    .category-title {
-        font-size: 1rem;
-        margin-bottom: 10px;
-        font-weight: bold;
+    .logo-section img {
+        max-width: 100%;
+        height: auto;
     }
     .class-grid {
         display: grid;
@@ -177,22 +136,13 @@
         text-align: center;
         transition: transform 0.2s;
     }
+    .class-card:hover {
+        background-color: #8a8a8a;
+        text-decoration: none;
+    }
     .class-icon {
         font-size: 1.2rem;
         margin-bottom: 5px;
-        font-style: none;
-        text-decoration: none;
-    }
-    .content-section {
-        padding: 15px;
-    }
-    .logo-section {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .logo-section img {
-        max-width: 100%;
-        height: auto;
     }
 </style>
 {% endblock %}
