@@ -42,10 +42,10 @@
             <div class="panel">
                 <h3 class="panel-title">Liste des Classes</h3>
                 {% for school, classes in data.items %}
-                    <h4>{{ school.nom }}</h4>
+                
                     <div class="class-grid">
                         {% for item in classes %}
-                            <a href="{% url 'class_detail' item.classe.id %}" class="class-card" title="{{ item.classe.nom }}">
+                            <a href="{% url 'class_detail' item.classe.id %}" class="class-card mb-2" title="{{ item.classe.nom }}">
                                 <i class="fas fa-{{ item.icon }} class-icon"></i>
                                 <span>{{ item.classe.nom }}</span>
                             </a>
