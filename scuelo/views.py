@@ -125,78 +125,6 @@ def select_school_year(request):
     })
 from django.db import transaction
 
-'''@login_required
-def home(request):
-    schools = Ecole.objects.filter(externe=False)
-    data = {}
-
-    icon_mapping = {
-        "Maternelle": "child",
-        "Primaire": "school",
-        "Secondaire": "user-graduate",
-        "Lycée": "chalkboard-teacher"
-    }
-
-    all_years = AnneeScolaire.objects.all()
-
-    school_year_id = request.GET.get("school_year")
-
-    # If a year is selected and different than the current actif year, update actif year
-    if school_year_id:
-        with transaction.atomic():
-            try:
-                selected_year = AnneeScolaire.objects.get(pk=school_year_id)
-            except AnneeScolaire.DoesNotExist:
-                selected_year = None
-
-            if selected_year and not selected_year.actuel:
-                # Set all to False, then selected to True atomically ensuring only one actif year
-                AnneeScolaire.objects.filter(actuel=True).update(actuel=False)
-                selected_year.actuel = True
-                selected_year.save()
-
-    # reload current_year from DB so it reflects the update
-    current_year = AnneeScolaire.objects.filter(actuel=True).first()
-
-    for school in schools:
-        categories = {
-            "Maternelle": [],
-            "Primaire": [],
-            "Secondaire": [],
-            "Lycée": []
-        }
-        classes = Classe.objects.filter(ecole=school)
-        for classe in classes:
-            category_key = None
-            if classe.type.type_ecole == 'M':
-                category_key = "Maternelle"
-            elif classe.type.type_ecole == 'P':
-                category_key = "Primaire"
-            elif classe.type.type_ecole == 'S':
-                category_key = "Secondaire"
-            elif classe.type.type_ecole == 'L':
-                category_key = "Lycée"
-
-            if category_key:
-                categories[category_key].append({
-                    'classe': classe,
-                    'icon': icon_mapping.get(category_key, 'school')
-                })
-
-        if any(categories.values()):
-            data[school] = categories
-
-    breadcrumbs = [('/', 'Home')]
-
-    return render(request, 'scuelo/home.html', {
-        'data': data,
-        'breadcrumbs': breadcrumbs,
-        'all_years': all_years,
-        'current_year': current_year,
-        'page_identifier': 'S01',
-    })
-
-'''
 @login_required
 def home(request):
     # Ordre désiré des écoles
@@ -313,6 +241,7 @@ def class_detail(request, pk):
 
 
 
+
 class ClasseInformation(LoginRequiredMixin, DetailView):
     model = Classe
     template_name = "scuelo/classe/classe_information.html"
@@ -321,38 +250,28 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Get the selected academic year (annee_scolaire)
         selected_annee_scolaire_id = self.request.GET.get('annee_scolaire')
-        selected_annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_annee_scolaire_id) if selected_annee_scolaire_id else AnneeScolaire.objects.get(actuel=True)
+        if selected_annee_scolaire_id:
+            selected_annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_annee_scolaire_id)
+        else:
+            selected_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
 
         classe = self.get_object()
 
-        # Get students registered in this class during the selected academic year, EXCLUDING those with 'ABAN' condition
-        # First, get the inscriptions for the class and year
         inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
 
-        # Then, get the students who are in those inscriptions and are NOT 'ABAN'
+        # Sélection des élèves PY non abandonnés
         students = Eleve.objects.filter(
-            inscriptions__in=inscriptions,  # Students in these inscriptions
-            condition_eleve__ne='ABAN'  # Who are not 'ABAN'
-        ).distinct()  # Avoid duplicates
+            inscriptions__in=inscriptions,
+            cs_py='P'
+        ).exclude(condition_eleve='ABAN').distinct()
 
-        # Calculate total payments for each student and get details of each payment
-        # We can now calculate payments and categorize them all in one go
         total_class_payment = 0
-        total_paid_cs = 0
         total_paid_py = 0
-        total_paid_conf = 0
-        total_paid_aut = 0
         
-        cs_students = []
         py_students = []
-        conf_students = []
-        aut_students = []
 
         for student in students:
-            # Get payments for the student
-            # Assuming Mouvement has a ForeignKey to Inscription named 'inscription'
             payments = Mouvement.objects.filter(
                 inscription__eleve=student,
                 inscription__classe=classe,
@@ -361,113 +280,41 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
 
             student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
             student.payment_details = payments.values('causal', 'montant', 'date_paye')
-            student.tenues = payments.filter(causal='TEN').values('montant')  # Only "tenues" payments
-            student.notes = student.note_eleve  # Assuming `note_eleve` is a field, or adjust accordingly
+            student.tenues = payments.filter(causal='TEN').values('montant', 'date_paye')
+            student.notes = getattr(student, 'note_eleve', '')
 
-            # Categorize students based on cs_py and condition_eleve
-            if student.cs_py == 'C':
-                cs_students.append(student)
-                total_paid_cs += student.total_payment
-            elif student.cs_py == 'P':
-                py_students.append(student)
-                total_paid_py += student.total_payment
-            elif student.condition_eleve == 'CONF':
-                conf_students.append(student)
-                total_paid_conf += student.total_payment
-            else:
-                aut_students.append(student)
-                total_paid_aut += student.total_payment
-
+            py_students.append(student)
+            total_paid_py += student.total_payment
             total_class_payment += student.total_payment
 
-        # Get tarifs related to this class for the selected academic year
-        tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
-
-        # Total number of students in each category
-        cs_count = len(cs_students)
         py_count = len(py_students)
-        conf_count = len(conf_students)
-        aut_count = len(aut_students)
-        total_students = len(students)
 
-        student_count_display = f"{total_students} ({cs_count}-{py_count}-{conf_count}-{aut_count})"
-
-        # Calculate the expected total for the class (for now, assuming it's a placeholder calculation)
-        expected_total_class = self.calculate_expected_total(classe)
-
-        # 1. PY + CONF students count
-        py_conf_count = py_count + conf_count
-
-        # 2. Progressive fees from tariffs
+        # Calcul de la 1ère tranche (tarif SCO1) pour la classe et l'année scolaire
         progressive_fee_1 = Tarif.objects.filter(
             classe=classe,
             causal='SCO1',
             annee_scolaire=selected_annee_scolaire
         ).aggregate(total=Sum('montant'))['total'] or 0
 
-        progressive_fee_2 = Tarif.objects.filter(
-            classe=classe,
-            causal='SCO2',
-            annee_scolaire=selected_annee_scolaire
-        ).aggregate(total=Sum('montant'))['total'] or 0
+        # Total attendu = 1ère tranche * nombre d'élèves PY
+        expected_first_tranche = progressive_fee_1 * py_count
 
-        progressive_fee_3 = Tarif.objects.filter(
-            classe=classe,
-            causal='SCO3',
-            annee_scolaire=selected_annee_scolaire
-        ).aggregate(total=Sum('montant'))['total'] or 0
-
-        # 3. Payment percentage calculation
-        expected_total_class = classe.get_expected_payment()  # Use existing method
-        total_payment_percentage = round((total_class_payment / expected_total_class * 100), 2) if expected_total_class else 0
-
-        # 4. Tenues payments for PY students
-        total_tenues_py = sum(
-            sum(p['montant'] for p in student.tenues)
-            for student in py_students
-        )
-
-        # 5. Expected tenues for PY students
-        tenues_tarif = Tarif.objects.filter(
-            classe=classe,
-            causal='TEN',
-            annee_scolaire=selected_annee_scolaire
-        ).aggregate(total=Sum('montant'))['total'] or 0
-        expected_total_tenues_py = tenues_tarif * py_count
+        # Pourcentage payé de la 1ère tranche
+        total_payment_percentage = round((total_paid_py / expected_first_tranche * 100), 2) if expected_first_tranche else 0
 
         context.update({
             'students': students,
-            'tarifs': tarifs,
+            'tarifs': Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire),
             'breadcrumbs': [('/', 'Home'), ('#', classe.nom)],
             'total_class_payment': total_class_payment,
-            'student_count_display': student_count_display,
-            'cs_count': cs_count,
             'py_count': py_count,
-            'conf_count': conf_count,
-            'aut_count': aut_count,
-            'total_paid_cs': total_paid_cs,
             'total_paid_py': total_paid_py,
-            'total_paid_conf': total_paid_conf,
-            'total_paid_aut': total_paid_aut,
-            'all_annee_scolaires': AnneeScolaire.objects.all(),
-            'selected_annee_scolaire': selected_annee_scolaire,
-            'expected_total_class': expected_total_class,  # Placeholder, replace with actual calculation if needed
-            'py_conf_count': py_conf_count,
-            'progressive_fee_1': progressive_fee_1,
-            'progressive_fee_2': progressive_fee_2,
-            'progressive_fee_3': progressive_fee_3,
+            'expected_first_tranche': expected_first_tranche,
             'total_payment_percentage': total_payment_percentage,
-            'actual_total_received': total_class_payment,  # Same as total_class_payment
-            'actual_total_received_tenues_py': total_tenues_py,
-            'expected_total_tenues_py': expected_total_tenues_py,
+            'selected_annee_scolaire': selected_annee_scolaire,
         })
 
         return context
-
-    def calculate_expected_total(self, classe):
-        # Replace this with your actual calculation for the expected total for the class
-        # This is just a placeholder to prevent errors
-        return 0
 
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
