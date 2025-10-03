@@ -240,8 +240,6 @@ def class_detail(request, pk):
     })
 
 
-
-
 class ClasseInformation(LoginRequiredMixin, DetailView):
     model = Classe
     template_name = "scuelo/classe/classe_information.html"
@@ -266,9 +264,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
             cs_py='P'
         ).exclude(condition_eleve='ABAN').distinct()
 
-        total_class_payment = 0
         total_paid_py = 0
-        
         py_students = []
 
         for student in students:
@@ -277,45 +273,35 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
                 inscription__classe=classe,
                 inscription__annee_scolaire=selected_annee_scolaire
             )
-
             student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
-            student.payment_details = payments.values('causal', 'montant', 'date_paye')
-            student.tenues = payments.filter(causal='TEN').values('montant', 'date_paye')
-            student.notes = getattr(student, 'note_eleve', '')
-
             py_students.append(student)
             total_paid_py += student.total_payment
-            total_class_payment += student.total_payment
 
         py_count = len(py_students)
 
-        # Calcul de la 1ère tranche (tarif SCO1) pour la classe et l'année scolaire
-        progressive_fee_1 = Tarif.objects.filter(
+        # Calcul 1ère tranche = nb élèves PY * tarif SCO1
+        tarif_sco1 = Tarif.objects.filter(
             classe=classe,
             causal='SCO1',
             annee_scolaire=selected_annee_scolaire
         ).aggregate(total=Sum('montant'))['total'] or 0
 
-        # Total attendu = 1ère tranche * nombre d'élèves PY
-        expected_first_tranche = progressive_fee_1 * py_count
+        expected_first_tranche = tarif_sco1 * py_count
 
-        # Pourcentage payé de la 1ère tranche
         total_payment_percentage = round((total_paid_py / expected_first_tranche * 100), 2) if expected_first_tranche else 0
 
         context.update({
             'students': students,
             'tarifs': Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire),
-            'breadcrumbs': [('/', 'Home'), ('#', classe.nom)],
-            'total_class_payment': total_class_payment,
+            'selected_annee_scolaire': selected_annee_scolaire,
             'py_count': py_count,
             'total_paid_py': total_paid_py,
             'expected_first_tranche': expected_first_tranche,
             'total_payment_percentage': total_payment_percentage,
-            'selected_annee_scolaire': selected_annee_scolaire,
+            'breadcrumbs': [('/', 'Home'), ('#', classe.nom)],
         })
 
         return context
-
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
