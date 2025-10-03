@@ -239,7 +239,6 @@ def class_detail(request, pk):
         'page_identifier': 'S02'
     })
 
-
 class ClasseInformation(LoginRequiredMixin, DetailView):
     model = Classe
     template_name = "scuelo/classe/classe_information.html"
@@ -248,11 +247,8 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        selected_annee_scolaire_id = self.request.GET.get('annee_scolaire')
-        if selected_annee_scolaire_id:
-            selected_annee_scolaire = get_object_or_404(AnneeScolaire, pk=selected_annee_scolaire_id)
-        else:
-            selected_annee_scolaire = AnneeScolaire.objects.get(actuel=True)
+        # Utiliser l'année scolaire actuelle par défaut
+        selected_annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
 
         classe = self.get_object()
 
@@ -279,13 +275,16 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
 
         py_count = len(py_students)
 
-        # Calcul 1ère tranche = nb élèves PY * tarif SCO1
-        tarif_sco1 = Tarif.objects.filter(
+        # Récupérer un tarif unitaire SCO1 (1ère tranche)
+        tarif_sco1_obj = Tarif.objects.filter(
             classe=classe,
             causal='SCO1',
             annee_scolaire=selected_annee_scolaire
-        ).aggregate(total=Sum('montant'))['total'] or 0
+        ).first()
 
+        tarif_sco1 = tarif_sco1_obj.montant if tarif_sco1_obj else 0
+
+        # Calcul attendu 1ère tranche = tarif unitaire * nb élèves PY
         expected_first_tranche = tarif_sco1 * py_count
 
         total_payment_percentage = round((total_paid_py / expected_first_tranche * 100), 2) if expected_first_tranche else 0
@@ -302,6 +301,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
         })
 
         return context
+   
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 

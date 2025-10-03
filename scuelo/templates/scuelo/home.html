@@ -92,6 +92,28 @@
                     </div>
                 </div>
             </div>
+
+              <!-- Quick Access Links -->
+                    <div class="col-md-12 mt-5">
+                        <div class="class-grid">
+                            <a href="{% url 'uniform_payments' %}" class="class-card">
+                                <i class="fas fa-tshirt"></i>
+                                <span>Uniform</span>
+                            </a>
+                            <a href="{% url 'offsite_students' %}" class="class-card">
+                                <i class="fas fa-user-friends"></i>
+                                <span>External Students</span>
+                            </a>
+                            <a href="{% url 'directly_managed_students' %}" class="class-card">
+                                <i class="fas fa-users"></i>
+                                <span>Student Management</span>
+                            </a>
+                            <a href="{% url 'late_payment_report' %}" class="class-card">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Late Payment</span>
+                            </a>
+                        </div>
+                    </div>
         </div>
     </div>
 </div>
