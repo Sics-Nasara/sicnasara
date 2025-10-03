@@ -197,7 +197,6 @@ def home(request):
     })
 
 '''
-
 @login_required
 def home(request):
     schools = Ecole.objects.filter(externe=False)
@@ -227,6 +226,10 @@ def home(request):
 
     current_year = AnneeScolaire.objects.filter(actuel=True).first()
 
+    # Ordre préféré des classes
+    class_order = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', '6me']
+    order_map = {name: index for index, name in enumerate(class_order)}
+
     for school in schools:
         categories = {
             "MATERNELLE": [],
@@ -235,22 +238,20 @@ def home(request):
             "LYCEE": []
         }
 
-        # Récupérer classes triées selon type__ordre asc
         classes = Classe.objects.filter(ecole=school).select_related('type').order_by('type__ordre')
+        
+        # Filtrer et ordonner classes dans chaque catégorie
         for category_key in categories.keys():
-            print(f"Filtering for category {category_key} using key {category_key[0]}...")
-            filtered = [
-                c for c in classes if c.type.type_ecole == category_key[0]
-            ]
-            print(f"Classes filtered for {category_key}: {[c.nom + ' (' + c.type.type_ecole + ')' for c in filtered]}")
-
-
+            filtered = [c for c in classes if c.type.type_ecole == category_key[0]]
+            
+            # Trier les classes selon l'ordre personnalisé (s'il est défini, sinon fin de liste)
+            filtered.sort(key=lambda c: order_map.get(c.nom, len(class_order)))
+            
             categories[category_key] = [{
                 'classe': classe,
                 'icon': icon_mapping.get(category_key, 'school')
             } for classe in filtered]
 
-        # Ajouter seulement si catégories non vides
         if any(categories.values()):
             data[school] = categories
 
