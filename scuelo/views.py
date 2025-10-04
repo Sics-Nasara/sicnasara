@@ -268,7 +268,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
 
         conf_students = Eleve.objects.filter(
             inscriptions__in=inscriptions,
-            condition_eleve='CONF'
+            condition_eleve= ['CONF' ,'PROP']  # Assuming 'CONF' is the code for confirmed students
         ).distinct()
 
         cs_students_internal = Eleve.objects.filter(
