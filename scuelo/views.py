@@ -270,7 +270,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
             inscriptions__in=inscriptions,
             condition_eleve= 'CONF'
         ).distinct()
-
+542,500 + 775000
         cs_students_internal = Eleve.objects.filter(
             inscriptions__in=inscriptions,
             cs_py='C',
