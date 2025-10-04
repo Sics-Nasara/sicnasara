@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="card shadow-sm p-4">
-        <!-- Class Header Section -->
+        <!-- En-tête de classe -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="display-6">{{ classe.nom }}</h1>
@@ -16,19 +16,19 @@
             </div>
             <div class="text-end">
                 <div class="d-grid gap-2 d-md-block">
-                    <span class="badge bg-primary fs-6">{{ py_count }} Élèves PY</span>
+                    <span class="badge bg-primary fs-6">{{ py_students.count }} Élèves PY</span>
                 </div>
                 <small class="text-muted">Année scolaire: {{ selected_annee_scolaire.nom }}</small>
             </div>
         </div>
 
-        <!-- Statistics Cards -->
+        <!-- Cartes statistiques -->
         <div class="row mb-4 g-4">
             <div class="col-md-3">
                 <div class="card border-success h-100">
                     <div class="card-body">
                         <h5 class="card-title text-success">PY</h5>
-                        <p class="card-text fs-4">{{ py_count }}</p>
+                        <p class="card-text fs-4">{{ py_students.count }}</p>
                         <small class="text-muted">Total payé: {{ total_paid_py|intcomma }}</small>
                     </div>
                 </div>
@@ -37,8 +37,8 @@
                 <div class="card border-info h-100">
                     <div class="card-body">
                         <h5 class="card-title text-info">1ère Tranche Attendue</h5>
-                        <p class="card-text fs-4">{{ expected_first_tranche|intcomma }}</p>
-                        <small class="text-muted">Pour {{ py_count }} élèves</small>
+                        <p class="card-text fs-4">{{ expected_sco1|intcomma }}</p>
+                        <small class="text-muted">Montant unitaire : {{ tarif_sco1|intcomma }}</small>
                     </div>
                 </div>
             </div>
@@ -46,13 +46,13 @@
                 <div class="card border-primary h-100">
                     <div class="card-body">
                         <h5 class="card-title text-primary">Pourcentage Paiement</h5>
-                        <p class="card-text fs-4">{{ total_payment_percentage }}%</p>
+                        <p class="card-text fs-4">{{ payment_percentage }}%</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Frais par élève -->
+        <!-- Table des frais par élève -->
         <div class="card h-100">
             <div class="card-header bg-primary text-white">
                 <h5 class="card-title mb-0">Frais par élève</h5>
@@ -62,7 +62,7 @@
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Type</th>
+                                <th>Type de Frais</th>
                                 <th>Montant</th>
                                 <th>Échéance</th>
                             </tr>

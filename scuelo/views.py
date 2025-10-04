@@ -239,6 +239,7 @@ def class_detail(request, pk):
         'page_identifier': 'S02'
     })
 
+
 class ClasseInformation(LoginRequiredMixin, DetailView):
     model = Classe
     template_name = "scuelo/classe/classe_information.html"
@@ -247,61 +248,107 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Utiliser l'année scolaire actuelle par défaut
-        selected_annee_scolaire = AnneeScolaire.objects.filter(actuel=True).first()
+        # Use the current school year or a request parameter if provided
+        selected_year_id = self.request.GET.get('annee_scolaire')
+        if selected_year_id:
+            selected_year = get_object_or_404(AnneeScolaire, pk=selected_year_id)
+        else:
+            selected_year = AnneeScolaire.objects.filter(actuel=True).first()
 
         classe = self.get_object()
 
-        inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire)
+        # Get all inscriptions for this class and year
+        inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_year)
 
-        # Sélection des élèves PY non abandonnés
-        students = Eleve.objects.filter(
+        # Student categories:
+        py_students = Eleve.objects.filter(
             inscriptions__in=inscriptions,
             cs_py='P'
         ).exclude(condition_eleve='ABAN').distinct()
 
-        total_paid_py = 0
-        py_students = []
+        conf_students = Eleve.objects.filter(
+            inscriptions__in=inscriptions,
+            condition_eleve='CONF'
+        ).distinct()
 
-        for student in students:
-            payments = Mouvement.objects.filter(
-                inscription__eleve=student,
-                inscription__classe=classe,
-                inscription__annee_scolaire=selected_annee_scolaire
-            )
-            student.total_payment = payments.aggregate(total=Sum('montant'))['total'] or 0
-            py_students.append(student)
-            total_paid_py += student.total_payment
+        cs_students_internal = Eleve.objects.filter(
+            inscriptions__in=inscriptions,
+            cs_py='C',
+            # Attending classes inside the center
+        ).distinct()
 
-        py_count = len(py_students)
+        cs_students_external = Eleve.objects.filter(
+            inscriptions__in=inscriptions,
+            cs_py='C',
+            # Attending classes outside the center (e.g., filter by school outside center)
+        ).exclude(inscriptions__classe__ecole=classe.ecole).distinct()
 
-        # Récupérer un tarif unitaire SCO1 (1ère tranche)
-        tarif_sco1_obj = Tarif.objects.filter(
-            classe=classe,
-            causal='SCO1',
-            annee_scolaire=selected_annee_scolaire
-        ).first()
+        # Calculate payments and expected fees per group:
+        def total_payments_for_students(student_qs):
+            total = 0
+            for student in student_qs:
+                payments = Mouvement.objects.filter(
+                    inscription__eleve=student,
+                    inscription__classe=classe,
+                    inscription__annee_scolaire=selected_year
+                )
+                total += payments.aggregate(total=Sum('montant'))['total'] or 0
+            return total
 
-        tarif_sco1 = tarif_sco1_obj.montant if tarif_sco1_obj else 0
+        total_paid_py = total_payments_for_students(py_students)
+        total_paid_conf = total_payments_for_students(conf_students)
+        total_paid_cs_internal = total_payments_for_students(cs_students_internal)
+        # total_paid_cs_external calculation would be similar, if meaningful here
 
-        # Calcul attendu 1ère tranche = tarif unitaire * nb élèves PY
-        expected_first_tranche = tarif_sco1 * py_count
+        # Get fees (tarifs) by type for this class and year
+        tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_year)
 
-        total_payment_percentage = round((total_paid_py / expected_first_tranche * 100), 2) if expected_first_tranche else 0
+        def get_tarif_amount(causal_code):
+            tarif_obj = tarifs.filter(causal=causal_code).first()
+            return tarif_obj.montant if tarif_obj else 0
+
+        tarif_sco1 = get_tarif_amount('SCO1')
+        tarif_sco2 = get_tarif_amount('SCO2')
+        tarif_sco3 = get_tarif_amount('SCO3')
+        tarif_tenues = get_tarif_amount('TEN')
+
+        # Expected amounts based on student numbers
+        expected_sco1 = tarif_sco1 * py_students.count()
+        expected_sco2 = tarif_sco2 * py_students.count()
+        expected_sco3 = tarif_sco3 * py_students.count()
+        expected_tenues_py = tarif_tenues * py_students.count()
+
+        # Total expected for the class combining all tranches (example)
+        expected_total_class = expected_sco1 + expected_sco2 + expected_sco3 + expected_tenues_py
+
+        # Aggregate totals received
+        total_class_payment = total_paid_py + total_paid_conf + total_paid_cs_internal
+
+        # Percentages
+        payment_percentage = round((total_class_payment / expected_total_class * 100), 2) if expected_total_class else 0
 
         context.update({
-            'students': students,
-            'tarifs': Tarif.objects.filter(classe=classe, annee_scolaire=selected_annee_scolaire),
-            'selected_annee_scolaire': selected_annee_scolaire,
-            'py_count': py_count,
+            'classe': classe,
+            'selected_annee_scolaire': selected_year,
+            'tarifs': tarifs,
+            'py_students': py_students,
+            'conf_students': conf_students,
+            'cs_students_internal': cs_students_internal,
+            'cs_students_external': cs_students_external,
             'total_paid_py': total_paid_py,
-            'expected_first_tranche': expected_first_tranche,
-            'total_payment_percentage': total_payment_percentage,
-            'breadcrumbs': [('/', 'Home'), ('#', classe.nom)],
+            'total_paid_conf': total_paid_conf,
+            'total_paid_cs_internal': total_paid_cs_internal,
+            'expected_sco1': expected_sco1,
+            'expected_sco2': expected_sco2,
+            'expected_sco3': expected_sco3,
+            'expected_tenues_py': expected_tenues_py,
+            'expected_total_class': expected_total_class,
+            'total_class_payment': total_class_payment,
+            'payment_percentage': payment_percentage,
         })
 
         return context
-   
+
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 
