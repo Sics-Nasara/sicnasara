@@ -270,12 +270,13 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
             inscriptions__in=inscriptions,
             condition_eleve= 'CONF'
         ).distinct()
-542,500 + 775000
+#542,500 + 775000
         cs_students_internal = Eleve.objects.filter(
             inscriptions__in=inscriptions,
             cs_py='C',
             # Attending classes inside the center
         ).distinct()
+
 
         cs_students_external = Eleve.objects.filter(
             inscriptions__in=inscriptions,
@@ -319,7 +320,7 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
         expected_tenues_py = tarif_tenues * py_students.count()
 
         # Total expected for the class combining all tranches (example)
-        expected_total_class = expected_sco1 + expected_sco2 + expected_sco3 + expected_tenues_py
+        expected_total_class = expected_sco1  #+ expected_sco2 + expected_sco3 + expected_tenues_py
 
         # Aggregate totals received
         total_class_payment = total_paid_py + total_paid_conf + total_paid_cs_internal
