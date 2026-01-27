@@ -1,63 +1,75 @@
 {% extends "../layout.html" %}
 {% load custom_filters %}
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-
 {% block header %}
-<span class="navbar-brand mb-0 h1 text-white">Retards Paiement par Classe</span>
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total :</strong> {{ grand_total_remaining|format_amount }}</h4>
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total SCO :</strong> {{ grand_total_diff_sco|format_amount }}</h4>
-<h4 class="navbar-brand mb-0 h1 text-white"><strong>Total CAN :</strong> {{ grand_total_diff_can|format_amount }}</h4>
+<span class="navbar-brand mb-0 h1 text-white">Retards de paiement par classe</span>
+<h5 class="text-white">
+    Total : {{ grand_total_remaining|format_amount }} |
+    SCO : {{ grand_total_diff_sco|format_amount }} |
+    CAN : {{ grand_total_diff_can|format_amount }}
+</h5>
 {% endblock header %}
 
 {% block content %}
+
 <style>
-    .table-container {
-        max-width: 100%;
-        overflow-x: auto;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-    .table th, .table td {
-        padding: 5px 8px !important;
-        font-size: 12px;
-    }
-    .table th {
-        background-color: #333;
-        color: #fff;
-        text-transform: uppercase;
-    }
-    .class-header-row {
-        background-color: #f8f9fa !important;
-        font-weight: bold;
-        font-size: 14px;
-        text-align: center;
-    }
-    .highlight-negative {
-        color: red;
-        font-weight: bold;
-    }
-    .amount-col {
-        text-align: right !important;
-    }
-    .red-retard {
-        color: red;
-    }
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+.table th, .table td {
+    padding: 6px 8px !important;
+    font-size: 12px;
+}
+.table th {
+    background: #222;
+    color: #fff;
+}
+.amount-col {
+    text-align: right;
+}
+.highlight-negative {
+    color: #c0392b;
+    font-weight: bold;
+}
+.red-retard {
+    color: #e74c3c;
+    font-weight: bold;
+}
+.class-title {
+    background: #2c3e50;
+    color: white;
+    padding: 6px;
+    margin-top: 15px;
+    border-radius: 4px;
+}
 </style>
 
+<!-- AJOUT: Bouton Back -->
+<div class="mb-3">
+    <a href="{% url 'home' %}" class="btn btn-secondary">
+        ← Retour à l'accueil
+    </a>
+</div>
+
+
+
 {% for school, classes in data.items %}
+    <h2 class="mt-4">{{ school }}</h2>
+
     {% for class_name, class_info in classes.items %}
+        <div class="class-title">
+            Classe : {{ class_name }}
+            {% if class_name in "PS,MS,GS" %}
+                <span class="badge bg-secondary">Avec cantine</span>
+            {% endif %}
+        </div>
+
         <div class="table-container">
-            <h3>{{ class_name }}</h3>
-
-
-            <table id="table-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" class="table table-striped table-bordered classTable" style="width:100%">
+            <table class="table table-striped table-bordered classTable" style="width:100%"
+                   data-has-cantine="{% if class_name in 'PS,MS,GS' %}yes{% else %}no{% endif %}">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -65,47 +77,76 @@
                         <th>Prénom</th>
                         <th>Sexe</th>
                         <th>Cond</th>
-                        <th class="amount-col">SCO Payé</th>
-                        <th class="amount-col">Exigible</th>
-                        <th class="amount-col">Diff. SCO</th>
-                        <th class="amount-col">CAN Payé</th>
-                        <th class="amount-col">Exigible</th>
-                        <th class="amount-col">Diff. CAN</th>
-                        <th class="amount-col">Retards</th>
-                        <th class="amount-col">Retard (%)</th>
+                        <th class="amount-col">SCO payé</th>
+                        <th class="amount-col">SCO exigible</th>
+                        <th class="amount-col">Diff SCO</th>
+                        
+                        <!-- AFFICHAGE CONDITIONNEL CAN -->
+                        {% if class_name in "PS,MS,GS" %}
+                            <th class="amount-col">CAN payé</th>
+                            <th class="amount-col">CAN exigible</th>
+                            <th class="amount-col">Diff CAN</th>
+                        {% endif %}
+                        
+                        <th class="amount-col">Total retard</th>
+                        
+                        <!-- NOTE: Position de la colonne Retard (%) change selon présence CAN -->
+                        <th class="amount-col retard-col">Retard (%)</th>
+                        
                         <th>Note</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for student in class_info.students %}
-                        <tr>
-                            <td>{{ student.id }}</td>
-                            <td>{{ student.nom }}</td>
-                            <td>{{ student.prenom }}</td>
-                            <td>{{ student.sex }}</td>
-                            <td>{{ student.condition_eleve }}</td>
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.nom }}</td>
+                        <td>{{ student.prenom }}</td>
+                        <td>{{ student.sex }}</td>
+                        <td>{{ student.condition_eleve }}</td>
 
-                            <td class="amount-col">{% if student.sco_paid == 0 %}-{% else %}{{ student.sco_paid|format_amount }}{% endif %}</td>
-                            <td class="amount-col">{% if student.sco_exigible == 0 %}-{% else %}{{ student.sco_exigible|format_amount }}{% endif %}</td>
-                            <td class="amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}">{% if student.diff_sco == 0 %}-{% else %}{{ student.diff_sco|format_amount }}{% endif %}</td>
-                            <td class="amount-col">{% if student.can_paid == 0 %}-{% else %}{{ student.can_paid|format_amount }}{% endif %}</td>
-                            <td class="amount-col">{% if student.can_exigible == 0 %}-{% else %}{{ student.can_exigible|format_amount }}{% endif %}</td>
-                            <td class="amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}">{% if student.diff_can == 0 %}-{% else %}{{ student.diff_can|format_amount }}{% endif %}</td>
-                            <td class="amount-col">{% if student.retards == 0 %}-{% else %}{{ student.retards|format_amount }}{% endif %}</td>
-                            <td class="amount-col {% if student.remaining_percentage > 0 %}red-retard{% endif %}"
-                                data-order="{{ student.remaining_percentage|default:0 }}">
-                                {% if student.remaining_percentage > 0 %}-{{ student.remaining_percentage|floatformat:1 }}%{% else %}-{% endif %}
+                        <td class="amount-col">{{ student.sco_paid|format_amount }}</td>
+                        <td class="amount-col">{{ student.sco_exigible|format_amount }}</td>
+                        <td class="amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}">
+                            {{ student.diff_sco|format_amount }}
+                        </td>
+
+                        <!-- CAN CONDITIONNEL -->
+                        {% if class_name in "PS,MS,GS" %}
+                            <td class="amount-col">{{ student.can_paid|format_amount }}</td>
+                            <td class="amount-col">{{ student.can_exigible|format_amount }}</td>
+                            <td class="amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}">
+                                {{ student.diff_can|format_amount }}
                             </td>
-                            <td>{{ student.note }}</td>
-                        </tr>
+                        {% endif %}
+
+                        <td class="amount-col highlight-negative">
+                            {{ student.retards|format_amount }}
+                        </td>
+
+                        <!-- COLONNE DE TRI PRINCIPALE -->
+                        <!-- IMPORTANT: Cette colonne doit toujours avoir la même classe pour le JavaScript -->
+                        <td class="amount-col red-retard retard-percentage"
+                            data-order="{{ student.remaining_percentage|default:0 }}">
+                            {{ student.remaining_percentage|floatformat:1 }} %
+                        </td>
+
+                        <td>{{ student.note }}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    <tr class="class-header-row">
-                        <td colspan="6" style="text-align:right">Total par classe :</td>
-                        <td class="amount-col {% if class_info.total_diff_sco > 0 %}highlight-negative{% endif %}">{{ class_info.total_diff_sco|format_amount }}</td>
-                        <td></td><td></td>
-                        <td class="amount-col {% if class_info.total_diff_can > 0 %}highlight-negative{% endif %}">{{ class_info.total_diff_can|format_amount }}</td>
+                    <tr style="background:#f2f2f2;font-weight:bold;">
+                        <td colspan="7" class="text-right">Totaux classe :</td>
+                        <td class="amount-col highlight-negative">
+                            {{ class_info.total_diff_sco|format_amount }}
+                        </td>
+                        {% if class_name in "PS,MS,GS" %}
+                            <td colspan="2"></td>
+                            <td class="amount-col highlight-negative">
+                                {{ class_info.total_diff_can|format_amount }}
+                            </td>
+                        {% endif %}
                         <td colspan="3"></td>
                     </tr>
                 </tfoot>
@@ -115,21 +156,83 @@
 {% endfor %}
 
 <script>
-    $(document).ready(function() {
-        $('.classTable').each(function() {
-            $(this).DataTable({
-                dom: 'Bfrtip',
-                buttons: [ 'excel',  'print'],
-                order: [
-                    [12, 'desc'],  // Retard (%) col index (0-based)
-                    [1, 'asc'],    // Nom
-                    [2, 'asc']     // Prenom
-                ],
-                pageLength: 100,
-                lengthChange: false,
-                responsive: true
+$(document).ready(function() {
+    // Initialiser chaque tableau avec sa propre configuration
+    $('.classTable').each(function() {
+        var table = $(this);
+        var hasCantine = table.data('has-cantine') === 'yes';
+        
+        // Déterminer l'index de la colonne "Retard (%)" dynamiquement
+        // Avec cantine: colonne 13 (index 12 en base 0)
+        // Sans cantine: colonne 10 (index 9 en base 0)
+        var retardColumnIndex = hasCantine ? 12 : 9;
+        var totalRetardIndex = hasCantine ? 11 : 8;
+        
+        var dataTable = table.DataTable({
+            dom: 'Bfrtip',
+            buttons: ['excel', 'print'],
+            order: [
+                [retardColumnIndex, 'desc'],   // Retard (%) - TRI DÉCROISSANT
+                [totalRetardIndex, 'desc'],    // Total retard - second critère
+                [1, 'asc']                     // Nom
+            ],
+            pageLength: 100,
+            lengthChange: false,
+            responsive: true,
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+            },
+            columnDefs: [
+                {
+                    targets: [retardColumnIndex], // Colonne Retard (%)
+                    type: 'num',
+                    orderDataType: 'dom-text',
+                    render: function(data, type, row) {
+                        if (type === 'sort' || type === 'type') {
+                            // Extraire la valeur numérique pour le tri
+                            return parseFloat(data) || 0;
+                        }
+                        return data;
+                    }
+                },
+                {
+                    targets: '_all',
+                    createdCell: function(td, cellData, rowData, row, col) {
+                        // Ajouter data-order pour toutes les celles numériques
+                        if (col === retardColumnIndex) {
+                            $(td).attr('data-order', parseFloat(cellData) || 0);
+                        }
+                    }
+                }
+            ],
+            initComplete: function() {
+                console.log('Table initialisée:', 
+                    hasCantine ? 'Avec cantine' : 'Sans cantine', 
+                    'Colonne retard index:', retardColumnIndex);
+            }
+        });
+        
+        // Vérification visuelle du tri
+        dataTable.on('draw', function() {
+            var currentOrder = dataTable.order();
+            console.log('Ordre actuel:', currentOrder);
+            
+            // Ajouter un indicateur visuel de tri
+            $('.retard-percentage').each(function() {
+                var value = parseFloat($(this).text()) || 0;
+                if (value >= 50) {
+                    $(this).css('background-color', '#ffe6e6');
+                } else if (value >= 25) {
+                    $(this).css('background-color', '#fff3e6');
+                }
             });
         });
     });
+    
+    // Message d'information
+    console.log('Total tables:', $('.classTable').length);
+    console.log('Tri configuré: 100% → 0% par défaut');
+});
 </script>
+
 {% endblock content %}
