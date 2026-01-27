@@ -31,7 +31,8 @@ class PaiementPerStudentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Set initial value for date_paye to current date and time
         if not self.initial.get('date_paye'):
-            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO format            
+            self.initial['date_paye'] = timezone.now().strftime('%Y-%m-%dT%H:%M')  # ISO format    
+                    
 class MouvementForm(forms.ModelForm):
     class Meta:
         model = Mouvement

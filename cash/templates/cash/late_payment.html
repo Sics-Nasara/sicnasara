@@ -8,6 +8,14 @@
     SCO : {{ grand_total_diff_sco|format_amount }} |
     CAN : {{ grand_total_diff_can|format_amount }}
 </h5>
+<!-- AJOUT: Bouton Back -->
+<div class="mb-3">
+    <a href="{% url 'home' %}" class="class-card">
+        back
+    </a>
+</div>
+
+<h5 class="class-card">{{page_identifier }}</h5>
 {% endblock header %}
 
 {% block content %}
@@ -47,12 +55,6 @@
 }
 </style>
 
-<!-- AJOUT: Bouton Back -->
-<div class="mb-3">
-    <a href="{% url 'home' %}" class="btn btn-secondary">
-        ← Retour à l'accueil
-    </a>
-</div>
 
 
 

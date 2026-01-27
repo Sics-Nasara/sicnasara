@@ -436,6 +436,30 @@ def delete_mouvement(request, pk):
 
 
 from datetime import date
+from datetime import date
+from django.db.models import Sum, Prefetch
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from scuelo.models import Ecole, Classe, Inscription, Eleve, AnneeScolaire
+from .models import Mouvement, Tarif
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Sum, Prefetch
+from datetime import date
+
+from scuelo.models import Ecole, Classe, Eleve, Inscription, AnneeScolaire
+from .models import Tarif, Mouvement
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Sum, Prefetch
+from datetime import date
+
+from scuelo.models import Ecole, Classe, Eleve, Inscription, AnneeScolaire
+from .models import Tarif, Mouvement
+
 
 @login_required
 def late_payment_report(request):
@@ -448,7 +472,7 @@ def late_payment_report(request):
     except AnneeScolaire.DoesNotExist:
         return render(request, 'cash/late_payment.html', {
             'data': data,
-            'error': 'No current school year is set.',
+            'error': 'Aucune année scolaire active.',
             'page_identifier': 'S58'
         })
 
@@ -457,7 +481,7 @@ def late_payment_report(request):
     schools = Ecole.objects.prefetch_related(
         Prefetch(
             'classe_set',
-            queryset=Classe.objects.prefetch_related(
+            queryset=Classe.objects.select_related('type').prefetch_related(
                 Prefetch(
                     'inscription_set',
                     queryset=Inscription.objects.select_related('eleve')
@@ -468,11 +492,11 @@ def late_payment_report(request):
 
     for school in schools:
         class_data = {}
+
         for classe in school.classe_set.all():
             students = Eleve.objects.filter(
                 inscriptions__classe=classe,
                 inscriptions__annee_scolaire=current_annee_scolaire,
-                inscriptions__classe__ecole=school,
                 cs_py='P',
                 condition_eleve__in=["CONF", "PROP"]
             ).distinct()
@@ -482,46 +506,41 @@ def late_payment_report(request):
             total_diff_can = 0
             total_class_remaining = 0
 
-            # Dates tranche expirations triées
-            tranche_dates = list(Tarif.objects.filter(
+            tarifs = Tarif.objects.filter(
                 classe=classe,
-                annee_scolaire=current_annee_scolaire,
-                causal__in=['SCO1', 'SCO2', 'SCO3']
-            ).values_list('causal', 'date_expiration').order_by('date_expiration'))
+                annee_scolaire=current_annee_scolaire
+            )
+
+            # ===== SCO exigible selon date =====
+            if today <= date(today.year, 11, 30):
+                sco_exigible = tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0
+            elif today <= date(today.year, 12, 31):
+                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2']).aggregate(total=Sum('montant'))['total'] or 0
+            else:
+                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+
+            # ===== Cantine seulement pour PS / MS / GS =====
+            if classe.type.nom in ['PS', 'MS', 'GS']:
+                can_exigible = tarifs.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+            else:
+                can_exigible = 0
 
             for student in students:
-                sco_payments = Mouvement.objects.filter(
+                # SCO payé
+                sco_paid = Mouvement.objects.filter(
                     inscription__eleve=student,
-                    inscription__annee_scolaire=current_annee_scolaire
-                ).exclude(causal__in=['CAN', 'TEN', 'INS'])
+                    annee_scolaire=current_annee_scolaire,
+                    causal='SCO'
+                ).aggregate(total=Sum('montant'))['total'] or 0
 
-                sco_paid = sco_payments.aggregate(Sum('montant'))['montant__sum'] or 0
-
-                can_payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    causal='CAN',
-                    inscription__annee_scolaire=current_annee_scolaire
-                )
-                can_paid = can_payments.aggregate(Sum('montant'))['montant__sum'] or 0
-
-                tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=current_annee_scolaire)
-
-                # Logique pour la colonne SCO exigible selon date
-                if today <= date(today.year, 11, 30):
-                    # Avant ou égal 30/11, seulement SCO1
-                    sco_exigible = tarifs.filter(causal='SCO1').aggregate(Sum('montant'))['montant__sum'] or 0
-                elif today <= date(today.year, 12, 31):
-                    # entre 1/12 et 31/12, sommmes SCO1 + SCO2
-                    sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2']).aggregate(Sum('montant'))['montant__sum'] or 0
+                # CAN payé
+                if can_exigible > 0:
+                    can_paid = Mouvement.objects.filter(
+                        inscription__eleve=student,
+                        annee_scolaire=current_annee_scolaire,
+                        causal='CAN'
+                    ).aggregate(total=Sum('montant'))['total'] or 0
                 else:
-                    # après 31/12, total SCO1 + SCO2 + SCO3
-                    sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(Sum('montant'))['montant__sum'] or 0
-
-                # Cantine uniquement pour maternelle
-                if school.nom == "École Maternelle Centre social de Nasara":
-                    can_exigible = tarifs.filter(causal='CAN').aggregate(Sum('montant'))['montant__sum'] or 0
-                else:
-                    can_exigible = 0
                     can_paid = 0
 
                 diff_sco = max(0, sco_exigible - sco_paid)
@@ -530,15 +549,15 @@ def late_payment_report(request):
 
                 if retards > 0:
                     total_exigible = sco_exigible + can_exigible
-                    percentage_paid = (sco_paid + can_paid) / total_exigible * 100 if total_exigible > 0 else 0
-                    remaining_percentage = retards / total_exigible * 100 if total_exigible > 0 else 0
+                    remaining_percentage = (retards / total_exigible) * 100 if total_exigible > 0 else 0
+                    percentage_paid = 100 - remaining_percentage
 
                     student_data.append({
                         'id': student.id,
                         'nom': student.nom,
                         'prenom': student.prenom,
                         'sex': student.sex,
-                        'cs_py': student.cs_py,
+                        'condition_eleve': student.condition_eleve,
                         'sco_paid': sco_paid,
                         'sco_exigible': sco_exigible,
                         'diff_sco': diff_sco,
@@ -546,11 +565,9 @@ def late_payment_report(request):
                         'can_exigible': can_exigible,
                         'diff_can': diff_can,
                         'retards': retards,
-                        'percentage_paid': percentage_paid,
-                        'remaining_percentage': remaining_percentage,
-                        'note': getattr(student, 'note_eleve', ''),
-                        'condition_eleve': student.condition_eleve,
-                        'page_identifier': 'S30'
+                        'percentage_paid': round(percentage_paid, 2),
+                        'remaining_percentage': round(remaining_percentage, 2),
+                        'note': student.note_eleve if hasattr(student, 'note_eleve') else ''
                     })
 
                     total_diff_sco += diff_sco
@@ -558,12 +575,20 @@ def late_payment_report(request):
                     total_class_remaining += retards
 
             if student_data:
+                # TRI MÉTIER : les plus en retard d’abord (100% → 0%)
+                student_data = sorted(
+                    student_data,
+                    key=lambda x: x['remaining_percentage'],
+                    reverse=True
+                )
+
                 class_data[classe.nom] = {
+                    'classe_obj': classe,
+                    'type_classe': classe.type.nom,
                     'students': student_data,
                     'total_class_remaining': total_class_remaining,
                     'total_diff_sco': total_diff_sco,
                     'total_diff_can': total_diff_can,
-                    'tranche_dates': tranche_dates,
                 }
 
                 grand_total_diff_sco += total_diff_sco
@@ -582,7 +607,6 @@ def late_payment_report(request):
         'page_identifier': 'S58',
         'current_annee_scolaire': current_annee_scolaire,
     })
-
 
 
 from django.shortcuts import render, get_object_or_404
