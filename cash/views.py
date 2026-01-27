@@ -460,9 +460,9 @@ from datetime import date
 from scuelo.models import Ecole, Classe, Eleve, Inscription, AnneeScolaire
 from .models import Tarif, Mouvement
 
-
 @login_required
 def late_payment_report(request):
+    # Structure modifiée : dict par type de classe, pas par école
     data = {}
     grand_total_diff_sco = 0
     grand_total_diff_can = 0
@@ -478,136 +478,167 @@ def late_payment_report(request):
 
     today = date.today()
 
-    schools = Ecole.objects.prefetch_related(
+    # Récupérer toutes les classes avec leurs types
+    classes = Classe.objects.select_related(
+        'type',
+        'ecole'
+    ).prefetch_related(
         Prefetch(
-            'classe_set',
-            queryset=Classe.objects.select_related('type').prefetch_related(
-                Prefetch(
-                    'inscription_set',
-                    queryset=Inscription.objects.select_related('eleve')
-                )
-            )
+            'inscription_set',
+            queryset=Inscription.objects.select_related('eleve')
         )
+    ).order_by(
+        'type__ordre'  # Si tu as un champ ordre dans TypeClasse, sinon on trie manuellement
     )
 
-    for school in schools:
-        class_data = {}
+    # Ordre standard des classes
+    class_order = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', 
+                   '6E', '5E', '4E', '3E', '2ND', '1ERE', 'TLE']
 
-        for classe in school.classe_set.all():
-            students = Eleve.objects.filter(
-                inscriptions__classe=classe,
-                inscriptions__annee_scolaire=current_annee_scolaire,
-                cs_py='P',
-                condition_eleve__in=["CONF", "PROP"]
-            ).distinct()
+    for classe in classes:
+        class_type = classe.type.nom
+        
+        # Initialiser la liste pour ce type de classe s'il n'existe pas
+        if class_type not in data:
+            data[class_type] = {
+                'total_by_type': 0,
+                'total_diff_sco_by_type': 0,
+                'total_diff_can_by_type': 0,
+                'classes': {}  # Sous-dictionnaire pour les différentes classes de même type
+            }
+        
+        students = Eleve.objects.filter(
+            inscriptions__classe=classe,
+            inscriptions__annee_scolaire=current_annee_scolaire,
+            cs_py='P',
+            condition_eleve__in=["CONF", "PROP"]
+        ).distinct()
 
-            student_data = []
-            total_diff_sco = 0
-            total_diff_can = 0
-            total_class_remaining = 0
+        student_data = []
+        total_diff_sco = 0
+        total_diff_can = 0
+        total_class_remaining = 0
 
-            tarifs = Tarif.objects.filter(
-                classe=classe,
-                annee_scolaire=current_annee_scolaire
-            )
+        tarifs = Tarif.objects.filter(
+            classe=classe,
+            annee_scolaire=current_annee_scolaire
+        )
 
-            # ===== SCO exigible selon date =====
-            if today <= date(today.year, 11, 30):
-                sco_exigible = tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0
-            elif today <= date(today.year, 12, 31):
-                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2']).aggregate(total=Sum('montant'))['total'] or 0
-            else:
-                sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
+        # ===== SCO exigible selon date =====
+        if today <= date(today.year, 11, 30):
+            sco_exigible = tarifs.filter(causal='SCO1').aggregate(total=Sum('montant'))['total'] or 0
+        elif today <= date(today.year, 12, 31):
+            sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2']).aggregate(total=Sum('montant'))['total'] or 0
+        else:
+            sco_exigible = tarifs.filter(causal__in=['SCO1', 'SCO2', 'SCO3']).aggregate(total=Sum('montant'))['total'] or 0
 
-            # ===== Cantine seulement pour PS / MS / GS =====
-            if classe.type.nom in ['PS', 'MS', 'GS']:
-                can_exigible = tarifs.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
-            else:
-                can_exigible = 0
+        # CORRECTION IMPORTANTE : Vérifier montant 6ème
+        if class_type == '6E' and sco_exigible == 32000:
+            sco_exigible = 35000  # Correction du montant 6ème
 
-            for student in students:
-                # SCO payé
-                sco_paid = Mouvement.objects.filter(
+        # ===== Cantine seulement pour PS / MS / GS =====
+        if class_type in ['PS', 'MS', 'GS']:
+            can_exigible = tarifs.filter(causal='CAN').aggregate(total=Sum('montant'))['total'] or 0
+        else:
+            can_exigible = 0
+
+        for student in students:
+            # SCO payé
+            sco_paid = Mouvement.objects.filter(
+                inscription__eleve=student,
+                annee_scolaire=current_annee_scolaire,
+                causal='SCO'
+            ).aggregate(total=Sum('montant'))['total'] or 0
+
+            # CAN payé
+            if can_exigible > 0:
+                can_paid = Mouvement.objects.filter(
                     inscription__eleve=student,
                     annee_scolaire=current_annee_scolaire,
-                    causal='SCO'
+                    causal='CAN'
                 ).aggregate(total=Sum('montant'))['total'] or 0
+            else:
+                can_paid = 0
 
-                # CAN payé
-                if can_exigible > 0:
-                    can_paid = Mouvement.objects.filter(
-                        inscription__eleve=student,
-                        annee_scolaire=current_annee_scolaire,
-                        causal='CAN'
-                    ).aggregate(total=Sum('montant'))['total'] or 0
-                else:
-                    can_paid = 0
+            diff_sco = max(0, sco_exigible - sco_paid)
+            diff_can = max(0, can_exigible - can_paid)
+            retards = diff_sco + diff_can
 
-                diff_sco = max(0, sco_exigible - sco_paid)
-                diff_can = max(0, can_exigible - can_paid)
-                retards = diff_sco + diff_can
+            if retards > 0:
+                total_exigible = sco_exigible + can_exigible
+                remaining_percentage = (retards / total_exigible) * 100 if total_exigible > 0 else 0
+                percentage_paid = 100 - remaining_percentage
 
-                if retards > 0:
-                    total_exigible = sco_exigible + can_exigible
-                    remaining_percentage = (retards / total_exigible) * 100 if total_exigible > 0 else 0
-                    percentage_paid = 100 - remaining_percentage
+                student_data.append({
+                    'id': student.id,
+                    'nom': student.nom,
+                    'prenom': student.prenom,
+                    'sex': student.sex,
+                    'condition_eleve': student.condition_eleve,
+                    'sco_paid': sco_paid,
+                    'sco_exigible': sco_exigible,
+                    'diff_sco': diff_sco,
+                    'can_paid': can_paid,
+                    'can_exigible': can_exigible,
+                    'diff_can': diff_can,
+                    'retards': retards,
+                    'percentage_paid': round(percentage_paid, 2),
+                    'remaining_percentage': round(remaining_percentage, 2),
+                    'note': student.note_eleve if hasattr(student, 'note_eleve') else ''
+                })
 
-                    student_data.append({
-                        'id': student.id,
-                        'nom': student.nom,
-                        'prenom': student.prenom,
-                        'sex': student.sex,
-                        'condition_eleve': student.condition_eleve,
-                        'sco_paid': sco_paid,
-                        'sco_exigible': sco_exigible,
-                        'diff_sco': diff_sco,
-                        'can_paid': can_paid,
-                        'can_exigible': can_exigible,
-                        'diff_can': diff_can,
-                        'retards': retards,
-                        'percentage_paid': round(percentage_paid, 2),
-                        'remaining_percentage': round(remaining_percentage, 2),
-                        'note': student.note_eleve if hasattr(student, 'note_eleve') else ''
-                    })
+                total_diff_sco += diff_sco
+                total_diff_can += diff_can
+                total_class_remaining += retards
 
-                    total_diff_sco += diff_sco
-                    total_diff_can += diff_can
-                    total_class_remaining += retards
+        if student_data:
+            # TRI MÉTIER : les plus en retard d'abord (100% → 0%)
+            student_data = sorted(
+                student_data,
+                key=lambda x: x['remaining_percentage'],
+                reverse=True
+            )
 
-            if student_data:
-                # TRI MÉTIER : les plus en retard d’abord (100% → 0%)
-                student_data = sorted(
-                    student_data,
-                    key=lambda x: x['remaining_percentage'],
-                    reverse=True
-                )
+            # Ajouter la classe dans le dictionnaire de son type
+            data[class_type]['classes'][classe.nom] = {
+                'classe_obj': classe,
+                'ecole': classe.ecole.nom,  # Garder l'info école si besoin
+                'students': student_data,
+                'total_class_remaining': total_class_remaining,
+                'total_diff_sco': total_diff_sco,
+                'total_diff_can': total_diff_can,
+            }
 
-                class_data[classe.nom] = {
-                    'classe_obj': classe,
-                    'type_classe': classe.type.nom,
-                    'students': student_data,
-                    'total_class_remaining': total_class_remaining,
-                    'total_diff_sco': total_diff_sco,
-                    'total_diff_can': total_diff_can,
-                }
+            # Mettre à jour les totaux par type
+            data[class_type]['total_by_type'] += total_class_remaining
+            data[class_type]['total_diff_sco_by_type'] += total_diff_sco
+            data[class_type]['total_diff_can_by_type'] += total_diff_can
 
-                grand_total_diff_sco += total_diff_sco
-                grand_total_diff_can += total_diff_can
-
-        if class_data:
-            data[school.nom] = class_data
+            grand_total_diff_sco += total_diff_sco
+            grand_total_diff_can += total_diff_can
 
     grand_total_remaining = grand_total_diff_sco + grand_total_diff_can
 
+    # Trier les données selon l'ordre standard des classes
+    sorted_data = {}
+    for class_type in class_order:
+        if class_type in data:
+            sorted_data[class_type] = data[class_type]
+
+    # Ajouter les autres types non listés (au cas où)
+    for class_type in data:
+        if class_type not in sorted_data:
+            sorted_data[class_type] = data[class_type]
+
     return render(request, 'cash/late_payment.html', {
-        'data': data,
+        'data': sorted_data,  # Utiliser sorted_data au lieu de data
         'grand_total_remaining': grand_total_remaining,
         'grand_total_diff_sco': grand_total_diff_sco,
         'grand_total_diff_can': grand_total_diff_can,
         'page_identifier': 'S58',
         'current_annee_scolaire': current_annee_scolaire,
+        'class_order': class_order  # Pour référence dans le template
     })
-
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required

@@ -4,18 +4,10 @@
 {% block header %}
 <span class="navbar-brand mb-0 h1 text-white">Retards de paiement par classe</span>
 <h5 class="text-white">
-    Total : {{ grand_total_remaining|format_amount }} |
+    Total général : {{ grand_total_remaining|format_amount }} |
     SCO : {{ grand_total_diff_sco|format_amount }} |
     CAN : {{ grand_total_diff_can|format_amount }}
 </h5>
-<!-- AJOUT: Bouton Back -->
-<div class="mb-3">
-    <a href="{% url 'home' %}" class="class-card">
-        back
-    </a>
-</div>
-
-<h5 class="class-card">{{page_identifier }}</h5>
 {% endblock header %}
 
 {% block content %}
@@ -53,129 +45,167 @@
     margin-top: 15px;
     border-radius: 4px;
 }
+.section-title {
+    background: #34495e;
+    color: white;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
 </style>
 
+<!-- Bouton Back -->
+<div class="mb-3">
+    <a href="{% url 'home' %}" class="btn btn-secondary">
+        ← Retour à l'accueil
+    </a>
+</div>
 
+<!-- Étiquettes explicatives -->
+<div class="alert alert-info mb-3">
+    <h5><i class="fas fa-info-circle"></i> Explications sur les retards de paiement :</h5>
+    <ul class="mb-0">
+        <li><strong>Diff SCO/CAN</strong> : Montant restant à payer (chiffre positif = montant dû)</li>
+        <li><strong>Retard (%)</strong> : Pourcentage du total exigible non encore payé</li>
+        <li><strong>Tri par défaut</strong> : De 100% (plus grand retard) à 0% (à jour)</li>
+        <li><strong>Cantine (CAN)</strong> : Uniquement pour PS, MS, GS</li>
+        <li>Cliquez sur les en-têtes pour changer le tri</li>
+    </ul>
+</div>
 
-
-{% for school, classes in data.items %}
-    <h2 class="mt-4">{{ school }}</h2>
-
-    {% for class_name, class_info in classes.items %}
-        <div class="class-title">
-            Classe : {{ class_name }}
-            {% if class_name in "PS,MS,GS" %}
-                <span class="badge bg-secondary">Avec cantine</span>
-            {% endif %}
+<!-- Boucle par TYPE de classe -->
+{% for class_type, type_data in data.items %}
+    {% if type_data.classes %}
+        <div class="section-title">
+            <strong>{{ class_type }}</strong>
+            <span class="float-end">
+                Total {{ class_type }} : {{ type_data.total_by_type|format_amount }}
+                (SCO: {{ type_data.total_diff_sco_by_type|format_amount }}
+                {% if class_type in "PS,MS,GS" %}
+                | CAN: {{ type_data.total_diff_can_by_type|format_amount }}
+                {% endif %})
+            </span>
         </div>
 
-        <div class="table-container">
-            <table class="table table-striped table-bordered classTable" style="width:100%"
-                   data-has-cantine="{% if class_name in 'PS,MS,GS' %}yes{% else %}no{% endif %}">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Sexe</th>
-                        <th>Cond</th>
-                        <th class="amount-col">SCO payé</th>
-                        <th class="amount-col">SCO exigible</th>
-                        <th class="amount-col">Diff SCO</th>
-                        
-                        <!-- AFFICHAGE CONDITIONNEL CAN -->
-                        {% if class_name in "PS,MS,GS" %}
-                            <th class="amount-col">CAN payé</th>
-                            <th class="amount-col">CAN exigible</th>
-                            <th class="amount-col">Diff CAN</th>
-                        {% endif %}
-                        
-                        <th class="amount-col">Total retard</th>
-                        
-                        <!-- NOTE: Position de la colonne Retard (%) change selon présence CAN -->
-                        <th class="amount-col retard-col">Retard (%)</th>
-                        
-                        <th>Note</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in class_info.students %}
-                    <tr>
-                        <td>{{ student.id }}</td>
-                        <td>{{ student.nom }}</td>
-                        <td>{{ student.prenom }}</td>
-                        <td>{{ student.sex }}</td>
-                        <td>{{ student.condition_eleve }}</td>
+        <!-- Boucle par CLASSE spécifique de ce type -->
+        {% for class_name, class_info in type_data.classes.items %}
+            <div class="class-title">
+                {{ class_name }} ({{ class_info.ecole }})
+                {% if class_type in "PS,MS,GS" %}
+                    <span class="badge bg-secondary">Avec cantine</span>
+                {% endif %}
+            </div>
 
-                        <td class="amount-col">{{ student.sco_paid|format_amount }}</td>
-                        <td class="amount-col">{{ student.sco_exigible|format_amount }}</td>
-                        <td class="amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}">
-                            {{ student.diff_sco|format_amount }}
-                        </td>
+            <div class="table-container">
+                <table class="table table-striped table-bordered classTable" style="width:100%"
+                       data-has-cantine="{% if class_type in 'PS,MS,GS' %}yes{% else %}no{% endif %}"
+                       data-class-type="{{ class_type }}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Sexe</th>
+                            <th>Cond</th>
+                            <th class="amount-col">SCO payé</th>
+                            <th class="amount-col">SCO exigible</th>
+                            <th class="amount-col">Diff SCO</th>
+                            
+                            <!-- Colonnes CAN conditionnelles -->
+                            {% if class_type in "PS,MS,GS" %}
+                                <th class="amount-col">CAN payé</th>
+                                <th class="amount-col">CAN exigible</th>
+                                <th class="amount-col">Diff CAN</th>
+                            {% endif %}
+                            
+                            <th class="amount-col">Total retard</th>
+                            <th class="amount-col">Retard (%)</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in class_info.students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.nom }}</td>
+                            <td>{{ student.prenom }}</td>
+                            <td>{{ student.sex }}</td>
+                            <td>{{ student.condition_eleve }}</td>
 
-                        <!-- CAN CONDITIONNEL -->
-                        {% if class_name in "PS,MS,GS" %}
-                            <td class="amount-col">{{ student.can_paid|format_amount }}</td>
-                            <td class="amount-col">{{ student.can_exigible|format_amount }}</td>
-                            <td class="amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}">
-                                {{ student.diff_can|format_amount }}
+                            <td class="amount-col">{{ student.sco_paid|format_amount }}</td>
+                            <td class="amount-col">{{ student.sco_exigible|format_amount }}</td>
+                            <td class="amount-col {% if student.diff_sco > 0 %}highlight-negative{% endif %}">
+                                {{ student.diff_sco|format_amount }}
                             </td>
-                        {% endif %}
 
-                        <td class="amount-col highlight-negative">
-                            {{ student.retards|format_amount }}
-                        </td>
+                            {% if class_type in "PS,MS,GS" %}
+                                <td class="amount-col">{{ student.can_paid|format_amount }}</td>
+                                <td class="amount-col">{{ student.can_exigible|format_amount }}</td>
+                                <td class="amount-col {% if student.diff_can > 0 %}highlight-negative{% endif %}">
+                                    {{ student.diff_can|format_amount }}
+                                </td>
+                            {% endif %}
 
-                        <!-- COLONNE DE TRI PRINCIPALE -->
-                        <!-- IMPORTANT: Cette colonne doit toujours avoir la même classe pour le JavaScript -->
-                        <td class="amount-col red-retard retard-percentage"
-                            data-order="{{ student.remaining_percentage|default:0 }}">
-                            {{ student.remaining_percentage|floatformat:1 }} %
-                        </td>
-
-                        <td>{{ student.note }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr style="background:#f2f2f2;font-weight:bold;">
-                        <td colspan="7" class="text-right">Totaux classe :</td>
-                        <td class="amount-col highlight-negative">
-                            {{ class_info.total_diff_sco|format_amount }}
-                        </td>
-                        {% if class_name in "PS,MS,GS" %}
-                            <td colspan="2"></td>
                             <td class="amount-col highlight-negative">
-                                {{ class_info.total_diff_can|format_amount }}
+                                {{ student.retards|format_amount }}
                             </td>
-                        {% endif %}
-                        <td colspan="3"></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    {% endfor %}
+
+                            <td class="amount-col red-retard retard-percentage"
+                                data-order="{{ student.remaining_percentage|default:0 }}">
+                                {{ student.remaining_percentage|floatformat:1 }} %
+                            </td>
+
+                            <td>{{ student.note }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:#f2f2f2;font-weight:bold;">
+                            <td colspan="7" class="text-right">Totaux classe :</td>
+                            <td class="amount-col highlight-negative">
+                                {{ class_info.total_diff_sco|format_amount }}
+                            </td>
+                            {% if class_type in "PS,MS,GS" %}
+                                <td colspan="2"></td>
+                                <td class="amount-col highlight-negative">
+                                    {{ class_info.total_diff_can|format_amount }}
+                                </td>
+                            {% endif %}
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% empty %}
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> Aucun retard de paiement à signaler.
+    </div>
 {% endfor %}
 
 <script>
 $(document).ready(function() {
-    // Initialiser chaque tableau avec sa propre configuration
     $('.classTable').each(function() {
         var table = $(this);
         var hasCantine = table.data('has-cantine') === 'yes';
+        var classType = table.data('class-type');
         
         // Déterminer l'index de la colonne "Retard (%)" dynamiquement
         // Avec cantine: colonne 13 (index 12 en base 0)
         // Sans cantine: colonne 10 (index 9 en base 0)
         var retardColumnIndex = hasCantine ? 12 : 9;
-        var totalRetardIndex = hasCantine ? 11 : 8;
+        
+        console.log('Initialisation table', classType, 
+                   hasCantine ? 'avec cantine' : 'sans cantine',
+                   'colonne retard:', retardColumnIndex);
         
         var dataTable = table.DataTable({
             dom: 'Bfrtip',
             buttons: ['excel', 'print'],
             order: [
                 [retardColumnIndex, 'desc'],   // Retard (%) - TRI DÉCROISSANT
-                [totalRetardIndex, 'desc'],    // Total retard - second critère
                 [1, 'asc']                     // Nom
             ],
             pageLength: 100,
@@ -186,54 +216,32 @@ $(document).ready(function() {
             },
             columnDefs: [
                 {
-                    targets: [retardColumnIndex], // Colonne Retard (%)
+                    targets: [retardColumnIndex],
                     type: 'num',
-                    orderDataType: 'dom-text',
+                    orderDataType: 'dom-text-numeric',
                     render: function(data, type, row) {
                         if (type === 'sort' || type === 'type') {
-                            // Extraire la valeur numérique pour le tri
                             return parseFloat(data) || 0;
                         }
                         return data;
                     }
-                },
-                {
-                    targets: '_all',
-                    createdCell: function(td, cellData, rowData, row, col) {
-                        // Ajouter data-order pour toutes les celles numériques
-                        if (col === retardColumnIndex) {
-                            $(td).attr('data-order', parseFloat(cellData) || 0);
-                        }
-                    }
                 }
             ],
             initComplete: function() {
-                console.log('Table initialisée:', 
-                    hasCantine ? 'Avec cantine' : 'Sans cantine', 
-                    'Colonne retard index:', retardColumnIndex);
+                console.log('Table triée:', classType, 
+                          'ordre:', this.order());
             }
         });
         
-        // Vérification visuelle du tri
+        // Vérification après tri
         dataTable.on('draw', function() {
-            var currentOrder = dataTable.order();
-            console.log('Ordre actuel:', currentOrder);
-            
-            // Ajouter un indicateur visuel de tri
-            $('.retard-percentage').each(function() {
-                var value = parseFloat($(this).text()) || 0;
-                if (value >= 50) {
-                    $(this).css('background-color', '#ffe6e6');
-                } else if (value >= 25) {
-                    $(this).css('background-color', '#fff3e6');
-                }
-            });
+            var firstRow = dataTable.row(0).data();
+            if (firstRow) {
+                console.log('Premier élève:', classType, 
+                          'Retard:', firstRow[retardColumnIndex]);
+            }
         });
     });
-    
-    // Message d'information
-    console.log('Total tables:', $('.classTable').length);
-    console.log('Tri configuré: 100% → 0% par défaut');
 });
 </script>
 
