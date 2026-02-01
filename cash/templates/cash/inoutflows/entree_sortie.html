@@ -81,7 +81,7 @@
         </select>
     </form>
     
-    <!-- Center-aligned elements (Totals) -->
+    <!-- Center-aligned elements (Totals) 
     <div class="d-flex align-items-center">
         <div class="header-totals">
             <span>Total: {{ total_balance|format_amount }}</span>
@@ -89,6 +89,7 @@
             <span>Sortie: {{ total_sortie|floatformat:2 }}</span>
         </div>
     </div>
+    -->
 
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
@@ -107,15 +108,11 @@
 
 {% block content %}
 <style>
-    .content-container {
-        margin: 0;
-        padding: 0;
-    }
-    
+  
     .table-container {
         width: 100%;
         overflow: hidden;
-        border-radius: 5px;
+       
     }
     
     .table {
@@ -131,7 +128,7 @@
         font-weight: bold;
         padding: 4px 8px !important;
         font-size: 11px;
-        height: 30px;
+        height: 20px;
         line-height: 1.1;
         white-space: nowrap !important;
         overflow: hidden;
@@ -148,7 +145,7 @@
         padding: 3px 8px !important;
         text-align: center;
         font-size: 11px;
-        height: 26px;
+        height: 16px;
         line-height: 1.1;
         vertical-align: middle;
         white-space: nowrap;
@@ -182,13 +179,7 @@
     #entreeSortieTable th:nth-child(6) { width: 50px !important; }  /* Action */
     
     /* COULEURS */
-    .text-success {
-        color: #28a745 !important;
-    }
-    
-    .text-danger {
-        color: #dc3545 !important;
-    }
+
     
     /* SCROLLING */
     .dataTables_scrollBody {
@@ -231,7 +222,7 @@
                         <th class="dt-right">Entrée</th>
                         <th class="dt-right">Sortie</th>
                         <th class="dt-right">Solde Progressif</th>
-                        <th class="action"></th>
+                        <th class=""></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -271,10 +262,7 @@
     </div>
 </div>
 
-<!-- Bouton pour scroller vers le bas -->
-<button class="scroll-bottom-btn" title="Aller en bas">
-    <i class="fas fa-arrow-down"></i>
-</button>
+
 
 <script>
     $(document).ready(function() {
