@@ -1542,25 +1542,47 @@ from django.shortcuts import get_object_or_404, render
 from django.db.models import Sum
 
 from cash.models import Tarif
-
 @login_required
 def classe_information(request, pk):
-    classe = get_object_or_404(Classe, id=pk)  # Classe ciblée
-    school_year = AnneeScolaire.objects.filter(actuel=True).first()  # Année scolaire actuelle
+    classe = get_object_or_404(Classe, id=pk)
+    school_year = AnneeScolaire.objects.filter(actuel=True).first()
     
-    # S'assurer qu'une année scolaire est définie
     if not school_year:
         return render(request, 'cash/tarif/classe_information.html', {
             'error_message': "Aucune année scolaire actuelle définie.",
             'page_identifier': 'S55',
         })
 
-    school_name = classe.ecole.nom  # Nom de l'école liée à la classe
+    school_name = classe.ecole.nom
     
-    # Tarifs de la classe pour l'année scolaire actuelle uniquement
+    # DÉTERMINER SI LA CLASSE EST INTERNE OU EXTERNE
+    # Classes internes au centre Nasara
+    internal_classes = ['PS', 'MS', 'GS', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2']
+    
+    # Vérifier si c'est une classe interne
+    # Note: Tu dois avoir un champ pour identifier le type de classe
+    # Si classe.type.nom existe, utilise-le, sinon utilise le nom
+    class_type = getattr(classe, 'type', None)
+    if class_type and hasattr(class_type, 'nom'):
+        class_type_name = class_type.nom
+    else:
+        # Extraire le type du nom (ex: "CP1 Nasara" → "CP1")
+        class_type_name = classe.nom.split()[0] if ' ' in classe.nom else classe.nom
+    
+    is_internal_class = class_type_name in internal_classes
+    is_external_class = not is_internal_class
+    
+    # Tarifs de la classe
     tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=school_year)
+    
+    # Filtrer les tarifs CAN (cantine) uniquement pour PS/MS/GS
+    display_tarifs = []
+    for tarif in tarifs:
+        if tarif.causal == 'CAN' and class_type_name not in ['PS', 'MS', 'GS']:
+            continue  # Ne pas afficher CAN pour les autres classes
+        display_tarifs.append(tarif)
 
-    # Étudiants inscrits dans cette classe & année scolaire
+    # Étudiants inscrits
     eleves_qs = Eleve.objects.filter(
         inscriptions__classe=classe,
         inscriptions__annee_scolaire=school_year
@@ -1568,77 +1590,193 @@ def classe_information(request, pk):
 
     total_students = eleves_qs.count()
 
-    # Étudiants confirmés PY
+    # PY confirmés (PROP → CONF après premier paiement)
     total_students_confirmed = eleves_qs.filter(
         condition_eleve='CONF',
         cs_py='P'
     ).count()
 
-    # Comptage par catégorie dans la classe & année
+    # Comptage par catégorie
     total_CS = eleves_qs.filter(cs_py='C').count()
     total_PY = eleves_qs.filter(cs_py='P').count()
     other = total_students - (total_PY + total_CS)
 
-    # Calcul des tranches tarifaires
-    sco1 = tarifs.filter(causal="SCO1").aggregate(total=Sum('montant'))['total'] or 0
-    sco2 = tarifs.filter(causal="SCO2").aggregate(total=Sum('montant'))['total'] or 0
-    sco3 = tarifs.filter(causal="SCO3").aggregate(total=Sum('montant'))['total'] or 0
-
-    first_tranche = sco1
-    second_tranche = sco1 + sco2
-    third_tranche = sco1 + sco2 + sco3
-
-    # Progressif par tranche (PY confirmés cette année)
-    progressif_per_tranche = {
-        '1er': first_tranche * total_students_confirmed,
-        '2eme': second_tranche * total_students_confirmed,
-        '3eme': third_tranche * total_students_confirmed,
+    # === CALCULS POUR PY (ÉLÈVES PAYANTS) ===
+    
+    # 1. Tarifs SCO pour PY (ce que NOUS recevons)
+    sco1_py = tarifs.filter(causal="SCO1").aggregate(total=Sum('montant'))['total'] or 0
+    sco2_py = tarifs.filter(causal="SCO2").aggregate(total=Sum('montant'))['total'] or 0
+    sco3_py = tarifs.filter(causal="SCO3").aggregate(total=Sum('montant'))['total'] or 0
+    
+    # 2. Tarifs CAN (cantine) pour PY - seulement PS/MS/GS
+    can_py = 0
+    if class_type_name in ['PS', 'MS', 'GS']:
+        can_py = tarifs.filter(causal="CAN").aggregate(total=Sum('montant'))['total'] or 0
+    
+    # 3. Tarifs TEN (tenues) pour PY
+    ten_py = tarifs.filter(causal="TEN").aggregate(total=Sum('montant'))['total'] or 0
+    
+    # Calcul des tranches pour PY
+    first_tranche_py = sco1_py + (can_py if class_type_name in ['PS', 'MS', 'GS'] else 0)
+    second_tranche_py = sco1_py + sco2_py + (can_py if class_type_name in ['PS', 'MS', 'GS'] else 0)
+    third_tranche_py = sco1_py + sco2_py + sco3_py + (can_py if class_type_name in ['PS', 'MS', 'GS'] else 0)
+    
+    # Progressif par tranche POUR PY
+    progressif_per_tranche_py = {
+        '1er': first_tranche_py * total_students_confirmed,
+        '2eme': second_tranche_py * total_students_confirmed,
+        '3eme': third_tranche_py * total_students_confirmed,
     }
-
-    expected_total_school_fees = third_tranche * total_students_confirmed
-
-    # Uniformes reçus PY cette année et classe
+    
+    # Total attendu de la classe POUR PY
+    expected_total_school_fees_py = third_tranche_py * total_students_confirmed
+    
+    # === CALCULS POUR CS (CENTRE SOCIAL - CE QUE NOUS PAYONS) ===
+    
+    # 1. Tarifs SCO pour CS (ce que NOUS payons pour eux)
+    # NOTE: Dans la base, tu dois avoir des tarifs spécifiques pour CS
+    # Sinon, utilise les mêmes tarifs mais comme dépenses
+    sco1_cs = tarifs.filter(causal="SCO1").aggregate(total=Sum('montant'))['total'] or 0
+    sco2_cs = tarifs.filter(causal="SCO2").aggregate(total=Sum('montant'))['total'] or 0
+    sco3_cs = tarifs.filter(causal="SCO3").aggregate(total=Sum('montant'))['total'] or 0
+    
+    # 2. CS ne paient pas la cantine
+    # 3. CS ne paient pas les tenues (nous payons pour eux)
+    
+    # Calcul des tranches pour CS (CE QUE NOUS PAYONS)
+    first_tranche_cs = sco1_cs
+    second_tranche_cs = sco1_cs + sco2_cs
+    third_tranche_cs = sco1_cs + sco2_cs + sco3_cs
+    
+    # Total que NOUS devons payer pour les CS
+    total_cs_payment_due = third_tranche_cs * total_CS
+    
+    # === CALCULS RÉELS (CE QUI A ÉTÉ PAYÉ/RÉCOLTÉ) ===
+    
+    # 1. PY - Frais scolaires reçus
+    actual_total_school_fees_received = Mouvement.objects.filter(
+        inscription__classe=classe,
+        inscription__annee_scolaire=school_year,
+        inscription__eleve__cs_py='P',  # SEULEMENT PY
+        causal__in=['SCO', 'SCO1', 'SCO2', 'SCO3']
+    ).aggregate(total=Sum('montant'))['total'] or 0
+    
+    # 2. PY - Cantine reçue (seulement PS/MS/GS)
+    actual_cantine_received = 0
+    if class_type_name in ['PS', 'MS', 'GS']:
+        actual_cantine_received = Mouvement.objects.filter(
+            inscription__classe=classe,
+            inscription__annee_scolaire=school_year,
+            inscription__eleve__cs_py='P',
+            causal='CAN'
+        ).aggregate(total=Sum('montant'))['total'] or 0
+    
+    # 3. PY - Tenues reçues
     total_py_uniforms_received = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=school_year,
         inscription__eleve__cs_py='P',
         causal='TEN'
     ).aggregate(total=Sum('montant'))['total'] or 0
-
-    # Frais scolaires reçus cette année pour la classe
-    actual_total_school_fees_received = Mouvement.objects.filter(
+    
+    # 4. CS - Frais payés par NOUS (dépenses)
+    actual_cs_payments_made = Mouvement.objects.filter(
         inscription__classe=classe,
         inscription__annee_scolaire=school_year,
-        causal__in=['SCO', 'SCO1', 'SCO2', 'SCO3']  # selon ce qui est conservé en base
+        inscription__eleve__cs_py='C',
+        causal__in=['SCO', 'SCO1', 'SCO2', 'SCO3']
     ).aggregate(total=Sum('montant'))['total'] or 0
-
-    # Coût un uniforme PY (ou 0 si pas défini)
-    first_uniform_reservation = UniformReservation.objects.filter(student_type='P').first()
-    cost_per_uniform = first_uniform_reservation.cost_per_uniform if first_uniform_reservation else 0
-
-    total_py_uniforms_expected = total_students_confirmed * cost_per_uniform
-
-    return render(request, 'cash/tarif/classe_information.html', {
+    
+    # === CALCULS DES ATTENDUS ===
+    
+    # Tenues attendues des PY
+    cost_per_uniform = 0
+    if is_internal_class:  # Seulement pour classes internes
+        first_uniform_reservation = UniformReservation.objects.filter(student_type='P').first()
+        cost_per_uniform = first_uniform_reservation.cost_per_uniform if first_uniform_reservation else 0
+    
+    total_py_uniforms_expected = total_students_confirmed * cost_per_uniform if is_internal_class else 0
+    
+    # Tenues payées par NOUS pour CS (dépenses)
+    total_cs_uniforms_paid = 0
+    if is_internal_class:  # Seulement pour classes internes
+        total_cs_uniforms_paid = Mouvement.objects.filter(
+            inscription__classe=classe,
+            inscription__annee_scolaire=school_year,
+            inscription__eleve__cs_py='C',
+            causal='TEN'
+        ).aggregate(total=Sum('montant'))['total'] or 0
+    
+    # === PRÉPARATION DES DONNÉES POUR LE TEMPLATE ===
+    
+    context = {
+        # Informations de base
         'classe': classe,
         'school_name': school_name,
         'school_year': school_year,
-        'tarifs': tarifs,
+        'page_identifier': 'S55',
+        
+        # Type de classe
+        'is_internal_class': is_internal_class,
+        'is_external_class': is_external_class,
+        'class_type_name': class_type_name,
+        
+        # Tarifs (filtrés pour CAN)
+        'tarifs': display_tarifs,
+        
+        # Statistiques élèves
         'total_students': total_students,
         'total_students_confirmed': total_students_confirmed,
         'total_CS': total_CS,
         'total_PY': total_PY,
         'other': other,
-        'progressif_per_tranche': progressif_per_tranche,
-        'first_tranche': first_tranche,
-        'second_tranche': second_tranche,
-        'third_tranche': third_tranche,
+        
+        # === DONNÉES POUR PY (CE QUE NOUS RECEVONS) ===
+        # Progressif par élève PY
+        'progressif_per_tranche': progressif_per_tranche_py,
+        
+        # Tranches unitaires PY
+        'first_tranche': first_tranche_py,
+        'second_tranche': second_tranche_py,
+        'third_tranche': third_tranche_py,
+        
+        # Totaux attendus PY
+        'expected_total_school_fees': expected_total_school_fees_py,
+        
+        # Tenues PY
         'total_py_uniforms_received': total_py_uniforms_received,
-        'actual_total_school_fees_received': actual_total_school_fees_received,
-        'expected_total_school_fees': expected_total_school_fees,
         'total_py_uniforms_expected': total_py_uniforms_expected,
-        'page_identifier': 'S55',
-    })
-
+        
+        # Reçus réels PY
+        'actual_total_school_fees_received': actual_total_school_fees_received,
+        'actual_cantine_received': actual_cantine_received,
+        
+        # === DONNÉES POUR CS (CE QUE NOUS PAYONS) ===
+        # Seulement pour le template si c'est pertinent
+        'total_cs_payment_due': total_cs_payment_due,
+        'actual_cs_payments_made': actual_cs_payments_made,
+        'total_cs_uniforms_paid': total_cs_uniforms_paid,
+        
+        # Tranches unitaires CS (pour affichage si nécessaire)
+        'first_tranche_cs': first_tranche_cs,
+        'second_tranche_cs': second_tranche_cs,
+        'third_tranche_cs': third_tranche_cs,
+        
+        # Cantine
+        'has_cantine': class_type_name in ['PS', 'MS', 'GS'],
+        'can_py_amount': can_py,
+    }
+    
+    # Ajouter des logs pour débogage
+    print(f"=== DEBUG Classe Information ===")
+    print(f"Classe: {classe.nom}, Type: {class_type_name}")
+    print(f"Interne: {is_internal_class}, Externe: {is_external_class}")
+    print(f"PY confirmés: {total_students_confirmed}, CS: {total_CS}")
+    print(f"Cantine applicable: {class_type_name in ['PS', 'MS', 'GS']}")
+    print(f"Tarifs affichés: {len(display_tarifs)}")
+    print(f"==============================")
+    
+    return render(request, 'cash/tarif/classe_information.html', context)
 
 @login_required
 def tarif_update(request, pk):

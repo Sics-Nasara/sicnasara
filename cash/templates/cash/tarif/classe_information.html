@@ -1,18 +1,45 @@
 {% extends "../../layout.html" %}
-{% load custom_filters %}
 
 {% block header %}
+<style>
+    /* Style pour les badges */
+    .badge-internal {
+        background-color: #28a745 !important;
+    }
+    .badge-external {
+        background-color: #dc3545 !important;
+    }
+    .badge-cantine {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+    .badge-no-cantine {
+        background-color: #6c757d !important;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center w-100">
     <div class="d-flex align-items-center">
-        <span class="navbar-brand mb-0 h1 text-white">Informations su la classe</span>
+        <span class="navbar-brand mb-0 h1 text-white">Informations sur la classe</span>
         <span class="ms-4 text-white fs-5">{% now "d/m/Y" %}</span>
+        
+        <!-- Badges d'information -->
+        {% if is_internal_class %}
+            <span class="badge badge-internal ms-2">Classe Interne</span>
+        {% elif is_external_class %}
+            <span class="badge badge-external ms-2">Classe Externe</span>
+        {% endif %}
+        
+        {% if has_cantine %}
+            <span class="badge badge-cantine ms-1">Avec Cantine</span>
+        {% else %}
+            <span class="badge badge-no-cantine ms-1">Sans Cantine</span>
+        {% endif %}
     </div>
+    
     <div class="d-flex align-items-stretch">
-        <button class="class-card mr-3" id="undo-button" title="Undo">
+        <button class="class-card mr-3" onclick="window.history.back()" title="Retour">
             <i class="fas fa-undo fa-lg"></i>
-        </button>
-        <button class="class-card mr-3" id="redo-button" title="Redo">
-            <i class="fas fa-redo fa-lg"></i>
         </button>
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
@@ -35,355 +62,559 @@
         vertical-align: middle !important;
         font-size: 1rem;
     }
-    .cantin-hide {
-        display: none !important;
+    
+    .section-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #ddd;
+    }
+    
+    .bg-yellow {
+        background-color: #f9f9c5 !important;
+    }
+    .bg-gray {
+        background-color: #e9ecef !important;
+    }
+    .bg-green {
+        background-color: #e4f9e4 !important;
+    }
+    
+    .text-right {
+        text-align: right !important;
+    }
+    .text-center {
+        text-align: center !important;
+    }
+    
+    .form-control-sm {
+        height: calc(1.5em + 0.5rem + 2px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+    
+    .border-top {
+        border-top: 1px solid #dee2e6 !important;
     }
 </style>
 
-<!-- Ajouter du JavaScript pour masquer la cantine -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Vérifier si c'est une classe maternelle (PS, MS, GS)
-    function isPreschoolClass() {
-        const className = "{{ classe.nom|upper }}"; // Récupérer le nom de la classe
-        return className.includes('PS') || className.includes('MS') || className.includes('GS');
-    }
-    
-    const isPreschool = isPreschoolClass();
-    console.log('Classe:', "{{ classe.nom }}", 'Maternelle?', isPreschool);
-    
-    // Masquer la section cantine si ce n'est pas une classe maternelle
-    if (!isPreschool) {
-        // 1. Masquer les lignes "CAN" dans le tableau des frais
-        document.querySelectorAll('table tbody tr').forEach(row => {
-            const cells = row.querySelectorAll('td');
-            cells.forEach(cell => {
-                if (cell.textContent.includes('CAN') || cell.textContent.trim() === 'CAN') {
-                    row.classList.add('cantin-hide');
-                }
-            });
-        });
-        
-        // 2. Afficher un message d'information
-        const fraisSection = document.querySelector('h5:contains("Frais par élève")');
-        if (fraisSection) {
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'alert alert-info mt-2 p-2';
-            infoDiv.innerHTML = '<small><i class="fas fa-info-circle"></i> La cantine (CAN) n\'est pas applicable pour cette classe (uniquement pour PS, MS, GS).</small>';
-            fraisSection.parentNode.insertBefore(infoDiv, fraisSection.nextSibling);
-        }
-        
-        // 3. Mettre à jour le titre avec une note
-        const pageTitle = document.querySelector('.navbar-brand');
-        if (pageTitle) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-secondary ms-2';
-           // badge.textContent = 'Sans cantine';
-            pageTitle.appendChild(badge);
-        }
-    } else {
-        // Si c'est une classe maternelle, ajouter un badge
-        const pageTitle = document.querySelector('.navbar-brand');
-        if (pageTitle) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-warning ms-2';
-           // badge.textContent = 'Avec cantine';
-            pageTitle.appendChild(badge);
-        }
-    }
-});
-</script>
-
-<div class="container-fluid mt-4" style="max-width: 1300px;">
-    <!-- General Information -->
+<div class="container-fluid mt-4" style="max-width: 1400px;">
+    <!-- En-tête avec informations générales -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="mb-2">
-                <label class="form-label fw-bold">École {{ school_name }}</label>
+            <div class="mb-3">
+                <label class="form-label fw-bold">École: {{ school_name }}</label>
             </div>
-            <div class="mb-2">
-                <label class="form-label fw-bold">Année Scolaire {{ school_year }}</label>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Année Scolaire: {{ school_year.nom }}</label>
             </div>
-            <div class="mb-2">
-                <label class="form-label fw-bold">Classe {{ classe.nom }}</label>
-                <!-- Indicateur visuel ajouté par JavaScript -->
-                <span id="cantineIndicator" class="badge ms-2"></span>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Classe: {{ classe.nom }}</label>
             </div>
         </div>
+        
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light">
+                <h6 class="fw-bold mb-3 text-center">Statistiques Élèves</h6>
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-bold">Élèves</span>
-                    <span class="fs-4">{{ total_students }}</span>
+                    <span class="fw-bold">Total élèves</span>
+                    <span class="fs-5">{{ total_students }}</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>CS</span>
-                    <span>{{ total_CS }}</span>
+                    <span>PY (Payants)</span>
+                    <span class="badge bg-primary">{{ total_PY }}</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>PY</span>
-                    <span>{{ total_PY }}</span>
+                    <span>CS (Centre Social)</span>
+                    <span class="badge bg-info">{{ total_CS }}</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <span>Autres</span>
-                    <span>{{ other }}</span>
+                    <span class="badge bg-secondary">{{ other }}</span>
+                </div>
+                
+                <div class="mt-3 pt-2 border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">PY confirmés</span>
+                        <span class="fs-5 text-success">{{ total_students_confirmed }}</span>
+                    </div>
+                    <small class="text-muted">(PROP → CONF après premier paiement)</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Data Section -->
+    <!-- Section principale - 3 colonnes -->
     <div class="row g-3">
-        <!-- Frais par élève -->
+        <!-- COLONNE GAUCHE: Frais par élève -->
         <div class="col-md-4">
             <div class="border rounded p-3 h-100" style="background: #fafafa;">
-                <h5 class="fw-bold mb-3">Frais par élève</h5>
+                <h5 class="fw-bold mb-3 section-title">Frais par élève</h5>
+                
+                {% if not has_cantine %}
+                <div class="alert alert-info p-2 mb-3">
+                    <small>
+                        <i class="fas fa-info-circle"></i>
+                        La cantine (CAN) n'est pas applicable pour cette classe (uniquement pour PS, MS, GS).
+                    </small>
+                </div>
+                {% endif %}
                 
                 <table class="table table-sm table-borderless">
                     <thead>
                         <tr>
-                            <th class="py-1"></th>
-                            <th class="py-1">Montant</th>
+                            <th class="py-1">Type</th>
+                            <th class="py-1 text-right">Montant</th>
                             <th class="py-1">Échéance</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for tarif in tarifs %}
-                            <!-- Ajouter une classe conditionnelle pour CAN -->
-                            <tr style="height: 30px;" 
-                                {% if tarif.causal == 'CAN' %} 
-                                    class="cantine-row {% if classe.nom not in 'PS,MS,GS' %}d-none{% endif %}" 
-                                {% endif %}>
+                            <tr style="height: 35px;">
                                 <td class="py-1">
-                                    {{ tarif.causal }}
-                                 
-                                </td>
-                                <td class="py-1">{{ tarif.montant|format_amount }}</td>
-                                <td class="py-1">
-                                    {% if tarif.date_expiration %}
-                                        {{ tarif.date_expiration|date:"d/m/Y" }}
-                                    {% elif tarif.tranche %}
-                                        {{ tarif.tranche }}
+                                    {% if tarif.causal == 'INS' %}Inscription
+                                    {% elif tarif.causal == 'SCO1' %}1ère SCO
+                                    {% elif tarif.causal == 'SCO2' %}2ème SCO
+                                    {% elif tarif.causal == 'SCO3' %}3ème SCO
+                                    {% elif tarif.causal == 'TEN' %}Tenue
+                                    {% elif tarif.causal == 'CAN' %}Cantine
+                                    {% else %}{{ tarif.causal }}{% endif %}
+                                    
+                                    {% if tarif.causal == 'CAN' %}
+                                        <span class="badge badge-cantine ms-1">Cantine</span>
                                     {% endif %}
+                                </td>
+                                <td class="py-1 text-right">
+                                    <input type="text" class="form-control form-control-sm bg-yellow" 
+                                           value="{{ tarif.montant }}" readonly>
+                                </td>
+                                <td class="py-1">
+                                    <input type="text" class="form-control form-control-sm bg-yellow" 
+                                           value="{% if tarif.date_expiration %}{{ tarif.date_expiration|date:"d/m/Y" }}{% elif tarif.tranche %}{{ tarif.tranche }}{% else %}-{% endif %}" 
+                                           readonly>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center">Aucun tarif disponible</td>
+                                <td colspan="3" class="text-center py-3">Aucun tarif défini</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
                 
-                <!-- Message conditionnel pour la cantine -->
-             
+                {% if is_external_class and total_CS > 0 %}
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold mb-2">Pour CS (Centre Social)</h6>
+                    <div class="alert alert-warning p-2">
+                        <small>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Ces frais représentent ce que NOUS devons payer pour les CS qui suivent cette classe externe.
+                        </small>
+                    </div>
+                    
+                    <table class="table table-sm table-borderless">
+                        <tr style="height: 35px;">
+                            <td class="py-1">Scolarité CS</td>
+                            <td class="py-1 text-right">
+                                <input type="text" class="form-control form-control-sm bg-yellow" 
+                                       value="{{ first_tranche_cs }}" readonly>
+                            </td>
+                            <td class="py-1">
+                                <input type="text" class="form-control form-control-sm bg-yellow" 
+                                       value="Échéances SCO" readonly>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {% endif %}
             </div>
         </div>
-        <!-- Progressif par élève par tranche -->
+
+        <!-- COLONNE CENTRE: Progressif par élève par tranche -->
         <div class="col-md-4">
             <div class="border rounded p-3 h-100" style="background: #fafafa;">
-                <h5 class="fw-bold mb-3">Progressif par élève par tranche</h5>
-                <div class="mb-2">
-                    <span class="fw-bold">PY & CONF</span>
-                    <span class="fs-4 ms-2 bl">{{ total_students_confirmed }}</span>
+                <h5 class="fw-bold mb-3 section-title">Progressif par élève par tranche</h5>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">PY & CONF</span>
+                        <span class="fs-4">{{ total_students_confirmed }}</span>
+                    </div>
+                    <small class="text-muted d-block">Élèves PY ayant confirmé leur inscription (après premier paiement)</small>
                 </div>
-                <table class="table table-bordered table-sm align-middle mb-0">
+                
+                <table class="table table-bordered table-sm mb-4">
                     <thead class="table-light">
                         <tr>
                             <th>Tranche</th>
-                            <th>Montant</th>
+                            <th class="text-right">Montant par élève</th>
+                            <th class="text-right">Total attendu</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>1er</td>
-                            <td>{{ first_tranche|format_amount }}</td>
+                            <td>1ère échéance</td>
+                            <td class="text-right">{{ first_tranche }}</td>
+                            <td class="text-right bg-gray">{{ progressif_per_tranche.1er }}</td>
                         </tr>
                         <tr>
-                            <td>2ème</td>
-                            <td>{{ second_tranche|format_amount }}</td>
+                            <td>2ème échéance</td>
+                            <td class="text-right">{{ second_tranche }}</td>
+                            <td class="text-right bg-gray">{{ progressif_per_tranche.2eme }}</td>
                         </tr>
                         <tr>
-                            <td>3ème</td>
-                            <td>{{ third_tranche|format_amount }}</td>
+                            <td>3ème échéance</td>
+                            <td class="text-right">{{ third_tranche }}</td>
+                            <td class="text-right bg-gray">{{ progressif_per_tranche.3eme }}</td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>1er</span>
-                        <span>{{ progressif_per_tranche.1er|format_amount }}</span>
+                
+                {% if is_internal_class %}
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold mb-2">Tenues commandées</h6>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span>PY (à notre charge)</span>
+                            <span class="fw-bold">{{ total_PY }}</span>
+                        </div>
+                        <small class="text-muted">Élèves PY devant payer leur tenue</small>
                     </div>
+                    
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>2ème</span>
-                        <span>{{ progressif_per_tranche.2me|format_amount }}</span>
+                        <span>CS (à notre charge)</span>
+                        <span class="fw-bold">{{ total_CS }}</span>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>3ème</span>
-                        <span>{{ progressif_per_tranche.3me|format_amount }}</span>
+                    <small class="text-muted">Élèves CS dont nous payons la tenue</small>
+                </div>
+                {% else %}
+                <div class="mt-4 pt-3 border-top">
+                    <div class="alert alert-info p-2">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Les tenues ne sont pas gérées pour les classes externes.
+                        </small>
                     </div>
                 </div>
+                {% endif %}
+                
+                {% if is_external_class and total_CS > 0 %}
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold mb-2">Pour CS (ce que nous payons)</h6>
+                    
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tranche</th>
+                                <th class="text-right">Par élève CS</th>
+                                <th class="text-right">Total à payer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1ère échéance</td>
+                                <td class="text-right">{{ first_tranche_cs }}</td>
+                                <td class="text-right bg-gray">
+                                    <!-- Calcul direct dans le template -->
+                                    {% widthratio first_tranche_cs 1 total_CS %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2ème échéance</td>
+                                <td class="text-right">{{ second_tranche_cs }}</td>
+                                <td class="text-right bg-gray">
+                                    {% widthratio second_tranche_cs 1 total_CS %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3ème échéance</td>
+                                <td class="text-right">{{ third_tranche_cs }}</td>
+                                <td class="text-right bg-gray">
+                                    {% widthratio third_tranche_cs 1 total_CS %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-active">
+                                <td><strong>Total CS</strong></td>
+                                <td class="text-right"><strong>{{ third_tranche_cs }}</strong></td>
+                                <td class="text-right"><strong>{{ total_cs_payment_due }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- Frais Total aujourd'hui -->
+        <!-- COLONNE DROITE: Frais Total aujourd'hui -->
         <div class="col-md-4">
             <div class="border rounded p-3 h-100" style="background: #fafafa; min-height: 320px;">
-                <h5 class="fw-bold mb-4 text-center">Frais Total aujourd'hui</h5>
+                <h5 class="fw-bold mb-4 text-center section-title">Frais Total aujourd'hui</h5>
+                
+                <!-- Frais Scolarité PY -->
                 <div class="mb-4">
-                    <div class="fw-bold mb-2">Frais Scolarité</div>
+                    <div class="fw-bold mb-2">Frais Scolarité PY</div>
                     <div class="row mb-2 align-items-center">
                         <div class="col-5 text-end text-muted">Attendus</div>
                         <div class="col-7">
-                            <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
-                                   value="{{ first_tranche|default:''|format_amount }}" readonly>
+                            <input type="text" class="form-control form-control-sm bg-yellow" 
+                                   value="{{ expected_total_school_fees|default:'' }}" 
+                                   readonly>
                         </div>
                     </div>
                     <div class="row align-items-center">
                         <div class="col-5 text-end text-muted">Effectif</div>
                         <div class="col-7">
-                            <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
-                                   value="{{ actual_total_school_fees_received|default:''|format_amount }}" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div class="fw-bold mb-2">Frais Tenues</div>
-                    <div class="row mb-2 align-items-center">
-                        <div class="col-5 text-end text-muted">Attendus</div>
-                        <div class="col-7">
-                            <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
-                                   value="{{ total_py_uniforms_expected|default:'0'|format_amount }}" readonly>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="col-5 text-end text-muted">Effectif</div>
-                        <div class="col-7">
-                            <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
-                                   value="{{ total_py_uniforms_received|default:'0'|format_amount }}" readonly>
+                            <input type="text" class="form-control form-control-sm bg-green" 
+                                   value="{{ actual_total_school_fees_received|default:'' }}" 
+                                   readonly>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Section Cantine (conditionnelle) -->
-                {% with can_tarif=tarifs|dictsort:"causal"|first %}
-                {% for tarif in tarifs %}
-                    {% if tarif.causal == 'CAN' %}
-                        {% with can_tarif=tarif %}
-                        <div id="cantineSection" class="mt-3 pt-3 border-top {% if classe.nom not in 'PS,MS,GS' %}d-none{% endif %}">
-                            <div class="fw-bold mb-2">Frais Cantine</div>
-                            <div class="row mb-2 align-items-center">
-                                <div class="col-5 text-end text-muted">Attendus</div>
-                                <div class="col-7">
-                                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
-                                           value="{{ can_tarif.montant|format_amount }}" readonly>
-                                </div>
-                            </div>
-                            <div class="row align-items-center">
-                                <div class="col-5 text-end text-muted">Effectif</div>
-                                <div class="col-7">
-                                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
-                                           value="{{ total_cantine_received|default:'0'|format_amount }}" readonly>
-                                </div>
-                            </div>
+                <!-- Frais Tenues PY -->
+                {% if is_internal_class %}
+                <div class="mb-4">
+                    <div class="fw-bold mb-2">Frais Tenues PY</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">Attendus</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-yellow" 
+                                   value="{{ total_py_uniforms_expected|default:'0' }}" 
+                                   readonly>
                         </div>
-                        {% endwith %}
-                    {% endif %}
-                {% endfor %}
-                {% endwith %}
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end text-muted">Effectif</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-green" 
+                                   value="{{ total_py_uniforms_received|default:'0' }}" 
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Frais Cantine -->
+                {% if has_cantine %}
+                <div class="mb-4">
+                    <div class="fw-bold mb-2">Frais Cantine</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">Attendus</div>
+                        <div class="col-7">
+                            {% with can_expected=can_py_amount|default:0|add:0 %}
+                            {% with can_total=can_expected|default:0|add:0 %}
+                            <input type="text" class="form-control form-control-sm bg-yellow" 
+                                   value="{% widthratio can_expected 1 total_students_confirmed %}" 
+                                   readonly>
+                            {% endwith %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end text-muted">Effectif</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-green" 
+                                   value="{{ actual_cantine_received|default:'0' }}" 
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Section CS pour classes externes -->
+                {% if is_external_class and total_CS > 0 %}
+                <div class="mt-4 pt-3 border-top">
+                    <div class="fw-bold mb-2">Dépenses CS (externes)</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">À payer</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-yellow" 
+                                   value="{{ total_cs_payment_due|default:'0' }}" 
+                                   readonly>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end text-muted">Déjà payé</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-green" 
+                                   value="{{ actual_cs_payments_made|default:'0' }}" 
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Section CS pour classes internes -->
+                {% if is_internal_class and total_CS > 0 %}
+                <div class="mt-4 pt-3 border-top">
+                    <div class="fw-bold mb-2">Dépenses CS (internes)</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">Tenues payées</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm bg-yellow" 
+                                   value="{{ total_cs_uniforms_paid|default:'0' }}" 
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Total général -->
+                <div class="mt-4 pt-3 border-top">
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end">
+                            <strong>Solde</strong>
+                        </div>
+                        <div class="col-7">
+                            {% comment %}
+                            Calcul du solde manuellement:
+                            total_reçu = scolarité_reçue + cantine_reçue + tenues_reçues
+                            total_attendu = scolarité_attendue + cantine_attendue + tenues_attendues
+                            solde = total_reçu - total_attendu
+                            {% endcomment %}
+                            
+                            {% with total_recu=actual_total_school_fees_received|add:0 %}
+                            {% with total_recu_cantine=actual_cantine_received|add:0 %}
+                            {% with total_recu_tenues=total_py_uniforms_received|add:0 %}
+                            {% with total_recu_total=total_recu|add:total_recu_cantine|add:total_recu_tenues %}
+                            
+                            {% with total_attendu_scol=expected_total_school_fees|add:0 %}
+                            {% with can_attendu=can_py_amount|default:0|add:0 %}
+                            {% with can_total_attendu=can_attendu|default:0|add:0 %}
+                            {% with total_attendu_tenues=total_py_uniforms_expected|add:0 %}
+                            {% with total_attendu_total=total_attendu_scol|add:can_total_attendu|add:total_attendu_tenues %}
+                            
+                            {% with solde=total_recu_total|add:0 %}
+                            {% with solde_final=solde|add:0|add:0 %}
+                            
+                            <input type="text" class="form-control form-control-sm {% if solde_final >= 0 %}bg-success text-white{% else %}bg-danger text-white{% endif %}" 
+                                   value="{{ solde_final }}" 
+                                   readonly>
+                            
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section résumé -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="border rounded p-3">
+                <h5 class="fw-bold mb-3">Résumé</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Total attendu PY:</span>
+                            <span class="fw-bold">
+                                {% with total_attendu_scol=expected_total_school_fees|add:0 %}
+                                {% with total_attendu_tenues=total_py_uniforms_expected|add:0 %}
+                                {% with can_attendu=can_py_amount|default:0|add:0 %}
+                                {% with can_total_attendu=can_attendu|default:0|add:0 %}
+                                {{ total_attendu_scol|add:total_attendu_tenues|add:can_total_attendu }}
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Total reçu PY:</span>
+                            <span class="fw-bold">
+                                {% with total_recu_scol=actual_total_school_fees_received|add:0 %}
+                                {% with total_recu_cantine=actual_cantine_received|add:0 %}
+                                {% with total_recu_tenues=total_py_uniforms_received|add:0 %}
+                                {{ total_recu_scol|add:total_recu_cantine|add:total_recu_tenues }}
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Dépenses CS:</span>
+                            <span class="fw-bold">
+                                {% with depenses_cs=total_cs_payment_due|add:0 %}
+                                {% with depenses_cs_tenues=total_cs_uniforms_paid|add:0 %}
+                                {{ depenses_cs|add:depenses_cs_tenues }}
+                                {% endwith %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript pour gérer l'affichage de la cantine -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Fonction pour détecter si c'est une classe maternelle
-    function isPreschoolClass(className) {
-        if (!className) return false;
-        const upperName = className.toUpperCase().trim();
-        return upperName.includes('PS') || upperName.includes('MS') || upperName.includes('GS');
+    // Formatage des nombres avec séparateur de milliers
+    function formatNumber(num) {
+        if (!num && num !== 0) return '';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     }
     
-    // Récupérer le nom de la classe
-    const className = "{{ classe.nom }}";
-    const isPreschool = isPreschoolClass(className);
-    
-    console.log('Classe:', className, 'Maternelle?', isPreschool);
-    
-    // Mettre à jour l'indicateur
-    const indicator = document.getElementById('cantineIndicator');
-    if (indicator) {
-        if (isPreschool) {
-            indicator.className = 'badge bg-warning';
-            // indicator.textContent = 'Avec cantine';
-        } else {
-            indicator.className = 'badge bg-secondary';
-            //indicator.textContent = 'Sans cantine';
+    // Appliquer le formatage à tous les inputs et spans avec des nombres
+    document.querySelectorAll('input[readonly]').forEach(input => {
+        const value = input.value.trim();
+        if (value && !isNaN(value) && value !== '-') {
+            input.value = formatNumber(parseInt(value));
         }
-    }
+    });
     
-    // Gérer l'affichage de la cantine
-    if (!isPreschool) {
-        // 1. Masquer les lignes CAN dans le tableau
-        document.querySelectorAll('.cantine-row').forEach(row => {
-            row.classList.add('d-none');
+    document.querySelectorAll('.text-right, .fw-bold').forEach(element => {
+        const text = element.textContent.trim();
+        if (text && !isNaN(text) && text !== '-') {
+            element.textContent = formatNumber(parseInt(text));
+        }
+    });
+    
+    // Ajuster la hauteur des sections
+    function adjustHeights() {
+        const sections = document.querySelectorAll('.col-md-4 > div');
+        let maxHeight = 0;
+        
+        sections.forEach(section => {
+            section.style.height = 'auto';
+            const height = section.offsetHeight;
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
         });
         
-        // 2. Afficher le message d'information
-        const cantineMessage = document.getElementById('cantineMessage');
-        if (cantineMessage) {
-            cantineMessage.classList.remove('d-none');
-        }
-        
-        // 3. Masquer la section cantine dans les frais totaux
-        const cantineSection = document.getElementById('cantineSection');
-        if (cantineSection) {
-            cantineSection.classList.add('d-none');
-        }
-        
-        // 4. Ajouter une note visuelle dans le titre
-        const pageTitle = document.querySelector('.navbar-brand');
-        if (pageTitle && !pageTitle.querySelector('.cantine-badge')) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-secondary ms-2 cantine-badge';
-           // badge.textContent = 'Sans cantine';
-            pageTitle.appendChild(badge);
-        }
-    } else {
-        // Si c'est une classe maternelle
-        // 1. Afficher les lignes CAN (elles sont déjà visibles par défaut)
-        // 2. Ajouter un badge "Avec cantine"
-        const pageTitle = document.querySelector('.navbar-brand');
-        if (pageTitle && !pageTitle.querySelector('.cantine-badge')) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-warning ms-2 cantine-badge';
-           // badge.textContent = 'Avec cantine';
-            pageTitle.appendChild(badge);
-        }
+        sections.forEach(section => {
+            section.style.height = maxHeight + 'px';
+        });
     }
     
-    // Fonction pour vérifier s'il y a des tarifs CAN
-    function hasCantineTarif() {
-        const tarifRows = document.querySelectorAll('table tbody tr');
-        for (let row of tarifRows) {
-            const firstCell = row.querySelector('td:first-child');
-            if (firstCell && firstCell.textContent.includes('CAN')) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    // Si pas de tarif CAN du tout, masquer le message aussi
-    if (!hasCantineTarif() && !isPreschool) {
-        const cantineMessage = document.getElementById('cantineMessage');
-        if (cantineMessage) {
-            cantineMessage.classList.add('d-none');
-        }
-    }
+    setTimeout(adjustHeights, 100);
+    window.addEventListener('resize', adjustHeights);
 });
 </script>
-
-{% endblock %}
+{%  endwith %}
+{% endwith %}
+{% endblock content %}
