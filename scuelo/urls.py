@@ -4,7 +4,7 @@ from .views import (
     StudentListView, StudentCreateView, SchoolManagementView, SchoolCreateView,
     SchoolUpdateView, SchoolDeleteView, SchoolDetailView,ClassCreateView ,
     ClasseDetailView, ClasseUpdateView, ClasseDeleteView ,ClasseInformation
-     # print_receipt  
+     #print_receipt  
       , login_view , SchoolYearManagementView ,AddSchoolYearView , DeleteSchoolYearView , EditSchoolYearView ,
 )
 

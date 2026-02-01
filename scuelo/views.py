@@ -248,17 +248,57 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # 1. DEBUG: Vérifions ce qui se passe
+        print("=" * 50)
+        print("DEBUG: ClasseInformation.get_context_data()")
+        
         # Use the current school year or a request parameter if provided
         selected_year_id = self.request.GET.get('annee_scolaire')
         if selected_year_id:
             selected_year = get_object_or_404(AnneeScolaire, pk=selected_year_id)
         else:
             selected_year = AnneeScolaire.objects.filter(actuel=True).first()
+        
+        print(f"DEBUG: Année scolaire sélectionnée: {selected_year}")
 
         classe = self.get_object()
+        print(f"DEBUG: Classe: {classe.nom}")
+        print(f"DEBUG: Classe type: {classe.type}")
+        print(f"DEBUG: Classe type nom: {getattr(classe.type, 'nom', 'ATTRIBUT NON TROUVÉ')}")
 
-        # Get all inscriptions for this class and year
-        inscriptions = Inscription.objects.filter(classe=classe, annee_scolaire=selected_year)
+        # 2. DÉTERMINER SI CLASSE MATERNELLE - VERSION ROBUSTE
+        is_preschool_class = False
+        try:
+            # Essayer plusieurs façons d'accéder au type
+            if hasattr(classe.type, 'nom'):
+                class_type_name = classe.type.nom
+            elif hasattr(classe.type, 'name'):
+                class_type_name = classe.type.name
+            elif hasattr(classe.type, 'type_nom'):
+                class_type_name = classe.type.type_nom
+            else:
+                # Si c'est juste un string
+                class_type_name = str(classe.type)
+            
+            print(f"DEBUG: Nom du type de classe: '{class_type_name}'")
+            
+            # Normaliser le nom (enlever espaces, majuscules)
+            normalized_type = class_type_name.strip().upper()
+            is_preschool_class = normalized_type in ['PS', 'MS', 'GS']
+            
+            print(f"DEBUG: Est une classe maternelle? {is_preschool_class}")
+            
+        except Exception as e:
+            print(f"DEBUG: Erreur lors de la détection du type: {e}")
+            # Par défaut, considérer que ce n'est pas maternelle
+            is_preschool_class = False
+
+        # 3. Get all inscriptions for this class and year
+        inscriptions = Inscription.objects.filter(
+            classe=classe, 
+            annee_scolaire=selected_year
+        )
+        print(f"DEBUG: Nombre d'inscriptions: {inscriptions.count()}")
 
         # Student categories:
         py_students = Eleve.objects.filter(
@@ -268,70 +308,125 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
 
         conf_students = Eleve.objects.filter(
             inscriptions__in=inscriptions,
-            condition_eleve= 'CONF'
+            condition_eleve='CONF'
         ).distinct()
-#542,500 + 775000
+
         cs_students_internal = Eleve.objects.filter(
             inscriptions__in=inscriptions,
             cs_py='C',
-            # Attending classes inside the center
         ).distinct()
-
 
         cs_students_external = Eleve.objects.filter(
             inscriptions__in=inscriptions,
             cs_py='C',
-            # Attending classes outside the center (e.g., filter by school outside center)
         ).exclude(inscriptions__classe__ecole=classe.ecole).distinct()
 
-        # Calculate payments and expected fees per group:
-        def total_payments_for_students(student_qs):
+        print(f"DEBUG: Nombre d'élèves PY: {py_students.count()}")
+
+        # 4. CALCUL DES PAIEMENTS - VERSION SIMPLIFIÉE
+        def calculate_payments_for_students(students_qs):
             total = 0
-            for student in student_qs:
-                payments = Mouvement.objects.filter(
-                    inscription__eleve=student,
-                    inscription__classe=classe,
-                    inscription__annee_scolaire=selected_year
-                )
-                total += payments.aggregate(total=Sum('montant'))['total'] or 0
+            for student in students_qs:
+                # Pour PS/MS/GS: inclure tous les paiements
+                # Pour autres: exclure CAN
+                filters = {
+                    'inscription__eleve': student,
+                    'inscription__classe': classe,
+                    'inscription__annee_scolaire': selected_year
+                }
+                
+                # Si ce n'est pas une classe maternelle, exclure CAN
+                if not is_preschool_class:
+                    filters['causal__in'] = ['INS', 'SCO', 'TEN']
+                
+                payments = Mouvement.objects.filter(**filters)
+                student_total = payments.aggregate(total=Sum('montant'))['total'] or 0
+                total += student_total
+                
+                # Debug pour le premier étudiant
+                if total > 0 and payments.exists():
+                    print(f"  DEBUG étudiant {student.id}: {student_total} (filtres: {filters})")
+            
             return total
 
-        total_paid_py = total_payments_for_students(py_students)
-        total_paid_conf = total_payments_for_students(conf_students)
-        total_paid_cs_internal = total_payments_for_students(cs_students_internal)
-        # total_paid_cs_external calculation would be similar, if meaningful here
+        total_paid_py = calculate_payments_for_students(py_students)
+        total_paid_conf = calculate_payments_for_students(conf_students)
+        total_paid_cs_internal = calculate_payments_for_students(cs_students_internal)
 
-        # Get fees (tarifs) by type for this class and year
-        tarifs = Tarif.objects.filter(classe=classe, annee_scolaire=selected_year)
+        print(f"DEBUG: Total payé PY: {total_paid_py}")
+        print(f"DEBUG: Est-ce une classe maternelle pour le filtrage? {is_preschool_class}")
 
-        def get_tarif_amount(causal_code):
-            tarif_obj = tarifs.filter(causal=causal_code).first()
-            return tarif_obj.montant if tarif_obj else 0
+        # 5. GET TARIFS - VERSION CLAIRE
+        # D'abord, tous les tarifs
+        all_tarifs = Tarif.objects.filter(
+            classe=classe, 
+            annee_scolaire=selected_year
+        )
+        print(f"DEBUG: Tous les tarifs trouvés: {all_tarifs.count()}")
+        
+        for tarif in all_tarifs:
+            print(f"  - {tarif.causal}: {tarif.montant}")
 
-        tarif_sco1 = get_tarif_amount('SCO1')
-        tarif_sco2 = get_tarif_amount('SCO2')
-        tarif_sco3 = get_tarif_amount('SCO3')
-        tarif_tenues = get_tarif_amount('TEN')
+        # Ensuite, filtrer pour l'affichage
+        if is_preschool_class:
+            # PS/MS/GS: montrer tous les tarifs (y compris CAN)
+            display_tarifs = all_tarifs
+        else:
+            # Autres classes: exclure CAN
+            display_tarifs = all_tarifs.exclude(causal='CAN')
+        
+        print(f"DEBUG: Tarifs à afficher: {display_tarifs.count()}")
 
-        # Expected amounts based on student numbers
-        expected_sco1 = tarif_sco1 * py_students.count()
-        expected_sco2 = tarif_sco2 * py_students.count()
-        expected_sco3 = tarif_sco3 * py_students.count()
-        expected_tenues_py = tarif_tenues * py_students.count()
+        # 6. Créer un dictionnaire pour accéder facilement aux tarifs
+        tarif_dict = {}
+        for tarif in all_tarifs:
+            tarif_dict[tarif.causal] = tarif.montant
+        
+        # Fonction helper
+        def get_tarif(causal_code, default=0):
+            return tarif_dict.get(causal_code, default)
 
-        # Total expected for the class combining all tranches (example)
-        expected_total_class = expected_sco1  #+ expected_sco2 + expected_sco3 + expected_tenues_py
+        # 7. CALCUL DES MONTANTS ATTENDUS
+        # Récupérer les tarifs
+        sco1_amount = get_tarif('SCO1', 0)
+        sco2_amount = get_tarif('SCO2', 0)
+        sco3_amount = get_tarif('SCO3', 0)
+        ten_amount = get_tarif('TEN', 0)
+        can_amount = get_tarif('CAN', 0) if is_preschool_class else 0
+        
+        print(f"DEBUG: Tarif CAN: {can_amount} (affiché: {'OUI' if is_preschool_class else 'NON'})")
 
-        # Aggregate totals received
+        # Calculer les totaux attendus
+        py_count = py_students.count()
+        
+        expected_sco1 = sco1_amount * py_count
+        expected_sco2 = sco2_amount * py_count
+        expected_sco3 = sco3_amount * py_count
+        expected_tenues = ten_amount * py_count
+        expected_can = can_amount * py_count if is_preschool_class else 0
+
+        # Total attendu
+        base_total = expected_sco1 + expected_sco2 + expected_sco3 + expected_tenues
+        expected_total_class = base_total + (expected_can if is_preschool_class else 0)
+
+        # 8. CALCUL DU TOTAL PAYÉ ET POURCENTAGE
         total_class_payment = total_paid_py + total_paid_conf + total_paid_cs_internal
+        
+        payment_percentage = 0
+        if expected_total_class > 0:
+            payment_percentage = round((total_class_payment / expected_total_class * 100), 2)
 
-        # Percentages
-        payment_percentage = round((total_class_payment / expected_total_class * 100), 2) if expected_total_class else 0
+        print(f"DEBUG: Total attendu: {expected_total_class}")
+        print(f"DEBUG: Total payé: {total_class_payment}")
+        print(f"DEBUG: Pourcentage: {payment_percentage}%")
+        print("=" * 50)
 
+        # 9. METTRE À JOUR LE CONTEXTE
         context.update({
             'classe': classe,
             'selected_annee_scolaire': selected_year,
-            'tarifs': tarifs,
+            'tarifs': display_tarifs,  # ← IMPORTANT: utiliser display_tarifs, pas all_tarifs
+            'is_preschool_class': is_preschool_class,
             'py_students': py_students,
             'conf_students': conf_students,
             'cs_students_internal': cs_students_internal,
@@ -339,17 +434,22 @@ class ClasseInformation(LoginRequiredMixin, DetailView):
             'total_paid_py': total_paid_py,
             'total_paid_conf': total_paid_conf,
             'total_paid_cs_internal': total_paid_cs_internal,
+            'tarif_sco1': sco1_amount,
+            'tarif_sco2': sco2_amount,
+            'tarif_sco3': sco3_amount,
+            'tarif_tenues': ten_amount,
+            'tarif_can': can_amount,
             'expected_sco1': expected_sco1,
             'expected_sco2': expected_sco2,
             'expected_sco3': expected_sco3,
-            'expected_tenues_py': expected_tenues_py,
+            'expected_tenues_py': expected_tenues,
+            'expected_can': expected_can,
             'expected_total_class': expected_total_class,
             'total_class_payment': total_class_payment,
             'payment_percentage': payment_percentage,
         })
 
         return context
-
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 

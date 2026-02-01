@@ -3,16 +3,36 @@
 
 {% block header %}
 <span class="navbar-brand mb-0 h1 text-white">Informations sur la classe</span>
+<button class="btn btn-lg btn-light btn-link mr-3" onclick="window.history.back()" title="Retour">
+    <i class="fas fa-arrow-left"></i> Retour
+</button>
+<h4>{{ page_identifier }}</h4>
 {% endblock header %}
 
 {% block content %}
 <div class="container mt-4">
+    <!-- DEBUG INFO - À enlever après tests -->
+    <div class="alert alert-info">
+        <h5>Debug Info:</h5>
+        <p>Classe: {{ classe.nom }}</p>
+        <p>Type de classe: {{ classe.type.nom|default:"Non défini" }}</p>
+        <p>Est maternelle (PS/MS/GS)?: {{ is_preschool_class|yesno:"Oui,Non" }}</p>
+        <p>Nombre de tarifs affichés: {{ tarifs.count }}</p>
+        <p>Tarif CAN: {{ tarif_can|default:"Non applicable" }}</p>
+    </div>
+    <!-- FIN DEBUG -->
+    
     <div class="card shadow-sm p-4">
         <!-- En-tête de classe -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="display-6">{{ classe.nom }}</h1>
                 <h2 class="h4 text-muted">{{ classe.ecole }}</h2>
+                {% if is_preschool_class %}
+                <span class="badge bg-warning">Classe maternelle (avec cantine)</span>
+                {% else %}
+                <span class="badge bg-secondary">Classe sans cantine</span>
+                {% endif %}
             </div>
             <div class="text-end">
                 <div class="d-grid gap-2 d-md-block">
@@ -22,68 +42,124 @@
             </div>
         </div>
 
-        <!-- Cartes statistiques -->
-        <div class="row mb-4 g-4">
-            <div class="col-md-3">
-                <div class="card border-success h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">PY</h5>
-                        <p class="card-text fs-4">{{ py_students.count }}</p>
-                        <small class="text-muted">Total payé: {{ total_paid_py|intcomma }}</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-info h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-info">1ère Tranche Attendue</h5>
-                        <p class="card-text fs-4">{{ expected_sco1|intcomma }}</p>
-                        <small class="text-muted">Montant unitaire : {{ tarif_sco1|intcomma }}</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-primary h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">Pourcentage Paiement</h5>
-                        <p class="card-text fs-4">{{ payment_percentage }}%</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table des frais par élève -->
+        <!-- Table des frais par élève - VERSION SIMPLIFIÉE -->
         <div class="card h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Frais par élève</h5>
+                <span class="badge bg-light text-dark">
+                    {{ tarifs.count }} type(s) de frais
+                </span>
             </div>
             <div class="card-body">
+                {% if tarifs %}
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
                                 <th>Type de Frais</th>
-                                <th>Montant</th>
+                                <th>Montant unitaire</th>
                                 <th>Échéance</th>
+                                <th>Statut</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for tarif in tarifs %}
-                            <tr>
-                                <td>{{ tarif.get_causal_display }}</td>
+                            <tr class="{% if tarif.causal == 'CAN' %}table-warning{% endif %}">
+                                <td>
+                                    <strong>{{ tarif.get_causal_display }}</strong>
+                                    {% if tarif.causal == 'CAN' %}
+                                    <span class="badge bg-warning ms-2">Cantine</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ tarif.montant|intcomma }}</td>
-                                <td>{{ tarif.date_expiration|date:"Y-m-d" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center text-muted">Aucun tarif défini</td>
+                                <td>{{ tarif.date_expiration|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if tarif.causal == 'CAN' %}
+                                        {% if is_preschool_class %}
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle"></i> Applicable
+                                        </span>
+                                        {% else %}
+                                        <span class="text-danger">
+                                            <i class="fas fa-times-circle"></i> Non applicable
+                                        </span>
+                                        {% endif %}
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
+                        <tfoot class="table-info">
+                            <tr>
+                                <td colspan="4">
+                                    <strong>Total attendu pour la classe:</strong>
+                                    {{ expected_total_class|intcomma }}
+                                    {% if expected_can > 0 %}
+                                    <small class="text-muted ms-2">
+                                        (dont cantine: {{ expected_can|intcomma }})
+                                    </small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3"></i>
+                    <h5>Aucun tarif défini pour cette classe</h5>
+                    <p class="text-muted">
+                        {% if is_preschool_class %}
+                        Les tarifs de scolarité et cantine doivent être configurés.
+                        {% else %}
+                        Les tarifs de scolarité doivent être configurés.
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+                
+                <!-- Note explicative -->
+                <div class="alert alert-light mt-3">
+                    <small>
+                        <i class="fas fa-info-circle"></i>
+                        {% if is_preschool_class %}
+                        <strong>Classe maternelle:</strong> Les frais de cantine (CAN) sont applicables.
+                        {% else %}
+                        <strong>Classe primaire/secondaire:</strong> Les frais de cantine (CAN) ne sont pas applicables.
+                        {% endif %}
+                    </small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Boutons de navigation -->
+<div class="mt-4 d-flex justify-content-between">
+    <button onclick="window.history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+    </button>
+    
+    <a href="{% url 'classe_list' %}" class="btn btn-outline-primary">
+        <i class="fas fa-list"></i> Liste des classes
+    </a>
+</div>
+
+<script>
+// JavaScript pour confirmer le type de classe
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Page chargée:");
+    console.log("Classe:", "{{ classe.nom }}");
+    console.log("Type:", "{{ classe.type.nom|default:'Non défini' }}");
+    console.log("Est maternelle:", "{{ is_preschool_class }}");
+    console.log("Tarif CAN:", "{{ tarif_can }}");
+    
+    // Afficher une alerte si CAN est présent mais pas autorisé
+    {% if tarif_can and not is_preschool_class %}
+    console.warn("ATTENTION: Tarif CAN trouvé mais classe n'est pas PS/MS/GS");
+    {% endif %}
+});
+</script>
 {% endblock %}

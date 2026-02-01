@@ -263,6 +263,7 @@ class Rang(models.Model):
 
     def __str__(self):
         return f"Rangs for {self.eleve} in {self.classe} ({self.annee_scolaire})"
+        
 class StudentLog(TimeStampedModel):
     student = models.ForeignKey(Eleve, on_delete=models.CASCADE, related_name='logs')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

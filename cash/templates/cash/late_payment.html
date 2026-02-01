@@ -8,6 +8,17 @@
     SCO : {{ grand_total_diff_sco|format_amount }} |
     CAN : {{ grand_total_diff_can|format_amount }}
 </h5>
+
+
+<a href="{% url 'home' %}" >
+        <i class="fas fa-undo mr-2 class-card">back</i> 
+</a>
+
+
+
+
+<h4 class="class-card">{{page_identifier}}</h4>
+
 {% endblock header %}
 
 {% block content %}
@@ -56,13 +67,9 @@
 </style>
 
 <!-- Bouton Back -->
-<div class="mb-3">
-    <a href="{% url 'home' %}" class="btn btn-secondary">
-        ← Retour à l'accueil
-    </a>
-</div>
 
-<!-- Étiquettes explicatives -->
+
+<!-- Étiquettes explicatives 
 <div class="alert alert-info mb-3">
     <h5><i class="fas fa-info-circle"></i> Explications sur les retards de paiement :</h5>
     <ul class="mb-0">
@@ -73,10 +80,12 @@
         <li>Cliquez sur les en-têtes pour changer le tri</li>
     </ul>
 </div>
+-->
 
 <!-- Boucle par TYPE de classe -->
 {% for class_type, type_data in data.items %}
     {% if type_data.classes %}
+    <!-- Boucle par TYPE de classe 
         <div class="section-title">
             <strong>{{ class_type }}</strong>
             <span class="float-end">
@@ -87,14 +96,12 @@
                 {% endif %})
             </span>
         </div>
-
+-->
         <!-- Boucle par CLASSE spécifique de ce type -->
         {% for class_name, class_info in type_data.classes.items %}
-            <div class="class-title">
-                {{ class_name }} ({{ class_info.ecole }})
-                {% if class_type in "PS,MS,GS" %}
-                    <span class="badge bg-secondary">Avec cantine</span>
-                {% endif %}
+            <div class="">
+                <h3>{{ class_name }}</h3>
+             
             </div>
 
             <div class="table-container">

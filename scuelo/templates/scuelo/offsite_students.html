@@ -47,12 +47,9 @@
 </div>
 <!-- Undo and Redo Icons -->
 <div class="ml-2 d-flex align-items-stretch">
-    <button class="class-card mr-3" id="undo-button" title="Undo">
-        <i class="fas fa-undo"></i>
-    </button>
-    <button class="class-card mr-3" id="redo-button" title="Redo">
-        <i class="fas fa-redo"></i>
-    </button>
+     <button class=" mr-3 class-card " id="undo-button" title="Undo">
+                    <i class="fas fa-undo fa-lg"></i>
+                </button>
     <h2 class='mr-3 text-white '><strong>{{ page_identifier }}</strong></h2>
 </div>
 {% endblock header %}
@@ -84,7 +81,6 @@
     .table th {
         background-color: #333;
         color: #fff;
-      
         text-transform: uppercase;
         font-weight: bold;
     }
@@ -108,7 +104,6 @@
         background-color: #ffc107;
         border: none;
     }
-
 
     .fas {
         margin-right: 5px;
@@ -144,7 +139,6 @@
         width: 5% !important;
     }
 
-
     .col-sex {
         width: 1% !important;
     }
@@ -169,7 +163,6 @@
     {% if all_offsite_students %}
     <table id="offsiteStudentsTable" class="display compact">
         <thead>
-            
             <tr>
                 <th class="action dt-left"></th>
                 <th class='scuelo'>classe</th>
@@ -192,26 +185,19 @@
                     <a href="{% url 'student_detail' student.id %}">
                         <i class="fas fa-eye"></i>
                     </a>
-
                 </td>
                 <td>{{ student.classe_name|default:"-" }}</td>
                 <td>{{ student.school_name|default:"-" }}</td>
                 <td class='dt-left'>{{ student.id }}</td>
-                <td class='dt-left'>{{ student.prenom }}</td>
+                <!-- NOTE: j'ai inversé nom et prénom pour correspondre à l'ordre alphabétique -->
                 <td class='dt-left'>{{ student.nom }}</td>
+                <td class='dt-left'>{{ student.prenom }}</td>
                 <td class='dt-left'>{{ student.cs_py }}</td>
                 <td class='dt-lef'>{{ student.condition_eleve }}</td>
                 <td class='dt-let'>{{ student.sex }}</td>
                 <td class='dt-left'>{{ student.date_naissance|date:'Y-m-d' }}</td>
-             
-            
-            
-
                 <td>{{ student.get_hand_display|default:'-' }}</td>
-                <!-- Ensure blank if no handicap -->
-
                 <td>{{ student.note_eleve }}</td>
-             
             </tr>
             {% endfor %}
         </tbody>
@@ -227,10 +213,11 @@
         var currentDate = new Date().toLocaleDateString();
         var table = $('#offsiteStudentsTable').DataTable({
             lengthChange: false, // No entries dropdown
-            ordering: false, // Disable sorting
+            ordering: true, // Activer le tri (CHANGÉ de false à true)
             paging: false, // Disable pagination
             info: false, // Remove the "Showing X to Y"
             searching: true, // ENABLE the search bar
+            order: [[4, 'asc'], [5, 'asc']], // TRI: colonne 4 (Nom) ascendant, puis colonne 5 (Prénom) ascendant
             buttons: [{
                     extend: 'csv',
                     text: 'Export CSV',
@@ -259,28 +246,132 @@
                     }
                 }
             ],
-            order: [],
-            columnDefs: [{
-                targets: 2, // École column (index 2)
-                width: '15%', // Adjust this percentage as needed
-                orderable: false,
-                className: 'dt-left'
-            },
-            {
-                targets: 10, // The Action column
-                width: '5%',
-                orderable: false,
-                className: 'dt-left'
-            }],
-            fixedHeader: true // Enable fixed header
+            columnDefs: [
+                {
+                    targets: 0, // Action column
+                    orderable: false, // Pas de tri sur cette colonne
+                    width: '5%',
+                    className: 'dt-left'
+                },
+                {
+                    targets: 1, // Classe column
+                    orderable: true, // Permettre le tri par classe
+                    className: 'dt-left'
+                },
+                {
+                    targets: 2, // École column
+                    width: '15%',
+                    orderable: true, // Permettre le tri par école
+                    className: 'dt-left'
+                },
+                {
+                    targets: 3, // ID column
+                    orderable: true, // Permettre le tri par ID
+                    className: 'dt-left'
+                },
+                {
+                    targets: 4, // Nom column - IMPORTANT POUR LE TRI ALPHABÉTIQUE
+                    orderable: true,
+                    type: 'string', // Type string pour tri alphabétique
+                    className: 'dt-left'
+                },
+                {
+                    targets: 5, // Prénom column - IMPORTANT POUR LE TRI ALPHABÉTIQUE
+                    orderable: true,
+                    type: 'string', // Type string pour tri alphabétique
+                    className: 'dt-left'
+                },
+                {
+                    targets: 6, // CS_PY column
+                    orderable: true,
+                    className: 'dt-left'
+                },
+                {
+                    targets: 7, // Condition column
+                    orderable: true,
+                    className: 'dt-left'
+                },
+                {
+                    targets: 8, // Sexe column
+                    orderable: true,
+                    className: 'dt-left'
+                },
+                {
+                    targets: 9, // Date Naissance column
+                    orderable: true,
+                    type: 'date', // Type date pour tri chronologique
+                    className: 'dt-left'
+                },
+                {
+                    targets: 10, // Hand column
+                    orderable: true,
+                    className: 'dt-left'
+                },
+                {
+                    targets: 11, // Note column
+                    orderable: true,
+                    className: 'dt-left'
+                }
+            ],
+            fixedHeader: true, // Enable fixed header
+            language: {
+                // Traduction en français
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json'
+            }
         });
     
         // Move buttons to header
-        table.buttons().container()
-            .appendTo($('#datatable-buttons'));
+        table.buttons().container().appendTo($('#datatable-buttons'));
+        
+        // Afficher un message de confirmation dans la console
+        console.log('Table triée par défaut: Nom (ascendant) puis Prénom (ascendant)');
+        
+        // Optionnel: Ajouter un indicateur visuel du tri actuel
+        table.on('order.dt', function() {
+            var order = table.order();
+            console.log('Tri actuel:', order);
+            
+            // Mettre en évidence les colonnes de tri
+            $('th').removeClass('sorting-active');
+            order.forEach(function(pair) {
+                var columnIndex = pair[0];
+                $('th').eq(columnIndex).addClass('sorting-active');
+            });
+        });
     });
-    
-    
 </script>
-{% endblock %}
 
+<style>
+    /* Style pour les colonnes de tri actives */
+
+    
+    /* Style pour les flèches de tri */
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_desc:after {
+        opacity: 1;
+        color: white;
+    }
+    
+    /* Style pour les en-têtes */
+    table.dataTable thead th {
+        cursor: pointer;
+        position: relative;
+    }
+    
+    /* Indicateur visuel pour le tri par défaut */
+    table.dataTable thead th.sorting_asc:after {
+        content: "↑";
+        position: absolute;
+        right: 8px;
+        color: #ffc107;
+    }
+    
+    table.dataTable thead th.sorting_desc:after {
+        content: "↓";
+        position: absolute;
+        right: 8px;
+        color: #ffc107;
+    }
+</style>
+{% endblock %}

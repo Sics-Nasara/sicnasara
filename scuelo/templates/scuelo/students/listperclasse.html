@@ -69,7 +69,10 @@
 
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
-          <a class="class-card mr-3" href="{% url 'home'  %}" >back</a>
+           <button class=" mr-3 class-card " id="undo-button" title="Undo">
+                    <i class="fas fa-undo fa-lg"></i>
+                </button>
+          <!--<a class="class-card mr-3" href="{% url 'home'  %}" >back</a> -->
         <a href="{% url 'classe_information' classe.pk %}" class="class-card mr-3">info</a>
        
         <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">

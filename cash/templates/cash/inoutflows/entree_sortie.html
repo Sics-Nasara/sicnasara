@@ -30,8 +30,9 @@
 
     <div class="d-flex align-items-stretch">
    
-        <button class="class-card mr-3" id="undo-button" title="Undo"><i class="fas fa-undo"></i></button>
-        <button class="class-card mr-3" id="redo-button" title="Redo"><i class="fas fa-redo"></i></button>
+          <button class=" mr-3 class-card " id="undo-button" title="Undo">
+                    <i class="fas fa-undo fa-lg"></i>
+                </button>
         
         <!-- 🟢 Export to Excel Button -->
         <button id="exportExcel" class="class-card mr-3 btn btn-success" title="Exporter en Excel">
@@ -46,80 +47,107 @@
 
 {% block content %}
 <style>
+    /* OPTIMISATION DE L'ESPACE - STYLE ORIGINAL AMÉLIORÉ */
     .table-container {
         max-width: 100%;
-      
         border-radius: 10px;
+        overflow: hidden;
     }
 
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 0;
     }
 
-    .table th,
-    .table td {
-        padding: 5px 10px !important;
-        text-align: center;
-        font-size: 12px;
-    }
-
+    /* EN-TÊTES OPTIMISÉS - PAS DE RETOUR À LA LIGNE */
     .table th {
         background-color: #333;
         color: #fff;
-        text-transform: uppercase;
         font-weight: bold;
+        padding: 4px 6px !important;
+        font-size: 11px;
+        height: 30px;
+        line-height: 1.1;
+        white-space: nowrap !important; /* IMPORTANT: force une seule ligne */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+        vertical-align: middle;
     }
 
-    .table tbody tr:hover {
-        background-color: #e9ecef;
+    /* CELLULES DU CORPS */
+    .table td {
+        padding: 3px 6px !important;
+        text-align: center;
+        font-size: 11px;
+        height: 26px;
+        line-height: 1.1;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    /* Alignments */
+    /* ALIGNEMENTS SPÉCIFIQUES */
     .dt-left {
         text-align: left !important;
     }
 
     .dt-right {
         text-align: right !important;
+        font-family: 'Calibri', 'Consolas', 'Courier New', monospace;
+        font-variant-numeric: tabular-nums;
     }
 
+    /* OPTIMISATION SCROLLING */
     .dataTables_wrapper {
-        overflow: hidden; /* Hide scrollbars */
+        overflow: hidden;
     }
 
     .dataTables_scrollHead {
         overflow: hidden !important;
         position: sticky;
         top: 0;
-        z-index: 1;
-        background-color: #333; /* Ensure the background color is set */
+        z-index: 100;
+        background-color: #333;
     }
 
     .dataTables_scrollHeadInner {
-        width: 100%; /* Make sure this is set */
+        width: 100% !important;
     }
 
     .dataTables_scrollHead table {
-        width: 100% !important; /* Ensure the table occupies the full width */
+        width: 100% !important;
+        margin-bottom: 0;
     }
 
     .dataTables_scrollBody {
-        overflow-y: auto !important; /* Enable vertical scrolling */
-        max-height: 80vh !important; /* Set a maximum height for the scrollable body */
+        overflow-y: auto !important;
+        max-height: calc(100vh - 200px) !important;
     }
 
- .table td, .table th {
-      font-family: 'Calibri', 'Consolas', 'Courier New', monospace;
-      font-variant-numeric: tabular-nums;
-      text-align: right;
-  }
-  /* Vous pouvez ajuster pour les cellules spécifiques si besoin */
-  .dt-left {
-      text-align: left !important;
-      font-family: Arial, sans-serif; /* font proportionnelle pour textes */
-  }
+    /* STYLE POUR LES LIGNES */
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    /* FORCE L'AFFICHAGE SUR UNE SEULE LIGNE POUR LES EN-TÊTES */
+    .dataTables_scrollHead th {
+        word-wrap: normal !important;
+        word-break: keep-all !important;
+        hyphens: none !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+    }
+
+    /* LARGEURS OPTIMISÉES POUR ÉVITER LES RETOURS À LA LIGNE */
+    th:nth-child(1) { width: 100px !important; min-width: 100px; } /* Date */
+    th:nth-child(2) { width: 250px !important; min-width: 250px; } /* Description */
+    th:nth-child(3) { width: 110px !important; min-width: 110px; } /* Entrée */
+    th:nth-child(4) { width: 110px !important; min-width: 110px; } /* Sortie */
+    th:nth-child(5) { width: 130px !important; min-width: 130px; } /* Solde Progressif */
+    th:nth-child(6) { width: 30px !important; min-width: 30px; }   /* Action */
 </style>
 
 <div class="table-container">
@@ -131,7 +159,7 @@
                 <th class='dt-right'>Entrée</th>
                 <th class='dt-right'>Sortie</th>
                 <th class='dt-right'>Solde Progressif</th>
-                <th class='w-50'></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -142,14 +170,26 @@
                     {{ entry.date|date:'d/m/Y H:i' }}
                 </td>
                 <td class='dt-left'>{{ entry.description }}</td>
-                <td class='dt-right'>{% if entry.entree > 0 %}{{ entry.entree|format_amount }}{% else %}{% endif %}</td>
-                <td class='dt-right'>{% if entry.sortie > 0 %}{{ entry.sortie|format_amount }}{% else %}{% endif %}</td>
+                <td class='dt-right'>
+                    {% if entry.entree > 0 %}
+                        {{ entry.entree|format_amount }}
+                    {% else %}
+                        <!-- Vide pour zéro -->
+                    {% endif %}
+                </td>
+                <td class='dt-right'>
+                    {% if entry.sortie > 0 %}
+                        {{ entry.sortie|format_amount }}
+                    {% else %}
+                        <!-- Vide pour zéro -->
+                    {% endif %}
+                </td>
                 <td class='dt-right progressive-balance'></td>
-                <td class='w-50'></td>
+                <td></td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6">Aucune entrée disponible.</td>
+                <td colspan="6" class="text-center">Aucune entrée disponible.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -161,89 +201,173 @@
 
 <script>
     $(document).ready(function () {
+        // CONFIGURATION DATATABLES OPTIMISÉE
         var table = $('#entreeSortieTable').DataTable({
-            "bLengthChange": false, // Disable entries selection dropdown
-            "paging": false, // Disable pagination
-            "columnDefs": [
-                { "orderable": false, "targets": "_all" } // Disable sorting on all columns
-            ],
+            "dom": '<"top"f>rt<"bottom"ip><"clear">', // Layout simple
+            "bLengthChange": false, // Désactive la sélection d'entrées
+            "paging": true, // Active la pagination
+            "pageLength": 100, // Augmente le nombre de lignes par page
+            "pagingType": "simple_numbers", // Pagination simple
+            "ordering": false, // Désactive le tri
+            "info": true, // Affiche les infos de pagination
+            "scrollY": "calc(100vh - 200px)", // Hauteur dynamique
+            "scrollCollapse": true,
+            "scrollX": false, // Désactive le scroll horizontal
+            "autoWidth": false, // IMPORTANT: Désactive l'ajustement automatique
+            "fixedHeader": true, // En-tête fixe
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json",
+                "paginate": {
+                    "first": "Premier",
+                    "last": "Dernier",
+                    "next": "Suivant",
+                    "previous": "Précédent"
+                },
+                "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+                "infoEmpty": "Aucune entrée",
+                "infoFiltered": "(filtré de _MAX_ entrées)",
+                "search": "Rechercher:",
+                "zeroRecords": "Aucun enregistrement correspondant"
             },
-            "scrollY": "500px", // Enable vertical scrolling
-            "scrollCollapse": true, // Collapse the table when the content fits into the viewport
-            //"dom": 'Bfrtip',      // Enable buttons
-            "buttons": [
-                {
-                    extend: 'excelHtml5',
-                    text: 'Exporter Excel',
-                    title: 'Entrées et Sorties',
-                    className: 'btn btn-success',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4], // Ensure "Solde Progressif" is included
-                        modifier: {
-                            page: 'all' // Export all rows
-                        },
-                        format: {
-                            body: function (data, row, column, node) {
-                                if (column === 4) { 
-                                    // Compute Progressive Balance for Export
-                                    return calculateProgressiveForExport(row);
-                                }
-                                return data;
-                            }
-                        }
-                    }
-                }
-            ],
             "drawCallback": function(settings) {
                 calculateProgressiveBalance(this.api());
-                scrollToBottom();
+            },
+            "initComplete": function(settings, json) {
+                console.log("Table optimisée chargée");
+                
+                // FORCE LES EN-TÊTES À RESTER SUR UNE LIGNE
+                $('th').each(function() {
+                    $(this).css({
+                        'white-space': 'nowrap',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis'
+                    });
+                });
+                
+                // Ajuste les colonnes après chargement
+                this.api().columns.adjust();
+                
+                // Redimensionne la hauteur
+                adjustTableHeight();
             }
         });
-    
-        // Connect Navbar Button to DataTables Export Function
-        $('#exportExcel').click(function () {
-            table.button('.buttons-excel').trigger();
-        });
-    
+
+        // CALCUL DU SOLDE PROGRESSIF
         function calculateProgressiveBalance(api) {
             let progressive = 0;
-    
-            api.rows({ search: 'applied', order: 'applied' }).every(function (rowIdx) {
-                let data = this.data();
-                let entree = parseFloat(data[2].replace(/[^0-9.-]+/g, "")) || 0;
-                let sortie = parseFloat(data[3].replace(/[^0-9.-]+/g, "")) || 0;
+            let rows = api.rows({ page: 'current' }).nodes();
+            
+            $(rows).each(function() {
+                let entreeCell = $(this).find('td').eq(2);
+                let sortieCell = $(this).find('td').eq(3);
+                let progressiveCell = $(this).find('.progressive-balance');
+                
+                // Extraire les valeurs (utilisation du format_amount existant)
+                let entreeText = entreeCell.text().trim();
+                let sortieText = sortieCell.text().trim();
+                
+                // Convertir en nombre (enlever les espaces, etc.)
+                let entree = parseFloat(entreeText.replace(/[^\d.-]/g, '')) || 0;
+                let sortie = parseFloat(sortieText.replace(/[^\d.-]/g, '')) || 0;
+                
                 progressive += entree - sortie;
-    
-                let formattedProgressive = formatAmount(progressive);
-                $(this.node()).find('.progressive-balance').text(formattedProgressive);
+                
+                // Formater comme le filtre format_amount
+                progressiveCell.text(formatAmount(progressive));
             });
         }
-    
-        function calculateProgressiveForExport(rowIndex) {
-            let progressive = 0;
-            let rows = table.rows({ search: 'applied', order: 'applied' }).data();
-            
-            for (let i = 0; i <= rowIndex; i++) {
-                let entree = parseFloat(rows[i][2].replace(/[^0-9.-]+/g, "")) || 0;
-                let sortie = parseFloat(rows[i][3].replace(/[^0-9.-]+/g, "")) || 0;
-                progressive += entree - sortie;
-            }
-            
-            return formatAmount(progressive);
-        }
-    
+
+        // FORMATAGE MONÉTAIRE SIMILAIRE À format_amount
         function formatAmount(amount) {
-            return amount.toLocaleString('fr-FR', { minimumFractionDigits: 0 });
+            if (isNaN(amount)) return '0';
+            
+            // Format avec séparateur de milliers
+            return amount.toLocaleString('fr-FR', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).replace(/,/g, ' ');
         }
-    
-        function scrollToBottom() {
-            const scrollBody = $('.dataTables_scrollBody');
-            scrollBody.scrollTop(scrollBody[0].scrollHeight);
+
+        // AJUSTEMENT DYNAMIQUE DE LA HAUTEUR
+        function adjustTableHeight() {
+            var windowHeight = $(window).height();
+            var headerHeight = $('header').outerHeight() || 100;
+            var tableHeaderHeight = $('.dataTables_scrollHead').outerHeight() || 30;
+            var otherElementsHeight = 50;
+            
+            var availableHeight = windowHeight - headerHeight - tableHeaderHeight - otherElementsHeight;
+            
+            $('.dataTables_scrollBody').css('max-height', availableHeight + 'px');
+            if (table.settings()[0].oScroll) {
+                table.settings()[0].oScroll.sY = availableHeight;
+            }
+            table.columns.adjust();
         }
+
+        // REDIMENSIONNEMENT FENÊTRE
+        $(window).resize(function() {
+            adjustTableHeight();
+            table.columns.adjust();
+            
+            // Re-force les en-têtes sur une ligne
+            $('th').css('white-space', 'nowrap');
+        });
+
+        // BOUTON EXPORT EXCEL (fonctionnalité basique)
+        $('#exportExcel').click(function () {
+            alert("Fonction d'export Excel - À implémenter selon tes besoins");
+            // window.location.href = window.location.pathname + '?export=excel';
+        });
+
+        // INITIALISATION
+        setTimeout(function() {
+            adjustTableHeight();
+            table.columns.adjust();
+        }, 100);
     });
-    
-    
 </script>
+
+<!-- STYLE SUPPLEMENTAIRE POUR GARANTIR LES EN-TÊTES SUR UNE LIGNE -->
+<style>
+    /* GARANTIR QUE LES EN-TÊTES NE PASSENT PAS À LA LIGNE */
+    table.dataTable thead th {
+        max-width: none !important;
+        min-width: auto !important;
+    }
+    
+    /* ÉVITER TOUT RETOUR À LA LIGNE DANS LES CELLULES */
+    .dataTables_scrollBody td {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* OPTION: Si tu veux voir le texte complet au survol */
+    .dataTables_scrollBody td:hover {
+        overflow: visible !important;
+        white-space: normal !important;
+        position: relative;
+        z-index: 10;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    /* ADAPTATION POUR PETITS ÉCRANS */
+    @media (max-width: 1400px) {
+        th:nth-child(1) { width: 90px !important; }
+        th:nth-child(2) { width: 200px !important; }
+        th:nth-child(3) { width: 100px !important; }
+        th:nth-child(4) { width: 100px !important; }
+        th:nth-child(5) { width: 120px !important; }
+    }
+    
+    @media (max-width: 1200px) {
+        th:nth-child(1) { width: 85px !important; }
+        th:nth-child(2) { width: 180px !important; }
+        th:nth-child(3) { width: 95px !important; }
+        th:nth-child(4) { width: 95px !important; }
+        th:nth-child(5) { width: 110px !important; }
+    }
+</style>
+
 {% endblock %}
