@@ -1,84 +1,151 @@
 {% extends "../../layout.html" %}
 {% load custom_filters %}
-<!-- Include DataTables CSS and JS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+{% load humanize %}
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.3.2/css/fixedHeader.dataTables.min.css">
+<!-- Include jQuery -->
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Include DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.flash.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>
 
 {% block header %}
+<style>
+    /* Style the DataTables buttons container */
+    #datatable-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Style the DataTables buttons to match navbar buttons */
+    .dt-buttons .dt-button {
+        background-color: grey;
+        color: white;
+        border: none;
+        padding: 1rem 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Style for year dropdown */
+    #annee_scolaire_select {
+        background-color: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+    
+    #annee_scolaire_select option {
+        color: #333;
+    }
+    
+    .header-totals {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-right: 2rem;
+    }
+    
+    .header-totals span {
+        color: white;
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+</style>
 <div class="d-flex justify-content-between align-items-center w-100">
+    <!-- Left-aligned elements -->
     <div class="d-flex align-items-center">
-        <h2 class='navbar-brand mb-0 h1 text-white'>Entrées et Sorties (C-SCO Cashier)</h2>
+        <span class="navbar-brand mb-0 h1 text-white">Entrées et Sorties</span>
+        <span class="navbar-brand mb-0 h1 text-white">(C-SCO Cashier)</span>
         <p class='navbar-brand mb-0 h1 text-white'> {{ user.username }}</p>
     </div>
-    <h1 class='navbar-brand mb-0 h1 text-white'>Total: {{ total_balance|format_amount }}</h1>
-    <div class="header-totals">
-    <span>Total Entrée: {{ total_entree|floatformat:2 }}</span>
-    <span>Total Sortie: {{ total_sortie|floatformat:2 }}</span>
-</div>
+    
+    <!-- Academic Year Dropdown -->
+    <form id="annee-scolaire-form" method="get">
+        <select id="annee_scolaire_select" name="annee_scolaire" onchange="this.form.submit()">
+            {% for annee in all_annee_scolaires %}
+                <option value="{{ annee.id }}" {% if annee.id == annee_scolaire.id %}selected{% endif %}>
+                    {{ annee.nom }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+    
+    <!-- Center-aligned elements (Totals) -->
+    <div class="d-flex align-items-center">
+        <div class="header-totals">
+            <span>Total: {{ total_balance|format_amount }}</span>
+            <span>Entrée: {{ total_entree|floatformat:2 }}</span>
+            <span>Sortie: {{ total_sortie|floatformat:2 }}</span>
+        </div>
+    </div>
 
-<form method="get" id="annee-scolaire-form" class="d-inline-block ml-3">
-  <select name="annee_scolaire" onchange="this.form.submit()" class="form-control form-control-sm">
-    {% for annee in all_annee_scolaires %}
-      <option value="{{ annee.id }}" {% if annee.id == annee_scolaire.id %}selected{% endif %}>
-        {{ annee.nom }}
-      </option>
-    {% endfor %}
-  </select>
-</form>
-
+    <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
-   
-          <button class=" mr-3 class-card " id="undo-button" title="Undo">
-                    <i class="fas fa-undo fa-lg"></i>
-                </button>
-        
-        <!-- 🟢 Export to Excel Button -->
-        <button id="exportExcel" class="class-card mr-3 btn btn-success" title="Exporter en Excel">
-            <i class="fas fa-file-excel"></i>
+        <button class="mr-3 class-card" id="undo-button" title="Undo">
+            <i class="fas fa-undo fa-lg"></i>
         </button>
+        
+        <div id="datatable-buttons" class="ml-2 d-flex align-items-stretch">
+            <!-- Buttons will be moved here -->
+        </div>
 
         <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
 {% endblock header %}
 
-
 {% block content %}
 <style>
-    /* OPTIMISATION DE L'ESPACE - STYLE ORIGINAL AMÉLIORÉ */
-    .table-container {
-        max-width: 100%;
-        border-radius: 10px;
-        overflow: hidden;
+    .content-container {
+        margin: 0;
+        padding: 0;
     }
-
+    
+    .table-container {
+        width: 100%;
+        overflow: hidden;
+        border-radius: 5px;
+    }
+    
     .table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 0;
     }
-
-    /* EN-TÊTES OPTIMISÉS - PAS DE RETOUR À LA LIGNE */
+    
+    /* EN-TÊTES COMPACTS */
     .table th {
         background-color: #333;
         color: #fff;
         font-weight: bold;
-        padding: 4px 6px !important;
+        padding: 4px 8px !important;
         font-size: 11px;
         height: 30px;
         line-height: 1.1;
-        white-space: nowrap !important; /* IMPORTANT: force une seule ligne */
+        white-space: nowrap !important;
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: center;
         vertical-align: middle;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
-
-    /* CELLULES DU CORPS */
+    
+    /* CELLULES COMPACTES */
     .table td {
-        padding: 3px 6px !important;
+        padding: 3px 8px !important;
         text-align: center;
         font-size: 11px;
         height: 26px;
@@ -88,285 +155,337 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    /* ALIGNEMENTS SPÉCIFIQUES */
+    
+    /* ALIGNEMENTS */
     .dt-left {
         text-align: left !important;
+        font-family: Arial, sans-serif;
     }
-
+    
     .dt-right {
         text-align: right !important;
         font-family: 'Calibri', 'Consolas', 'Courier New', monospace;
         font-variant-numeric: tabular-nums;
     }
-
-    /* OPTIMISATION SCROLLING */
-    .dataTables_wrapper {
-        overflow: hidden;
-    }
-
-    .dataTables_scrollHead {
-        overflow: hidden !important;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background-color: #333;
-    }
-
-    .dataTables_scrollHeadInner {
-        width: 100% !important;
-    }
-
-    .dataTables_scrollHead table {
-        width: 100% !important;
-        margin-bottom: 0;
-    }
-
-    .dataTables_scrollBody {
-        overflow-y: auto !important;
-        max-height: calc(100vh - 200px) !important;
-    }
-
-    /* STYLE POUR LES LIGNES */
+    
+    /* STYLE HOVER */
     .table tbody tr:hover {
-        background-color: #e9ecef;
+        background-color: #e9ecef !important;
     }
-
-    /* FORCE L'AFFICHAGE SUR UNE SEULE LIGNE POUR LES EN-TÊTES */
-    .dataTables_scrollHead th {
-        word-wrap: normal !important;
-        word-break: keep-all !important;
-        hyphens: none !important;
-        white-space: nowrap !important;
-        overflow-wrap: normal !important;
+    
+    /* LARGEURS FIXES POUR ÉVITER LES RETOURS À LA LIGNE */
+    #entreeSortieTable th:nth-child(1) { width: 100px !important; } /* Date */
+    #entreeSortieTable th:nth-child(2) { width: 250px !important; } /* Description */
+    #entreeSortieTable th:nth-child(3) { width: 110px !important; } /* Entrée */
+    #entreeSortieTable th:nth-child(4) { width: 110px !important; } /* Sortie */
+    #entreeSortieTable th:nth-child(5) { width: 130px !important; } /* Solde Progressif */
+    #entreeSortieTable th:nth-child(6) { width: 50px !important; }  /* Action */
+    
+    /* COULEURS */
+    .text-success {
+        color: #28a745 !important;
     }
-
-    /* LARGEURS OPTIMISÉES POUR ÉVITER LES RETOURS À LA LIGNE */
-    th:nth-child(1) { width: 100px !important; min-width: 100px; } /* Date */
-    th:nth-child(2) { width: 250px !important; min-width: 250px; } /* Description */
-    th:nth-child(3) { width: 110px !important; min-width: 110px; } /* Entrée */
-    th:nth-child(4) { width: 110px !important; min-width: 110px; } /* Sortie */
-    th:nth-child(5) { width: 130px !important; min-width: 130px; } /* Solde Progressif */
-    th:nth-child(6) { width: 30px !important; min-width: 30px; }   /* Action */
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    /* SCROLLING */
+    .dataTables_scrollBody {
+        max-height: calc(100vh - 150px) !important;
+        overflow-y: auto !important;
+    }
+    
+    /* BOUTON SCROLL TO BOTTOM */
+    .scroll-bottom-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .scroll-bottom-btn:hover {
+        background-color: #0056b3;
+    }
 </style>
 
-<div class="table-container">
-    <table id="entreeSortieTable" class="table table-striped display table-bordered compact">
-        <thead>
-            <tr>
-                <th class='dt-left'>Date</th>
-                <th class='dt-left'>Description</th>
-                <th class='dt-right'>Entrée</th>
-                <th class='dt-right'>Sortie</th>
-                <th class='dt-right'>Solde Progressif</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in entries %}
-            <tr>
-                <!-- Sorting uses YYYY-MM-DD format but displays French format -->
-                <td class='dt-left' data-order="{{ entry.date|date:'Y-m-d H:i:s' }}">
-                    {{ entry.date|date:'d/m/Y H:i' }}
-                </td>
-                <td class='dt-left'>{{ entry.description }}</td>
-                <td class='dt-right'>
-                    {% if entry.entree > 0 %}
-                        {{ entry.entree|format_amount }}
-                    {% else %}
-                        <!-- Vide pour zéro -->
-                    {% endif %}
-                </td>
-                <td class='dt-right'>
-                    {% if entry.sortie > 0 %}
-                        {{ entry.sortie|format_amount }}
-                    {% else %}
-                        <!-- Vide pour zéro -->
-                    {% endif %}
-                </td>
-                <td class='dt-right progressive-balance'></td>
-                <td></td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">Aucune entrée disponible.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="content-container row mt-2">
+    <div class="col">
+        <div class="table-container">
+            <table id="entreeSortieTable" class="table table-striped table-bordered display compact" style="width:100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="dt-left">Date</th>
+                        <th class="dt-left">Description</th>
+                        <th class="dt-right">Entrée</th>
+                        <th class="dt-right">Sortie</th>
+                        <th class="dt-right">Solde Progressif</th>
+                        <th class="action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr style="height:2px;">
+                        <td class="dt-left" data-order="{{ entry.date|date:'Y-m-d H:i:s' }}">
+                            {{ entry.date|date:'d/m/Y H:i' }}
+                        </td>
+                        <td class="dt-left" title="{{ entry.description }}">
+                            {{ entry.description|truncatechars:50 }}
+                        </td>
+                        <td class="dt-right">
+                            {% if entry.entree > 0 %}
+                                <span class="text-success">{{ entry.entree|format_amount }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="dt-right">
+                            {% if entry.sortie > 0 %}
+                                <span class="text-danger">{{ entry.sortie|format_amount }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="dt-right progressive-balance"></td>
+                        <td></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucune entrée disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<!-- Bouton pour scroller vers le bas -->
+<button class="scroll-bottom-btn" title="Aller en bas">
+    <i class="fas fa-arrow-down"></i>
+</button>
 
 <script>
-    $(document).ready(function () {
-        // CONFIGURATION DATATABLES OPTIMISÉE
+    $(document).ready(function() {
+        var currentDate = new Date().toLocaleDateString();
+        
         var table = $('#entreeSortieTable').DataTable({
-            "dom": '<"top"f>rt<"bottom"ip><"clear">', // Layout simple
-            "bLengthChange": false, // Désactive la sélection d'entrées
-            "paging": true, // Active la pagination
-            "pageLength": 100, // Augmente le nombre de lignes par page
-            "pagingType": "simple_numbers", // Pagination simple
-            "ordering": false, // Désactive le tri
-            "info": true, // Affiche les infos de pagination
-            "scrollY": "calc(100vh - 200px)", // Hauteur dynamique
-            "scrollCollapse": true,
-            "scrollX": false, // Désactive le scroll horizontal
-            "autoWidth": false, // IMPORTANT: Désactive l'ajustement automatique
-            "fixedHeader": true, // En-tête fixe
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json",
-                "paginate": {
-                    "first": "Premier",
-                    "last": "Dernier",
-                    "next": "Suivant",
-                    "previous": "Précédent"
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    filename: 'entrees_sorties - ' + currentDate,
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: ':not(:last-child)',
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Pour la colonne Solde Progressif (colonne 4)
+                                if (column === 4) {
+                                    return calculateProgressiveForExport(row);
+                                }
+                                return data;
+                            }
+                        }
+                    }
                 },
-                "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
-                "infoEmpty": "Aucune entrée",
-                "infoFiltered": "(filtré de _MAX_ entrées)",
-                "search": "Rechercher:",
-                "zeroRecords": "Aucun enregistrement correspondant"
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    className: 'class-card',
+                    title: 'Entrées et Sorties - ' + currentDate,
+                    exportOptions: {
+                        columns: ':not(:last-child)'
+                    }
+                }
+            ],
+            order: [], // Pas de tri par défaut
+            columnDefs: [
+                { targets: [0], orderable: true },  // Date
+                { targets: [1], orderable: true },  // Description
+                { targets: [2], orderable: true },  // Entrée
+                { targets: [3], orderable: true },  // Sortie
+                { targets: [4], orderable: false }, // Solde Progressif (calculé)
+                { targets: [5], orderable: false }, // Action
+            ],
+            paging: false,
+            info: false,
+            searching: true,
+            lengthChange: false,
+            fixedHeader: { 
+                header: true,
+                headerOffset: $('header').outerHeight()
             },
-            "drawCallback": function(settings) {
+            scrollY: "calc(100vh - 150px)",
+            scrollCollapse: false,
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/fr_fr.json"
+            },
+            drawCallback: function(settings) {
                 calculateProgressiveBalance(this.api());
+                // Scroll automatique vers le bas après le dessin
+                setTimeout(function() {
+                    scrollToBottom();
+                }, 100);
             },
-            "initComplete": function(settings, json) {
-                console.log("Table optimisée chargée");
+            initComplete: function(settings, json) {
+                console.log("Table initialisée avec succès");
                 
-                // FORCE LES EN-TÊTES À RESTER SUR UNE LIGNE
-                $('th').each(function() {
-                    $(this).css({
-                        'white-space': 'nowrap',
-                        'overflow': 'hidden',
-                        'text-overflow': 'ellipsis'
-                    });
-                });
+                // Déplacer les boutons dans le header
+                this.api().buttons().container().appendTo($('#datatable-buttons'));
                 
-                // Ajuste les colonnes après chargement
+                // Ajuster les colonnes
                 this.api().columns.adjust();
-                
-                // Redimensionne la hauteur
-                adjustTableHeight();
             }
         });
 
         // CALCUL DU SOLDE PROGRESSIF
         function calculateProgressiveBalance(api) {
             let progressive = 0;
-            let rows = api.rows({ page: 'current' }).nodes();
             
-            $(rows).each(function() {
-                let entreeCell = $(this).find('td').eq(2);
-                let sortieCell = $(this).find('td').eq(3);
-                let progressiveCell = $(this).find('.progressive-balance');
+            api.rows({ order: 'applied' }).every(function(rowIdx) {
+                let row = this.node();
+                let entreeCell = $(row).find('td').eq(2);
+                let sortieCell = $(row).find('td').eq(3);
+                let progressiveCell = $(row).find('.progressive-balance');
                 
-                // Extraire les valeurs (utilisation du format_amount existant)
-                let entreeText = entreeCell.text().trim();
-                let sortieText = sortieCell.text().trim();
+                // Extraire les valeurs
+                let entreeText = entreeCell.find('.text-success').text() || '0';
+                let sortieText = sortieCell.find('.text-danger').text() || '0';
                 
-                // Convertir en nombre (enlever les espaces, etc.)
                 let entree = parseFloat(entreeText.replace(/[^\d.-]/g, '')) || 0;
                 let sortie = parseFloat(sortieText.replace(/[^\d.-]/g, '')) || 0;
                 
                 progressive += entree - sortie;
                 
-                // Formater comme le filtre format_amount
+                // Formater et afficher
                 progressiveCell.text(formatAmount(progressive));
+                progressiveCell.attr('title', 'Solde cumulé: ' + formatAmount(progressive));
             });
         }
 
-        // FORMATAGE MONÉTAIRE SIMILAIRE À format_amount
+        // CALCUL POUR L'EXPORT
+        function calculateProgressiveForExport(rowIndex) {
+            let progressive = 0;
+            let rows = table.rows({ order: 'applied' }).data();
+            
+            for (let i = 0; i <= rowIndex; i++) {
+                let rowData = rows[i];
+                let entreeText = $(rowData[2]).text() || '0';
+                let sortieText = $(rowData[3]).text() || '0';
+                
+                let entree = parseFloat(entreeText.replace(/[^\d.-]/g, '')) || 0;
+                let sortie = parseFloat(sortieText.replace(/[^\d.-]/g, '')) || 0;
+                
+                progressive += entree - sortie;
+            }
+            
+            return formatAmount(progressive);
+        }
+
+        // FORMATAGE MONÉTAIRE
         function formatAmount(amount) {
             if (isNaN(amount)) return '0';
-            
-            // Format avec séparateur de milliers
             return amount.toLocaleString('fr-FR', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
-            }).replace(/,/g, ' ');
+            });
         }
 
-        // AJUSTEMENT DYNAMIQUE DE LA HAUTEUR
-        function adjustTableHeight() {
-            var windowHeight = $(window).height();
-            var headerHeight = $('header').outerHeight() || 100;
-            var tableHeaderHeight = $('.dataTables_scrollHead').outerHeight() || 30;
-            var otherElementsHeight = 50;
-            
-            var availableHeight = windowHeight - headerHeight - tableHeaderHeight - otherElementsHeight;
-            
-            $('.dataTables_scrollBody').css('max-height', availableHeight + 'px');
-            if (table.settings()[0].oScroll) {
-                table.settings()[0].oScroll.sY = availableHeight;
+        // SCROLL TO BOTTOM
+        function scrollToBottom() {
+            var scrollBody = $('.dataTables_scrollBody');
+            if (scrollBody.length) {
+                scrollBody.animate({
+                    scrollTop: scrollBody[0].scrollHeight
+                }, 300);
             }
-            table.columns.adjust();
         }
+
+        // BOUTON SCROLL TO BOTTOM
+        $('.scroll-bottom-btn').click(function() {
+            scrollToBottom();
+        });
 
         // REDIMENSIONNEMENT FENÊTRE
         $(window).resize(function() {
-            adjustTableHeight();
             table.columns.adjust();
+            table.fixedHeader.adjust();
             
-            // Re-force les en-têtes sur une ligne
-            $('th').css('white-space', 'nowrap');
+            // Force les en-têtes sur une ligne
+            $('#entreeSortieTable thead th').css({
+                'white-space': 'nowrap',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis'
+            });
         });
 
-        // BOUTON EXPORT EXCEL (fonctionnalité basique)
-        $('#exportExcel').click(function () {
-            alert("Fonction d'export Excel - À implémenter selon tes besoins");
-            // window.location.href = window.location.pathname + '?export=excel';
+        // CLICK SUR LE BOUTON UNDO
+        $('#undo-button').click(function() {
+            window.history.back();
         });
 
         // INITIALISATION
         setTimeout(function() {
-            adjustTableHeight();
             table.columns.adjust();
-        }, 100);
+            scrollToBottom();
+        }, 200);
     });
 </script>
 
-<!-- STYLE SUPPLEMENTAIRE POUR GARANTIR LES EN-TÊTES SUR UNE LIGNE -->
+<!-- STYLE SUPPLEMENTAIRE -->
 <style>
-    /* GARANTIR QUE LES EN-TÊTES NE PASSENT PAS À LA LIGNE */
-    table.dataTable thead th {
+    /* FORCER LES EN-TÊTES SUR UNE LIGNE */
+    .dataTables_scrollHead th {
         max-width: none !important;
-        min-width: auto !important;
-    }
-    
-    /* ÉVITER TOUT RETOUR À LA LIGNE DANS LES CELLULES */
-    .dataTables_scrollBody td {
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
     }
     
-    /* OPTION: Si tu veux voir le texte complet au survol */
-    .dataTables_scrollBody td:hover {
-        overflow: visible !important;
-        white-space: normal !important;
-        position: relative;
-        z-index: 10;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    
-    /* ADAPTATION POUR PETITS ÉCRANS */
+    /* Ajustement pour les petits écrans */
     @media (max-width: 1400px) {
-        th:nth-child(1) { width: 90px !important; }
-        th:nth-child(2) { width: 200px !important; }
-        th:nth-child(3) { width: 100px !important; }
-        th:nth-child(4) { width: 100px !important; }
-        th:nth-child(5) { width: 120px !important; }
+        #entreeSortieTable th:nth-child(1) { width: 90px !important; }
+        #entreeSortieTable th:nth-child(2) { width: 200px !important; }
+        #entreeSortieTable th:nth-child(3) { width: 100px !important; }
+        #entreeSortieTable th:nth-child(4) { width: 100px !important; }
+        #entreeSortieTable th:nth-child(5) { width: 120px !important; }
     }
     
     @media (max-width: 1200px) {
-        th:nth-child(1) { width: 85px !important; }
-        th:nth-child(2) { width: 180px !important; }
-        th:nth-child(3) { width: 95px !important; }
-        th:nth-child(4) { width: 95px !important; }
-        th:nth-child(5) { width: 110px !important; }
+        #entreeSortieTable th:nth-child(1) { width: 85px !important; }
+        #entreeSortieTable th:nth-child(2) { width: 180px !important; }
+        #entreeSortieTable th:nth-child(3) { width: 95px !important; }
+        #entreeSortieTable th:nth-child(4) { width: 95px !important; }
+        #entreeSortieTable th:nth-child(5) { width: 110px !important; }
+    }
+    
+    /* Style pour les colonnes monétaires */
+    .amount-col {
+        text-align: right !important;
+        font-family: 'Courier New', monospace !important;
+    }
+    
+    /* Zébra striping amélioré */
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.02);
+    }
+    
+    /* Bordure des cellules */
+    .table-bordered td, .table-bordered th {
+        border: 1px solid #dee2e6;
     }
 </style>
 
