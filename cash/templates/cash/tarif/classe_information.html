@@ -4,7 +4,7 @@
 {% block header %}
 <div class="d-flex justify-content-between align-items-center w-100">
     <div class="d-flex align-items-center">
-        <span class="navbar-brand mb-0 h1 text-white">Informations sur la classe</span>
+        <span class="navbar-brand mb-0 h1 text-white">Informations su la classe</span>
         <span class="ms-4 text-white fs-5">{% now "d/m/Y" %}</span>
     </div>
     <div class="d-flex align-items-stretch">
@@ -35,22 +35,79 @@
         vertical-align: middle !important;
         font-size: 1rem;
     }
+    .cantin-hide {
+        display: none !important;
+    }
 </style>
+
+<!-- Ajouter du JavaScript pour masquer la cantine -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier si c'est une classe maternelle (PS, MS, GS)
+    function isPreschoolClass() {
+        const className = "{{ classe.nom|upper }}"; // Récupérer le nom de la classe
+        return className.includes('PS') || className.includes('MS') || className.includes('GS');
+    }
+    
+    const isPreschool = isPreschoolClass();
+    console.log('Classe:', "{{ classe.nom }}", 'Maternelle?', isPreschool);
+    
+    // Masquer la section cantine si ce n'est pas une classe maternelle
+    if (!isPreschool) {
+        // 1. Masquer les lignes "CAN" dans le tableau des frais
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                if (cell.textContent.includes('CAN') || cell.textContent.trim() === 'CAN') {
+                    row.classList.add('cantin-hide');
+                }
+            });
+        });
+        
+        // 2. Afficher un message d'information
+        const fraisSection = document.querySelector('h5:contains("Frais par élève")');
+        if (fraisSection) {
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'alert alert-info mt-2 p-2';
+            infoDiv.innerHTML = '<small><i class="fas fa-info-circle"></i> La cantine (CAN) n\'est pas applicable pour cette classe (uniquement pour PS, MS, GS).</small>';
+            fraisSection.parentNode.insertBefore(infoDiv, fraisSection.nextSibling);
+        }
+        
+        // 3. Mettre à jour le titre avec une note
+        const pageTitle = document.querySelector('.navbar-brand');
+        if (pageTitle) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-secondary ms-2';
+           // badge.textContent = 'Sans cantine';
+            pageTitle.appendChild(badge);
+        }
+    } else {
+        // Si c'est une classe maternelle, ajouter un badge
+        const pageTitle = document.querySelector('.navbar-brand');
+        if (pageTitle) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-warning ms-2';
+           // badge.textContent = 'Avec cantine';
+            pageTitle.appendChild(badge);
+        }
+    }
+});
+</script>
+
 <div class="container-fluid mt-4" style="max-width: 1300px;">
     <!-- General Information -->
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="mb-2">
                 <label class="form-label fw-bold">École {{ school_name }}</label>
-              
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold">Année Scolaire {{ school_year }}</label>
-              
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold">Classe {{ classe.nom }}</label>
-              
+                <!-- Indicateur visuel ajouté par JavaScript -->
+                <span id="cantineIndicator" class="badge ms-2"></span>
             </div>
         </div>
         <div class="col-md-4">
@@ -92,8 +149,15 @@
                     </thead>
                     <tbody>
                         {% for tarif in tarifs %}
-                            <tr style="height: 30px;">
-                                <td class="py-1">{{ tarif.causal }}</td>
+                            <!-- Ajouter une classe conditionnelle pour CAN -->
+                            <tr style="height: 30px;" 
+                                {% if tarif.causal == 'CAN' %} 
+                                    class="cantine-row {% if classe.nom not in 'PS,MS,GS' %}d-none{% endif %}" 
+                                {% endif %}>
+                                <td class="py-1">
+                                    {{ tarif.causal }}
+                                 
+                                </td>
                                 <td class="py-1">{{ tarif.montant|format_amount }}</td>
                                 <td class="py-1">
                                     {% if tarif.date_expiration %}
@@ -110,6 +174,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                
+                <!-- Message conditionnel pour la cantine -->
+             
             </div>
         </div>
         <!-- Progressif par élève par tranche -->
@@ -159,49 +226,164 @@
             </div>
         </div>
 
- <!-- Frais Total aujourd'hui -->
-<div class="col-md-4">
-    <div class="border rounded p-3 h-100" style="background: #fafafa; min-height: 320px;">
-        <h5 class="fw-bold mb-4 text-center">Frais Total aujourd'hui</h5>
-        <div class="mb-4">
-            <div class="fw-bold mb-2">Frais Scolarité</div>
-            <div class="row mb-2 align-items-center">
-                <div class="col-5 text-end text-muted">Attendus</div>
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
-                           value="{{ first_tranche|default:''|format_amount }}" readonly>
+        <!-- Frais Total aujourd'hui -->
+        <div class="col-md-4">
+            <div class="border rounded p-3 h-100" style="background: #fafafa; min-height: 320px;">
+                <h5 class="fw-bold mb-4 text-center">Frais Total aujourd'hui</h5>
+                <div class="mb-4">
+                    <div class="fw-bold mb-2">Frais Scolarité</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">Attendus</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
+                                   value="{{ first_tranche|default:''|format_amount }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end text-muted">Effectif</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
+                                   value="{{ actual_total_school_fees_received|default:''|format_amount }}" readonly>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-5 text-end text-muted">Effectif</div>
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
-                           value="{{ actual_total_school_fees_received|default:''|format_amount }}" readonly>
+                <div>
+                    <div class="fw-bold mb-2">Frais Tenues</div>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-5 text-end text-muted">Attendus</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
+                                   value="{{ total_py_uniforms_expected|default:'0'|format_amount }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-5 text-end text-muted">Effectif</div>
+                        <div class="col-7">
+                            <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
+                                   value="{{ total_py_uniforms_received|default:'0'|format_amount }}" readonly>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div>
-            <div class="fw-bold mb-2">Frais Tenues</div>
-            <div class="row mb-2 align-items-center">
-                <div class="col-5 text-end text-muted">Attendus</div>
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
-                           value="{{ total_py_uniforms_expected|default:'0'|format_amount }}" readonly>
-                </div>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-5 text-end text-muted">Effectif</div>
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
-                           value="{{ total_py_uniforms_received|default:'0'|format_amount }}" readonly>
-                </div>
+                
+                <!-- Section Cantine (conditionnelle) -->
+                {% with can_tarif=tarifs|dictsort:"causal"|first %}
+                {% for tarif in tarifs %}
+                    {% if tarif.causal == 'CAN' %}
+                        {% with can_tarif=tarif %}
+                        <div id="cantineSection" class="mt-3 pt-3 border-top {% if classe.nom not in 'PS,MS,GS' %}d-none{% endif %}">
+                            <div class="fw-bold mb-2">Frais Cantine</div>
+                            <div class="row mb-2 align-items-center">
+                                <div class="col-5 text-end text-muted">Attendus</div>
+                                <div class="col-7">
+                                    <input type="text" class="form-control form-control-sm" style="background: #f9f9c5;" 
+                                           value="{{ can_tarif.montant|format_amount }}" readonly>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-5 text-end text-muted">Effectif</div>
+                                <div class="col-7">
+                                    <input type="text" class="form-control form-control-sm" style="background: #e4f9e4;" 
+                                           value="{{ total_cantine_received|default:'0'|format_amount }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    {% endif %}
+                {% endfor %}
+                {% endwith %}
             </div>
         </div>
     </div>
 </div>
 
-    </div>
-</div>
-
+<!-- JavaScript pour gérer l'affichage de la cantine -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour détecter si c'est une classe maternelle
+    function isPreschoolClass(className) {
+        if (!className) return false;
+        const upperName = className.toUpperCase().trim();
+        return upperName.includes('PS') || upperName.includes('MS') || upperName.includes('GS');
+    }
+    
+    // Récupérer le nom de la classe
+    const className = "{{ classe.nom }}";
+    const isPreschool = isPreschoolClass(className);
+    
+    console.log('Classe:', className, 'Maternelle?', isPreschool);
+    
+    // Mettre à jour l'indicateur
+    const indicator = document.getElementById('cantineIndicator');
+    if (indicator) {
+        if (isPreschool) {
+            indicator.className = 'badge bg-warning';
+            // indicator.textContent = 'Avec cantine';
+        } else {
+            indicator.className = 'badge bg-secondary';
+            //indicator.textContent = 'Sans cantine';
+        }
+    }
+    
+    // Gérer l'affichage de la cantine
+    if (!isPreschool) {
+        // 1. Masquer les lignes CAN dans le tableau
+        document.querySelectorAll('.cantine-row').forEach(row => {
+            row.classList.add('d-none');
+        });
+        
+        // 2. Afficher le message d'information
+        const cantineMessage = document.getElementById('cantineMessage');
+        if (cantineMessage) {
+            cantineMessage.classList.remove('d-none');
+        }
+        
+        // 3. Masquer la section cantine dans les frais totaux
+        const cantineSection = document.getElementById('cantineSection');
+        if (cantineSection) {
+            cantineSection.classList.add('d-none');
+        }
+        
+        // 4. Ajouter une note visuelle dans le titre
+        const pageTitle = document.querySelector('.navbar-brand');
+        if (pageTitle && !pageTitle.querySelector('.cantine-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-secondary ms-2 cantine-badge';
+           // badge.textContent = 'Sans cantine';
+            pageTitle.appendChild(badge);
+        }
+    } else {
+        // Si c'est une classe maternelle
+        // 1. Afficher les lignes CAN (elles sont déjà visibles par défaut)
+        // 2. Ajouter un badge "Avec cantine"
+        const pageTitle = document.querySelector('.navbar-brand');
+        if (pageTitle && !pageTitle.querySelector('.cantine-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-warning ms-2 cantine-badge';
+           // badge.textContent = 'Avec cantine';
+            pageTitle.appendChild(badge);
+        }
+    }
+    
+    // Fonction pour vérifier s'il y a des tarifs CAN
+    function hasCantineTarif() {
+        const tarifRows = document.querySelectorAll('table tbody tr');
+        for (let row of tarifRows) {
+            const firstCell = row.querySelector('td:first-child');
+            if (firstCell && firstCell.textContent.includes('CAN')) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Si pas de tarif CAN du tout, masquer le message aussi
+    if (!hasCantineTarif() && !isPreschool) {
+        const cantineMessage = document.getElementById('cantineMessage');
+        if (cantineMessage) {
+            cantineMessage.classList.add('d-none');
+        }
+    }
+});
+</script>
 
 {% endblock %}

@@ -81,15 +81,7 @@
         </select>
     </form>
     
-    <!-- Center-aligned elements (Totals) 
-    <div class="d-flex align-items-center">
-        <div class="header-totals">
-            <span>Total: {{ total_balance|format_amount }}</span>
-            <span>Entrée: {{ total_entree|floatformat:2 }}</span>
-            <span>Sortie: {{ total_sortie|floatformat:2 }}</span>
-        </div>
-    </div>
-    -->
+
 
     <!-- Right-aligned elements (Undo, Redo, and Page Identifier) -->
     <div class="d-flex align-items-stretch">
@@ -101,7 +93,7 @@
             <!-- Buttons will be moved here -->
         </div>
 
-        <h2 class='mr-3 text-white'><strong>{{ page_identifier }}</strong></h2>
+        <h2 class='text-white'><strong>{{ page_identifier }}</strong></h2>
     </div>
 </div>
 {% endblock header %}
@@ -111,14 +103,15 @@
   
     .table-container {
         width: 100%;
-        overflow: hidden;
+    
        
     }
     
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 0;
+        margin: 0 auto;
+        
     }
     
     /* EN-TÊTES COMPACTS */
@@ -131,7 +124,7 @@
         height: 20px;
         line-height: 1.1;
         white-space: nowrap !important;
-        overflow: hidden;
+        overflow-x: hidden;
         text-overflow: ellipsis;
         text-align: center;
         vertical-align: middle;
@@ -163,8 +156,8 @@
         text-align: right !important;
         font-family: 'Calibri', 'Consolas', 'Courier New', monospace;
         font-variant-numeric: tabular-nums;
+        
     }
-    
     /* STYLE HOVER */
     .table tbody tr:hover {
         background-color: #e9ecef !important;
@@ -184,7 +177,7 @@
     /* SCROLLING */
     .dataTables_scrollBody {
         max-height: calc(100vh - 150px) !important;
-        overflow-y: auto !important;
+       
     }
     
     /* BOUTON SCROLL TO BOTTOM */
@@ -415,7 +408,7 @@
             // Force les en-têtes sur une ligne
             $('#entreeSortieTable thead th').css({
                 'white-space': 'nowrap',
-                'overflow': 'hidden',
+                'overflow-x': 'hidden',
                 'text-overflow': 'ellipsis'
             });
         });
